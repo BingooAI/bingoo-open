@@ -560,6 +560,10 @@ importers:
   packages/i18n: {}
 
   packages/knowledge-engine:
+    dependencies:
+      '@bingoo.ai/contracts':
+        specifier: workspace:^
+        version: link:../contracts
     devDependencies:
       vitest:
         specifier: ^4.1.10

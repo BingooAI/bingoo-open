@@ -16,12 +16,17 @@ import type {
   RelType,
 } from './domain'
 
-/** Khoá tham chiếu khái niệm (SPEC: engine chạy bằng slug). */
-export type Slug = string
-/** Điểm Elo (ability của người học / difficulty của đối tượng). */
-export type Elo = number
-/** Mốc thời gian epoch milliseconds — thời gian LUÔN truyền vào, lõi không đọc đồng hồ. */
-export type Millis = number
+/**
+ * Nguyên thuỷ định danh — TÁI XUẤT từ `@bingoo.ai/contracts`, không định nghĩa lại.
+ * Trình biên dịch đã xác nhận bằng nhau hai chiều.
+ *
+ * `Slug` là khoá tham chiếu khái niệm (engine chạy bằng slug); `Elo` là ability của người học
+ * hoặc difficulty của đối tượng; `Millis` là mốc epoch — thời gian LUÔN truyền vào, lõi không
+ * bao giờ đọc đồng hồ.
+ */
+import type { Elo, Millis, Slug } from '@bingoo.ai/contracts'
+
+export type { Elo, Millis, Slug }
 
 export type Awaitable<T> = T | Promise<T>
 
@@ -169,18 +174,11 @@ export interface EvidenceInput {
   readonly knowledgePointId?: string
 }
 
-/** SPEC §7.3/§B.5 — một tiên quyết của đơn vị có thể khoá. */
-export interface PrerequisiteRef {
-  readonly requiredType: 'COMPETENCY' | 'LESSON'
-  readonly requiredId: string
-  readonly mode: PrereqMode
-}
-
-/** SPEC §6.5/§B.4 — neo năng lực cho rollup (tham chiếu bằng id ổn định). */
-export interface CompetencyAnchor {
-  readonly competencyId: string
-  readonly weight: number
-}
+/**
+ * SPEC §7.3/§B.5 và §6.5/§B.4 — tiên quyết có thể khoá, và neo năng lực cho rollup.
+ * TÁI XUẤT từ `@bingoo.ai/contracts`; trình biên dịch đã xác nhận bằng nhau hai chiều.
+ */
+export type { CompetencyAnchor, PrerequisiteRef } from '@bingoo.ai/contracts'
 
 /** SPEC §7.5/§B.3 — hạt giống scope liên quan (engine tự mở rộng một-hop). */
 export interface RelevanceSeeds {
