@@ -17,8 +17,8 @@ import {
   primitiveDisplay,
 } from '@bingoo.ai/authored-item'
 import { getAi } from '../providers'
-import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'
+import { modelFor } from '../config/models'
 
 export type PrimitiveFamily = 'quiz' | 'kit' | 'block'
 interface Loc {
@@ -111,7 +111,7 @@ export async function recommendPrimitives(input: {
       language: input.language ?? 'vi',
     }),
     messages: [{ role: 'user', content: `KC=${input.kc}` }],
-    model: readEnv('CONTENT_MODEL') ?? 'claude-sonnet-5',
+    model: modelFor('content'),
     maxTokens: 1200,
   })
   const m = res.text.match(/\{[\s\S]*\}/)

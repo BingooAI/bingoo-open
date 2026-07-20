@@ -31,14 +31,13 @@ const PRIMITIVE_CATALOGUE = contentReadyPrimitives()
   .map((p) => `${p.kind} — ${p.family} — ${p.desc?.en ?? p.label.en}`)
   .join('\n')
 import { getAi } from '../providers'
-import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'
+import { modelFor } from '../config/models'
 
 /**
  * CHI PHÍ: tách model cho khâu sinh nội dung. Mặc định Sonnet (nội dung học cần chất lượng hơn
- * trích xuất, nhưng KHÔNG cần Opus). Đổi bằng env `CONTENT_MODEL`, không đụng code.
+ * trích xuất, nhưng KHÔNG cần Opus). Đổi bằng env `modelFor('content')`, không đụng code.
  */
-const CONTENT_MODEL = readEnv('CONTENT_MODEL') ?? 'claude-sonnet-5'
 
 const MIS_TYPES = ['conceptual', 'procedural', 'incomplete', 'formatting'] as const
 const STAGES = ['concrete', 'pictorial', 'abstract'] as const
@@ -265,7 +264,7 @@ export async function generateLessonPlan(input: {
       catalogue: PRIMITIVE_CATALOGUE,
     }),
     messages: [{ role: 'user', content: `KCs=${input.kcs.join(', ')}` }],
-    model: CONTENT_MODEL,
+    model: modelFor('content'),
     // Kế hoạch giờ giàu: kcArcs (mỗi KC một chuỗi bước ~4k token) + brief/mustCover/forStates mỗi bước
     // + KP + assessment. maxTokens là TRẦN, chỉ trả tiền token THỰC sinh — nới cao không tốn thêm khi
     // output ngắn, chỉ cứu bài nhiều KC khỏi bị cắt. ~4 KC là kịch trần thực tế; đông hơn nên TÁCH bài.

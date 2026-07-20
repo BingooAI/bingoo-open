@@ -26,8 +26,8 @@ import {
   type Transfer,
 } from '@bingoo.ai/facets'
 import { getAi, getEmbedding, getVision } from '../providers'
-import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'
+import { modelFor } from '../config/models'
 
 const KINDS: readonly CompetencyKind[] = [
   'OBJECTIVE',
@@ -48,7 +48,6 @@ const MODES = ['REQUIRED', 'RECOMMENDED'] as const
  * output) chạy bằng Opus → đốt tiền vô lý. Tách riêng model cho authoring (khuôn có sẵn của bingoo:
  * TRANSLATION_MODEL, MEDIA_ENRICH_AI_PROVIDER). Đổi model = đổi env, không đụng code.
  */
-const AUTHORING_MODEL = readEnv('AUTHORING_MODEL') ?? 'claude-haiku-4-5-20251001'
 
 const clamp01 = (n: number): number => (n < 0 ? 0 : n > 1 ? 1 : n)
 const rec = (v: unknown): Record<string, unknown> =>
@@ -224,7 +223,7 @@ export function buildAuthoringPorts(opts?: {
     const res = await getAi(opts?.aiKey).generateText({
       system: await renderPrompt('authoring.concept.extract'),
       messages: [{ role: 'user', content: text }],
-      model: AUTHORING_MODEL,
+      model: modelFor('extraction'),
       maxTokens: 8000,
     })
 
@@ -278,7 +277,7 @@ export function buildAuthoringPorts(opts?: {
         const res = await getAi(opts?.aiKey).generateText({
           system: await renderPrompt('authoring.edge.propose'),
           messages: [{ role: 'user', content: JSON.stringify({ concepts: window }) }],
-          model: AUTHORING_MODEL,
+          model: modelFor('extraction'),
           maxTokens: 4000,
         })
         if (res.finishReason === 'max_tokens') {

@@ -30,13 +30,11 @@ import {
 } from '@bingoo.ai/authoring'
 import type { DomainProfile, Facets } from '@bingoo.ai/facets'
 import { getAi } from '../providers'
-import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'
 import { loadDomainProfiles, loadKcCandidates } from '../repos/authoring.repo'
 import { nearestKcs } from '../repos/competency-embedding.repo'
 import { buildAuthoringPorts } from './authoring-adapters'
-
-const AUTHORING_MODEL = readEnv('AUTHORING_MODEL') ?? 'claude-haiku-4-5-20251001'
+import { modelFor } from '../config/models'
 
 const VERDICTS: readonly AlignVerdict[] = ['SAME', 'SUBSET', 'SUPERSET', 'OVERLAP', 'NEW', 'UNKNOWN']
 
@@ -104,7 +102,7 @@ async function adjudicate(
       existing: brief(target.title, target.facets),
     }),
     messages: [{ role: 'user', content: `NEW: ${c.title}\nEXISTING: ${target.title}` }],
-    model: AUTHORING_MODEL,
+    model: modelFor('extraction'),
     maxTokens: 600,
   })
 

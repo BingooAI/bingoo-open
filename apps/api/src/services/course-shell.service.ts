@@ -9,18 +9,17 @@
 import type { Slug } from '@bingoo.ai/knowledge-engine'
 import type { CoursePlan } from '@bingoo.ai/plans'
 import { getAi, getVision } from '../providers'
-import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'
 import { loadConceptVocab, type ConceptVocabItem } from '../repos/authoring.repo'
 import { saveCourse, type SavedCourse } from '../repos/course.repo'
 import { AppError } from '../lib/errors'
 import { firstJson, sanitizeCourse } from './course-shell.sanitize'
+import { modelFor } from '../config/models'
 
 /**
  * CHI PHÍ: tách model cho khâu sinh nội dung. Mặc định Sonnet (nội dung học cần chất lượng hơn
- * trích xuất, nhưng KHÔNG cần Opus). Đổi bằng env `CONTENT_MODEL`, không đụng code.
+ * trích xuất, nhưng KHÔNG cần Opus). Đổi bằng env `modelFor('content')`, không đụng code.
  */
-const CONTENT_MODEL = readEnv('CONTENT_MODEL') ?? 'claude-sonnet-5'
 
 // Bó vốn từ (KC) đưa vào prompt — chặn trần để không thổi token.
 const VOCAB_CAP = 300
@@ -119,7 +118,7 @@ export async function courseShellFromPrompt(input: CourseShellInput): Promise<Co
       ),
     }),
     messages: [{ role: 'user', content: input.brief }],
-    model: CONTENT_MODEL,
+    model: modelFor('content'),
     maxTokens: 8000,
   })
   throwIfTruncated(res.finishReason, 'rút gọn mô tả hoặc thu hẹp stage')
@@ -162,7 +161,7 @@ export async function courseShellFromBook(
       ),
     }),
     messages: [{ role: 'user', content: 'Trích cấu trúc sách thành vỏ khoá, giữ nguyên thứ tự.' }],
-    model: CONTENT_MODEL,
+    model: modelFor('content'),
     maxTokens: 8000,
   })
   throwIfTruncated(res.finishReason, 'sách quá dài, tách theo phần/chương rồi sinh từng phần')

@@ -29,14 +29,13 @@ import type { ExpositionPort, FlashcardPort, GeneratorPort } from '@bingoo.ai/co
 import type { Slug } from '@bingoo.ai/knowledge-engine'
 import type { DifficultyBand, GenerationSpec } from '@bingoo.ai/personalization'
 import { getAi } from '../providers'
-import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'
+import { modelFor } from '../config/models'
 
 /**
  * CHI PHÍ: tách model cho khâu sinh nội dung. Mặc định Sonnet (nội dung học cần chất lượng hơn
- * trích xuất, nhưng KHÔNG cần Opus). Đổi bằng env `CONTENT_MODEL`, không đụng code.
+ * trích xuất, nhưng KHÔNG cần Opus). Đổi bằng env `modelFor('content')`, không đụng code.
  */
-const CONTENT_MODEL = readEnv('CONTENT_MODEL') ?? 'claude-sonnet-5'
 
 const BAND_ELO: Record<DifficultyBand, number> = { easy: 1300, core: 1500, stretch: 1700 }
 
@@ -169,7 +168,7 @@ export function buildExpositionPort(opts?: { aiKey?: string }): ExpositionPort {
           schema: CONTENT_SCHEMA_JSON,
         }),
         messages: [{ role: 'user', content: `KC=${kc}` }],
-        model: CONTENT_MODEL,
+        model: modelFor('content'),
         maxTokens: 2000,
       })
       if (res.finishReason === 'max_tokens') {
@@ -222,7 +221,7 @@ export function buildFlashcardPort(opts?: { aiKey?: string }): FlashcardPort {
           schema: FLASHCARD_SCHEMA_JSON,
         }),
         messages: [{ role: 'user', content: `KC=${kc}` }],
-        model: CONTENT_MODEL,
+        model: modelFor('content'),
         maxTokens: 1500,
       })
       if (res.finishReason === 'max_tokens') {
@@ -271,7 +270,7 @@ export function buildGeneratorPort(opts?: {
           misconceptions: opts?.misconceptions ?? '(none listed — write plausible distractors)',
         }),
         messages: [{ role: 'user', content: `KC=${kc}` }],
-        model: CONTENT_MODEL,
+        model: modelFor('content'),
         // Đa-locale (prompt/label/explanation mỗi locale) + thang hỗ trợ 4 level (mỗi cấp đa-locale) → item
         // dài gấp ~3; trần thấp cắt JSON giữa chừng (nổ ở finishReason). Nới đủ cho vài item đa ngôn ngữ.
         maxTokens: 16000,
@@ -397,7 +396,7 @@ export function buildKitGeneratorPort(opts: {
             misconceptions: opts.misconceptions ?? '(none listed)',
           }),
           messages: [{ role: 'user', content: `KC=${kc} KIT=${kind}` }],
-          model: CONTENT_MODEL,
+          model: modelFor('content'),
           // Kit cũng đa-locale (prompt/support 4 level mỗi locale) → nới trần.
           maxTokens: 8000,
         })

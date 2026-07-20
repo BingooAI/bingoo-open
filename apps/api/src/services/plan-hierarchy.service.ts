@@ -8,13 +8,11 @@
 import type { CoursePlanDoc, UnitPlanDoc } from '@bingoo.ai/plans'
 import { coursePlanQuality, unitPlanQuality } from '@bingoo.ai/plans'
 import { getAi } from '../providers'
-import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'
 import { getCourse } from '../repos/course.repo'
 import { getPlan, isApproved, savePlan, type StoredPlan } from '../repos/plan-hierarchy.repo'
 import { AppError } from '../lib/errors'
-
-const CONTENT_MODEL = readEnv('CONTENT_MODEL') ?? 'claude-sonnet-5'
+import { modelFor } from '../config/models'
 
 // ── coerce helpers (plans là TS interface, không Zod) ────────────────────────
 const rec = (v: unknown): Record<string, unknown> =>
@@ -138,7 +136,7 @@ export async function generateCoursePlan(input: {
     ...(input.signal ? { signal: input.signal } : {}),
     system: await renderPrompt('authoring.plan.course', { language: input.language, shell }),
     messages: [{ role: 'user', content: `Course=${input.courseSlug}` }],
-    model: CONTENT_MODEL,
+    model: modelFor('content'),
     maxTokens: 4000,
   })
   throwIfTruncated(res.finishReason)
@@ -250,7 +248,7 @@ export async function generateUnitPlan(input: {
       unit: unitJson,
     }),
     messages: [{ role: 'user', content: `Unit=${input.unitSlug}` }],
-    model: CONTENT_MODEL,
+    model: modelFor('content'),
     maxTokens: 4000,
   })
   throwIfTruncated(res.finishReason)

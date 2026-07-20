@@ -25,14 +25,13 @@ import {
 } from '@bingoo.ai/authoring'
 import type { CompetencyKind, FrameworkKind, PrereqMode, RelType } from '@bingoo.ai/knowledge-engine'
 import { getAi, getVision } from '../providers'
-import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'
 import { loadDomainProfiles, loadExistingConcepts, loadExistingNodes } from '../repos/authoring.repo'
 import { buildAuthoringPorts } from './authoring-adapters'
 import type { IngestResult } from './authoring-ingest.service'
+import { modelFor } from '../config/models'
 
 // Model RẺ cho trích xuất có cấu trúc (xem authoring-adapters). Đổi bằng env, không đụng code.
-const AUTHORING_MODEL = readEnv('AUTHORING_MODEL') ?? 'claude-haiku-4-5-20251001'
 
 const KINDS: readonly CompetencyKind[] = [
   'OBJECTIVE',
@@ -134,7 +133,7 @@ export async function frameworkFromPrompt(
   const res = await getAi(aiKey).generateText({
     system: await renderPrompt('authoring.framework.generate', { topic, locale }),
     messages: [{ role: 'user', content: topic }],
-    model: AUTHORING_MODEL,
+    model: modelFor('extraction'),
     maxTokens: 4000,
   })
   const draft = sanitizeDraft(firstJson(res.text), locale)
@@ -191,7 +190,7 @@ async function extractObjectives(
     const res = await getAi(aiKey).generateText({
       system,
       messages: [{ role: 'user', content: text }],
-      model: AUTHORING_MODEL,
+      model: modelFor('extraction'),
       maxTokens: 8000,
     })
     if (res.finishReason !== 'max_tokens') return arr(firstJson(res.text).objectives).map(rec)
