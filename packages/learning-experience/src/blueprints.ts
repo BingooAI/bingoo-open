@@ -19,7 +19,7 @@ export type ExperienceAccent = 'primary' | 'teal' | 'sunbeam' | 'coral' | 'succe
 export interface Blueprint {
   readonly id: string
   readonly descriptor: ExperienceDescriptor
-  /** Hậu tố khoá i18n (vd 'aiTutor' → kitchenSink.experiences.blueprints.aiTutor). */
+  /** Hậu tố khoá i18n (vd 'aiTutor' → learn.experiences.blueprints.aiTutor). */
   readonly labelKey: string
   readonly accent: ExperienceAccent
   /** Tên icon (lucide) — host map sang component. */

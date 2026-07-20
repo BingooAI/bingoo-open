@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 import type { LearningExperienceLabels } from '@bingoo.ai/ui-web'
 
-/** Translator (next-intl) đã bound namespace `kitchenSink.experiences`. */
+/** Translator (next-intl) đã bound namespace `learn.experiences`. */
 type ExpT = (key: string) => string
 
 /**
- * Dựng bảng nhãn 5 trục cho `@bingoo.ai/ui-web` từ i18n (`kitchenSink.experiences`). Một nơi duy nhất
- * để cả /learn lẫn kitchen-sink dùng — component ui-web i18n-free nên host phải cấp nhãn (R4).
+ * Dựng bảng nhãn 5 trục cho `@bingoo.ai/ui-web` từ i18n (`learn.experiences`).
+ * Component ui-web cố ý i18n-free, nên host phải cấp nhãn (R4).
  */
 export function buildExperienceLabels(exp: ExpT): LearningExperienceLabels {
   return {

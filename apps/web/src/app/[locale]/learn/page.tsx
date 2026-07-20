@@ -45,7 +45,7 @@ const DESCR: Record<Exclude<TabId, 'me'>, ExperienceDescriptor> = {
 
 export default function LearnPage() {
   const t = useTranslations('learn')
-  const exp = useTranslations('kitchenSink.experiences')
+  const exp = useTranslations('learn.experiences')
   const [tab, setTab] = useState<TabId>('home')
 
   const expLabels = useMemo(() => buildExperienceLabels(exp), [exp])
