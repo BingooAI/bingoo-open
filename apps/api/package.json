@@ -17,7 +17,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.110.0",
+    "@anthropic-ai/sdk": "^0.112.3",
     "@aws-sdk/client-s3": "^3.1080.0",
     "@aws-sdk/s3-request-presigner": "^3.1080.0",
     "@better-auth/expo": "^1.6.23",
@@ -35,7 +35,7 @@
     "@bingoo/personalization": "workspace:^",
     "@bingoo/plans": "workspace:^",
     "@hono/node-server": "^2.0.8",
-    "@hono/zod-validator": "^0.8.0",
+    "@hono/zod-validator": "^0.9.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@upstash/qstash": "^2.11.1",
@@ -59,7 +59,7 @@
     "tsup": "^8.5.1",
     "tsx": "^4.23.0",
     "typescript": "^5.7.3",
-    "vitest": "^3.2.7"
+    "vitest": "^4.1.10"
   },
   "engines": {
     "node": ">=18.18.0"
