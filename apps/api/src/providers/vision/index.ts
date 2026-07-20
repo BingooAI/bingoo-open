@@ -1,9 +1,9 @@
-import { readEnv } from '../core/config'
+import { providerFor } from '../core/profile'
 import { createRegistry } from '../core/registry'
 import { claudeVisionAdapter } from './adapters/claude'
 import type { VisionPort } from './port'
 
-export const visionRegistry = createRegistry<VisionPort>('vision', readEnv('VISION_PROVIDER') ?? 'claude', [
+export const visionRegistry = createRegistry<VisionPort>('vision', providerFor('vision'), [
   claudeVisionAdapter,
 ])
 

@@ -1,11 +1,11 @@
-import { readEnv } from '../core/config'
+import { providerFor } from '../core/profile'
 import { createRegistry } from '../core/registry'
 import { fcmAdapter } from './adapters/fcm'
 import type { NotificationPort } from './port'
 
 export const notificationRegistry = createRegistry<NotificationPort>(
   'notification',
-  readEnv('NOTIFICATION_PROVIDER') ?? 'fcm',
+  providerFor('notification'),
   [fcmAdapter],
 )
 

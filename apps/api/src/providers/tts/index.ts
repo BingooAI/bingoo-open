@@ -1,10 +1,10 @@
-import { readEnv } from '../core/config'
+import { providerFor } from '../core/profile'
 import { createRegistry } from '../core/registry'
 import { elevenlabsAdapter } from './adapters/elevenlabs'
 import { openaiTtsAdapter } from './adapters/openai'
 import type { TtsPort } from './port'
 
-export const ttsRegistry = createRegistry<TtsPort>('tts', readEnv('TTS_PROVIDER') ?? 'elevenlabs', [
+export const ttsRegistry = createRegistry<TtsPort>('tts', providerFor('tts'), [
   elevenlabsAdapter,
   openaiTtsAdapter,
 ])

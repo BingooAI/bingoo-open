@@ -3,6 +3,7 @@ import type { AppEnv } from '../lib/context'
 import { env } from '../config/env'
 import { pingDatabase } from '../repos/health.repo'
 import { providersHealth } from '../providers'
+import { activeProfile, capabilitiesWithoutLocalAdapter } from '../providers/core/profile'
 
 /**
  * Health probes. `/health` is liveness (process is up, needs no DB); `/health/db`
@@ -26,5 +27,12 @@ export const health = new Hono<AppEnv>()
     const providers = providersHealth()
     // "degraded" when the active provider of any capability is missing its config.
     const activeReady = providers.filter((p) => p.active).every((p) => p.configured)
-    return c.json({ status: activeReady ? 'ok' : 'degraded', providers })
+    // The profile and its gaps are reported alongside, so an operator can tell a
+    // deliberately cloud-backed capability from one that has no local option yet.
+    return c.json({
+      status: activeReady ? 'ok' : 'degraded',
+      profile: activeProfile(),
+      withoutLocalAdapter: capabilitiesWithoutLocalAdapter(),
+      providers,
+    })
   })

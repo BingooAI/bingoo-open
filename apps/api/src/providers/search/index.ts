@@ -1,9 +1,9 @@
-import { readEnv } from '../core/config'
+import { providerFor } from '../core/profile'
 import { createRegistry } from '../core/registry'
 import { postgresSearchAdapter } from './adapters/postgres'
 import type { SearchPort } from './port'
 
-export const searchRegistry = createRegistry<SearchPort>('search', readEnv('SEARCH_PROVIDER') ?? 'postgres', [
+export const searchRegistry = createRegistry<SearchPort>('search', providerFor('search'), [
   postgresSearchAdapter,
 ])
 
