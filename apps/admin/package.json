@@ -21,7 +21,7 @@
     "@bingoo/i18n": "workspace:*",
     "@bingoo/tokens": "workspace:*",
     "@bingoo/ui-web": "workspace:*",
-    "@tanstack/react-query": "^5.62.11",
+    "@tanstack/react-query": "^5.101.3",
     "better-auth": "^1.6.23",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
