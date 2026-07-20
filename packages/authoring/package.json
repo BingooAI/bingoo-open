@@ -2,7 +2,7 @@
   "name": "@bingoo/authoring",
   "version": "0.1.0",
   "private": true,
-  "description": "L\u00f5i bi\u00ean so\u1ea1n thu\u1ea7n \u2014 tr\u00edch kh\u00e1i ni\u1ec7m/KC t\u1eeb ngu\u1ed3n \u2192 GraphData + Framework (dedup/compile/validate/review).",
+  "description": "Lõi biên soạn thuần — trích khái niệm/KC từ nguồn → GraphData + Framework (dedup/compile/validate/review).",
   "author": "VietDevelopers.com (https://vietdevelopers.com)",
   "license": "UNLICENSED",
   "type": "module",
@@ -11,8 +11,8 @@
   },
   "types": "./src/index.ts",
   "dependencies": {
-    "@bingoo/knowledge-engine": "workspace:^",
-    "@bingoo/facets": "workspace:^"
+    "@bingoo/facets": "workspace:^",
+    "@bingoo/knowledge-engine": "workspace:^"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -20,6 +20,6 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "vitest": "^2.1.8"
+    "vitest": "^3.2.7"
   }
 }

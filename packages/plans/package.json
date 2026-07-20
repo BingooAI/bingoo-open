@@ -2,7 +2,7 @@
   "name": "@bingoo/plans",
   "version": "0.1.0",
   "private": true,
-  "description": "Instruction Plan (khung chu\u1ea9n) + Knowledge Point + planQuality \u2014 t\u1ea7ng n\u1ed9i dung \u2461.",
+  "description": "Instruction Plan (khung chuẩn) + Knowledge Point + planQuality — tầng nội dung ②.",
   "author": "VietDevelopers.com (https://vietdevelopers.com)",
   "license": "UNLICENSED",
   "type": "module",
@@ -19,6 +19,6 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "vitest": "^2.1.8"
+    "vitest": "^3.2.7"
   }
 }
