@@ -82,9 +82,15 @@ describe('an explicit provider always wins', () => {
 
   it('rescues a capability the local profile cannot serve', () => {
     process.env.DEPLOYMENT_PROFILE = 'local'
-    expect(() => providerFor('storage')).toThrow()
-    process.env.STORAGE_PROVIDER = 'r2'
+    expect(() => providerFor('image')).toThrow()
+    process.env.IMAGE_PROVIDER = 'openai'
+    expect(providerFor('image')).toBe('openai')
+  })
+
+  it('storage resolves to the S3 adapter locally, and R2 in the cloud', () => {
     expect(providerFor('storage')).toBe('r2')
+    process.env.DEPLOYMENT_PROFILE = 'local'
+    expect(providerFor('storage')).toBe('s3')
   })
 
   it('marks cache optional, so an installation without it is not degraded', () => {
@@ -107,9 +113,9 @@ describe('a misconfiguration fails at startup, not in front of a learner', () =>
 
   it('names the capability and where the work is tracked', () => {
     process.env.DEPLOYMENT_PROFILE = 'local'
-    expect(() => providerFor('storage')).toThrow(/storage/)
-    expect(() => providerFor('storage')).toThrow(/issue #11/)
-    expect(() => providerFor('storage')).toThrow(/STORAGE_PROVIDER/)
+    expect(() => providerFor('image')).toThrow(/image/)
+    expect(() => providerFor('image')).toThrow(/issue #14/)
+    expect(() => providerFor('image')).toThrow(/IMAGE_PROVIDER/)
   })
 
   it('accepts a profile regardless of case and surrounding space', () => {
@@ -120,7 +126,7 @@ describe('a misconfiguration fails at startup, not in front of a learner', () =>
 
 describe('the table describes the deployment honestly', () => {
   it('reports which capabilities still need an account', () => {
-    expect(capabilitiesWithoutLocalAdapter().sort()).toEqual(['image', 'storage'].sort())
+    expect(capabilitiesWithoutLocalAdapter()).toEqual(['image'])
   })
 
   it('points every gap at somewhere the reader can go', () => {

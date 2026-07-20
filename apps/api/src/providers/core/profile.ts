@@ -70,6 +70,8 @@ export interface CapabilitySpec {
  * Nine capabilities, down from fifteen. Notification, payment, video, workflow, realtime and
  * email were removed rather than given local adapters: they belonged to a paid tier that is not
  * part of this project, and three of them had no caller at all.
+ *
+ * `image` is the last gap. Everything else runs with no third-party account.
  */
 export const CAPABILITY_SPECS = {
   ai: { env: 'AI_PROVIDER', cloud: 'claude', local: 'openai' },
@@ -77,7 +79,7 @@ export const CAPABILITY_SPECS = {
   embedding: { env: 'EMBEDDING_PROVIDER', cloud: 'openai', local: 'openai' },
   image: { env: 'IMAGE_PROVIDER', cloud: 'openai', local: null, localTracking: 'issue #14' },
   search: { env: 'SEARCH_PROVIDER', cloud: 'postgres', local: 'postgres' },
-  storage: { env: 'STORAGE_PROVIDER', cloud: 'r2', local: null, localTracking: 'issue #11' },
+  storage: { env: 'STORAGE_PROVIDER', cloud: 'r2', local: 's3' },
   translation: { env: 'TRANSLATION_PROVIDER', cloud: 'llm', local: 'llm' },
   tts: { env: 'TTS_PROVIDER', cloud: 'elevenlabs', local: 'openai' },
   vision: { env: 'VISION_PROVIDER', cloud: 'claude', local: 'claude' },
