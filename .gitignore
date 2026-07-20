@@ -1,0 +1,60 @@
+# Dependencies
+node_modules/
+.pnp.*
+.yarn/*
+
+# Build output
+dist/
+build/
+out/
+.turbo/
+*.tsbuildinfo
+.next/
+next-env.d.ts
+*.orig.*
+
+# Generated — regenerate, never edit or commit
+generated/
+coverage/
+*.lcov
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*~
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+logs/
+
+# Test / tooling caches
+.vitest/
+.eslintcache
+.prettiercache
+
+# Local-only assistant notes (see CLAUDE.md)
+CLAUDE.md
+
+# Third-party reference material — copyrighted books/papers, read in place only.
+# Never commit: this repository is public and git history is permanent.
+docs/**/*.pdf
+
+# Brand source kit — shipped assets live in apps/*/public/brand; this is the working kit.
+/bingoo-brand/
+
+# Internal working notes — migration state, audit findings. Local-only, like CLAUDE.md.
+docs/internal/

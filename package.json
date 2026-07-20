@@ -1,0 +1,69 @@
+{
+  "name": "bingoo-open",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A teaching toolkit that measures what a learner can actually do — and explains its reasoning.",
+  "homepage": "https://github.com/BingooAI/bingoo-open",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BingooAI/bingoo-open.git"
+  },
+  "bugs": "https://github.com/BingooAI/bingoo-open/issues",
+  "license": "Apache-2.0",
+  "author": "Bingoo.ai (https://bingoo.ai)",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "predev": "for p in 3000 3001 4000; do lsof -ti tcp:$p | xargs kill -9 2>/dev/null; done; true",
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "lint": "node --max-old-space-size=8192 ./node_modules/eslint/bin/eslint.js . --max-warnings 0",
+    "lint:fix": "node --max-old-space-size=8192 ./node_modules/eslint/bin/eslint.js . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "pnpm build && pnpm lint && pnpm typecheck && pnpm test",
+    "tokens:build": "pnpm --filter @bingoo/tokens build",
+    "web": "pnpm --filter @bingoo/web",
+    "admin": "pnpm --filter @bingoo/admin",
+    "api": "pnpm --filter @bingoo/api-server",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "turbo run build && changeset publish",
+    "prepare": "husky || true"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.7.0",
+    "@changesets/cli": "^2.27.10",
+    "@eslint/js": "^9.18.0",
+    "@next/eslint-plugin-next": "^15.1.6",
+    "@types/node": "^22.10.0",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
+    "prettier": "^3.4.2",
+    "tsup": "^8.3.5",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.20.0",
+    "vite": "^6.0.0",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "zod": "^4"
+  },
+  "pnpm": {
+    "overrides": {
+      "react": "19.1.0",
+      "react-dom": "19.1.0"
+    }
+  }
+}

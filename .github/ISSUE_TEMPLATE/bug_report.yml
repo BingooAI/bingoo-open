@@ -1,0 +1,71 @@
+name: Bug report
+description: A type or schema does not describe what it should
+labels: ['bug', 'needs-triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Security issues do not belong here** — see [SECURITY.md](../blob/main/SECURITY.md)
+        and report them privately.
+
+        Proposing a *change* to a type rather than reporting a defect? That is an RFC —
+        please open a discussion instead, because it affects every repo in the family.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you expected the schema to accept or reject, and what it did instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: |
+        A `safeParse` call with the input that misbehaved, or better still a failing test.
+        A failing test is the most useful bug report there is.
+      render: ts
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: '@bingoo.ai/contracts 0.1.0'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which module
+      options:
+        - refs
+        - competency
+        - evidence
+        - content
+        - pedagogy
+        - format
+        - assessment
+        - profile
+        - xai
+        - providers
+        - Not sure
+    validations:
+      required: true
+
+  - type: input
+    id: consumer
+    attributes:
+      label: Which repo hit it
+      description: Which consumer surfaced the problem — ours or your own.
+      placeholder: e.g. competency-engine, or my own CASE importer
+
+  - type: input
+    id: environment
+    attributes:
+      label: Node version and runtime
+      placeholder: Node 22.11, or "browser, Vite 6"

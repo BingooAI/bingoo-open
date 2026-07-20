@@ -1,0 +1,144 @@
+# SPDX-FileCopyrightText: 2026 Bingoo.ai
+# SPDX-License-Identifier: Apache-2.0
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # The floor declared in package.json engines. CI tests the floor deliberately:
+  # running only the newest version is how an unsupported-syntax bug reaches a user.
+  NODE_VERSION: '22'
+
+jobs:
+  quality:
+    name: Lint · typecheck · test · build
+    runs-on: ubuntu-latest
+    steps:
+      # Actions are pinned by commit SHA — a moving tag is a supply-chain hole.
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      # Build first: `typecheck` resolves the package through its published `types` entry,
+      # which points into dist/. Checking a clean checkout before building reports the result
+      # as `any` rather than as the missing build it actually is.
+      - run: pnpm build
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+
+  # The ethical invariants (A7) are a tested promise, not an aspiration. They get their own
+  # job — separate from `quality` — so a failure names itself in the checks list rather than
+  # hiding inside a generic red X, and so it can be a required status check that nobody waves
+  # through on the grounds that the suite is flaky today.
+  invariants:
+    name: Ethical invariants (A7)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - name: Dispositions unscored · no ranking · privacy strict · human review
+        run: pnpm --filter @bingoo.ai/contracts exec vitest run test/invariants.test.ts
+
+  # R2: contracts is the root of the dependency graph and has no outgoing edges. The lint rule
+  # catches an import of a sibling package; this catches the subtler version — a runtime
+  # dependency added to package.json that nobody imports yet but somebody eventually will.
+  purity:
+    name: No dependencies beyond zod (R2)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Assert the dependency list
+        run: |
+          deps=$(node -p "Object.keys(require('./packages/contracts/package.json').dependencies ?? {}).sort().join(',')")
+          if [ "$deps" != "zod" ]; then
+            echo "contracts must depend on zod and nothing else (R2). Found: $deps"
+            exit 1
+          fi
+
+  security:
+    name: Security scanning
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      # Secret scanning is GitHub's native feature, enabled in repository settings, not a step
+      # here. It is free on public repositories and — unlike scanning after the fact — push
+      # protection rejects a secret before it reaches the repository, which is the only point
+      # at which the problem is still cheap.
+
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Dependency audit
+        run: pnpm audit --audit-level=high
+
+      # An incompatible licence must fail the build, not surface at release time.
+      - name: Licence compatibility
+        run: pnpm dlx license-checker-rseidelsohn --production --onlyAllow "Apache-2.0;MIT;BSD-2-Clause;BSD-3-Clause;ISC;0BSD;CC0-1.0;Unlicense;Python-2.0;BlueOak-1.0.0" --excludePrivatePackages
+
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: github/codeql-action/init@7188fc363630916deb702c7fdcf4e481b751f97a # v4.37.1
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+      - uses: github/codeql-action/analyze@7188fc363630916deb702c7fdcf4e481b751f97a # v4.37.1
+
+  changeset:
+    name: Changeset present
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # A published package changing without a changeset is a release nobody announced.
+      - name: Require a changeset for published-package changes
+        run: pnpm changeset status --since=origin/main

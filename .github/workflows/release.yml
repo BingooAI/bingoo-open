@@ -1,0 +1,93 @@
+# SPDX-FileCopyrightText: 2026 Bingoo.ai
+# SPDX-License-Identifier: Apache-2.0
+name: Release
+
+on:
+  push:
+    branches: [main]
+  # Manual trigger, for the specific case this workflow will otherwise strand: the version
+  # bump lands on `main` and the publish then fails on something outside the code — an
+  # expired npm token, a registry outage, a 2FA policy change. `main` then claims a version
+  # npm does not have, and without this there is no way to retry except an empty commit.
+  #
+  # Re-running is safe: changesets publishes only versions the registry does not already
+  # have, so a duplicate run is a no-op rather than a conflict.
+  workflow_dispatch:
+
+# The default token is read-only. Each job asks for exactly what it needs and nothing more:
+# a compromised action in a release pipeline is the highest-value target in the repository.
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  release:
+    name: Version PR or publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # to open and update the version PR, and to tag
+      pull-requests: write # to open the version PR
+      id-token: write # npm provenance — the attestation is signed with this
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          # changesets needs history to work out what has been released.
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+
+      # The full gate, again, on the exact commit being published. CI already ran it on the
+      # PR — but the merge commit is not the PR head, and "it passed on the branch" is how a
+      # broken package reaches npm. The cost is two minutes; the alternative is a deprecated
+      # version that can never be deleted.
+      - run: pnpm check
+
+      # Two modes, decided by changesets:
+      #
+      #   Unreleased changesets present  → open or update the "Version Packages" PR.
+      #                                    Nothing is published. A human reviews the version
+      #                                    bump and the generated changelog, then merges.
+      #   No changesets left (that PR was just merged)
+      #                                  → publish to npm.
+      #
+      # The version PR is the deliberate human gate. A change here reaches eight
+      # repositories, and publishing straight from a merge to main means the first person to
+      # see the version number is a consumer.
+      - name: Create version PR or publish
+        id: changesets
+        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
+        with:
+          version: pnpm version-packages
+          publish: pnpm release
+          commit: 'chore(release): version packages'
+          title: 'chore(release): version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Provenance links the published tarball to this workflow run and this commit, so a
+          # consumer can verify what they install was built from what we published. It needs
+          # `id-token: write` above and `publishConfig.provenance` in package.json — both, or
+          # it silently does nothing.
+          NPM_CONFIG_PROVENANCE: 'true'
+
+      - name: Summarise
+        if: always()
+        run: |
+          if [ "${{ steps.changesets.outputs.published }}" = "true" ]; then
+            echo "Published: ${{ steps.changesets.outputs.publishedPackages }}" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No publish this run — a version PR is open, or there was nothing to release." >> "$GITHUB_STEP_SUMMARY"
+          fi

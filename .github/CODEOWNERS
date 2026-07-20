@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2026 Bingoo.ai
+# SPDX-License-Identifier: Apache-2.0
+#
+# Review is required on everything here, because everything here is imported by eight
+# repositories. There is no low-stakes corner of this package.
+
+* @BingooAI/maintainers
+
+# The files below encode guarantees rather than shapes. They are called out separately not
+# because a different team owns them, but because a reviewer should know before opening the
+# diff that a change to one of these is a change to a promise:
+#
+#   competency.ts   `measurableDomain` — a child's character is never scored
+#   format.ts       `WellbeingPolicy` — no ranking is ever exposed
+#   pedagogy.ts     `InteractionDesign` — child privacy is not a setting
+#   content.ts      `Item` — a named person approves what a child sees
+#
+# See docs/adr/0003-guarantees-as-unrepresentable-states.md before approving one.
+/packages/contracts/src/competency.ts @BingooAI/maintainers
+/packages/contracts/src/format.ts @BingooAI/maintainers
+/packages/contracts/src/pedagogy.ts @BingooAI/maintainers
+/packages/contracts/src/content.ts @BingooAI/maintainers
+/packages/contracts/test/invariants.test.ts @BingooAI/maintainers
+
+# Changing the constitution, the release path or the dependency floor.
+/docs/ENGINEERING.md @BingooAI/maintainers
+/docs/adr/ @BingooAI/maintainers
+/.github/workflows/ @BingooAI/maintainers
+/package.json @BingooAI/maintainers
+/packages/contracts/package.json @BingooAI/maintainers

@@ -1,0 +1,54 @@
+{
+  "name": "@bingoo.ai/codecs",
+  "version": "0.0.0",
+  "description": "Open-standard codecs for the Bingoo family: CASE and xAPI, reached by subpath.",
+  "keywords": [
+    "case",
+    "1edtech",
+    "xapi",
+    "adl",
+    "competency",
+    "edtech",
+    "codec"
+  ],
+  "license": "Apache-2.0",
+  "author": "Bingoo.ai (https://bingoo.ai)",
+  "homepage": "https://github.com/BingooAI/codecs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BingooAI/codecs.git",
+    "directory": "packages/codecs"
+  },
+  "bugs": "https://github.com/BingooAI/codecs/issues",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./case": {
+      "types": "./dist/case/index.d.ts",
+      "import": "./dist/case/index.js",
+      "require": "./dist/case/index.cjs"
+    },
+    "./xapi": {
+      "types": "./dist/xapi/index.d.ts",
+      "import": "./dist/xapi/index.js",
+      "require": "./dist/xapi/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@bingoo.ai/contracts": "^0.2.0",
+    "zod": "^4.4.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

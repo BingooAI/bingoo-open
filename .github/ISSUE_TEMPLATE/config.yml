@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/BingooAI/bingoo-open/security/advisories/new
+    about: Report privately. Never in a public issue.
+  - name: Propose a contract change (RFC)
+    url: https://github.com/BingooAI/bingoo-open/discussions
+    about: Adding, changing or removing a type affects every repo. Start the discussion here.
+  - name: Questions and ideas
+    url: https://github.com/BingooAI/bingoo-open/discussions
+    about: For anything that is not a bug or a concrete proposal.

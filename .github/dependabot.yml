@@ -1,0 +1,55 @@
+version: 2
+updates:
+  # One PR per group. A very small team cannot review twenty individual bumps a week, and
+  # dependency PRs that pile up unreviewed are a supply-chain risk, not a hygiene win.
+  # Grouping by dependency-type rather than by name patterns means a new dev tool is
+  # classified correctly the day it is added, with no config change.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      dev-dependencies:
+        dependency-type: development
+        update-types: ['minor', 'patch']
+      production-dependencies:
+        dependency-type: production
+        update-types: ['minor', 'patch']
+    # Majors arrive as their own PR: they are the ones that actually need reading, and
+    # burying one inside a group of twelve patches is how a breaking change slips through.
+    ignore:
+      # TypeScript 6 is blocked by tsup, not by us.
+      #
+      # `tsc --noEmit` passes cleanly on 6.0.3 — our source and our tsconfig are already
+      # TS 6-ready. What fails is tsup's declaration build, because it injects a compiler
+      # option we never asked for:
+      #
+      #   tsup/dist/rollup.js →  baseUrl: compilerOptions.baseUrl || "."
+      #
+      # TS 6 deprecates `baseUrl` (TS5101), so the dts step errors on an option that exists
+      # only because tsup put it there.
+      #
+      # The two ways to force the upgrade are both worse than waiting. Setting
+      # `ignoreDeprecations: "6.0"` silences a warning about someone else's option and buys
+      # nothing, since TS 7 removes `baseUrl` outright. Replacing tsup's dts step with
+      # `tsc --emitDeclarationOnly` is real work and permanent complexity, traded for a
+      # temporary gap in a dependency that will fix itself.
+      #
+      # So: hold at 5.x. There is no migration debt accruing — we are already compatible.
+      #
+      # REVISIT when tsup ships a release that stops injecting `baseUrl`
+      # (https://github.com/egoist/tsup). Remove this entry and let the major PR through;
+      # it should pass without any change to our code. Minor and patch updates to
+      # TypeScript are unaffected and still arrive normally.
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      github-actions:
+        patterns: ['*']
+        update-types: ['minor', 'patch']
