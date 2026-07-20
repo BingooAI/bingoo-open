@@ -128,7 +128,10 @@ jobs:
   changeset:
     name: Changeset present
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    # Dependabot cannot write a changeset, so requiring one of it only produces a red check
+    # that reviewers learn to wave through — which is worse than not checking at all. A
+    # dependency bump that needs a release gets its changeset from the human who merges it.
+    if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
