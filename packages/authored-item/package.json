@@ -1,0 +1,26 @@
+{
+  "name": "@bingoo/authored-item",
+  "version": "0.1.0",
+  "private": true,
+  "description": "L\u1edbp neo n\u1ed1i primitive @bingoo/core v\u00e0o knowledge-engine (Candidate + c\u1ea7u grading).",
+  "author": "VietDevelopers.com (https://vietdevelopers.com)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@bingoo/core": "workspace:^",
+    "@bingoo/knowledge-engine": "workspace:^",
+    "@bingoo/manipulatives": "workspace:^"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}

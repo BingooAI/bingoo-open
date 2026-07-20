@@ -1,0 +1,39 @@
+{
+  "name": "@bingoo/ui-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bingoo web UI component library — primitives on shared tokens (React DOM).",
+  "author": "VietDevelopers.com (https://vietdevelopers.com)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@bingoo/core": "workspace:*",
+    "@bingoo/learning-experience": "workspace:*",
+    "@hookform/resolvers": "^5.4.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.474.0",
+    "react-aria-components": "^1.19.0",
+    "react-hook-form": "^7.81.0",
+    "tailwind-merge": "^3.0.1",
+    "zod": "^4.4.3"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.7.3"
+  }
+}

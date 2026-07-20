@@ -1,0 +1,19 @@
+{
+  "name": "@bingoo/core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bingoo shared domain logic — utils, validation, mascot catalog (platform-agnostic TS).",
+  "author": "VietDevelopers.com (https://vietdevelopers.com)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

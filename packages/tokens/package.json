@@ -1,0 +1,28 @@
+{
+  "name": "@bingoo/tokens",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bingoo design tokens — single JSON source generating CSS (web) + TS (native).",
+  "author": "VietDevelopers.com (https://vietdevelopers.com)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./dist/tokens.ts",
+    "./css": "./dist/tokens.css",
+    "./source": "./src/tokens.json",
+    "./native": {
+      "types": "./dist/native/theme.d.ts",
+      "default": "./dist/native/theme.js"
+    },
+    "./nativewind-preset": "./dist/native/preset.cjs"
+  },
+  "types": "./dist/tokens.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "node build.mjs",
+    "clean": "rm -rf dist"
+  }
+}

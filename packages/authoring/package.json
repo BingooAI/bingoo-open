@@ -1,0 +1,25 @@
+{
+  "name": "@bingoo/authoring",
+  "version": "0.1.0",
+  "private": true,
+  "description": "L\u00f5i bi\u00ean so\u1ea1n thu\u1ea7n \u2014 tr\u00edch kh\u00e1i ni\u1ec7m/KC t\u1eeb ngu\u1ed3n \u2192 GraphData + Framework (dedup/compile/validate/review).",
+  "author": "VietDevelopers.com (https://vietdevelopers.com)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@bingoo/knowledge-engine": "workspace:^",
+    "@bingoo/facets": "workspace:^"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}

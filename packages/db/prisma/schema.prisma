@@ -1,0 +1,1407 @@
+// Bingoo database schema — SERVER-ONLY (R1/R2). Never import @bingoo/db from a
+// client bundle: it carries DB credentials + the query engine.
+//
+// AAA foundation (identity · authN · authZ · audit) — see
+// docs/identity-auth-design.md. Migration #1 lays the FULL covering schema
+// (P1–P6): later phases only WIRE features and add columns/tables — the User
+// primary key never changes, so no breaking migration is ever needed (§12).
+//
+// Better Auth owns the write path for: user, session, account, verification,
+// organization, member, invitation, team, teamMember. Their fields mirror Better
+// Auth 1.6 exactly (cross-checked against @better-auth/core get-tables + the
+// admin / username / organization plugin schemas); Prisma field names MUST equal
+// Better Auth's fieldNames (no per-column @map) so the Prisma adapter's writes
+// line up. Better Auth supplies `id` on those tables; our own tables default to
+// cuid(). Only table names are remapped (@@map → snake_case).
+//
+// Reconciliations vs the reduced schema in design §9 (documented inline):
+//   • Organization.metadata is String? (Better Auth serializes JSON to a string),
+//     not Json?.  • Member.teamId is dropped in favour of Better Auth's TeamMember
+//     join table (teams=on).  • displayUsername / impersonatedBy /
+//     activeOrganizationId / activeTeamId / TeamMember are Better Auth plugin
+//     fields absent from §9's reduction but laid now (covering schema).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── Enums ────────────────────────────────────────────────────────────────────
+
+enum AccountType {
+  CHILD
+  TEEN
+  ADULT
+}
+
+enum AccountStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+  PENDING_DELETION
+  DELETED
+}
+
+// ── Identity ─────────────────────────────────────────────────────────────────
+// One User for the whole lifecycle: `id` + `publicId` are immutable, so a child
+// who later claims their account keeps every bit of history (§3.1).
+
+model User {
+  id String @id
+
+  // Better Auth core
+  name          String
+  email         String? @unique // real email (adult/teen) or <publicId>@id.bingoo.ai (child); nullable, populated in practice
+  emailVerified Boolean @default(false)
+  image         String?
+
+  // admin plugin — platform roles (multi-role CSV, e.g. "USER,TEACHER") + ban
+  role       String    @default("USER")
+  banned     Boolean?  @default(false)
+  banReason  String?
+  banExpires DateTime?
+
+  // username plugin — child login by username + PIN (wired in P2; columns laid now)
+  username        String? @unique
+  displayUsername String?
+
+  // Bingoo identity + lifecycle + multi-country (§3.1–3.7)
+  publicId          String        @unique // immutable public handle (BG + base32), safe to display/share
+  status            AccountStatus @default(PENDING)
+  accountType       AccountType   @default(ADULT)
+  dateOfBirth       DateTime?
+  country           String? // ISO-3166 alpha-2 — drives age-of-consent (§3.7)
+  locale            String?
+  timezone          String?
+  gender            String? // optional — honorific (anh/chị/em) + personalisation (§6)
+  managedByGuardian Boolean       @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accounts           Account[]
+  sessions           Session[]
+  members            Member[]
+  teamMembers        TeamMember[]
+  invitations        Invitation[]        @relation("inviter")
+  guardianOf         Guardianship[]      @relation("guardian")
+  childOf            Guardianship[]      @relation("child")
+  classMembers       ClassMember[]
+  relFrom            Relationship[]      @relation("relFrom")
+  relTo              Relationship[]      @relation("relTo")
+  auditLogs          AuditLog[]
+  alignmentDecisions AlignmentDecision[]
+
+  // Profile facets (§3.8) — 1:0..1, "enabled" when the user takes that role.
+  learnerProfile      LearnerProfile?
+  teacherProfile      TeacherProfile?
+  parentProfile       ParentProfile?
+  professionalProfile ProfessionalProfile?
+  activityEvents      ActivityEvent[]
+
+  // Analytics + social (§3.8, §5.1)
+  userSegments     UserSegment[]
+  communityMembers CommunityMember[]
+
+  explainerLessons ExplainerLesson[] @relation("explainerLessonAuthor")
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // organization plugin — the org/team the session is currently acting in
+  activeOrganizationId String?
+  activeTeamId         String?
+  // admin plugin — set when an admin impersonates this user
+  impersonatedBy       String?
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String // provider's user id (OAuth sub) or our userId for credentials
+  providerId            String // "credential" | "google" | …
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String? // scrypt hash for email/password (never returned)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+// ── Organization (multi-tenant, hierarchical) ────────────────────────────────
+// Better Auth owns core fields; parentId/path/type/inheritAdmin are our additive
+// hierarchy columns (§5). Flat usage in P1; delegation/nesting arrive in P5.
+
+model Organization {
+  id        String   @id
+  name      String
+  slug      String?  @unique // Better Auth requires it on create; nullable at DB level
+  logo      String?
+  metadata  String? // Better Auth serialises JSON → string (NOT Prisma Json)
+  createdAt DateTime @default(now())
+
+  // Bingoo hierarchy (§5)
+  type         String         @default("COMPANY") // GROUP | COMPANY | SCHOOL | CENTER
+  parentId     String?
+  parent       Organization?  @relation("orgTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children     Organization[] @relation("orgTree")
+  path         String         @default("") // materialised ancestry, e.g. "grpA.cmp1." → prefix queries
+  inheritAdmin Boolean        @default(false) // opt-in cross-level inheritance (P5)
+
+  members     Member[]
+  teams       Team[]
+  invitations Invitation[]
+  classes     Class[]
+
+  @@index([parentId])
+  @@index([path])
+  @@map("organization")
+}
+
+model Member {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role           String       @default("member") // owner | admin | member (scoped per-org, §5)
+  createdAt      DateTime     @default(now())
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@map("member")
+}
+
+model Invitation {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  email          String
+  role           String?
+  teamId         String? // present because teams=on
+  status         String       @default("pending") // pending | accepted | rejected | canceled
+  expiresAt      DateTime
+  createdAt      DateTime     @default(now())
+  inviterId      String
+  inviter        User         @relation("inviter", fields: [inviterId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([email])
+  @@map("invitation")
+}
+
+model Team {
+  id             String       @id
+  name           String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime?    @updatedAt
+
+  // Bingoo — nested departments (P5); Better Auth teams are flat
+  parentTeamId String?
+
+  members TeamMember[]
+
+  @@index([organizationId])
+  @@map("team")
+}
+
+model TeamMember {
+  id        String   @id
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([teamId])
+  @@index([userId])
+  @@map("team_member")
+}
+
+// ── Guardianship (parent ↔ child) — management + consent (§3.5) ───────────────
+
+model Guardianship {
+  id           String    @id @default(cuid())
+  guardianId   String
+  childId      String
+  guardian     User      @relation("guardian", fields: [guardianId], references: [id], onDelete: Cascade)
+  child        User      @relation("child", fields: [childId], references: [id], onDelete: Cascade)
+  relationship String? // FATHER | MOTHER | GUARDIAN | GRANDPARENT | RELATIVE | OTHER
+  status       String    @default("active") // active | inactive (after claim)
+  consentAt    DateTime?
+  consentBy    String?
+  createdAt    DateTime  @default(now())
+
+  @@unique([guardianId, childId])
+  @@index([childId])
+  @@map("guardianship")
+}
+
+// ── Academic scope (§6) — teacher↔student permission is scoped per Class ──────
+
+model Class {
+  id             String        @id @default(cuid())
+  name           String
+  organizationId String? // null = private tutor
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  subject        String?
+  term           String?
+  status         String        @default("active")
+  createdAt      DateTime      @default(now())
+
+  members ClassMember[]
+
+  @@index([organizationId])
+  @@map("class")
+}
+
+model ClassMember {
+  id       String   @id @default(cuid())
+  classId  String
+  class    Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role     String   @default("STUDENT") // TEACHER | TA | TUTOR | STUDENT
+  status   String   @default("active")
+  joinedAt DateTime @default(now())
+
+  @@unique([classId, userId])
+  @@index([userId])
+  @@map("class_member")
+}
+
+// ── Relationship graph (§6) — peer family/social links; NO account management ─
+
+model Relationship {
+  id                   String    @id @default(cuid())
+  fromUserId           String
+  toUserId             String
+  from                 User      @relation("relFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  to                   User      @relation("relTo", fields: [toUserId], references: [id], onDelete: Cascade)
+  category             String // FAMILY | SOCIAL
+  type                 String // SIBLING | GRANDPARENT | … | FRIEND
+  status               String    @default("pending") // pending | confirmed | blocked | declined
+  requestedById        String?
+  requestedAt          DateTime  @default(now())
+  respondedAt          DateTime?
+  guardianApprovedById String? // child-safety (R5)
+  guardianApprovedAt   DateTime?
+
+  @@unique([fromUserId, toUserId, type])
+  @@index([toUserId])
+  @@map("relationship")
+}
+
+// ── Audit (§7) — append-only trail of sensitive events ───────────────────────
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  action         String
+  actorUserId    String?
+  actor          User?    @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+  organizationId String?
+  classId        String?
+  targetType     String?
+  targetId       String?
+  ipAddress      String?
+  userAgent      String?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  @@index([actorUserId])
+  @@index([organizationId])
+  @@index([action])
+  @@map("audit_log")
+}
+
+// ── Remote config (§R6) — server-controlled runtime settings, no release needed.
+// Generic key → JSON value; e.g. "age_of_consent" (§3.7). Reused later for
+// feature flags, seasonal themes and entitlements. Admin-only writes; reads are
+// cached (getCache) with an in-code fallback.
+
+model RemoteConfig {
+  key       String   @id
+  value     Json
+  updatedBy String? // admin User.id that last changed it
+  updatedAt DateTime @updatedAt
+
+  @@map("remote_config")
+}
+
+// ── Profile facets (§3.8) — the 360° profile is the UNION of the facets a user
+// has enabled, never a flat block. Each is 1:0..1 with User (userId is the PK).
+// Typed columns for the queryable fields (feed P8 segmentation) + `metadata` for
+// extensibility without a migration.
+
+model LearnerProfile {
+  userId    String   @id
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level     String? // beginner | intermediate | advanced
+  gradeBand String? // e.g. "grade-6"
+  goals     String?
+  interests String[]
+  streak    Int      @default(0)
+  xp        Int      @default(0)
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("learner_profile")
+}
+
+model TeacherProfile {
+  userId          String   @id
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjects        String[]
+  bio             String?
+  certifications  Json?
+  rating          Float?
+  yearsExperience Int?
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("teacher_profile")
+}
+
+model ParentProfile {
+  userId      String   @id
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  preferences Json?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("parent_profile")
+}
+
+model ProfessionalProfile {
+  userId         String   @id
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title          String?
+  department     String?
+  organizationId String? // org context this professional role belongs to
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("professional_profile")
+}
+
+// ── Activity/event stream (§3.8) — append-only signals that feed the 360°
+// projection and (P8) segmentation. Distinct from AuditLog (security trail).
+
+model ActivityEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String // e.g. "auth.login", "lesson.completed"
+  payload   Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([type])
+  @@map("activity_event")
+}
+
+// ── Segmentation (§3.8) — dynamic cohorts. `rule` is a typed DSL (no raw SQL);
+// a job recomputes `UserSegment` membership. One user ∈ many segments.
+
+model Segment {
+  id          String        @id @default(cuid())
+  key         String        @unique
+  name        String
+  description String?
+  rule        Json
+  computedAt  DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  members     UserSegment[]
+
+  @@map("segment")
+}
+
+model UserSegment {
+  segmentId String
+  userId    String
+  segment   Segment  @relation(fields: [segmentId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  addedAt   DateTime @default(now())
+
+  @@id([segmentId, userId])
+  @@index([userId])
+  @@map("user_segment")
+}
+
+// ── Community (§5.1) — social/content collectives. DELIBERATELY separate from
+// Organization (B2B, invite-only): communities are discoverable + open/request
+// join, with their own moderation. Reuses the membership+role PATTERN, not the
+// table, so an open-join model never leaks into invite-only orgs.
+
+model Community {
+  id          String            @id @default(cuid())
+  slug        String            @unique
+  name        String
+  description String?
+  visibility  String            @default("public") // public | private
+  joinPolicy  String            @default("request") // open | request | invite
+  createdAt   DateTime          @default(now())
+  members     CommunityMember[]
+
+  @@map("community")
+}
+
+model CommunityMember {
+  id                  String    @id @default(cuid())
+  communityId         String
+  userId              String
+  community           Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role                String    @default("member") // owner | moderator | member
+  status              String    @default("active") // active | pending | banned
+  moderatorApprovedAt DateTime?
+  guardianApprovedAt  DateTime? // child-safety: a minor's guardian must approve (§5.1, R5)
+  joinedAt            DateTime  @default(now())
+
+  @@unique([communityId, userId])
+  @@index([userId])
+  @@map("community_member")
+}
+
+// ── Media library (docs/media-library-design.md) ─────────────────────────────
+// A shared asset store consumed by end-users, admins and the AI/RAG layer.
+// THREE LAYERS kept apart (invariant M1): physical bytes live in the storage /
+// video providers (server-only, R1); MediaAsset is the LOGICAL search+authz unit;
+// placement (folder tree) and meaning (tags/facets) are ORTHOGONAL axes.
+//
+// User references are PLAIN scalar FKs (createdById/ownerId/addedById), NOT Prisma
+// relations: assets deliberately OUTLIVE the user who created them (no cascade),
+// and this keeps the media domain self-contained without adding back-relations to
+// the AAA-core User model. Referential cleanup on user delete is a soft concern.
+//
+// Search organisation (invariant M2): `keywords` (GIN), `searchVector` tsvector
+// (GENERATED, GIN — added via raw SQL in the migration) and MediaEmbedding
+// (pgvector, HNSW) are DERIVED views of title/description/tags/caption, synced by
+// the enrichment pipeline (M2) — never the source of truth.
+
+enum MediaKind {
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+  ANIMATION
+  FONT
+  ARCHIVE
+  OTHER
+}
+
+enum MediaStatus {
+  DRAFT
+  UPLOADING
+  PROCESSING
+  READY
+  FAILED
+  ARCHIVED
+}
+
+enum ModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  FLAGGED
+}
+
+enum MediaScope {
+  GLOBAL
+  ORG
+  CLASS
+  COMMUNITY
+  USER
+}
+
+enum MediaVisibility {
+  PRIVATE // only explicit grants + owner + platform roles
+  SCOPE // anyone who belongs to the owning org/class/community
+  PUBLIC // anyone (READY + APPROVED only)
+}
+
+enum RenditionKind {
+  ORIGINAL
+  OPTIMIZED
+  THUMBNAIL
+  PREVIEW
+  POSTER
+  HLS
+  WAVEFORM
+  TRANSCRIPT
+  // Document export formats — derived from the canonical Markdown ORIGINAL (§6.2).
+  HTML
+  DOCX
+  PDF
+}
+
+enum GrantSubjectType {
+  USER
+  ORG
+  TEAM
+  ROLE
+  SERVICE // machine/AI consumers
+  PUBLIC
+}
+
+enum MediaPermission {
+  VIEW
+  USE
+  EDIT
+  MANAGE
+}
+
+enum TagKind {
+  SUBJECT
+  GRADE_BAND
+  TOPIC
+  STYLE
+  LANGUAGE
+  LICENSE
+  AGE_RATING
+  SOURCE
+  ENTITY
+  KEYWORD
+  FORMAT
+}
+
+enum TagRelType {
+  BROADER // parent → child
+  RELATED
+  ALIAS // synonym — widens recall
+}
+
+enum AssetRelType {
+  DERIVED_FROM
+  VARIANT_OF
+  PART_OF
+  TRANSCRIPT_OF
+  THUMBNAIL_OF
+  REPLACES
+}
+
+enum TagSource {
+  MANUAL
+  AI
+  IMPORT
+}
+
+// Navigation tree — materialised path, exactly like Organization (path prefix
+// queries for subtree; O(1) ancestry). One folder = one physical location (M4).
+model MediaFolder {
+  id          String          @id @default(cuid())
+  name        Json // {vi,en} (R4)
+  slug        String?
+  description Json?
+  parentId    String?
+  parent      MediaFolder?    @relation("folderTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children    MediaFolder[]   @relation("folderTree")
+  path        String          @default("") // "rootId.childId.selfId." → prefix queries
+  scope       MediaScope      @default(GLOBAL)
+  scopeId     String? // org/class/community/user id when scope != GLOBAL
+  visibility  MediaVisibility @default(SCOPE)
+  createdById String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  assets MediaAsset[]
+  grants MediaGrant[]
+
+  @@index([parentId])
+  @@index([path])
+  @@index([scope, scopeId])
+  @@map("media_folder")
+}
+
+model MediaAsset {
+  id               String           @id @default(cuid())
+  publicId         String           @unique // immutable public handle (M6), safe to share
+  kind             MediaKind
+  status           MediaStatus      @default(DRAFT)
+  moderation       ModerationStatus @default(PENDING)
+  moderationReason String?
+
+  folderId String?
+  folder   MediaFolder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+
+  scope      MediaScope      @default(GLOBAL)
+  scopeId    String?
+  visibility MediaVisibility @default(SCOPE)
+
+  // Localised, user-facing (R4)
+  title       Json // {vi,en}
+  description Json?
+  altText     Json?
+
+  // Typed, queryable metadata
+  mimeType      String?
+  byteSize      Int?
+  checksum      String? // sha256 of the original → dedup + change detection
+  width         Int?
+  height        Int?
+  durationMs    Int?
+  pageCount     Int?
+  dominantColor String?
+  locale        String?
+  license       String?
+  ageRating     String?
+  source        String?
+
+  createdById String?
+  ownerId     String?
+  publishedAt DateTime?
+
+  metadata Json? // open extension (EXIF, codec, …) — no migration needed
+
+  // Derived search projection (M2) — synced by enrichment, not authored.
+  keywords     String[] // denormalised tag slugs → GIN for fast facet filter
+  searchVector Unsupported("tsvector")? // GENERATED column (raw SQL migration) → GIN full-text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  renditions      MediaRendition[]
+  tags            MediaTag[]
+  grants          MediaGrant[]
+  embeddings      MediaEmbedding[]
+  relFrom         MediaAssetRelation[] @relation("assetRelFrom")
+  relTo           MediaAssetRelation[] @relation("assetRelTo")
+  collectionItems CollectionItem[]
+
+  @@index([folderId])
+  @@index([scope, scopeId])
+  @@index([kind])
+  @@index([status, moderation])
+  @@index([keywords], type: Gin)
+  @@map("media_asset")
+}
+
+model MediaRendition {
+  id         String        @id @default(cuid())
+  assetId    String
+  asset      MediaAsset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  kind       RenditionKind
+  provider   String? // storage/video provider key holding these bytes (e.g. "r2") — enables backup/restore/move across vendors
+  storageKey String? // key in the storage provider (R2) — SERVER-ONLY (R1)
+  videoId    String? // id in the video provider (HLS) when kind = HLS/POSTER
+  url        String? // external ready-made URL (e.g. HLS manifest)
+  checksum   String? // sha256 of these bytes — integrity check on restore/move
+  mimeType   String?
+  byteSize   Int?
+  width      Int?
+  height     Int?
+  bitrate    Int?
+  metadata   Json?
+  createdAt  DateTime      @default(now())
+
+  @@unique([assetId, kind])
+  @@index([assetId])
+  @@map("media_rendition")
+}
+
+// Resource-level ACL. A grant on a FOLDER inherits down the tree (path); a grant
+// on an ASSET overrides. Effective permission = highest across the union (§5).
+model MediaGrant {
+  id          String           @id @default(cuid())
+  subjectType GrantSubjectType
+  subjectId   String? // userId/orgId/teamId/role name/service key; null for PUBLIC
+  permission  MediaPermission
+
+  folderId String?
+  folder   MediaFolder? @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  assetId  String?
+  asset    MediaAsset?  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  @@unique([folderId, subjectType, subjectId, permission])
+  @@unique([assetId, subjectType, subjectId, permission])
+  @@index([subjectType, subjectId])
+  @@index([folderId])
+  @@index([assetId])
+  @@map("media_grant")
+}
+
+// Faceted classification (M4) — orthogonal to folders. Hierarchical controlled
+// vocabulary (materialised path). Reference by stable slug (M6).
+model Tag {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  kind        TagKind
+  label       Json // {vi,en} (R4)
+  description Json?
+  parentId    String?
+  parent      Tag?     @relation("tagTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children    Tag[]    @relation("tagTree")
+  path        String   @default("")
+  externalRef String? // optional link out (e.g. a future competency slug) — kept open, no coupling
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  media   MediaTag[]
+  relFrom TagRelation[] @relation("tagRelFrom")
+  relTo   TagRelation[] @relation("tagRelTo")
+
+  @@index([kind])
+  @@index([parentId])
+  @@index([path])
+  @@map("tag")
+}
+
+model TagRelation {
+  id      String     @id @default(cuid())
+  fromId  String
+  toId    String
+  from    Tag        @relation("tagRelFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  to      Tag        @relation("tagRelTo", fields: [toId], references: [id], onDelete: Cascade)
+  relType TagRelType
+  weight  Float      @default(1)
+
+  @@unique([fromId, toId, relType])
+  @@index([toId])
+  @@map("tag_relation")
+}
+
+model MediaTag {
+  assetId    String
+  asset      MediaAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  tagId      String
+  tag        Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  confidence Float? // AI-suggested tags carry a score; manual tags = null/1
+  source     TagSource  @default(MANUAL)
+  addedById  String?
+  addedAt    DateTime   @default(now())
+
+  @@id([assetId, tagId])
+  @@index([tagId])
+  @@map("media_tag")
+}
+
+// Media-native provenance graph (M3) — asset ↔ asset.
+model MediaAssetRelation {
+  id          String       @id @default(cuid())
+  fromAssetId String
+  toAssetId   String
+  from        MediaAsset   @relation("assetRelFrom", fields: [fromAssetId], references: [id], onDelete: Cascade)
+  to          MediaAsset   @relation("assetRelTo", fields: [toAssetId], references: [id], onDelete: Cascade)
+  relType     AssetRelType
+  metadata    Json?
+  createdAt   DateTime     @default(now())
+
+  @@unique([fromAssetId, toAssetId, relType])
+  @@index([toAssetId])
+  @@map("media_asset_relation")
+}
+
+// Virtual grouping (M4) — an asset can be in many collections without copying
+// bytes. Manual (CollectionItem) or smart (query DSL, auto-matched).
+model Collection {
+  id          String     @id @default(cuid())
+  name        Json // {vi,en}
+  description Json?
+  scope       MediaScope @default(GLOBAL)
+  scopeId     String?
+  isSmart     Boolean    @default(false)
+  query       Json? // facet/text DSL when isSmart
+  createdById String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  items CollectionItem[]
+
+  @@index([scope, scopeId])
+  @@map("collection")
+}
+
+model CollectionItem {
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  assetId      String
+  asset        MediaAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  position     Int        @default(0)
+  addedById    String?
+  addedAt      DateTime   @default(now())
+
+  @@id([collectionId, assetId])
+  @@index([assetId])
+  @@map("collection_item")
+}
+
+// Semantic index (M2) — one row per (asset, model). `embedding` is pgvector; the
+// column type + HNSW index are added via raw SQL in the migration (Prisma has no
+// native vector type). `contentHash` lets enrichment skip re-embedding.
+model MediaEmbedding {
+  id          String                       @id @default(cuid())
+  assetId     String
+  asset       MediaAsset                   @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  model       String
+  dim         Int
+  embedding   Unsupported("vector(1536)")?
+  contentHash String?
+  createdAt   DateTime                     @default(now())
+  updatedAt   DateTime                     @updatedAt
+
+  @@unique([assetId, model])
+  @@index([assetId])
+  @@map("media_embedding")
+}
+
+// Document templates (docs/media-library-design.md §6) — server-controlled (R6)
+// blueprints that drive HIGH-QUALITY AI document generation: the LLM fills the
+// declared `sections` (structured output, not free text), the draft is scored
+// against `rubric`, then rendered to Markdown. Editable at runtime without a
+// release. Deliberately DOCUMENT-specific (not a generic "template") so other
+// generators (image/audio prompt presets) get their own typed blueprint later.
+model DocumentTemplate {
+  id          String     @id @default(cuid())
+  key         String     @unique // stable slug, e.g. "worksheet-math"
+  name        Json // {vi,en}
+  description Json?
+  docKind     String // worksheet | lesson | quiz | reading | ...
+  scope       MediaScope @default(GLOBAL)
+  scopeId     String?
+  locale      String? // default target locale
+  sections    Json // [{ key, title{vi,en}, instruction, required?, repeatable? }]
+  style       Json? // { tone?, gradeBand?, length? }
+  rubric      Json? // string[] — quality criteria for the verify pass
+  status      String     @default("active")
+  version     Int        @default(1)
+  createdById String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([scope, scopeId])
+  @@index([docKind])
+  @@map("document_template")
+}
+
+// ── Knowledge Engine — Capability · Evidence · Adaptive ──────────────────────
+// Đồ thị năng lực + xương sống bằng chứng cho @bingoo/knowledge-engine.
+// Xem docs/COMPETENCY-GRAPH-SPEC.md, docs/EVIDENCE-ANALYTICS-SPEC.md.
+// Bất biến: mức nắm chỉ sống ở cấp KHÁI NIỆM (KC); tham chiếu bền bằng slug;
+// chỉ OBJECTIVE mang frameworkVersionId (publish version không di trú evidence).
+
+enum CompetencyKind {
+  OBJECTIVE
+  OUTCOME
+  SKILL
+  KNOWLEDGE
+  PROCEDURE
+  BEHAVIOR
+  ATTITUDE
+  DISPOSITION
+}
+
+enum PrereqMode {
+  REQUIRED
+  RECOMMENDED
+}
+
+enum CapabilityRelType {
+  PREREQUISITE
+  ENABLES
+  COMPOSES
+  ALIGNS
+  VARIANT_OF
+  MAPS_TO
+}
+
+enum FrameworkKind {
+  CURRICULUM
+  CREDENTIAL
+  JOB_PROFILE
+}
+
+enum FrameworkReleaseType {
+  PATCH
+  MINOR
+  MAJOR
+}
+
+enum FrameworkVersionStatus {
+  DRAFT
+  PUBLISHED
+  DEPRECATED
+}
+
+enum EvidenceSource {
+  QUIZ
+  PROJECT
+  RUBRIC
+  PEER
+  OBSERVATION
+  TIME
+}
+
+enum ObservationSubject {
+  LEARNER
+  TEACHER
+  CURRICULUM
+}
+
+enum AssessmentMode {
+  LEARN
+  MEASURE
+}
+
+// Node năng lực (KC/Concept/Skill/Objective/Competency…). `slug` là khoá tham chiếu bền.
+// `altitude` = concept|skill|competency|outcome|role (độ cao); `kind` = bản chất (chọn bộ đo).
+model Competency {
+  id                 String                @id @default(cuid())
+  slug               String                @unique
+  kind               CompetencyKind
+  title              Json // {vi,en} (R4)
+  description        Json?
+  parentId           String?
+  parent             Competency?           @relation("competencyTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children           Competency[]          @relation("competencyTree")
+  level              Int? // 1..5 độ khó
+  altitude           String? // concept|skill|competency|outcome|role
+  targetLevel        String? // novice|competent|proficient|expert
+  source             String? // mã chuẩn ngoài / đơn vị sách (DATA)
+  code               String? // mã hiển thị tuỳ chọn (VD KC001)
+  version            Int                   @default(1)
+  supersedesId       String?
+  supersedes         Competency?           @relation("competencySupersede", fields: [supersedesId], references: [id], onDelete: SetNull)
+  supersededBy       Competency[]          @relation("competencySupersede")
+  embeddings         CompetencyEmbedding[]
+  frameworkId        String? // chỉ set khi kind=OBJECTIVE
+  framework          Framework?            @relation(fields: [frameworkId], references: [id], onDelete: SetNull)
+  frameworkVersionId String? // ghim objective vào đúng một bản phát hành (B4)
+  frameworkVersion   FrameworkVersion?     @relation(fields: [frameworkVersionId], references: [id], onDelete: SetNull)
+  stage              String? // CHỈ đặt trên OBJECTIVE — nhãn riêng của từng khung (bất biến I2)
+  strand             String?
+  subject            String? // môn/ngành — chọn DomainProfile để xét định danh
+  facets             Json? // 6 trục phân biệt (@bingoo/facets) — cái quyết định 2 KC có phải một
+  relFrom            CapabilityRelation[]  @relation("capRelFrom")
+  relTo              CapabilityRelation[]  @relation("capRelTo")
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+
+  @@index([frameworkId])
+  @@index([frameworkVersionId])
+  @@index([kind])
+  @@index([parentId])
+  @@map("competency")
+}
+
+// Cạnh có kiểu, có trọng số (mirror TagRelation). Ordering (PREREQUISITE/ENABLES/COMPOSES)
+// phải giữ acyclic; lateral (ALIGNS/VARIANT_OF/MAPS_TO).
+model CapabilityRelation {
+  id      String            @id @default(cuid())
+  fromId  String
+  toId    String
+  from    Competency        @relation("capRelFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  to      Competency        @relation("capRelTo", fields: [toId], references: [id], onDelete: Cascade)
+  relType CapabilityRelType
+  mode    PrereqMode        @default(REQUIRED)
+  weight  Float             @default(1)
+
+  @@unique([fromId, toId, relType])
+  @@index([fromId])
+  @@index([toId])
+  @@index([relType])
+  @@map("capability_relation")
+}
+
+model Framework {
+  id         String             @id @default(cuid())
+  slug       String             @unique
+  name       Json // {vi,en}
+  locale     String             @default("en")
+  kind       FrameworkKind      @default(CURRICULUM)
+  version    Int                @default(1) // bộ đếm lỏng, KHÔNG dùng để ghim
+  source     String?
+  programId  String?
+  objectives Competency[]
+  versions   FrameworkVersion[]
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+
+  @@map("framework")
+}
+
+model FrameworkVersion {
+  id           String                 @id @default(cuid())
+  frameworkId  String
+  framework    Framework              @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+  major        Int                    @default(1)
+  minor        Int                    @default(0)
+  patch        Int                    @default(0)
+  releaseType  FrameworkReleaseType   @default(MAJOR)
+  status       FrameworkVersionStatus @default(DRAFT)
+  label        Json?
+  notes        Json?
+  source       String?
+  publishedAt  DateTime?
+  supersedesId String?
+  supersedes   FrameworkVersion?      @relation("frameworkVersionLineage", fields: [supersedesId], references: [id], onDelete: SetNull)
+  supersededBy FrameworkVersion[]     @relation("frameworkVersionLineage")
+  objectives   Competency[]
+  skillStates  SkillState[]
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+
+  @@unique([frameworkId, major, minor, patch])
+  @@index([frameworkId, status])
+  @@map("framework_version")
+}
+
+// Nhật ký bằng chứng ghi-thêm (nguồn sự thật). `userId` là REF PHẲNG, KHÔNG FK —
+// cô lập khỏi bảng User lớn (B/§1.5). Không bao giờ sửa; đính chính bằng ghi thêm.
+model Observation {
+  id                 String             @id @default(cuid())
+  subjectType        ObservationSubject @default(LEARNER)
+  subjectId          String?
+  userId             String? // ref phẳng, KHÔNG FK
+  skillSlug          String
+  metric             String? // metric có tên cho lane không phải LEARNER
+  source             EvidenceSource     @default(QUIZ)
+  outcome            Float // 0..1
+  confidence         Float              @default(1)
+  mode               AssessmentMode     @default(LEARN)
+  itemKey            String?
+  lang               String?
+  latencyMs          Int?
+  hintsUsed          Int?
+  retry              Int?
+  frameworkVersionId String? // provenance
+  knowledgePointId   String? // provenance cấp KP
+  attemptId          String?            @unique // idempotency (§9.1)
+  at                 DateTime           @default(now())
+
+  @@index([userId, skillSlug])
+  @@index([userId, at])
+  @@index([subjectType, subjectId])
+  @@map("observation")
+}
+
+// View mức nắm hiện tại (materialized). Dẫn xuất từ Observation; tái dựng được bằng phát lại.
+model SkillState {
+  id                 String            @id @default(cuid())
+  userId             String // ref phẳng
+  skillSlug          String
+  pKnown             Float             @default(0.25) // BKT P(L)
+  ability            Float             @default(1000) // Elo
+  attempts           Int               @default(0)
+  correct            Int               @default(0)
+  fluency            Float?
+  transfer           Float?
+  independence       Float?
+  level              String? // novice|competent|proficient|expert
+  competencyVersion  Int?
+  frameworkVersionId String?
+  frameworkVersion   FrameworkVersion? @relation(fields: [frameworkVersionId], references: [id], onDelete: SetNull)
+  lastSeenAt         DateTime?
+  updatedAt          DateTime          @updatedAt
+
+  @@unique([userId, skillSlug])
+  @@index([userId])
+  @@index([skillSlug])
+  @@index([frameworkVersionId])
+  @@map("skill_state")
+}
+
+// Mẫu chuỗi thời gian (vẽ đường cong học). Lấy mẫu: lần đầu + mỗi 4 lần.
+model SkillSnapshot {
+  id        String   @id @default(cuid())
+  userId    String
+  skillSlug String
+  pKnown    Float
+  ability   Float
+  level     String?
+  at        DateTime @default(now())
+
+  @@index([userId, skillSlug, at])
+  @@map("skill_snapshot")
+}
+
+// Ngân hàng item nội dung — AuthoredItem đã sinh/duyệt. Đo được → CandidatePort kéo làm Candidate;
+// payload là QuizQuestion (hộp đen với engine). skills phẳng (slug), KHÔNG FK — như Observation.
+enum ContentItemStatus {
+  DRAFT
+  NEEDS_REVIEW
+  APPROVED
+  PUBLISHED
+}
+
+model ContentItem {
+  id            String            @id @default(cuid())
+  itemKey       String            @unique // khoá bền + hiệu chuẩn độ khó (Observation.itemKey)
+  skills        String[] // slug năng lực item neo (≥1)
+  difficulty    Float             @default(1500) // Elo prior
+  mode          AssessmentMode    @default(LEARN)
+  measurable    Boolean           @default(true)
+  primitiveKind String // = QuizQuestion.type (single/multiple/…)
+  lessonSlug    String?
+  payload       Json // QuizQuestion @bingoo/core (hộp đen)
+  status        ContentItemStatus @default(NEEDS_REVIEW)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@index([primitiveKind])
+  @@index([status])
+  @@index([lessonSlug])
+  @@map("content_item")
+}
+
+// Lịch ôn flashcard theo SRS (SM-2) — per (học viên, item). ÔN TẬP ≠ evidence: KHÔNG fold mastery.
+model SrsCardState {
+  id           String   @id @default(cuid())
+  userId       String // ref phẳng
+  itemKey      String // trỏ ContentItem.itemKey (flashcard)
+  ease         Float    @default(2.5)
+  intervalDays Int      @default(0)
+  reps         Int      @default(0)
+  dueDay       Int // epoch-day index tới hạn ôn
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, itemKey])
+  @@index([userId, dueDay])
+  @@map("srs_card_state")
+}
+
+// Pipeline biên soạn S1→S7 (máy trạng thái @bingoo/authoring-workflow). Mỗi bước: draft→generating→
+// needs_review→approved, tự STALE khi thượng nguồn đổi version. Chỉ LƯU trạng thái; logic ở package thuần.
+model AuthoringPipeline {
+  id        String          @id @default(cuid())
+  title     String
+  createdBy String // userId phẳng
+  steps     AuthoringStep[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@map("authoring_pipeline")
+}
+
+model AuthoringStep {
+  id         String            @id @default(cuid())
+  pipelineId String
+  pipeline   AuthoringPipeline @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  stepKey    String // id logic của PipelineStep (vd "framework")
+  stage      String
+  status     String
+  version    Int               @default(0)
+  parents    String[] // stepKey thượng nguồn
+  builtFrom  Json              @default("{}") // { parentKey: version }
+  updatedAt  DateTime          @updatedAt
+
+  @@unique([pipelineId, stepKey])
+  @@index([pipelineId])
+  @@map("authoring_step")
+}
+
+// Vỏ khoá học (CoursePlan skeleton) — sinh từ sách/prompt, MAP vào framework qua frameworkVersionId (flat ref).
+// plan = cây course→unit→lesson (teaches[] trỏ slug năng lực). Chi tiết bài sinh sau ở /plan/generate.
+model Course {
+  id                 String            @id @default(cuid())
+  slug               String            @unique
+  title              Json // {vi,en}
+  frameworkVersionId String? // map vào 1 bản phát hành framework (ref phẳng)
+  plan               Json // CoursePlan skeleton
+  status             ContentItemStatus @default(DRAFT)
+  createdBy          String
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@index([frameworkVersionId])
+  @@index([status])
+  @@map("course")
+}
+
+/// KẾ HOẠCH BIÊN SOẠN PHÂN CẤP — Khoá → Unit → Bài, mỗi cấp một bản ghi.
+///
+/// Vì sao cần: sinh kế hoạch BÀI mà chỉ thấy vài KC rời của bài thì LLM không hiểu tổng thể → bịa và
+/// mất tính sư phạm. Kế hoạch cấp trên (đã DUYỆT) là CONTEXT chảy xuống cấp dưới, và là CỔNG: chưa
+/// duyệt cấp cha thì không sinh cấp con. `doc` = JSON của cấp tương ứng (CoursePlanDoc/UnitPlanDoc/
+/// LessonInstructionPlan). `status` DRAFT|APPROVED. `version` bump mỗi lần sinh lại.
+model AuthoringPlan {
+  id         String            @id @default(cuid())
+  courseSlug String
+  /// 'course' | 'unit' | 'lesson'.
+  level      String
+  /// Khoá: = courseSlug. Unit: slug unit. Bài: slug bài. (Định danh trong phạm vi khoá.)
+  refSlug    String
+  doc        Json
+  status     ContentItemStatus @default(DRAFT)
+  version    Int               @default(1)
+  /// Điểm/kết luận quality lúc sinh (để hiện, không chặn cứng).
+  quality    Json?
+  approvedBy String?
+  approvedAt DateTime?
+  createdBy  String
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  @@unique([courseSlug, level, refSlug])
+  @@index([courseSlug])
+  @@index([status])
+  @@map("authoring_plan")
+}
+
+// Hồ sơ MÔN/NGÀNH — DỮ LIỆU, không phải code. Thêm môn = thêm 1 dòng, KHÔNG deploy.
+// requiredAxes: trục facet bắt buộc của môn (Toán cần scope; Ngôn ngữ cần channel…).
+// Bất biến I8 đọc bảng này; engine không biết môn nào tồn tại.
+model DomainProfile {
+  id           String   @id @default(cuid())
+  domain       String   @unique // "math" | "language" | "welding" | …
+  requiredAxes String[] // trục BẮT BUỘC phải khai ở môn này
+  identityAxes String[] @default(["object", "scope"]) // trục ỔN ĐỊNH, chỉ chúng mới kết luận "khác KC"
+  aliases      Json? // { axis: { biến thể: giá trị chuẩn } }
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("domain_profile")
+}
+
+/// LỊCH SỬ ĐỐI CHIẾU — APPEND-ONLY. Quyết định gộp (SAME) là VĨNH VIỄN và không thể suy ngược từ đồ
+/// thị: sau khi gộp, KC của khung #2 đơn giản là không tồn tại, nên "vì sao hai thứ này là một?" và
+/// "ai chốt?" biến mất cùng với nó. Không có bảng này thì mọi lần gộp sai đều không truy được.
+/// Máy đề xuất (proposed*) và người chốt (verdict) được lưu TÁCH BIỆT — để đo được máy sai bao nhiêu.
+model AlignmentDecision {
+  id              String   @id @default(cuid())
+  /// Khái niệm đến từ khung mới (slug do server mint).
+  sourceSlug      String
+  sourceTitle     Json
+  subject         String?
+  facets          Json?
+  /// KC đã có được đối chiếu vào (null khi NEW).
+  targetSlug      String?
+  /// Máy đề xuất gì, dựa vào đâu.
+  proposedVerdict String?
+  proposedBy      String? // "structure" | "llm"
+  proposedReason  String?
+  /// NGƯỜI chốt gì (đây mới là thứ được thi hành).
+  verdict         String // SAME | SUBSET | SUPERSET | OVERLAP | NEW
+  decidedById     String?
+  decidedBy       User?    @relation(fields: [decidedById], references: [id], onDelete: SetNull)
+  /// Người có sửa khác máy không — tín hiệu trực tiếp để chỉnh facets/prompt.
+  overridden      Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  @@index([sourceSlug])
+  @@index([targetSlug])
+  @@index([verdict])
+  @@map("alignment_decision")
+}
+
+/// Vector NGỮ NGHĨA của KC — dùng để TRUY HỒI ứng viên đối chiếu, và CHỈ để truy hồi.
+///
+/// Ranh giới này là cốt tử: embedding trả lời "cái gì GIỐNG cái này" — một câu hỏi mờ, có thang độ.
+/// Còn "hai cái này có phải MỘT KC không" là câu hỏi nhị phân, quyết bằng CẤU TRÚC (facets) và người
+/// duyệt. Lấy độ giống ngữ nghĩa ra quyết định gộp chính là cái bẫy đã sinh ra mọi bug định danh.
+/// Ở đây embedding chỉ làm một việc: khi `object` chưa từng thấy và trigram bó tay (khác ngôn ngữ,
+/// khác cách diễn đạt), nó tìm ra ứng viên để ĐEM ĐI SO CẤU TRÚC.
+model CompetencyEmbedding {
+  id           String                       @id @default(cuid())
+  competencyId String
+  competency   Competency                   @relation(fields: [competencyId], references: [id], onDelete: Cascade)
+  model        String
+  dim          Int
+  embedding    Unsupported("vector(1536)")?
+  /// Băm của văn bản đã nhúng — đổi tiêu đề mới phải nhúng lại, không thì bỏ qua (tiết kiệm).
+  contentHash  String?
+  createdAt    DateTime                     @default(now())
+  updatedAt    DateTime                     @updatedAt
+
+  @@unique([competencyId, model])
+  @@index([competencyId])
+  @@map("competency_embedding")
+}
+
+/// Một bài giảng Explainer đang soạn hoặc đã xuất bản.
+///
+/// Vì sao có bảng này: trang nhập bài và Studio trước đó KHÔNG lưu gì cả — mọi thứ nằm trong state
+/// của React. Một lần reload là mất trắng ảnh đã SINH (tốn tiền) và giọng đã ĐỌC (tốn tiền), và
+/// không có gì để quay lại. Bài phải là một thực thể có chủ, mở lại được từ máy khác.
+///
+/// `doc` và `bundles` là JSON của engine (explainer/v2 + LocaleBundle theo locale). Cố tình KHÔNG
+/// bẻ nhỏ thành bảng con: schema của engine do zod định nghĩa và còn tiến hoá; ràng nó vào cột SQL
+/// là tự trói mình vào một phiên bản. Cổng kiểm tra (checkScene/checkLesson) mới là thứ bảo vệ dữ
+/// liệu, không phải kiểu cột.
+model ExplainerLesson {
+  id       String @id @default(cuid())
+  publicId String @unique @default(cuid()) // handle công khai, chia sẻ được
+
+  /// `doc.meta.id` — slug do người soạn đặt. Duy nhất TRONG phạm vi người tạo, không toàn cục:
+  /// hai giáo viên đều có quyền có bài "so-chan-so-le".
+  slug  String
+  title String
+
+  /// explainer/v2 ExplainerDoc
+  doc     Json
+  /// { [locale]: LocaleBundle }
+  bundles Json
+
+  status ExplainerStatus @default(DRAFT)
+
+  /// Tiến độ phần TỐN TIỀN — để biết mở lại thì còn phải trả cho những gì.
+  imagesDone  Int @default(0)
+  imagesTotal Int @default(0)
+  audioDone   Int @default(0)
+  audioTotal  Int @default(0)
+
+  createdById String?
+  createdBy   User?   @relation("explainerLessonAuthor", fields: [createdById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([createdById, slug])
+  @@index([createdById, updatedAt])
+  @@index([status])
+  @@map("explainer_lesson")
+}
+
+enum ExplainerStatus {
+  DRAFT
+  READY
+  PUBLISHED
+}

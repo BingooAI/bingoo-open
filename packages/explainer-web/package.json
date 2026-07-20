@@ -1,0 +1,35 @@
+{
+  "name": "@bingoo/explainer-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bingoo explainer web renderer — React/SVG player that draws the engine's RenderModel, resolves design tokens, and mounts @bingoo/ui-web at activity beats. Used by the player (apps/web) and studio (apps/admin).",
+  "author": "VietDevelopers.com (https://vietdevelopers.com)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles.css"
+  },
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@bingoo/core": "workspace:*",
+    "@bingoo/explainer": "workspace:*",
+    "@bingoo/manipulatives": "workspace:*",
+    "@bingoo/tokens": "workspace:*",
+    "@bingoo/ui-web": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.7.3"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

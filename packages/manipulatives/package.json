@@ -1,0 +1,21 @@
+{
+  "name": "@bingoo/manipulatives",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bingoo manipulatives — self-contained, deterministic interactive visual kits (math/english/science) + verb baking + easing. Platform-agnostic pure TS; reusable across explainer, games, practice, arena.",
+  "author": "VietDevelopers.com (https://vietdevelopers.com)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test:manip": "node --disable-warning=ExperimentalWarning --import ./scripts/ts-hook.mjs scripts/verify-manip.mjs",
+    "verbdoc": "node scripts/gen-verbdoc.mjs"
+  }
+}

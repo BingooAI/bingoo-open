@@ -1,0 +1,21 @@
+{
+  "name": "@bingoo/content-gen",
+  "version": "0.1.0",
+  "private": true,
+  "description": "S4b — GenerationSpec → GeneratorPort → AuthoredItem[] → ráp/kiểm ContentBundle.",
+  "author": "VietDevelopers.com (https://vietdevelopers.com)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@bingoo/authored-item": "workspace:^",
+    "@bingoo/knowledge-engine": "workspace:^",
+    "@bingoo/personalization": "workspace:^"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

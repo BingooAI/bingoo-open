@@ -1,0 +1,22 @@
+{
+  "name": "@bingoo/facets",
+  "version": "0.1.0",
+  "private": true,
+  "description": "6 tr\u1ee5c ph\u00e2n bi\u1ec7t KC + lu\u1eadt \u0111\u1ecbnh danh ph\u1ed5 qu\u00e1t. Ch\u1ea5t li\u1ec7u t\u1eebng m\u00f4n l\u00e0 d\u1eef li\u1ec7u, kh\u00f4ng ph\u1ea3i code.",
+  "author": "VietDevelopers.com (https://vietdevelopers.com)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "dependencies": {},
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}

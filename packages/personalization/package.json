@@ -1,0 +1,20 @@
+{
+  "name": "@bingoo/personalization",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cá nhân hoá (L3) — persona + dữ liệu engine → GenerationSpec cho khâu sinh content.",
+  "author": "VietDevelopers.com (https://vietdevelopers.com)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@bingoo/knowledge-engine": "workspace:^",
+    "@bingoo/plans": "workspace:^"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

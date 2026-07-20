@@ -1,0 +1,1623 @@
+{
+  "$comment": "GENERATED from each kit's source header by scripts/gen-verbdoc.mjs. `signatures` carries the ARG names — a model cannot call setNumber without knowing it takes {n}.",
+  "kits": {
+    "addstory": {
+      "desc": "AdditionStory (bài toán có lời văn trực quan: gộp vào / bớt đi). A scene: `a` icons (birds / fish / apples / dots) settled on a branch; for \"+\" the `b` group flies IN from the right edge along an arc,",
+      "paramEnums": {
+        "icon": ["bird", "fish", "apple", "dot"]
+      },
+      "signatures": "setStory({op,a,b}) · act · showResult · answer({n}) · reset",
+      "verbs": [
+        {
+          "name": "setStory",
+          "args": ["op", "a", "b"]
+        },
+        {
+          "name": "act",
+          "args": []
+        },
+        {
+          "name": "showResult",
+          "args": []
+        },
+        {
+          "name": "answer",
+          "args": ["n"]
+        },
+        {
+          "name": "reset",
+          "args": []
+        }
+      ]
+    },
+    "algebratile": {
+      "desc": "AlgebraTiles (giải phương trình bằng gạch đại số). Middle school (THCS, grades 6–8): model a linear equation on a two-sided mat — x-tiles (long rects, labeled \"x\") and unit tiles (small squares); nega",
+      "signatures": "addBoth({x,units}) · removeBoth({x,units}) · splitEqually · showSolution · setAnswer({v})",
+      "verbs": [
+        {
+          "name": "addBoth",
+          "args": ["x", "units"]
+        },
+        {
+          "name": "removeBoth",
+          "args": ["x", "units"]
+        },
+        {
+          "name": "splitEqually",
+          "args": []
+        },
+        {
+          "name": "showSolution",
+          "args": []
+        },
+        {
+          "name": "setAnswer",
+          "args": ["v"]
+        }
+      ]
+    },
+    "alphabet": {
+      "desc": "alphabet arc (Cambridge Primary English: phonics/handwriting — letter knowledge, upper/lower case, vowels).",
+      "signatures": "highlightLetter({ch}) · matchCase({ch}) · showVowels",
+      "verbs": [
+        {
+          "name": "highlightLetter",
+          "args": ["ch"]
+        },
+        {
+          "name": "matchCase",
+          "args": ["ch"]
+        },
+        {
+          "name": "showVowels",
+          "args": []
+        }
+      ]
+    },
+    "arrayarea": {
+      "desc": "Array / area model for multiplication & area.",
+      "signatures": "fill · splitArea({a}) · highlightCell({r,c})",
+      "verbs": [
+        {
+          "name": "fill",
+          "args": []
+        },
+        {
+          "name": "splitArea",
+          "args": ["a"]
+        },
+        {
+          "name": "highlightCell",
+          "args": ["r", "c"]
+        }
+      ]
+    },
+    "barmodel": {
+      "desc": "Singapore bar model.",
+      "signatures": "partition({n}) · compare · showUnknown · combine",
+      "verbs": [
+        {
+          "name": "partition",
+          "args": ["n"]
+        },
+        {
+          "name": "compare",
+          "args": []
+        },
+        {
+          "name": "showUnknown",
+          "args": []
+        },
+        {
+          "name": "combine",
+          "args": []
+        }
+      ]
+    },
+    "base10": {
+      "desc": "Base-10 blocks. The regroup / \"nhớ\" (carry) is the whole point: ten loose ones physically gather and snap into a single ten-rod (or ten rods into a hundred-flat), driven by a baked progress so it seek",
+      "signatures": "add({n}) · remove({n}) · group10 · regroup",
+      "verbs": [
+        {
+          "name": "add",
+          "args": ["n"]
+        },
+        {
+          "name": "remove",
+          "args": ["n"]
+        },
+        {
+          "name": "group10",
+          "args": []
+        },
+        {
+          "name": "regroup",
+          "args": []
+        }
+      ]
+    },
+    "calculusgraph": {
+      "desc": "CalculusGraph (giải tích: đạo hàm là hệ số góc tiếp tuyến, tích phân là diện tích dưới đường cong). One curve, two modes: · tangent — a point that GLIDES along the curve with its tangent line, a rise/",
+      "paramEnums": {
+        "fn": ["quadratic", "cubic", "sin"]
+      },
+      "signatures": "setPoint({x}) · setInterval({a,b}) · refine · setBars({n}) · showValue · setMode({mode}) · setFn({fn}) · answer({v})",
+      "verbs": [
+        {
+          "name": "setPoint",
+          "args": ["x"]
+        },
+        {
+          "name": "setInterval",
+          "args": ["a", "b"]
+        },
+        {
+          "name": "refine",
+          "args": []
+        },
+        {
+          "name": "setBars",
+          "args": ["n"]
+        },
+        {
+          "name": "showValue",
+          "args": []
+        },
+        {
+          "name": "setMode",
+          "args": ["mode"]
+        },
+        {
+          "name": "setFn",
+          "args": ["fn"]
+        },
+        {
+          "name": "answer",
+          "args": ["v"]
+        }
+      ]
+    },
+    "circuit": {
+      "desc": "simple electric circuit (Cambridge Primary Science: Physics — electricity). A loop with a cell, a bulb and a switch. Closing the switch lets current flow (dots travel the loop, bulb lights).",
+      "signatures": "closeSwitch · openSwitch · setBulbs({n})",
+      "verbs": [
+        {
+          "name": "closeSwitch",
+          "args": []
+        },
+        {
+          "name": "openSwitch",
+          "args": []
+        },
+        {
+          "name": "setBulbs",
+          "args": ["n"]
+        }
+      ]
+    },
+    "clock": {
+      "desc": "analog clock.",
+      "signatures": "setTime({h,m}) · advance({min}) · showAngle · sweep({from,to})",
+      "verbs": [
+        {
+          "name": "setTime",
+          "args": ["h", "m"]
+        },
+        {
+          "name": "advance",
+          "args": ["min"]
+        },
+        {
+          "name": "showAngle",
+          "args": []
+        },
+        {
+          "name": "sweep",
+          "args": ["from", "to"]
+        }
+      ]
+    },
+    "comparegroups": {
+      "desc": "CompareGroups (so sánh nhiều hơn / ít hơn / bằng nhau). Two groups of counters (left = accent, right = accent2) with ONE-TO-ONE pairing lines: pair them up, the leftovers get a warn ring — that group ",
+      "paramEnums": {
+        "icon": ["dot", "circle", "star", "apple", "heart", "flower"]
+      },
+      "signatures": "addLeft({n}) · addRight({n}) · pairUp · showSymbol · chooseSymbol({s}) · clear",
+      "verbs": [
+        {
+          "name": "addLeft",
+          "args": ["n"]
+        },
+        {
+          "name": "addRight",
+          "args": ["n"]
+        },
+        {
+          "name": "pairUp",
+          "args": []
+        },
+        {
+          "name": "showSymbol",
+          "args": []
+        },
+        {
+          "name": "chooseSymbol",
+          "args": ["s"]
+        },
+        {
+          "name": "clear",
+          "args": []
+        }
+      ]
+    },
+    "coordinategrid": {
+      "desc": "coordinate grid (Cambridge: position & direction). First- quadrant integer grid; plot points, read coordinates, translate/reflect a point.",
+      "signatures": "plot({x,y,label}) · translate({dx,dy}) · reflect({axis}) · readCoord({x,y})",
+      "verbs": [
+        {
+          "name": "plot",
+          "args": ["x", "y", "label"]
+        },
+        {
+          "name": "translate",
+          "args": ["dx", "dy"]
+        },
+        {
+          "name": "reflect",
+          "args": ["axis"]
+        },
+        {
+          "name": "readCoord",
+          "args": ["x", "y"]
+        }
+      ]
+    },
+    "count": {
+      "desc": "CountObjects (đếm vật thật). Shows `count` icons (apple / star / flower / heart / dot) arranged like a ten-frame (rows of 5) with a big number, for teaching one-to-one counting 1→10. Icons are path/ci",
+      "paramEnums": {
+        "shape": ["apple", "star", "flower", "heart", "dot"]
+      },
+      "signatures": "add({n}) · remove({n}) · setCount({n}) · setShape({shape}) · highlight({i})",
+      "verbs": [
+        {
+          "name": "add",
+          "args": ["n"]
+        },
+        {
+          "name": "remove",
+          "args": ["n"]
+        },
+        {
+          "name": "setCount",
+          "args": ["n"]
+        },
+        {
+          "name": "setShape",
+          "args": ["shape"]
+        },
+        {
+          "name": "highlight",
+          "args": ["i"]
+        }
+      ]
+    },
+    "datachart": {
+      "desc": "categorical data (Cambridge: Statistics — pictogram, bar chart, tally). One dataset, three views.",
+      "signatures": "setMode({mode}) · addData({label,n}) · highlightBar({label}) · showTotal",
+      "verbs": [
+        {
+          "name": "setMode",
+          "args": ["mode"]
+        },
+        {
+          "name": "addData",
+          "args": ["label", "n"]
+        },
+        {
+          "name": "highlightBar",
+          "args": ["label"]
+        },
+        {
+          "name": "showTotal",
+          "args": []
+        }
+      ]
+    },
+    "dialogue": {
+      "desc": "DialogueFlow: conversation / exchange builder (TOEIC conversations, business email chains, speaking-test role-play; teens–adult). A two-speaker chat: bubbles appear turn by turn (play mode), functiona",
+      "signatures": "next · playAll · swap({i,j}) · highlightFn · setDialogue({speakers,turns}) · setMode({mode})",
+      "verbs": [
+        {
+          "name": "next",
+          "args": []
+        },
+        {
+          "name": "playAll",
+          "args": []
+        },
+        {
+          "name": "swap",
+          "args": ["i", "j"]
+        },
+        {
+          "name": "highlightFn",
+          "args": []
+        },
+        {
+          "name": "setDialogue",
+          "args": ["speakers", "turns"]
+        },
+        {
+          "name": "setMode",
+          "args": ["mode"]
+        }
+      ]
+    },
+    "equationbalance": {
+      "desc": "EquationBalance (cân thăng bằng phương trình ax+b=c). Middle school (THCS, grades 6–8): a beam balance that stays LEVEL — the equation is always true — with `a` x-bags + `b` unit weights on the left p",
+      "paramEnums": {
+        "step": ["start", "minusB", "divided"]
+      },
+      "signatures": "takeFromBoth({n}) · divideBoth · showX · setAnswer({v})",
+      "verbs": [
+        {
+          "name": "takeFromBoth",
+          "args": ["n"]
+        },
+        {
+          "name": "divideBoth",
+          "args": []
+        },
+        {
+          "name": "showX",
+          "args": []
+        },
+        {
+          "name": "setAnswer",
+          "args": ["v"]
+        }
+      ]
+    },
+    "essaymap": {
+      "desc": "EssayMap: essay structure builder (IELTS Writing Task 2 / academic writing; ages 15+ / adult). A vertical map of essay blocks (hook → thesis → topic → evidence → conclusion) revealed top-down with lin",
+      "signatures": "reveal · revealAll · swap({i,j}) · showRoles · setMode({mode}) · setBlocks({blocks})",
+      "verbs": [
+        {
+          "name": "reveal",
+          "args": []
+        },
+        {
+          "name": "revealAll",
+          "args": []
+        },
+        {
+          "name": "swap",
+          "args": ["i", "j"]
+        },
+        {
+          "name": "showRoles",
+          "args": []
+        },
+        {
+          "name": "setMode",
+          "args": ["mode"]
+        },
+        {
+          "name": "setBlocks",
+          "args": ["blocks"]
+        }
+      ]
+    },
+    "estimate": {
+      "desc": "estimation (ước lượng). A jar of `actual` objects (scattered, so hard to count exactly); the learner sets a `guess` on a 0..max scale, then `reveal` neatly arranges & counts them to compare.",
+      "signatures": "setActual({n}) · guess({n}) · setMax({m}) · reveal",
+      "verbs": [
+        {
+          "name": "setActual",
+          "args": ["n"]
+        },
+        {
+          "name": "guess",
+          "args": ["n"]
+        },
+        {
+          "name": "setMax",
+          "args": ["m"]
+        },
+        {
+          "name": "reveal",
+          "args": []
+        }
+      ]
+    },
+    "evenodd": {
+      "desc": "even / odd (số chẵn, số lẻ). `number` objects arranged in pairs (2 columns); if one is left over the number is odd, else even. Teaches n = 2·k (+1).",
+      "paramEnums": {
+        "icon": ["dot", "circle", "star", "apple", "heart", "flower"]
+      },
+      "signatures": "setNumber({n}) · add({n}) · remove({n}) · showResult",
+      "verbs": [
+        {
+          "name": "setNumber",
+          "args": ["n"]
+        },
+        {
+          "name": "add",
+          "args": ["n"]
+        },
+        {
+          "name": "remove",
+          "args": ["n"]
+        },
+        {
+          "name": "showResult",
+          "args": []
+        }
+      ]
+    },
+    "expression": {
+      "desc": "algebra expression.",
+      "signatures": "highlightTerm({id}) · moveTerm({id}) · substitute({id,val}) · simplifyStep",
+      "verbs": [
+        {
+          "name": "highlightTerm",
+          "args": ["id"]
+        },
+        {
+          "name": "moveTerm",
+          "args": ["id"]
+        },
+        {
+          "name": "substitute",
+          "args": ["id", "val"]
+        },
+        {
+          "name": "simplifyStep",
+          "args": []
+        }
+      ]
+    },
+    "factortree": {
+      "desc": "FactorTree (cây thừa số nguyên tố). Prime factorization as a splitting tree for upper primary / middle school (ages 10–14): the number n sits at the root; each split [a,b] breaks the current leftmost ",
+      "signatures": "split({a,b}) · splitBy({d}) · circlePrimes · showProduct · reset({n})",
+      "verbs": [
+        {
+          "name": "split",
+          "args": ["a", "b"]
+        },
+        {
+          "name": "splitBy",
+          "args": ["d"]
+        },
+        {
+          "name": "circlePrimes",
+          "args": []
+        },
+        {
+          "name": "showProduct",
+          "args": []
+        },
+        {
+          "name": "reset",
+          "args": ["n"]
+        }
+      ]
+    },
+    "foodchain": {
+      "desc": "food chain / energy flow (Cambridge Primary Science: Biology — feeding relationships). Organisms linked left→right by energy arrows.",
+      "signatures": "addLink · addOrganism({label}) · highlight({i})",
+      "verbs": [
+        {
+          "name": "addLink",
+          "args": []
+        },
+        {
+          "name": "addOrganism",
+          "args": ["label"]
+        },
+        {
+          "name": "highlight",
+          "args": ["i"]
+        }
+      ]
+    },
+    "forces": {
+      "desc": "forces & motion (Cambridge Primary Science: Physics — pushes, pulls, balanced/unbalanced forces). Arrows on a box; the net force shifts it.",
+      "signatures": "pushLeft({n}) · pushRight({n}) · setForces({left,right}) · showNet · reset",
+      "verbs": [
+        {
+          "name": "pushLeft",
+          "args": ["n"]
+        },
+        {
+          "name": "pushRight",
+          "args": ["n"]
+        },
+        {
+          "name": "setForces",
+          "args": ["left", "right"]
+        },
+        {
+          "name": "showNet",
+          "args": []
+        },
+        {
+          "name": "reset",
+          "args": []
+        }
+      ]
+    },
+    "fraction": {
+      "desc": "Fraction. A bar or circle divided into `denominator` equal parts, some shaded.",
+      "signatures": "split({n}) · shade({k}) · merge · equivalent({n}) · compare({other})",
+      "verbs": [
+        {
+          "name": "split",
+          "args": ["n"]
+        },
+        {
+          "name": "shade",
+          "args": ["k"]
+        },
+        {
+          "name": "merge",
+          "args": []
+        },
+        {
+          "name": "equivalent",
+          "args": ["n"]
+        },
+        {
+          "name": "compare",
+          "args": ["other"]
+        }
+      ]
+    },
+    "fractionwall": {
+      "desc": "Fraction wall (Cambridge: compare & equivalent fractions). Stacked unit bars each split into 1, 2, 3 … equal parts.",
+      "signatures": "addRow({n}) · highlightRow({n}) · shadeRow({n,k}) · compare({a,b})",
+      "verbs": [
+        {
+          "name": "addRow",
+          "args": ["n"]
+        },
+        {
+          "name": "highlightRow",
+          "args": ["n"]
+        },
+        {
+          "name": "shadeRow",
+          "args": ["n", "k"]
+        },
+        {
+          "name": "compare",
+          "args": ["a", "b"]
+        }
+      ]
+    },
+    "functionmachine": {
+      "desc": "FunctionMachine (máy hàm số). A linear function y = kx + b as an input → rule → output machine for upper primary / middle school (ages 9–14): a number ball is fed into the left chute, the gears turn, ",
+      "signatures": "feed({x}) · setRule({k,b}) · revealRule · clear · guessRule({k,b}) · answer({y})",
+      "verbs": [
+        {
+          "name": "feed",
+          "args": ["x"]
+        },
+        {
+          "name": "setRule",
+          "args": ["k", "b"]
+        },
+        {
+          "name": "revealRule",
+          "args": []
+        },
+        {
+          "name": "clear",
+          "args": []
+        },
+        {
+          "name": "guessRule",
+          "args": ["k", "b"]
+        },
+        {
+          "name": "answer",
+          "args": ["y"]
+        }
+      ]
+    },
+    "geoshape": {
+      "desc": "geometry shape. A polygon (normalised vertices) with side labels, angle arcs and tick marks. Rigid transforms are stored as a POSE (rot / mirror / translate) over fixed base vertices, so rotate/reflec",
+      "signatures": "rotate({deg}) · reflect({axis}) · translate({dx,dy}) · labelSide({edge,label}) · markAngle({vertex})",
+      "verbs": [
+        {
+          "name": "rotate",
+          "args": ["deg"]
+        },
+        {
+          "name": "reflect",
+          "args": ["axis"]
+        },
+        {
+          "name": "translate",
+          "args": ["dx", "dy"]
+        },
+        {
+          "name": "labelSide",
+          "args": ["edge", "label"]
+        },
+        {
+          "name": "markAngle",
+          "args": ["vertex"]
+        }
+      ]
+    },
+    "linear": {
+      "desc": "Cartesian graph. Functions are *descriptors* (linear / quadratic / sin), not strings, so evaluation is pure & code-verifiable.",
+      "signatures": "plotPoint({x,y}) · drawCurve({fn}) · traceValue({x}) · highlightAxis({axis})",
+      "verbs": [
+        {
+          "name": "plotPoint",
+          "args": ["x", "y"]
+        },
+        {
+          "name": "drawCurve",
+          "args": ["fn"]
+        },
+        {
+          "name": "traceValue",
+          "args": ["x"]
+        },
+        {
+          "name": "highlightAxis",
+          "args": ["axis"]
+        }
+      ]
+    },
+    "hundredsquare": {
+      "desc": "1..100 grid (Cambridge: counting, patterns, multiples).",
+      "signatures": "highlightNumber({n}) · highlightMultiples({k}) · countBy({step}) · coverRange({a,b})",
+      "verbs": [
+        {
+          "name": "highlightNumber",
+          "args": ["n"]
+        },
+        {
+          "name": "highlightMultiples",
+          "args": ["k"]
+        },
+        {
+          "name": "countBy",
+          "args": ["step"]
+        },
+        {
+          "name": "coverRange",
+          "args": ["a", "b"]
+        }
+      ]
+    },
+    "integerchips": {
+      "desc": "IntegerChips (số nguyên âm — chip dương/âm & cặp triệt tiêu). Middle-school (THCS, grade 6) integers: plus chips live in a top zone, minus chips in a bottom zone; `cancelPairs` slides one +/− pair at ",
+      "signatures": "addPos({n}) · addNeg({n}) · cancelPairs · showValue",
+      "verbs": [
+        {
+          "name": "addPos",
+          "args": ["n"]
+        },
+        {
+          "name": "addNeg",
+          "args": ["n"]
+        },
+        {
+          "name": "cancelPairs",
+          "args": []
+        },
+        {
+          "name": "showValue",
+          "args": []
+        }
+      ]
+    },
+    "lifecycle": {
+      "desc": "life cycle (Cambridge Primary Science: Biology — life cycles of plants & animals). Stages arranged in a ring with arrows; advance moves the marker.",
+      "signatures": "advance · setStage({i}) · reveal",
+      "verbs": [
+        {
+          "name": "advance",
+          "args": []
+        },
+        {
+          "name": "setStage",
+          "args": ["i"]
+        },
+        {
+          "name": "reveal",
+          "args": []
+        }
+      ]
+    },
+    "measurescale": {
+      "desc": "pan balance (Cambridge: mass, comparing, equality). The beam tilts by the difference of the two pans; equal → level.",
+      "signatures": "setLeft({n}) · setRight({n}) · addLeft({n}) · addRight({n}) · compare",
+      "verbs": [
+        {
+          "name": "setLeft",
+          "args": ["n"]
+        },
+        {
+          "name": "setRight",
+          "args": ["n"]
+        },
+        {
+          "name": "addLeft",
+          "args": ["n"]
+        },
+        {
+          "name": "addRight",
+          "args": ["n"]
+        },
+        {
+          "name": "compare",
+          "args": []
+        }
+      ]
+    },
+    "minimalpair": {
+      "desc": "MinimalPair (cặp âm tối thiểu: ship–sheep). Two word cards whose ONLY difference is one grapheme/phoneme — the contrasting letters are rendered bigger + accent inside each word, the IPA row highlights",
+      "signatures": "focus({side}) · contrast · showIpa · choose({side}) · setPair({a,b,diffIndex})",
+      "verbs": [
+        {
+          "name": "focus",
+          "args": ["side"]
+        },
+        {
+          "name": "contrast",
+          "args": []
+        },
+        {
+          "name": "showIpa",
+          "args": []
+        },
+        {
+          "name": "choose",
+          "args": ["side"]
+        },
+        {
+          "name": "setPair",
+          "args": ["a", "b", "diffIndex"]
+        }
+      ]
+    },
+    "money": {
+      "desc": "coins & notes (Cambridge: money, making amounts, change). Values in the smallest unit (e.g. cents). `total` is the sum → verifiable by code.",
+      "signatures": "addCoin({value}) · makeAmount({amount}) · giveChange({paid,cost}) · setTarget({amount})",
+      "verbs": [
+        {
+          "name": "addCoin",
+          "args": ["value"]
+        },
+        {
+          "name": "makeAmount",
+          "args": ["amount"]
+        },
+        {
+          "name": "giveChange",
+          "args": ["paid", "cost"]
+        },
+        {
+          "name": "setTarget",
+          "args": ["amount"]
+        }
+      ]
+    },
+    "morpheme": {
+      "desc": "prefix + root + suffix (Cambridge Primary English: vocabulary & spelling — word building, e.g. un + happy + ness).",
+      "signatures": "addPrefix({p}) · addSuffix({s}) · removeAffix({which}) · highlight({part})",
+      "verbs": [
+        {
+          "name": "addPrefix",
+          "args": ["p"]
+        },
+        {
+          "name": "addSuffix",
+          "args": ["s"]
+        },
+        {
+          "name": "removeAffix",
+          "args": ["which"]
+        },
+        {
+          "name": "highlight",
+          "args": ["part"]
+        }
+      ]
+    },
+    "net3d": {
+      "desc": "2D net ↔ 3D solid (Cambridge: 3D shapes, nets, faces/edges/vertices). Shows a cube net and an isometric cube; `fold` crossfades net→solid.",
+      "signatures": "showNet · fold · highlightFace({i}) · showCounts",
+      "verbs": [
+        {
+          "name": "showNet",
+          "args": []
+        },
+        {
+          "name": "fold",
+          "args": []
+        },
+        {
+          "name": "highlightFace",
+          "args": ["i"]
+        },
+        {
+          "name": "showCounts",
+          "args": []
+        }
+      ]
+    },
+    "numberline": {
+      "desc": "NumberLine manipulative.",
+      "signatures": "jump({a,from,b,to}) · placePoint({x}) · mark({x}) · highlightRange({a,from,b,to})",
+      "verbs": [
+        {
+          "name": "jump",
+          "args": ["a", "from", "b", "to"]
+        },
+        {
+          "name": "placePoint",
+          "args": ["x"]
+        },
+        {
+          "name": "mark",
+          "args": ["x"]
+        },
+        {
+          "name": "highlightRange",
+          "args": ["a", "from", "b", "to"]
+        }
+      ]
+    },
+    "orbit": {
+      "desc": "Sun–planet orbit & day/night (Cambridge Primary Science: Earth & Space). A planet circles the Sun; its lit half faces the Sun (day), the far half is night.",
+      "signatures": "orbit({to}) · showDayNight · spin",
+      "verbs": [
+        {
+          "name": "orbit",
+          "args": ["to"]
+        },
+        {
+          "name": "showDayNight",
+          "args": []
+        },
+        {
+          "name": "spin",
+          "args": []
+        }
+      ]
+    },
+    "ordinal": {
+      "desc": "OrdinalQueue (số thứ tự 1st..10th). A queue of little stick figures walks toward a flag; positions are counted FROM the flag, so DIRECTION matters — an arrow under the queue shows the counting directi",
+      "signatures": "highlightPos({pos}) · setCount({n}) · showLabels · flip",
+      "verbs": [
+        {
+          "name": "highlightPos",
+          "args": ["pos"]
+        },
+        {
+          "name": "setCount",
+          "args": ["n"]
+        },
+        {
+          "name": "showLabels",
+          "args": []
+        },
+        {
+          "name": "flip",
+          "args": []
+        }
+      ]
+    },
+    "organism": {
+      "desc": "labelled organism (Cambridge Primary Science: Biology — parts of a plant / animal). A simple plant diagram; reveal leader-lines + labels for each part.",
+      "signatures": "revealPart({name}) · highlightPart({name}) · revealAll",
+      "verbs": [
+        {
+          "name": "revealPart",
+          "args": ["name"]
+        },
+        {
+          "name": "highlightPart",
+          "args": ["name"]
+        },
+        {
+          "name": "revealAll",
+          "args": []
+        }
+      ]
+    },
+    "paraphrase": {
+      "desc": "ParaphrasePair (nhận diện đồng nghĩa giữa câu hỏi và bài đọc — kỹ năng IELTS reading/listening, exam prep). Two sentences as rows of word chips; revealing an alignment underlines the matching chunks i",
+      "signatures": "showNext · showAll · focus · pick · clear · setPair",
+      "verbs": [
+        {
+          "name": "showNext",
+          "args": []
+        },
+        {
+          "name": "showAll",
+          "args": []
+        },
+        {
+          "name": "focus",
+          "args": []
+        },
+        {
+          "name": "pick",
+          "args": []
+        },
+        {
+          "name": "clear",
+          "args": []
+        },
+        {
+          "name": "setPair",
+          "args": []
+        }
+      ]
+    },
+    "partwhole": {
+      "desc": "Part-whole (\"cherry\") model (Cambridge: number bonds, missing part). A whole on top, parts below joined by connectors.",
+      "signatures": "split({parts}) · showWhole · showPart({i}) · findUnknown({which}) · reveal",
+      "verbs": [
+        {
+          "name": "split",
+          "args": ["parts"]
+        },
+        {
+          "name": "showWhole",
+          "args": []
+        },
+        {
+          "name": "showPart",
+          "args": ["i"]
+        },
+        {
+          "name": "findUnknown",
+          "args": ["which"]
+        },
+        {
+          "name": "reveal",
+          "args": []
+        }
+      ]
+    },
+    "pattern": {
+      "desc": "PatternTrain (quy luật lặp: AB, AAB, ABC…). A train of coloured shapes sits on a baseline; the repeating unit is bracketed and lettered (A B / A A B …) so the child SEES the rule, then extends the tra",
+      "signatures": "extend({n}) · hide({i}) · revealHidden · setUnit({unit}) · chooseNext({v})",
+      "verbs": [
+        {
+          "name": "extend",
+          "args": ["n"]
+        },
+        {
+          "name": "hide",
+          "args": ["i"]
+        },
+        {
+          "name": "revealHidden",
+          "args": []
+        },
+        {
+          "name": "setUnit",
+          "args": ["unit"]
+        },
+        {
+          "name": "chooseNext",
+          "args": ["v"]
+        }
+      ]
+    },
+    "phonics": {
+      "desc": "Phonics sound blocks (Cambridge Primary English: Reading — phonics & word recognition). A word shown as grapheme boxes with \"sound buttons\"; `segment` slides them apart to sound each phoneme, `blend` ",
+      "signatures": "segment · blend · sound({i}) · setWord({graphemes,word})",
+      "verbs": [
+        {
+          "name": "segment",
+          "args": []
+        },
+        {
+          "name": "blend",
+          "args": []
+        },
+        {
+          "name": "sound",
+          "args": ["i"]
+        },
+        {
+          "name": "setWord",
+          "args": ["graphemes", "word"]
+        }
+      ]
+    },
+    "placevalue": {
+      "desc": "Place-value chart with counters/discs (Cambridge: place value, exchange/regroup). Columns labelled (Th H T O …) hold a digit card + that many discs. `exchange` animates ten discs in a column collapsin",
+      "signatures": "setValue({n}) · addCounter({col}) · exchange({col}) · partition",
+      "verbs": [
+        {
+          "name": "setValue",
+          "args": ["n"]
+        },
+        {
+          "name": "addCounter",
+          "args": ["col"]
+        },
+        {
+          "name": "exchange",
+          "args": ["col"]
+        },
+        {
+          "name": "partition",
+          "args": []
+        }
+      ]
+    },
+    "probtree": {
+      "desc": "ProbabilityTree (cây xác suất hai tầng). A two-stage probability tree: root → stage-1 branches → stage-2 sub-branches, with the branch probability written on every segment and the product probability ",
+      "signatures": "reveal({stage}) · highlight({path}) · showProducts · setStages({stage1,stage2}) · answer({p})",
+      "verbs": [
+        {
+          "name": "reveal",
+          "args": ["stage"]
+        },
+        {
+          "name": "highlight",
+          "args": ["path"]
+        },
+        {
+          "name": "showProducts",
+          "args": []
+        },
+        {
+          "name": "setStages",
+          "args": ["stage1", "stage2"]
+        },
+        {
+          "name": "answer",
+          "args": ["p"]
+        }
+      ]
+    },
+    "punctuation": {
+      "desc": "capital letters & punctuation (Cambridge Primary English: Writing — punctuation). Fix a plain string: capitalise words, drop in end marks / commas.",
+      "signatures": "capitalize({i}) · addMark({after,mark}) · addComma({after})",
+      "verbs": [
+        {
+          "name": "capitalize",
+          "args": ["i"]
+        },
+        {
+          "name": "addMark",
+          "args": ["after", "mark"]
+        },
+        {
+          "name": "addComma",
+          "args": ["after"]
+        }
+      ]
+    },
+    "ratiotable": {
+      "desc": "RatioTable (bảng tỉ số / quy tắc tam suất). Ratio & proportion on a double-row table for upper primary / middle school (9–13): row A and row B stay in the fixed ratio baseA : baseB, every column is th",
+      "signatures": "addColumn({m}) · highlight({m}) · showUnitRate · setBase({a,b}) · fillCell({row,m,v})",
+      "verbs": [
+        {
+          "name": "addColumn",
+          "args": ["m"]
+        },
+        {
+          "name": "highlight",
+          "args": ["m"]
+        },
+        {
+          "name": "showUnitRate",
+          "args": []
+        },
+        {
+          "name": "setBase",
+          "args": ["a", "b"]
+        },
+        {
+          "name": "fillCell",
+          "args": ["row", "m", "v"]
+        }
+      ]
+    },
+    "rhymetime": {
+      "desc": "RhymeTime (vần điệu / word families: cat–hat–bat). A rime (e.g. \"-at\") sits in a central box; onset letters queue on the left and GLIDE in to snap in front of the rime, building one rhyming word per r",
+      "signatures": "build · buildAll · highlightRime · showOdd({word}) · spotOdd · choose({word})",
+      "verbs": [
+        {
+          "name": "build",
+          "args": []
+        },
+        {
+          "name": "buildAll",
+          "args": []
+        },
+        {
+          "name": "highlightRime",
+          "args": []
+        },
+        {
+          "name": "showOdd",
+          "args": ["word"]
+        },
+        {
+          "name": "spotOdd",
+          "args": []
+        },
+        {
+          "name": "choose",
+          "args": ["word"]
+        }
+      ]
+    },
+    "shadow": {
+      "desc": "light & shadow (Cambridge Primary Science: Physics — light, how shadows form and change). A light source casts an object's shadow on the ground; moving the light changes the shadow's direction & lengt",
+      "signatures": "moveLight({x}) · showRays · setHeight({h})",
+      "verbs": [
+        {
+          "name": "moveLight",
+          "args": ["x"]
+        },
+        {
+          "name": "showRays",
+          "args": []
+        },
+        {
+          "name": "setHeight",
+          "args": ["h"]
+        }
+      ]
+    },
+    "share": {
+      "desc": "equal sharing / grouping (chia đều) — division. `total` objects are dealt one-by-one, round-robin, into `groups` bins; the leftover is the remainder. Teaches total ÷ groups = perGroup (dư remainder).",
+      "signatures": "setTotal({n}) · setGroups({g}) · deal · highlight({bin})",
+      "verbs": [
+        {
+          "name": "setTotal",
+          "args": ["n"]
+        },
+        {
+          "name": "setGroups",
+          "args": ["g"]
+        },
+        {
+          "name": "deal",
+          "args": []
+        },
+        {
+          "name": "highlight",
+          "args": ["bin"]
+        }
+      ]
+    },
+    "spinner": {
+      "desc": "probability spinner (Cambridge: probability, likelihood). A wheel of weighted sectors + a pointer. `spin(to)` rotates the pointer (baked, multi- turn, settling on a sector) — deterministic, no live ra",
+      "signatures": "spin({to}) · addSector({label,weight}) · highlightOutcome({index})",
+      "verbs": [
+        {
+          "name": "spin",
+          "args": ["to"]
+        },
+        {
+          "name": "addSector",
+          "args": ["label", "weight"]
+        },
+        {
+          "name": "highlightOutcome",
+          "args": ["index"]
+        }
+      ]
+    },
+    "states": {
+      "desc": "states of matter (Cambridge Primary Science: Chemistry — solids, liquids, gases & changes of state). A particle model: heating loosens the arrangement (solid→liquid→gas), cooling tightens it. Particle",
+      "signatures": "heat · cool · setState({state})",
+      "verbs": [
+        {
+          "name": "heat",
+          "args": []
+        },
+        {
+          "name": "cool",
+          "args": []
+        },
+        {
+          "name": "setState",
+          "args": ["state"]
+        }
+      ]
+    },
+    "statplot": {
+      "desc": "StatPlot (thống kê mô tả: trung bình, trung vị, mốt, khoảng biến thiên). A dot plot on a number axis with live COMPUTED statistics: mean (balance-triangle + dashed line), median (flag), mode (ringed c",
+      "signatures": "addData({v}) · removeData({v}) · showMean · showMedian · showMode · showRange · setData({data}) · answer({v})",
+      "verbs": [
+        {
+          "name": "addData",
+          "args": ["v"]
+        },
+        {
+          "name": "removeData",
+          "args": ["v"]
+        },
+        {
+          "name": "showMean",
+          "args": []
+        },
+        {
+          "name": "showMedian",
+          "args": []
+        },
+        {
+          "name": "showMode",
+          "args": []
+        },
+        {
+          "name": "showRange",
+          "args": []
+        },
+        {
+          "name": "setData",
+          "args": ["data"]
+        },
+        {
+          "name": "answer",
+          "args": ["v"]
+        }
+      ]
+    },
+    "story": {
+      "desc": "story structure (Cambridge Primary English: Reading & Writing — sequencing, beginning/middle/end). Stage boxes joined by arrows, events dropped into stages.",
+      "signatures": "addEvent({stage,text}) · highlightStage({i}) · reveal",
+      "verbs": [
+        {
+          "name": "addEvent",
+          "args": ["stage", "text"]
+        },
+        {
+          "name": "highlightStage",
+          "args": ["i"]
+        },
+        {
+          "name": "reveal",
+          "args": []
+        }
+      ]
+    },
+    "stresspattern": {
+      "desc": "WordStress: word stress & syllables (academic pronunciation, IELTS speaking; teens–adult). Syllable boxes joined by dots; the learner marks the stressed syllable (big accent dot glides above it), metr",
+      "signatures": "mark({i}) · showBeats · showCompare · reveal · setWord({word,syllables,stressed,compare})",
+      "verbs": [
+        {
+          "name": "mark",
+          "args": ["i"]
+        },
+        {
+          "name": "showBeats",
+          "args": []
+        },
+        {
+          "name": "showCompare",
+          "args": []
+        },
+        {
+          "name": "reveal",
+          "args": []
+        },
+        {
+          "name": "setWord",
+          "args": ["word", "syllables", "stressed", "compare"]
+        }
+      ]
+    },
+    "subitize": {
+      "desc": "Subitize (nhìn nhanh số lượng — instant recognition of 1–10 without counting). A big dot card shows `count` dots in one of four arrangements (dice / pairs / random / tenframe); the SAME number can be ",
+      "paramEnums": {
+        "arrangement": ["dice", "pairs", "random", "tenframe"],
+        "icon": ["dot", "circle", "star", "apple", "heart", "flower"]
+      },
+      "signatures": "show({count,arrangement}) · hideCard · reveal · rearrange({arrangement}) · guess({n})",
+      "verbs": [
+        {
+          "name": "show",
+          "args": ["count", "arrangement"]
+        },
+        {
+          "name": "hideCard",
+          "args": []
+        },
+        {
+          "name": "reveal",
+          "args": []
+        },
+        {
+          "name": "rearrange",
+          "args": ["arrangement"]
+        },
+        {
+          "name": "guess",
+          "args": ["n"]
+        }
+      ]
+    },
+    "syllable": {
+      "desc": "syllable splitting & stress (Cambridge Primary English: reading longer words, spelling).",
+      "signatures": "split({syllables}) · clap · stress({i})",
+      "verbs": [
+        {
+          "name": "split",
+          "args": ["syllables"]
+        },
+        {
+          "name": "clap",
+          "args": []
+        },
+        {
+          "name": "stress",
+          "args": ["i"]
+        }
+      ]
+    },
+    "row": {
+      "desc": "data table (bảng số liệu) for Statistics. Rows × columns of values with headers and optional totals; highlight a row/column while reading it.",
+      "signatures": "highlightRow({i}) · highlightCol({i}) · showTotal · clear",
+      "verbs": [
+        {
+          "name": "highlightRow",
+          "args": ["i"]
+        },
+        {
+          "name": "highlightCol",
+          "args": ["i"]
+        },
+        {
+          "name": "showTotal",
+          "args": []
+        },
+        {
+          "name": "clear",
+          "args": []
+        }
+      ]
+    },
+    "tenframe": {
+      "desc": "Ten frame (Cambridge Primary, early number / bonds). A 2×5 grid (or two, for 20) filled with counters.",
+      "paramEnums": {
+        "icon": ["dot", "circle", "star", "apple", "heart", "flower"]
+      },
+      "signatures": "add({n}) · remove({n}) · bond({k}) · fill({n})",
+      "verbs": [
+        {
+          "name": "add",
+          "args": ["n"]
+        },
+        {
+          "name": "remove",
+          "args": ["n"]
+        },
+        {
+          "name": "bond",
+          "args": ["k"]
+        },
+        {
+          "name": "fill",
+          "args": ["n"]
+        }
+      ]
+    },
+    "tense": {
+      "desc": "verb tense timeline (Cambridge Primary English: Grammar — past / present / future). A verb form sits in the active time zone; `conjugate` reveals all three.",
+      "signatures": "setTense({t}) · conjugate · highlight({t})",
+      "verbs": [
+        {
+          "name": "setTense",
+          "args": ["t"]
+        },
+        {
+          "name": "conjugate",
+          "args": []
+        },
+        {
+          "name": "highlight",
+          "args": ["t"]
+        }
+      ]
+    },
+    "thermometer": {
+      "desc": "thermometer (Cambridge Primary Science: measuring temperature; enquiry). A scale + liquid column.",
+      "signatures": "setTemp({n}) · mark({n}) · compare({n})",
+      "verbs": [
+        {
+          "name": "setTemp",
+          "args": ["n"]
+        },
+        {
+          "name": "mark",
+          "args": ["n"]
+        },
+        {
+          "name": "compare",
+          "args": ["n"]
+        }
+      ]
+    },
+    "transformgrid": {
+      "desc": "TransformGrid (phép biến hình trên lưới, THPT 15–18). Geometric transformations of a polygon on a −R..R coordinate grid: tịnh tiến (translate), đối xứng trục (reflect across x/y axis), quay quanh gốc ",
+      "signatures": "translate({dx,dy}) · reflect({axis}) · rotate({deg}) · dilate({k}) · resetShape({shape}) · toggleGhosts · markPoint({x,y})",
+      "verbs": [
+        {
+          "name": "translate",
+          "args": ["dx", "dy"]
+        },
+        {
+          "name": "reflect",
+          "args": ["axis"]
+        },
+        {
+          "name": "rotate",
+          "args": ["deg"]
+        },
+        {
+          "name": "dilate",
+          "args": ["k"]
+        },
+        {
+          "name": "resetShape",
+          "args": ["shape"]
+        },
+        {
+          "name": "toggleGhosts",
+          "args": []
+        },
+        {
+          "name": "markPoint",
+          "args": ["x", "y"]
+        }
+      ]
+    },
+    "trianglelab": {
+      "desc": "TriangleLab (tam giác THPT 15–18): three reasoning modes. \"angles\": a triangle built from two given angles; showWork tears the three angle wedges off the vertices and re-lines them up on a straight li",
+      "paramEnums": {
+        "mode": ["angles", "pythagoras", "ratio"]
+      },
+      "signatures": "setMode({mode}) · setAngles({a,b}) · setLegs({a,b}) · showWork · highlightSide({side}) · setRatio({fn}) · answer",
+      "verbs": [
+        {
+          "name": "setMode",
+          "args": ["mode"]
+        },
+        {
+          "name": "setAngles",
+          "args": ["a", "b"]
+        },
+        {
+          "name": "setLegs",
+          "args": ["a", "b"]
+        },
+        {
+          "name": "showWork",
+          "args": []
+        },
+        {
+          "name": "highlightSide",
+          "args": ["side"]
+        },
+        {
+          "name": "setRatio",
+          "args": ["fn"]
+        },
+        {
+          "name": "answer",
+          "args": []
+        }
+      ]
+    },
+    "unitcircle": {
+      "desc": "UnitCircle (đường tròn lượng giác, THPT 15–18). The trig unit circle: a radius GLIDES to any angle (linear in angle value — never the \"short way\", so 350°→10° sweeps back through 180°) while sin (vert",
+      "signatures": "setAngle · showSin · showCos · showTan · toRadians · toDegrees",
+      "verbs": [
+        {
+          "name": "setAngle",
+          "args": []
+        },
+        {
+          "name": "showSin",
+          "args": []
+        },
+        {
+          "name": "showCos",
+          "args": []
+        },
+        {
+          "name": "showTan",
+          "args": []
+        },
+        {
+          "name": "toRadians",
+          "args": []
+        },
+        {
+          "name": "toDegrees",
+          "args": []
+        }
+      ]
+    },
+    "wordbuilder": {
+      "desc": "letter tiles (Cambridge Primary English: spelling, word families, minimal pairs — cat → cot → cog).",
+      "signatures": "addLetter({ch}) · removeLetter · changeLetter({i,ch}) · highlight({i})",
+      "verbs": [
+        {
+          "name": "addLetter",
+          "args": ["ch"]
+        },
+        {
+          "name": "removeLetter",
+          "args": []
+        },
+        {
+          "name": "changeLetter",
+          "args": ["i", "ch"]
+        },
+        {
+          "name": "highlight",
+          "args": ["i"]
+        }
+      ]
+    },
+    "wordclass": {
+      "desc": "parts of speech (Cambridge Primary English: Grammar). Each word in a sentence carries a word class; revealing/ tagging colours it and shows a legend.",
+      "signatures": "tag({i,cls}) · revealClass({cls}) · highlightClass({cls}) · reveal",
+      "verbs": [
+        {
+          "name": "tag",
+          "args": ["i", "cls"]
+        },
+        {
+          "name": "revealClass",
+          "args": ["cls"]
+        },
+        {
+          "name": "highlightClass",
+          "args": ["cls"]
+        },
+        {
+          "name": "reveal",
+          "args": []
+        }
+      ]
+    },
+    "wordform": {
+      "desc": "WordFormFamily (họ từ / word form — exam prep TOEIC/TOEFL/IELTS, e.g. decide → decision → decisive → decisively). The root word sits in a hub; POS satellites reveal each derived form with its suffix h",
+      "signatures": "reveal · revealAll · highlightSuffix · place · setFamily",
+      "verbs": [
+        {
+          "name": "reveal",
+          "args": []
+        },
+        {
+          "name": "revealAll",
+          "args": []
+        },
+        {
+          "name": "highlightSuffix",
+          "args": []
+        },
+        {
+          "name": "place",
+          "args": []
+        },
+        {
+          "name": "setFamily",
+          "args": []
+        }
+      ]
+    }
+  }
+}

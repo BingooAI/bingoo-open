@@ -1,0 +1,24 @@
+{
+  "name": "@bingoo/explainer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bingoo explainer engine — pure, deterministic frame(program,t) runtime + manipulative kits + doc schema/lint (platform-agnostic TS, no React/Next).",
+  "author": "VietDevelopers.com (https://vietdevelopers.com)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./providers": "./src/providers/index.ts"
+  },
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@bingoo/manipulatives": "workspace:*",
+    "zod": "^4.4.3",
+    "@bingoo/core": "workspace:*"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "contract": "node --disable-warning=ExperimentalWarning --import ./scripts/ts-hook.mjs scripts/gen-contract.mjs",
+    "prompt": "node --disable-warning=ExperimentalWarning --import ./scripts/ts-hook.mjs scripts/gen-prompt.mjs"
+  }
+}

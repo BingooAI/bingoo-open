@@ -1,0 +1,21 @@
+{
+  "name": "@bingoo/knowledge-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lõi engine học thuật thuần — Capability · Evidence · Adaptive (content-agnostic).",
+  "author": "VietDevelopers.com (https://vietdevelopers.com)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}

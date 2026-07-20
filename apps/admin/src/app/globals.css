@@ -1,0 +1,14 @@
+/* Bingoo Admin — global stylesheet entry.
+ * Tokens (primitives + semantic themes) come from the shared @bingoo/tokens
+ * package, generated from tokens.json — the single source of truth. */
+@import 'tailwindcss';
+@import '@bingoo/tokens/css';
+@import '../styles/base.css';
+
+/* Tell Tailwind where class names live (v4 content auto-detection covers src/). */
+@source '../**/*.{ts,tsx}';
+/* Also scan the shared UI package so its Tailwind classes are generated. */
+@source '../../../../packages/ui-web/src/**/*.{ts,tsx}';
+/* The explainer studio/player chrome is migrating to ui-web + tokens; scan it so
+   its Tailwind token classes are generated too. */
+@source '../../../../packages/explainer-web/src/**/*.{ts,tsx}';

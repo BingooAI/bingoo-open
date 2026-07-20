@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "template": {
+      "type": "string",
+      "enum": [
+        "teach",
+        "practice",
+        "compare",
+        "rule",
+        "sequence",
+        "recap",
+        "title-card",
+        "flow",
+        "swimlane",
+        "bullets",
+        "bullets-media",
+        "two-col",
+        "data",
+        "stats",
+        "quote",
+        "table",
+        "image-grid",
+        "definition",
+        "worked-example",
+        "section"
+      ]
+    },
+    "elements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "text",
+              "image",
+              "shape",
+              "stick",
+              "diagram",
+              "manipulative",
+              "list",
+              "table",
+              "chart",
+              "stat",
+              "quote"
+            ]
+          },
+          "region": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "rung": {
+            "type": "string"
+          },
+          "content": {}
+        },
+        "required": ["id", "type", "region"]
+      }
+    },
+    "narration": {
+      "type": "string"
+    }
+  },
+  "required": ["id", "template", "elements"],
+  "$comment": "GENERATED. Note what is ABSENT: place, x, y, size, w, h, overrides. A model cannot emit a coordinate because there is nowhere to put one."
+}

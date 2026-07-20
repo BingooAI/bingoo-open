@@ -1,0 +1,157 @@
+{
+  "happy": {
+    "label": "Vui vẻ",
+    "category": "Cơ bản",
+    "audio": "success"
+  },
+  "excited": {
+    "label": "Phấn khích",
+    "category": "Cơ bản",
+    "audio": "levelup"
+  },
+  "proud": {
+    "label": "Tự hào",
+    "category": "Cơ bản",
+    "audio": "proud"
+  },
+  "amazed": {
+    "label": "Ngạc nhiên",
+    "category": "Cơ bản",
+    "audio": "wow"
+  },
+  "thinking": {
+    "label": "Suy nghĩ",
+    "category": "Cơ bản",
+    "audio": "think"
+  },
+  "calm": {
+    "label": "Bình tĩnh",
+    "category": "Cơ bản",
+    "audio": "calm"
+  },
+  "celebrate": {
+    "label": "Ăn mừng",
+    "category": "Cơ bản",
+    "audio": "celebrate"
+  },
+  "cheer": {
+    "label": "Cổ vũ",
+    "category": "Động viên",
+    "audio": "cheer"
+  },
+  "praise": {
+    "label": "Khen ngợi",
+    "category": "Động viên",
+    "audio": "clap"
+  },
+  "encourage": {
+    "label": "Khích lệ",
+    "category": "Động viên",
+    "audio": "star"
+  },
+  "care": {
+    "label": "Quan tâm",
+    "category": "Động viên",
+    "audio": "care"
+  },
+  "congrats": {
+    "label": "Chúc mừng",
+    "category": "Động viên",
+    "audio": "congrats"
+  },
+  "companion": {
+    "label": "Đồng hành",
+    "category": "Động viên",
+    "audio": "care"
+  },
+  "sleepy": {
+    "label": "Buồn ngủ",
+    "category": "Nhắc nhở",
+    "audio": "sleepy"
+  },
+  "schedule": {
+    "label": "Nhắc lịch",
+    "category": "Nhắc nhở",
+    "audio": "reminder"
+  },
+  "curious": {
+    "label": "Tò mò",
+    "category": "Nhắc nhở",
+    "audio": "curious"
+  },
+  "waiting": {
+    "label": "Chờ đợi",
+    "category": "Nhắc nhở",
+    "audio": "wait"
+  },
+  "gentle": {
+    "label": "Động viên nhẹ",
+    "category": "Nhắc nhở",
+    "audio": "gentle"
+  },
+  "focus": {
+    "label": "Tập trung",
+    "category": "Nhắc nhở",
+    "audio": "focus"
+  },
+  "sad": {
+    "label": "Hơi buồn",
+    "category": "Buồn nhẹ",
+    "audio": "sad"
+  },
+  "longing": {
+    "label": "Mong chờ",
+    "category": "Buồn nhẹ",
+    "audio": "longing"
+  },
+  "confused": {
+    "label": "Bối rối",
+    "category": "Buồn nhẹ",
+    "audio": "error"
+  },
+  "disappointed": {
+    "label": "Thất vọng nhẹ",
+    "category": "Buồn nhẹ",
+    "audio": "sad"
+  },
+  "studying": {
+    "label": "Đang học",
+    "category": "Hoạt động",
+    "audio": "studying"
+  },
+  "writing": {
+    "label": "Đang viết",
+    "category": "Hoạt động",
+    "audio": "writing"
+  },
+  "idea": {
+    "label": "Nảy ý tưởng",
+    "category": "Hoạt động",
+    "audio": "idea"
+  },
+  "graduate": {
+    "label": "Tốt nghiệp",
+    "category": "Hoạt động",
+    "audio": "graduate"
+  },
+  "resting": {
+    "label": "Nghỉ ngơi",
+    "category": "Hoạt động",
+    "audio": "rest"
+  },
+  "start": {
+    "label": "Bắt đầu thử thách",
+    "category": "Hoạt động",
+    "audio": "start"
+  },
+  "target": {
+    "label": "Tập trung mục tiêu",
+    "category": "Hoạt động",
+    "audio": "focus"
+  },
+  "win": {
+    "label": "Chiến thắng",
+    "category": "Hoạt động",
+    "audio": "win"
+  }
+}
