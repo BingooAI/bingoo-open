@@ -1,10 +1,10 @@
 /**
- * Data access pipeline biên soạn. DB rows ↔ PipelineStep của @bingoo/authoring-workflow.
+ * Data access pipeline biên soạn. DB rows ↔ PipelineStep của @bingoo.ai/authoring-workflow.
  * Repo THUẦN lưu trạng thái; chuyển trạng thái/lan STALE do service gọi package thuần.
  */
 
-import { db, type Prisma } from '@bingoo/db'
-import type { PipelineStep, Stage } from '@bingoo/authoring-workflow'
+import { db, type Prisma } from '@bingoo.ai/db'
+import type { PipelineStep, Stage } from '@bingoo.ai/authoring-workflow'
 
 function rowToStep(r: {
   stepKey: string

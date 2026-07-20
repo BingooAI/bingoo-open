@@ -1,8 +1,8 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { Badge, type BadgeColor } from '@bingoo/ui-web'
-import type { ModerationStatus, MediaStatus } from '@bingoo/core'
+import { Badge, type BadgeColor } from '@bingoo.ai/ui-web'
+import type { ModerationStatus, MediaStatus } from '@bingoo.ai/core'
 
 const MODERATION_COLOR: Record<ModerationStatus, BadgeColor> = {
   PENDING: 'warning',

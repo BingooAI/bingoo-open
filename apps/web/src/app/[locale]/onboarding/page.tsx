@@ -26,9 +26,9 @@ import {
   Progress,
   SegmentedControl,
   Switch,
-} from '@bingoo/ui-web'
+} from '@bingoo.ai/ui-web'
 import { Link, useRouter } from '@/i18n/navigation'
-import { type MascotEmotion } from '@bingoo/core'
+import { type MascotEmotion } from '@bingoo.ai/core'
 
 type Icon = ComponentType<{ className?: string }>
 type Role = 'student' | 'parent'

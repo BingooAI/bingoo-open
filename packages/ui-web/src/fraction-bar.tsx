@@ -29,7 +29,7 @@ function slicePath(i: number, n: number, r = 46) {
 
 /**
  * Shade a fraction of a whole — tap parts of a divided bar or pie to shade them.
- * Grading (shaded count === numerator) lives in `@bingoo/core`. Tap-based →
+ * Grading (shaded count === numerator) lives in `@bingoo.ai/core`. Tap-based →
  * works web + mobile. i18n-free.
  */
 export function FractionBar({

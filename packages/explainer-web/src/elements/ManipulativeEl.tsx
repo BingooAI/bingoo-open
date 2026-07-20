@@ -5,8 +5,8 @@
  * math/animation logic lives here (that's all pure in the engine).
  */
 import * as React from 'react'
-import type { RenderItem, ManipulativeRenderContent } from '@bingoo/explainer'
-import type { ThemeTokens } from '@bingoo/explainer'
+import type { RenderItem, ManipulativeRenderContent } from '@bingoo.ai/explainer'
+import type { ThemeTokens } from '@bingoo.ai/explainer'
 import { Prims, computeFit } from './prims'
 import { itemTransform } from './util'
 

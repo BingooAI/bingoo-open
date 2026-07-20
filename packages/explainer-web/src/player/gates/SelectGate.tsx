@@ -2,13 +2,13 @@
  * SelectGate.tsx — the select / predict-check gate (spec §11, §12, B8).
  * Real-time input isolated from the seekable timeline: tap an option → validate
  * against `answer` → positive feedback + resume, or a hint + retry (no penalty).
- * The choices render with @bingoo/ui-web's <AnswerOption> so the activity beat
+ * The choices render with @bingoo.ai/ui-web's <AnswerOption> so the activity beat
  * uses the bingoo design system (states + a11y); grading stays in the engine.
  */
 'use client'
 import { useState } from 'react'
-import type { GateSpec } from '@bingoo/explainer'
-import { AnswerOption, type AnswerState } from '@bingoo/ui-web'
+import type { GateSpec } from '@bingoo.ai/explainer'
+import { AnswerOption, type AnswerState } from '@bingoo.ai/ui-web'
 
 export function SelectGate({
   gate,

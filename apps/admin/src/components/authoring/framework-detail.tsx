@@ -17,7 +17,7 @@ import {
   THead,
   TR,
   useToast,
-} from '@bingoo/ui-web'
+} from '@bingoo.ai/ui-web'
 import { GraphCanvas, type GEdge, type GNode } from './graph-canvas'
 import { useCreateVersion, useFramework, useFrameworkGraph, usePublishVersion } from '@/lib/authoring-queries'
 

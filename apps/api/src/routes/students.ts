@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import type { AppEnv } from '../lib/context'
 import { AppError } from '../lib/errors'
 import { ok } from '../lib/response'

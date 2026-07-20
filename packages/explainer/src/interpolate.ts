@@ -5,7 +5,7 @@
  * only downstream optimizers. Everything here is worklet-safe: pure, no
  * closures, no allocation in the hot path.
  */
-import { ease, type EasingName, clamp01 } from '@bingoo/manipulatives'
+import { ease, type EasingName, clamp01 } from '@bingoo.ai/manipulatives'
 import type { Pose } from './schema'
 
 export function lerp(a: number, b: number, p: number): number {

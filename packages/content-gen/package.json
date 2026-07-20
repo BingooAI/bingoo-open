@@ -1,5 +1,5 @@
 {
-  "name": "@bingoo/content-gen",
+  "name": "@bingoo.ai/content-gen",
   "version": "0.1.0",
   "private": true,
   "description": "S4b — GenerationSpec → GeneratorPort → AuthoredItem[] → ráp/kiểm ContentBundle.",
@@ -11,9 +11,9 @@
   },
   "types": "./src/index.ts",
   "dependencies": {
-    "@bingoo/authored-item": "workspace:^",
-    "@bingoo/knowledge-engine": "workspace:^",
-    "@bingoo/personalization": "workspace:^"
+    "@bingoo.ai/authored-item": "workspace:^",
+    "@bingoo.ai/knowledge-engine": "workspace:^",
+    "@bingoo.ai/personalization": "workspace:^"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

@@ -1,6 +1,6 @@
 'use client'
 
-import { Confetti, cn, ContentBlocks, type InteractiveBlock } from '@bingoo/ui-web'
+import { Confetti, cn, ContentBlocks, type InteractiveBlock } from '@bingoo.ai/ui-web'
 import { Bookmark, ChevronUp, Heart, Share2, Volume2, VolumeX } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState, type PointerEvent, type ReactNode } from 'react'
 import { playSfx } from '../arena/sfx'

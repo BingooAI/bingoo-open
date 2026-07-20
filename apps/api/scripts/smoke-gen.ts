@@ -5,9 +5,9 @@
  * (best-effort — the "never worse than single-shot" path). Asserts a lint-clean
  * doc comes out.
  *
- * Run: pnpm --filter @bingoo/api-server exec tsx scripts/smoke-gen.ts
+ * Run: pnpm --filter @bingoo.ai/api-server exec tsx scripts/smoke-gen.ts
  */
-import { briefFromTopic, lintDoc } from '@bingoo/explainer'
+import { briefFromTopic, lintDoc } from '@bingoo.ai/explainer'
 import { generateLesson, type GenDeps } from '../src/services/explainer-gen/pipeline'
 import { ACCEPTANCE_DOC, ACCEPTANCE_VI } from '../../web/src/lib/explainerLesson'
 

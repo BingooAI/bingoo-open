@@ -1,6 +1,6 @@
 'use client'
 
-import type { QuizMedia } from '@bingoo/core'
+import type { QuizMedia } from '@bingoo.ai/core'
 import { cn } from './lib/cn'
 import { SoundButton } from './sound-button'
 

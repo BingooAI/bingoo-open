@@ -32,7 +32,7 @@ const PALETTE = ['#2e62ec', '#f74c6c', '#18b862', '#ffaf0c', '#7c5cff', '#00b9b4
 /**
  * Waffle diagram — a 10×10 grid where one square is one per cent. Pick a category,
  * then tap squares to shade them. Grading (the count per category) lives in
- * `@bingoo/core`. Tap-based → web + mobile. i18n-free.
+ * `@bingoo.ai/core`. Tap-based → web + mobile. i18n-free.
  */
 export function WaffleGrid({
   size = 10,

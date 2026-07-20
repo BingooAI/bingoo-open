@@ -12,14 +12,14 @@ import type { Aspect, Pose, Rect, StyleTokens, ElementType, GateSpec, Diagram, B
 import { asDiagram, asManipulative } from './schema'
 import type { Chrome } from './layout'
 import type { Ambient } from './schema'
-import { getManipulative } from '@bingoo/manipulatives'
-import type { ManipModel } from '@bingoo/manipulatives'
+import { getManipulative } from '@bingoo.ai/manipulatives'
+import type { ManipModel } from '@bingoo.ai/manipulatives'
 import { graphLayout, type GraphLayout } from './layout'
 import type { Program, SceneSlot } from './runtime'
 import type { ExplainerDoc } from './schema'
 import { sceneAt } from './runtime'
 import type { DiagramRenderState } from './choreographer'
-import { easeOutCubic } from '@bingoo/manipulatives'
+import { easeOutCubic } from '@bingoo.ai/manipulatives'
 
 /* ------------------------------------------------------ resolved render data */
 

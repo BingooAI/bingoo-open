@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import { auth } from '../auth/auth'
 
 /**

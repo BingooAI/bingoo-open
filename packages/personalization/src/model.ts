@@ -3,7 +3,7 @@
  * Cùng Instruction Plan → nhiều spec khác nhau; CHUẨN/cut KHÔNG đổi theo level (CONTENT-ARCHITECTURE §6).
  */
 
-import type { Slug } from '@bingoo/knowledge-engine'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
 
 export type LearningLevel = 'L1' | 'L2' | 'L3'
 export type DifficultyBand = 'easy' | 'core' | 'stretch'

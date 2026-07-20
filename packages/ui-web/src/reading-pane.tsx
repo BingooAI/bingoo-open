@@ -1,6 +1,6 @@
 'use client'
 
-import type { ContentBlock } from '@bingoo/core'
+import type { ContentBlock } from '@bingoo.ai/core'
 import { Minus, Plus } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { ContentBlocks } from './content-blocks'

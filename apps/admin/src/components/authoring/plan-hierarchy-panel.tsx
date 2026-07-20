@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Badge, Button, useToast } from '@bingoo/ui-web'
+import { Badge, Button, useToast } from '@bingoo.ai/ui-web'
 import { Check, ChevronDown, Lock, RefreshCw } from 'lucide-react'
 import {
   useApprovePlan,

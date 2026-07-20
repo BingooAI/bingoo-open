@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Button } from '@bingoo/ui-web'
+import { Button } from '@bingoo.ai/ui-web'
 import { AlertTriangle, Ban, X } from 'lucide-react'
 import type { PlanJobDto } from '@/lib/authoring-queries'
 

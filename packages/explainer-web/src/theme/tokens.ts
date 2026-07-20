@@ -5,7 +5,7 @@
  * whole explainer's look flows through, and it's what the editor's inspector
  * offers instead of free-form colour pickers.
  */
-import type { ThemeTokens } from '@bingoo/explainer'
+import type { ThemeTokens } from '@bingoo.ai/explainer'
 
 export const defaultTheme: ThemeTokens = {
   colors: {

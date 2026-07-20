@@ -1,5 +1,5 @@
 {
-  "name": "@bingoo/i18n",
+  "name": "@bingoo.ai/i18n",
   "version": "0.1.0",
   "private": true,
   "description": "Bingoo shared i18n — locale config + ICU message catalog (web & mobile).",

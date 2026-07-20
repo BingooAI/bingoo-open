@@ -1,7 +1,7 @@
 'use client'
 
-import { deriveCapabilities } from '@bingoo/learning-experience'
-import { cn } from '@bingoo/ui-web'
+import { deriveCapabilities } from '@bingoo.ai/learning-experience'
+import { cn } from '@bingoo.ai/ui-web'
 import type { ReactNode } from 'react'
 import { ChromeBar } from './chrome-bar'
 import { ArenaMode, PracticeBattle } from './modes/arena-mode'

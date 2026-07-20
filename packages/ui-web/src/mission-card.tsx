@@ -1,4 +1,4 @@
-import { missionProgress } from '@bingoo/core'
+import { missionProgress } from '@bingoo.ai/core'
 import { Check } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { IconChip, type IconChipColor } from './icon-chip'
@@ -23,7 +23,7 @@ export interface MissionCardProps {
 /**
  * A daily/weekly mission (quest) card: icon, title, progress + reward. Fluid
  * width so it flows in a lesson list, a game hub, a feed card, or an arena panel.
- * Progress math from `@bingoo/core`. i18n-free.
+ * Progress math from `@bingoo.ai/core`. i18n-free.
  */
 export function MissionCard({
   icon,

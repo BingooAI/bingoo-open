@@ -1,7 +1,7 @@
 import { Heart } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Logo } from '@/components/brand/logo'
-import { Container } from '@bingoo/ui-web'
+import { Container } from '@bingoo.ai/ui-web'
 import { Link } from '@/i18n/navigation'
 
 const GROUPS = {

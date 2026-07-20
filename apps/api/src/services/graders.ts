@@ -6,7 +6,7 @@
  * đúng graderKind là chấm được, không đụng dispatcher.
  */
 
-import { manipGrader, primitiveMeta, quizGrader, type Grader } from '@bingoo/authored-item'
+import { manipGrader, primitiveMeta, quizGrader, type Grader } from '@bingoo.ai/authored-item'
 import {
   coloringScore,
   scoreTracedStroke,
@@ -14,7 +14,7 @@ import {
   type DrawPoint,
   type Grade,
   type TracingGlyph,
-} from '@bingoo/core'
+} from '@bingoo.ai/core'
 
 /** coloringPicture: tỉ lệ tô đúng. response = { areaId: color }. */
 const coloringGrader: Grader = (payload, response): Grade => {

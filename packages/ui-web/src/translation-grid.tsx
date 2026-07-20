@@ -1,6 +1,6 @@
 'use client'
 
-import { translateCells } from '@bingoo/core'
+import { translateCells } from '@bingoo.ai/core'
 import { cn } from './lib/cn'
 import { POP, SHAKE, tile } from './lib/interactive'
 
@@ -25,7 +25,7 @@ export interface TranslationGridProps {
 /**
  * Translation on a square grid — move the shape with the arrows, or describe a move that
  * has already happened. Positive dy is UP, the way the books say it. Grading lives in
- * `@bingoo/core`. Tap-based → web + mobile. i18n-free (arrows, not words).
+ * `@bingoo.ai/core`. Tap-based → web + mobile. i18n-free (arrows, not words).
  */
 export function TranslationGrid({
   rows,

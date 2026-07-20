@@ -1,6 +1,6 @@
 'use client'
 
-import type { QuizItem, VennRegion } from '@bingoo/core'
+import type { QuizItem, VennRegion } from '@bingoo.ai/core'
 import { useQuizText } from './quiz-locale'
 import { Check, X } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
@@ -24,7 +24,7 @@ export interface VennBoardProps {
 /**
  * Sort items into a two-set Venn diagram by tapping: tap an item to arm it, tap a
  * region (A-only / overlap / B-only / outside) to drop it. Tap-based → works on
- * web + mobile. Grading in `@bingoo/core`. i18n-free.
+ * web + mobile. Grading in `@bingoo.ai/core`. i18n-free.
  */
 export function VennBoard({
   labelA,

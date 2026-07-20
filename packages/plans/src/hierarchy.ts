@@ -7,7 +7,7 @@
  * đồ, không phải chỉ vài dòng.
  */
 
-import type { Slug } from '@bingoo/knowledge-engine'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
 import type { LocalizedText } from './model'
 
 /** Tóm tắt một unit trong kế hoạch khoá — vừa làm context, vừa để kiểm coverage. */

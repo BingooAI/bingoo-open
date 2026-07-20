@@ -4,8 +4,8 @@
  * Nguồn: prompt (brief) hoặc sách PDF (OCR qua vision). Chi tiết bài sinh sau ở /plan/generate.
  */
 
-import type { Slug } from '@bingoo/knowledge-engine'
-import type { CoursePlan } from '@bingoo/plans'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
+import type { CoursePlan } from '@bingoo.ai/plans'
 import { getAi, getVision } from '../providers'
 import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'

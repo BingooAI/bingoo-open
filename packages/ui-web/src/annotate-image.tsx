@@ -1,6 +1,6 @@
 'use client'
 
-import { appendPoint, pointsToSvgPath, type DrawPoint, type DrawStroke } from '@bingoo/core'
+import { appendPoint, pointsToSvgPath, type DrawPoint, type DrawStroke } from '@bingoo.ai/core'
 import { Undo2 } from 'lucide-react'
 import { useRef, useState, type PointerEvent } from 'react'
 import { cn } from './lib/cn'
@@ -23,7 +23,7 @@ export interface AnnotateImageProps {
 
 /**
  * Draw / annotate on an image — freehand strokes over a picture (circle the odd
- * one out, mark the parts…). Open response: `@bingoo/core` counts any annotation.
+ * one out, mark the parts…). Open response: `@bingoo.ai/core` counts any annotation.
  * Geometry helpers are shared with the free-draw canvas; native twin draws alike.
  */
 export function AnnotateImage({

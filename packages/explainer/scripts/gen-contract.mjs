@@ -13,7 +13,7 @@
  *   contract/scene-draft.schema.json ← JSON Schema for constrained decoding
  *   contract/examples.json         ← one gate-passing scene per template
  *
- * Run: pnpm --filter @bingoo/explainer contract
+ * Run: pnpm --filter @bingoo.ai/explainer contract
  */
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'

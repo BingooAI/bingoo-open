@@ -3,7 +3,7 @@
  * dù môn gì / vai gì, đều là MỘT ĐIỂM trong không gian 5 trục. "Chất liệu" (công thức đặt sẵn,
  * nhãn hiển thị) là DỮ LIỆU ở nơi khác, không nhồi vào đây.
  *
- * Cùng triết lý với `@bingoo/facets`: đưa thứ PHÂN BIỆT vào dữ liệu có cấu trúc thay vì chôn trong
+ * Cùng triết lý với `@bingoo.ai/facets`: đưa thứ PHÂN BIỆT vào dữ liệu có cấu trúc thay vì chôn trong
  * câu chữ, để "trải nghiệm này khác gì trải nghiệm kia" thành SO SÁNH CẤU TRÚC, không cần đoán.
  */
 

@@ -31,7 +31,7 @@ function dialAt(v: number, min: number, max: number, radius = 38) {
 
 /**
  * Read a graduated scale — a thermometer (vertical) or a dial gauge. Tap a tick to
- * set the reading. Grading (value === answer) in `@bingoo/core`. i18n-free.
+ * set the reading. Grading (value === answer) in `@bingoo.ai/core`. i18n-free.
  */
 export function ScaleReader({
   shape = 'thermometer',

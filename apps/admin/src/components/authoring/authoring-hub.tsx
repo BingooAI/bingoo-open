@@ -1,7 +1,7 @@
 'use client'
 
 import { BookOpen, GitCompareArrows, LayoutGrid, Network, SquareStack } from 'lucide-react'
-import { Card, CardContent } from '@bingoo/ui-web'
+import { Card, CardContent } from '@bingoo.ai/ui-web'
 import { Link } from '@/i18n/navigation'
 import { useCourses, useFrameworks } from '@/lib/authoring-queries'
 

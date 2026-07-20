@@ -10,12 +10,12 @@
  * stale example teaches the model to produce exactly the scene the importer will
  * then reject, which is worse than shipping no example at all.
  *
- * Run: pnpm --filter @bingoo/explainer prompt
+ * Run: pnpm --filter @bingoo.ai/explainer prompt
  */
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
-import { MANIPULATIVES } from '@bingoo/manipulatives'
+import { MANIPULATIVES } from '@bingoo.ai/manipulatives'
 import { promptMarkdown, templateCatalog, checkScene } from '../src/index.ts'
 import { EXAMPLES } from '../src/examples.ts'
 

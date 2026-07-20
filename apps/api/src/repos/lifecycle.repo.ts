@@ -1,5 +1,5 @@
-import { db } from '@bingoo/db'
-import { deriveAccountType, isSynthEmail } from '@bingoo/core'
+import { db } from '@bingoo.ai/db'
+import { deriveAccountType, isSynthEmail } from '@bingoo.ai/core'
 import { writeAudit } from './audit.repo'
 import { resolveConsentConfig } from './config.repo'
 

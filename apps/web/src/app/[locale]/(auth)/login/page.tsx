@@ -5,11 +5,11 @@ import { useTranslations } from 'next-intl'
 import { useState, type FormEvent } from 'react'
 import { AuthHeader } from '@/components/auth/auth-header'
 import { AuthDivider, SocialButtons } from '@/components/auth/social-buttons'
-import { Button, Checkbox, Field, Input, PasswordInput } from '@bingoo/ui-web'
+import { Button, Checkbox, Field, Input, PasswordInput } from '@bingoo.ai/ui-web'
 import { Link, useRouter } from '@/i18n/navigation'
 import { signIn } from '@/lib/auth-client'
 import { authErrorKey } from '@/lib/auth-errors'
-import { isEmail } from '@bingoo/core'
+import { isEmail } from '@bingoo.ai/core'
 
 export default function LoginPage() {
   const t = useTranslations('auth')

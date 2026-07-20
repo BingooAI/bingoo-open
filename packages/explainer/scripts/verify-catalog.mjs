@@ -22,7 +22,7 @@ import {
 import { EXAMPLES } from '../src/examples.ts'
 import { REFERENCE_DOC, REFERENCE_BUNDLE } from '../src/reference.ts'
 import { checkLesson, lintDoc, parseDoc, parseBundle, quizDocs, quizGuide } from '../src/index.ts'
-import { QUIZ_TYPES } from '@bingoo/core'
+import { QUIZ_TYPES } from '@bingoo.ai/core'
 
 let failed = 0
 const ok = (cond, msg) => {
@@ -115,12 +115,12 @@ try {
   const md = readFileSync(join(dir, 'AUTHORING.md'), 'utf8')
   ok(
     md.includes(authoringGuide()),
-    'contract/AUTHORING.md is STALE — run `pnpm --filter @bingoo/explainer contract`',
+    'contract/AUTHORING.md is STALE — run `pnpm --filter @bingoo.ai/explainer contract`',
   )
   const cat = JSON.parse(readFileSync(join(dir, 'catalog.json'), 'utf8'))
   ok(
     JSON.stringify(cat.templates) === JSON.stringify(templateCatalog()),
-    'contract/catalog.json is STALE — run `pnpm --filter @bingoo/explainer contract`',
+    'contract/catalog.json is STALE — run `pnpm --filter @bingoo.ai/explainer contract`',
   )
   // PROMPT.md must be BYTE-IDENTICAL to what promptMarkdown() builds — that is
   // the same function the admin download button calls, so a drift here means a
@@ -128,11 +128,11 @@ try {
   const prompt = readFileSync(join(dir, 'PROMPT.md'), 'utf8')
   ok(
     prompt === promptMarkdown(),
-    'contract/PROMPT.md is STALE — run `pnpm --filter @bingoo/explainer prompt`',
+    'contract/PROMPT.md is STALE — run `pnpm --filter @bingoo.ai/explainer prompt`',
   )
 } catch (e) {
   if (e.code === 'ENOENT')
-    ok(false, 'contract/ not generated — run `pnpm --filter @bingoo/explainer contract`')
+    ok(false, 'contract/ not generated — run `pnpm --filter @bingoo.ai/explainer contract`')
   else throw e
 }
 

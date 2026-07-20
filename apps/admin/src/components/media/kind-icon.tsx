@@ -9,7 +9,7 @@ import {
   Video,
   type LucideIcon,
 } from 'lucide-react'
-import type { MediaKind } from '@bingoo/core'
+import type { MediaKind } from '@bingoo.ai/core'
 
 const ICONS: Record<MediaKind, LucideIcon> = {
   IMAGE: ImageIcon,

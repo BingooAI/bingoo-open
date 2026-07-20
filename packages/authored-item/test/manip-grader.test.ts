@@ -8,7 +8,7 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import { INTERACTIVE_KITS } from '@bingoo/manipulatives'
+import { INTERACTIVE_KITS } from '@bingoo.ai/manipulatives'
 import { isKnownPrimitive, manipGrader, manipKind, primitiveMeta } from '../src/index'
 
 describe('đăng ký kit — động + namespace', () => {

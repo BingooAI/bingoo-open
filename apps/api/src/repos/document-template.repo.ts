@@ -1,6 +1,6 @@
-import type { LocalizedText } from '@bingoo/core'
-import { db } from '@bingoo/db'
-import type { MediaScope, Prisma } from '@bingoo/db'
+import type { LocalizedText } from '@bingoo.ai/core'
+import { db } from '@bingoo.ai/db'
+import type { MediaScope, Prisma } from '@bingoo.ai/db'
 
 /**
  * DocumentTemplate (docs/media-library-design.md §6) — server-controlled (R6)

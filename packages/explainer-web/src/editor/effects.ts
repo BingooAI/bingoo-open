@@ -6,7 +6,13 @@
  * the beat + cue + per-locale mark behind the scenes, so nobody ever types a
  * cue string or picks a verb. Adding an effect "at the playhead" just works.
  */
-import type { ExplainerDoc, LocaleBundle, Scene, VisualAction, ManipulativeContent } from '@bingoo/explainer'
+import type {
+  ExplainerDoc,
+  LocaleBundle,
+  Scene,
+  VisualAction,
+  ManipulativeContent,
+} from '@bingoo.ai/explainer'
 import type { EditOp } from './store/ops'
 
 export type EffectGroup = 'in' | 'emph' | 'out'

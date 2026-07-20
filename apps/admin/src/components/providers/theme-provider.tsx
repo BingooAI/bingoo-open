@@ -5,7 +5,7 @@ import type { ComponentProps } from 'react'
 
 /**
  * App-wide theme controller (next-themes). Themes are driven by the `data-theme`
- * attribute, so the semantic tokens from @bingoo/tokens swap automatically —
+ * attribute, so the semantic tokens from @bingoo.ai/tokens swap automatically —
  * light + dark both covered by the shared token set.
  */
 export const THEMES = ['light', 'dark'] as const

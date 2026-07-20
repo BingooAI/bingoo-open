@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
-import type { LocalizedText } from '@bingoo/core'
-import { db } from '@bingoo/db'
+import type { LocalizedText } from '@bingoo.ai/core'
+import { db } from '@bingoo.ai/db'
 import { getAi, getStorage } from '../providers'
 import { initialModeration } from '../lib/media-moderation'
 import { extForMime, renditionStorageKey } from '../lib/media-serialize'

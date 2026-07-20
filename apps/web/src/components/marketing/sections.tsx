@@ -33,7 +33,7 @@ import {
   type IconChipColor,
   Container,
   Section,
-} from '@bingoo/ui-web'
+} from '@bingoo.ai/ui-web'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 

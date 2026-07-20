@@ -1,5 +1,5 @@
 /**
- * Adapter LLM cho pipeline @bingoo/authoring — hiện thực các port bằng hạ tầng provider
+ * Adapter LLM cho pipeline @bingoo.ai/authoring — hiện thực các port bằng hạ tầng provider
  * sẵn có (getAi = Claude mặc định, getEmbedding). Lõi authoring vẫn thuần; đây là biên "bẩn".
  * Mọi output model đều qua sanitize — KHÔNG tin shape model trả (xem media-nl-query).
  */
@@ -12,8 +12,8 @@ import type {
   EdgeProposerPort,
   EmbeddingPort,
   VisionPort,
-} from '@bingoo/authoring'
-import type { CompetencyKind } from '@bingoo/knowledge-engine'
+} from '@bingoo.ai/authoring'
+import type { CompetencyKind } from '@bingoo.ai/knowledge-engine'
 import {
   BLOOM,
   FLUENCY,
@@ -22,7 +22,7 @@ import {
   type Facets,
   type Fluency,
   type Transfer,
-} from '@bingoo/facets'
+} from '@bingoo.ai/facets'
 import { getAi, getEmbedding, getVision } from '../providers'
 import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'

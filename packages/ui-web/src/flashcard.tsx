@@ -1,6 +1,6 @@
 'use client'
 
-import type { SrsGrade } from '@bingoo/core'
+import type { SrsGrade } from '@bingoo.ai/core'
 import { useState, type ReactNode } from 'react'
 import { Button } from './button'
 import { cn } from './lib/cn'
@@ -84,7 +84,7 @@ export interface DeckCard {
 export interface FlashcardDeckProps {
   cards: DeckCard[]
   labels: FlashcardDeckLabels
-  /** Called when a card is graded (feed to `@bingoo/core`'s reviewCard). */
+  /** Called when a card is graded (feed to `@bingoo.ai/core`'s reviewCard). */
   onGrade?: (cardId: string, grade: SrsGrade) => void
   onComplete?: () => void
   className?: string

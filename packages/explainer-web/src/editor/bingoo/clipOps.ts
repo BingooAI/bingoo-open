@@ -4,7 +4,7 @@
  * has no entrance/exit yet, dragging creates one (a fade in/out) at that time —
  * so the creator never touches a cue string.
  */
-import type { ExplainerDoc, LocaleBundle } from '@bingoo/explainer'
+import type { ExplainerDoc, LocaleBundle } from '@bingoo.ai/explainer'
 import type { EditOp } from '../store/ops'
 import type { Clip } from './clips'
 import { EFFECTS, buildAddEffectOps } from '../effects'

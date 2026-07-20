@@ -7,7 +7,7 @@
 import { describe, expect, it } from 'vitest'
 import { planQuality } from '../src/quality'
 import type { CoursePlan, KcArc, LessonInstructionPlan, LessonStep } from '../src/model'
-import type { SkillGraph } from '@bingoo/knowledge-engine'
+import type { SkillGraph } from '@bingoo.ai/knowledge-engine'
 
 const mkGraph = (prereqs: Record<string, string[]> = {}): SkillGraph =>
   ({

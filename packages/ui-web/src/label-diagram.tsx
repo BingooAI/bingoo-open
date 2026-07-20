@@ -1,6 +1,6 @@
 'use client'
 
-import type { DiagramHotspot, QuizItem } from '@bingoo/core'
+import type { DiagramHotspot, QuizItem } from '@bingoo.ai/core'
 import { useQuizText } from './quiz-locale'
 import { useState } from 'react'
 import { cn } from './lib/cn'
@@ -23,7 +23,7 @@ export interface LabelDiagramProps {
 /**
  * Label a diagram: tap a label, then tap the spot it belongs to (plant parts,
  * body parts). Tap-based → web + mobile. The figure is an image and/or emoji
- * hotspots. Grading in `@bingoo/core`. i18n-free.
+ * hotspots. Grading in `@bingoo.ai/core`. i18n-free.
  */
 export function LabelDiagram({
   hotspots,

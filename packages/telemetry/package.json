@@ -1,5 +1,5 @@
 {
-  "name": "@bingoo/telemetry",
+  "name": "@bingoo.ai/telemetry",
   "version": "0.1.0",
   "private": true,
   "description": "Sự kiện thô UI → ngữ cảnh làm giàu bằng chứng. Telemetry ≠ Evidence.",
@@ -11,7 +11,7 @@
   },
   "types": "./src/index.ts",
   "dependencies": {
-    "@bingoo/knowledge-engine": "workspace:^"
+    "@bingoo.ai/knowledge-engine": "workspace:^"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

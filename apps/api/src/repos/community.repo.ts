@@ -1,4 +1,4 @@
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import { AppError } from '../lib/errors'
 
 /**

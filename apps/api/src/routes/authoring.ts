@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { z } from 'zod'
-import type { GraphData } from '@bingoo/knowledge-engine'
-import type { RawSource } from '@bingoo/authoring'
+import type { GraphData } from '@bingoo.ai/knowledge-engine'
+import type { RawSource } from '@bingoo.ai/authoring'
 import type { AppEnv } from '../lib/context'
 import { AppError } from '../lib/errors'
 import { ok } from '../lib/response'
@@ -10,11 +10,11 @@ import { requireRole } from '../auth'
 import { ingestSource } from '../services/authoring-ingest.service'
 import { applyAuthoredFramework } from '../services/authoring.service'
 import type { FrameworkMeta } from '../repos/authoring.repo'
-import type { CompiledObjective } from '@bingoo/authoring'
+import type { CompiledObjective } from '@bingoo.ai/authoring'
 import { generateLessonContent } from '../services/content-generate.service'
 import { generateOneItem } from '../services/content-item-gen.service'
 import { allPrimitives, primitiveInfos, recommendPrimitives } from '../services/primitive-info.service'
-import { applyMediaAsset } from '@bingoo/authored-item'
+import { applyMediaAsset } from '@bingoo.ai/authored-item'
 import { itemMediaSlots } from '../services/item-media.service'
 import { getAssetById } from '../repos/media-asset.repo'
 import { serializeAsset } from '../lib/media-serialize'
@@ -62,8 +62,8 @@ import {
   listStages,
   publishFrameworkVersion,
 } from '../repos/authoring.repo'
-import type { LessonInstructionPlan } from '@bingoo/plans'
-import type { EngineSnapshot, LearnerPersona, TeacherPersona } from '@bingoo/personalization'
+import type { LessonInstructionPlan } from '@bingoo.ai/plans'
+import type { EngineSnapshot, LearnerPersona, TeacherPersona } from '@bingoo.ai/personalization'
 
 /**
  * Authoring — biên soạn khung năng lực. S2: nguồn thô → (LLM) đồ thị KC ứng viên (DỪNG ở review).

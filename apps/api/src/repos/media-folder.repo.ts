@@ -1,6 +1,6 @@
-import { buildTreePath, type LocalizedText } from '@bingoo/core'
-import { db } from '@bingoo/db'
-import type { MediaScope, MediaVisibility } from '@bingoo/db'
+import { buildTreePath, type LocalizedText } from '@bingoo.ai/core'
+import { db } from '@bingoo.ai/db'
+import type { MediaScope, MediaVisibility } from '@bingoo.ai/db'
 
 /**
  * Media folder tree (docs/media-library-design.md §3.2) — the human navigation

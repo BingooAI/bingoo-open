@@ -4,7 +4,7 @@
  * DOCUMENT asset + its Markdown in R2, then cleans up. Hits live OpenAI.
  * Run: `node --env-file=.env --import tsx src/scripts/media-doc-check.ts`
  */
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import { getStorage } from '../providers'
 import { createTemplate } from '../repos/document-template.repo'
 import { deleteAsset, getAssetById, listRenditions } from '../repos/media-asset.repo'

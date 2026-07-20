@@ -12,7 +12,7 @@
  */
 
 // Web Crypto is a global in every runtime we ship to; declared narrowly here
-// because @bingoo/core's tsconfig ships no DOM/Node lib.
+// because @bingoo.ai/core's tsconfig ships no DOM/Node lib.
 declare const crypto: { getRandomValues<T extends Uint8Array>(array: T): T }
 
 /** Crockford base32 — omits I, L, O, U (ambiguity + accidental words). */

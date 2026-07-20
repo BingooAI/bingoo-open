@@ -1,6 +1,6 @@
 /** Biên dịch Instruction Plan → dữ liệu host/engine dùng (lessonTeaches, blueprint certify). */
 
-import type { Slug } from '@bingoo/knowledge-engine'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
 import type { AssessmentPlan, CoursePlan } from './model'
 
 /** lessonSlug → khái niệm bài dạy (cho lessonTeaches / rollup). */

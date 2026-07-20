@@ -1,6 +1,6 @@
 'use client'
 
-import type { ArrowEdge, DiagramHotspot } from '@bingoo/core'
+import type { ArrowEdge, DiagramHotspot } from '@bingoo.ai/core'
 import { X } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from './lib/cn'
@@ -29,7 +29,7 @@ const edgeKey = (e: { from: string; to: string }, directed: boolean) =>
 /**
  * Draw arrows between points — force diagrams, matching direction, number-line
  * jumps. Tap a node to arm it, tap another to connect; remove an arrow from the
- * chip list. Tap-based → works web + mobile. Grading in `@bingoo/core`. i18n-free.
+ * chip list. Tap-based → works web + mobile. Grading in `@bingoo.ai/core`. i18n-free.
  */
 export function ArrowInput({
   nodes,

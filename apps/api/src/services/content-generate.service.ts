@@ -5,15 +5,15 @@
  * Instruction Plan + persona → GenerationSpec → sinh cả 2 → ráp LessonContentBundle → persist (NEEDS_REVIEW).
  */
 
-import type { AuthoredItem } from '@bingoo/authored-item'
-import { assembleLessonContent, type LessonContentBundle } from '@bingoo/content-gen'
-import type { LessonInstructionPlan } from '@bingoo/plans'
+import type { AuthoredItem } from '@bingoo.ai/authored-item'
+import { assembleLessonContent, type LessonContentBundle } from '@bingoo.ai/content-gen'
+import type { LessonInstructionPlan } from '@bingoo.ai/plans'
 import {
   contentPlan,
   type EngineSnapshot,
   type LearnerPersona,
   type TeacherPersona,
-} from '@bingoo/personalization'
+} from '@bingoo.ai/personalization'
 import { buildExpositionPort, buildFlashcardPort, buildGeneratorPort } from './content-adapters'
 import { saveItems } from '../repos/content-item.repo'
 import { computeSnapshot } from './knowledge.service'

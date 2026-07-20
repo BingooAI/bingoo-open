@@ -3,7 +3,7 @@
 import { Laptop, Smartphone } from 'lucide-react'
 import { useFormatter, useTranslations } from 'next-intl'
 import { useCallback, useEffect, useState } from 'react'
-import { Button } from '@bingoo/ui-web'
+import { Button } from '@bingoo.ai/ui-web'
 import { listSessions, revokeOtherSessions, revokeSession, useSession } from '@/lib/auth-client'
 
 interface DeviceSession {

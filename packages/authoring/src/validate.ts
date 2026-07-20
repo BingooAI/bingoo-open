@@ -1,6 +1,6 @@
 /** Kiểm bản nháp đã compile — tái dùng validator của engine. Lưới an toàn học thuật. */
 
-import { buildGraph, coverageReport, findOrderingCycle, type GraphData } from '@bingoo/knowledge-engine'
+import { buildGraph, coverageReport, findOrderingCycle, type GraphData } from '@bingoo.ai/knowledge-engine'
 import type { CompiledFramework } from './compile'
 
 export type IssueSeverity = 'error' | 'warning'

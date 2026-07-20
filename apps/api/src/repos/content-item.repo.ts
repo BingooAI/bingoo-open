@@ -3,10 +3,10 @@
  * Đo được + đã duyệt → Candidate (CandidatePort); tra theo itemKey để chấm (GraderPort).
  */
 
-import { db, type Prisma } from '@bingoo/db'
-import type { AuthoredItem } from '@bingoo/authored-item'
-import { compileBank } from '@bingoo/authored-item'
-import type { Candidate, Slug } from '@bingoo/knowledge-engine'
+import { db, type Prisma } from '@bingoo.ai/db'
+import type { AuthoredItem } from '@bingoo.ai/authored-item'
+import { compileBank } from '@bingoo.ai/authored-item'
+import type { Candidate, Slug } from '@bingoo.ai/knowledge-engine'
 
 type ItemStatus = 'DRAFT' | 'NEEDS_REVIEW' | 'APPROVED' | 'PUBLISHED'
 

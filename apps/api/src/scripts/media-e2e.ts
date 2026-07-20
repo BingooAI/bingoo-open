@@ -5,7 +5,7 @@
  * both vi and en. Run: `node --env-file=.env --import tsx src/scripts/media-e2e.ts`
  * Creates then deletes its fixtures.
  */
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import { getSearch, getStorage } from '../providers'
 import {
   buildMediaSubject,

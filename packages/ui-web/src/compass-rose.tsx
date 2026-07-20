@@ -1,6 +1,6 @@
 'use client'
 
-import { COMPASS_DIRECTIONS, type CompassDirection } from '@bingoo/core'
+import { COMPASS_DIRECTIONS, type CompassDirection } from '@bingoo.ai/core'
 import { cn } from './lib/cn'
 import { stagger, tile, tileState } from './lib/interactive'
 
@@ -39,7 +39,7 @@ const A: Record<CompassDirection, number> = {
 
 /**
  * 8-point compass — read a small map, then name the direction from one place to another.
- * The answer is derived from the map's geometry in `@bingoo/core`, so it cannot drift.
+ * The answer is derived from the map's geometry in `@bingoo.ai/core`, so it cannot drift.
  * i18n-free: the rose is labelled with the standard N/NE/E… abbreviations.
  */
 export function CompassRose({

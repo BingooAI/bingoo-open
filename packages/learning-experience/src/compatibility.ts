@@ -1,6 +1,6 @@
 /**
  * Luật TƯƠNG THÍCH — không phải tổ hợp 5 trục nào cũng có nghĩa. Thay "cảm giác kỳ kỳ" bằng một
- * VỊ TỪ dứt khoát trên dữ liệu có cấu trúc (giống `@bingoo/facets.compareIdentity`):
+ * VỊ TỪ dứt khoát trên dữ liệu có cấu trúc (giống `@bingoo.ai/facets.compareIdentity`):
  *
  *   • INVALID     — MÂU THUẪN cấu trúc, không thể tồn tại (vd: học trực tiếp mà lại tự học async).
  *   • DISCOURAGED — chạy được nhưng LỆCH KHUÔN, gần như luôn là nhầm (vd: "feed" mà theo lớp).

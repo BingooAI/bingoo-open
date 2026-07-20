@@ -2,13 +2,13 @@
  * explainer-gen — the multi-stage lesson generator (outline → write → critic →
  * regen) run server-side on bingoo's AiPort. The engine-owned pipeline is
  * unchanged; here we build its deps: the LLM is `explainerComplete` (AiPort), the
- * kit catalogue comes from the live @bingoo/manipulatives registry, and a
+ * kit catalogue comes from the live @bingoo.ai/manipulatives registry, and a
  * concise authoring ruleset grounds the writer.
  */
-import { MANIPULATIVES } from '@bingoo/manipulatives'
-import type { LessonBrief } from '@bingoo/explainer'
-import { promptMarkdown, planForScenes } from '@bingoo/explainer'
-import { db } from '@bingoo/db'
+import { MANIPULATIVES } from '@bingoo.ai/manipulatives'
+import type { LessonBrief } from '@bingoo.ai/explainer'
+import { promptMarkdown, planForScenes } from '@bingoo.ai/explainer'
+import { db } from '@bingoo.ai/db'
 import { generateLesson, type GenDeps, type GenResult, type BankItem } from './pipeline'
 import { explainerComplete } from '../explainer.service'
 

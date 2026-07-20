@@ -23,7 +23,7 @@ export interface LineGraphProps {
 /**
  * Line graph / dot plot — tap a height in each column to plot that x's value; the
  * points join into a line (or stay as dots). Values may sit BETWEEN gridlines, as
- * they do in the books. Grading in `@bingoo/core`. Tap-based → web + mobile.
+ * they do in the books. Grading in `@bingoo.ai/core`. Tap-based → web + mobile.
  */
 export function LineGraph({
   style = 'line',

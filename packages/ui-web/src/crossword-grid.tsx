@@ -1,6 +1,6 @@
 'use client'
 
-import { crosswordCells, type CrosswordEntry } from '@bingoo/core'
+import { crosswordCells, type CrosswordEntry } from '@bingoo.ai/core'
 import { cn } from './lib/cn'
 import { tile } from './lib/interactive'
 
@@ -21,7 +21,7 @@ export interface CrosswordGridProps {
 
 /**
  * Crossword — type letters into the open cells from the across/down clues. Grading
- * (each cell matches) in `@bingoo/core`, which also validates letter crossings when
+ * (each cell matches) in `@bingoo.ai/core`, which also validates letter crossings when
  * the puzzle is authored. i18n-free (clue-list headings are props).
  */
 export function CrosswordGrid({

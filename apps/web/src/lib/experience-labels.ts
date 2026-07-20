@@ -1,10 +1,10 @@
-import type { LearningExperienceLabels } from '@bingoo/ui-web'
+import type { LearningExperienceLabels } from '@bingoo.ai/ui-web'
 
 /** Translator (next-intl) đã bound namespace `kitchenSink.experiences`. */
 type ExpT = (key: string) => string
 
 /**
- * Dựng bảng nhãn 5 trục cho `@bingoo/ui-web` từ i18n (`kitchenSink.experiences`). Một nơi duy nhất
+ * Dựng bảng nhãn 5 trục cho `@bingoo.ai/ui-web` từ i18n (`kitchenSink.experiences`). Một nơi duy nhất
  * để cả /learn lẫn kitchen-sink dùng — component ui-web i18n-free nên host phải cấp nhãn (R4).
  */
 export function buildExperienceLabels(exp: ExpT): LearningExperienceLabels {

@@ -26,10 +26,10 @@ import type {
   ChartRenderContent,
   StatRenderContent,
   QuoteRenderContent,
-} from '@bingoo/explainer'
+} from '@bingoo.ai/explainer'
 import { resolveStyle } from '../theme/tokens'
 import { itemTransform, wrapText } from './util'
-import { rungSize } from '@bingoo/explainer'
+import { rungSize } from '@bingoo.ai/explainer'
 
 type Canvas = { w: number; h: number }
 const col = (theme: ThemeTokens, id: string | undefined, fb: string) =>

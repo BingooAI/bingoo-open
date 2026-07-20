@@ -5,8 +5,8 @@
  * → theme colours; geometry is already in the drawing box's coordinates.
  */
 import * as React from 'react'
-import type { ThemeTokens } from '@bingoo/explainer'
-import type { Prim, Weight } from '@bingoo/manipulatives'
+import type { ThemeTokens } from '@bingoo.ai/explainer'
+import type { Prim, Weight } from '@bingoo.ai/manipulatives'
 import { SVG_ASSETS } from '../kit/svgAssets'
 
 export function col(theme: ThemeTokens, id: string | undefined, fallback = 'ink'): string {

@@ -3,8 +3,8 @@
  * ÔN TẬP ≠ EVIDENCE — bảng này KHÔNG dính SkillState/mastery.
  */
 
-import { db } from '@bingoo/db'
-import type { SrsState } from '@bingoo/core'
+import { db } from '@bingoo.ai/db'
+import type { SrsState } from '@bingoo.ai/core'
 
 export async function getSrsState(userId: string, itemKey: string): Promise<SrsState | null> {
   const r = await db.srsCardState.findUnique({

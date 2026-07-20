@@ -9,7 +9,7 @@
  * exposition, has generated audio (can't cut an mp3), or the playhead sits at a
  * boundary.
  */
-import type { ExplainerDoc, LocaleBundle, Scene, GateSpec } from '@bingoo/explainer'
+import type { ExplainerDoc, LocaleBundle, Scene, GateSpec } from '@bingoo.ai/explainer'
 import type { EditOp } from '../store/ops'
 
 function hasAudio(doc: ExplainerDoc, bundles: Record<string, LocaleBundle>, narrId?: string): boolean {

@@ -3,8 +3,8 @@
 import { CheckCircle2, Flag, X, XCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState, type ReactNode } from 'react'
-import { Button, Dialog, Field, Textarea, useToast } from '@bingoo/ui-web'
-import type { ModerationStatus } from '@bingoo/core'
+import { Button, Dialog, Field, Textarea, useToast } from '@bingoo.ai/ui-web'
+import type { ModerationStatus } from '@bingoo.ai/core'
 import { ApiError } from '@/lib/api-client'
 import { useModerateAsset, useModerateAssets, type ModerationDecision } from '@/lib/media-queries'
 

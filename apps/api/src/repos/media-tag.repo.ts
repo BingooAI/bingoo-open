@@ -1,6 +1,6 @@
-import { buildTreePath, normalizeTagSlug, pathToIds, type LocalizedText } from '@bingoo/core'
-import { db } from '@bingoo/db'
-import type { TagKind, TagRelType } from '@bingoo/db'
+import { buildTreePath, normalizeTagSlug, pathToIds, type LocalizedText } from '@bingoo.ai/core'
+import { db } from '@bingoo.ai/db'
+import type { TagKind, TagRelType } from '@bingoo.ai/db'
 
 /**
  * Tag taxonomy (docs/media-library-design.md §3.6) — a hierarchical controlled

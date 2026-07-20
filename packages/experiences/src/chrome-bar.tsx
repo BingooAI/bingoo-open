@@ -1,7 +1,7 @@
-import { AvatarGroup } from '@bingoo/ui-web'
+import { AvatarGroup } from '@bingoo.ai/ui-web'
 import { Radio } from 'lucide-react'
 import type { ReactNode } from 'react'
-import type { Capability } from '@bingoo/learning-experience'
+import type { Capability } from '@bingoo.ai/learning-experience'
 import type { ExperienceLabels, Participant } from './types'
 
 /** Thanh chrome phản ánh companion/scale/time/delivery qua năng lực suy ra (live/scheduled/roster). */

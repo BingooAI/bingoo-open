@@ -25,8 +25,8 @@ import {
   type ExistingKc,
   type NewConcept,
   type RawSource,
-} from '@bingoo/authoring'
-import type { DomainProfile, Facets } from '@bingoo/facets'
+} from '@bingoo.ai/authoring'
+import type { DomainProfile, Facets } from '@bingoo.ai/facets'
 import { getAi } from '../providers'
 import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'

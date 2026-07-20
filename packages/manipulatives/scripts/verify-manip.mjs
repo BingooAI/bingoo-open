@@ -1,5 +1,5 @@
 /**
- * verify-engine.mjs — headless verification of @bingoo/explainer against the REAL
+ * verify-engine.mjs — headless verification of @bingoo.ai/explainer against the REAL
  * engine (no test runner, no deps, NO demo lessons). Drives every registered
  * manipulative through its own render() and asserts the hard engine contracts:
  *   • registry integrity   — every kit in MANIPULATIVES is resolvable by kind

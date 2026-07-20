@@ -18,7 +18,7 @@ export interface NumericAnswerProps {
 }
 
 /** Numeric input for math questions (comma or dot decimals). Controlled +
- * i18n-free; grading (with tolerance) lives in `@bingoo/core`. */
+ * i18n-free; grading (with tolerance) lives in `@bingoo.ai/core`. */
 export function NumericAnswer({
   value,
   onChange,

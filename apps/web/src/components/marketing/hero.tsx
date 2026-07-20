@@ -2,7 +2,7 @@ import { FlaskConical, Palette, Play, ShieldCheck } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 import { Mascot } from '@/components/brand/mascot'
-import { buttonVariants, Container, IconChip, type IconChipColor } from '@bingoo/ui-web'
+import { buttonVariants, Container, IconChip, type IconChipColor } from '@bingoo.ai/ui-web'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 

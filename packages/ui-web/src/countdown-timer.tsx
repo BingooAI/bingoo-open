@@ -1,6 +1,6 @@
 'use client'
 
-import { countdownParts } from '@bingoo/core'
+import { countdownParts } from '@bingoo.ai/core'
 import { useEffect, useRef, useState } from 'react'
 import { cn } from './lib/cn'
 import { hudSurfaceClass } from './lib/hud'
@@ -36,7 +36,7 @@ const pad = (n: number) => String(n).padStart(2, '0')
 
 /**
  * A ticking countdown (d/h/m/s) for challenges, arena rounds, or limited events.
- * Self-ticking + SSR-safe (renders after mount). Breakdown from `@bingoo/core`.
+ * Self-ticking + SSR-safe (renders after mount). Breakdown from `@bingoo.ai/core`.
  */
 export function CountdownTimer({
   deadline,

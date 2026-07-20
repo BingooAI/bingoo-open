@@ -6,9 +6,9 @@
  */
 'use client'
 import * as React from 'react'
-import type { Scene } from '@bingoo/explainer'
-import { buildProgram } from '@bingoo/explainer'
-import { frame } from '@bingoo/explainer'
+import type { Scene } from '@bingoo.ai/explainer'
+import { buildProgram } from '@bingoo.ai/explainer'
+import { frame } from '@bingoo.ai/explainer'
 import { Stage } from '../../elements/Stage'
 import { useSnap, useStore, genId } from '../store/ctx'
 import type { CapCtx } from './ExplainerStudio'

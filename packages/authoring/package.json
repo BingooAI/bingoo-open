@@ -1,5 +1,5 @@
 {
-  "name": "@bingoo/authoring",
+  "name": "@bingoo.ai/authoring",
   "version": "0.1.0",
   "private": true,
   "description": "Lõi biên soạn thuần — trích khái niệm/KC từ nguồn → GraphData + Framework (dedup/compile/validate/review).",
@@ -11,8 +11,8 @@
   },
   "types": "./src/index.ts",
   "dependencies": {
-    "@bingoo/facets": "workspace:^",
-    "@bingoo/knowledge-engine": "workspace:^"
+    "@bingoo.ai/facets": "workspace:^",
+    "@bingoo.ai/knowledge-engine": "workspace:^"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

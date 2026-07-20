@@ -32,7 +32,7 @@ const adjacent = (a: string, b: string) => {
 /**
  * Draw a route through a grid maze — tap cells next to the path to extend it from
  * start to target; tap a path cell to backtrack. Grading (a valid contiguous path)
- * in `@bingoo/core`. Tap-based → web + mobile. i18n-free.
+ * in `@bingoo.ai/core`. Tap-based → web + mobile. i18n-free.
  */
 export function RouteGrid({
   rows,

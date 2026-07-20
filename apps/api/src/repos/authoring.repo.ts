@@ -1,12 +1,12 @@
 /**
  * Data access cho authoring — bền hoá kết quả biên soạn (GraphData) xuống đồ thị năng lực.
- * Cầu: @bingoo/authoring compile → db (Competency + CapabilityRelation) → engine đọc lại.
+ * Cầu: @bingoo.ai/authoring compile → db (Competency + CapabilityRelation) → engine đọc lại.
  */
 
-import { db, type Prisma } from '@bingoo/db'
-import type { CompiledObjective, ExistingConcept, ExistingKc } from '@bingoo/authoring'
-import type { CompetencyKind, FrameworkKind, GraphData, SkillNode } from '@bingoo/knowledge-engine'
-import type { DomainProfile, Facets } from '@bingoo/facets'
+import { db, type Prisma } from '@bingoo.ai/db'
+import type { CompiledObjective, ExistingConcept, ExistingKc } from '@bingoo.ai/authoring'
+import type { CompetencyKind, FrameworkKind, GraphData, SkillNode } from '@bingoo.ai/knowledge-engine'
+import type { DomainProfile, Facets } from '@bingoo.ai/facets'
 import { deriveKcStrands } from './strand'
 
 export interface PersistResult {

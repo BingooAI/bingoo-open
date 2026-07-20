@@ -3,7 +3,7 @@
  * (courseSlug, level, refSlug). Đây là nơi giữ CỔNG: cấp con chỉ sinh khi cấp cha đã APPROVED.
  */
 
-import { db, type Prisma } from '@bingoo/db'
+import { db, type Prisma } from '@bingoo.ai/db'
 
 export type PlanLevel = 'course' | 'unit' | 'lesson'
 

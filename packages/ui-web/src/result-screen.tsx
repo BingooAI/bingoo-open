@@ -1,6 +1,6 @@
 'use client'
 
-import type { QuizSummary } from '@bingoo/core'
+import type { QuizSummary } from '@bingoo.ai/core'
 import { RotateCcw } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Button } from './button'

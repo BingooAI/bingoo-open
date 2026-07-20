@@ -4,8 +4,8 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import type { DomainProfile } from '@bingoo/facets'
-import type { GraphData, SkillNode } from '@bingoo/knowledge-engine'
+import type { DomainProfile } from '@bingoo.ai/facets'
+import type { GraphData, SkillNode } from '@bingoo.ai/knowledge-engine'
 import { checkInvariants, hasBlockingViolation } from '../src/index'
 
 const math: DomainProfile = { domain: 'math', requiredAxes: ['object'] }

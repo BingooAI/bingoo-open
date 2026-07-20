@@ -1,4 +1,4 @@
-import { permissionSatisfies, type MediaPermission } from '@bingoo/core'
+import { permissionSatisfies, type MediaPermission } from '@bingoo.ai/core'
 import { Hono, type Context } from 'hono'
 import { z } from 'zod'
 import { requireAuth } from '../auth'

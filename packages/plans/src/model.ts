@@ -4,7 +4,7 @@
  * Mọi trường neo vào đồ thị năng lực bằng slug. KP là nguyên tử dạy của một bài.
  */
 
-import type { Slug } from '@bingoo/knowledge-engine'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
 
 export type LocalizedText = Readonly<Record<string, string>>
 
@@ -165,7 +165,7 @@ export interface KcArc {
   readonly steps: readonly LessonStep[]
   /**
    * NGƯỠNG THOÁT KC — đạt thì mới lên level / chuyển KC (Decision Engine đọc). `masteryMin` ∈ [0,1];
-   * `fluencyMin` là bậc fluency tối thiểu (emerging→automatic, để chuỗi khỏi phụ thuộc @bingoo/facets).
+   * `fluencyMin` là bậc fluency tối thiểu (emerging→automatic, để chuỗi khỏi phụ thuộc @bingoo.ai/facets).
    * Vắng = dùng ngưỡng mặc định của policy engine.
    */
   readonly exit?: {

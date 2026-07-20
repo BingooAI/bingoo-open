@@ -8,7 +8,7 @@
  * ảnh-vật kit lưu URL vào `params.assets[shape]`, đúng khoá `shape` mà count.ts/tenframe… đọc lúc vẽ.
  */
 
-import { kitHasObjectImage } from '@bingoo/manipulatives'
+import { kitHasObjectImage } from '@bingoo.ai/manipulatives'
 
 export interface MediaSlot {
   path: string

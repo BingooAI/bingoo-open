@@ -1,6 +1,6 @@
 'use client'
 
-import type { AngleKind } from '@bingoo/core'
+import type { AngleKind } from '@bingoo.ai/core'
 import { Minus, Plus } from 'lucide-react'
 import { useRef, type PointerEvent } from 'react'
 import { cn } from './lib/cn'
@@ -43,7 +43,7 @@ const pt = (deg: number, r = R) => ({
 /**
  * The "angle maker" / protractor — drag the arm to MAKE an angle, ESTIMATE the
  * size of one that's shown, or NAME it (acute / right / obtuse). Grading (with a
- * degrees tolerance) and `classifyAngle` live in `@bingoo/core`. i18n-free.
+ * degrees tolerance) and `classifyAngle` live in `@bingoo.ai/core`. i18n-free.
  */
 export function AngleTool({
   task,

@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
 import { Hono } from 'hono'
 import { z } from 'zod'
-import { defaultLocale, isValidLocale, locales, localeMeta, messages } from '@bingoo/i18n'
+import { defaultLocale, isValidLocale, locales, localeMeta, messages } from '@bingoo.ai/i18n'
 import type { AppEnv } from '../lib/context'
 import { AppError } from '../lib/errors'
 import { ok } from '../lib/response'
@@ -11,7 +11,7 @@ import { translateContent } from '../lib/translation'
 
 /**
  * i18n surface. GETs are the *delivery* channel for the shared static catalog
- * (`@bingoo/i18n`, R3) — web bundles it today, mobile/remote-config can fetch it
+ * (`@bingoo.ai/i18n`, R3) — web bundles it today, mobile/remote-config can fetch it
  * here (R6). `POST /translate` is the *dynamic* content path (ADMIN-only so the
  * LLM can't be driven from clients); feature code should call `translateContent`
  * directly rather than hop through HTTP.

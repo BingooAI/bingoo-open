@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { z } from 'zod'
-import type { Prisma } from '@bingoo/db'
+import type { Prisma } from '@bingoo.ai/db'
 import type { AppEnv } from '../lib/context'
 import { AppError } from '../lib/errors'
 import { ok, paginated } from '../lib/response'

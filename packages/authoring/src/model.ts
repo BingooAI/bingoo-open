@@ -6,8 +6,8 @@
  * mà engine đã nhận (xem compile.ts).
  */
 
-import type { CompetencyKind, FrameworkKind, PrereqMode, RelType, Slug } from '@bingoo/knowledge-engine'
-import type { Facets } from '@bingoo/facets'
+import type { CompetencyKind, FrameworkKind, PrereqMode, RelType, Slug } from '@bingoo.ai/knowledge-engine'
+import type { Facets } from '@bingoo.ai/facets'
 
 export type LocalizedText = Readonly<Record<string, string>>
 

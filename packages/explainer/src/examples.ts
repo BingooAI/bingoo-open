@@ -548,7 +548,7 @@ export const EXAMPLES: Partial<Record<Template, Example>> = {
         kind: 'activity',
         prompt: 'Số 7 là chẵn hay lẻ?',
         answer: '',
-        // The question is a @bingoo/core question: `single` (not "single-choice"),
+        // The question is a @bingoo.ai/core question: `single` (not "single-choice"),
         // `choices` (not "options"), it needs an `id`, and the ANSWER LIVES IN IT
         // (`answerId`) — not on the gate. Get any of that wrong and QuizShell has
         // nothing it knows how to draw, so it renders an empty card.

@@ -1,4 +1,4 @@
-import { AnswerOption, AvatarGroup, Button, cn, Confetti, IconChip, Leaderboard } from '@bingoo/ui-web'
+import { AnswerOption, AvatarGroup, Button, cn, Confetti, IconChip, Leaderboard } from '@bingoo.ai/ui-web'
 import {
   Crown,
   GraduationCap,
@@ -26,7 +26,7 @@ import {
 import { playSfx, startBgm, stopBgm } from '../arena/sfx'
 import { EmptyState } from '../shared'
 import type { ArenaConfig, ExperienceLabels, LearnQuizItem, Participant } from '../types'
-import type { LeaderboardEntry } from '@bingoo/ui-web'
+import type { LeaderboardEntry } from '@bingoo.ai/ui-web'
 
 const MODES: ArenaModeKind[] = ['practice', 'coop', 'solo', 'vsAI']
 const MODE_ICON = { practice: GraduationCap, coop: Users, solo: HeartPulse, vsAI: Swords } as const

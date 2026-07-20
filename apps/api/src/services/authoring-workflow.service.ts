@@ -1,5 +1,5 @@
 /**
- * Điều phối pipeline biên soạn S1→S7 — nối máy trạng thái thuần (@bingoo/authoring-workflow) với DB.
+ * Điều phối pipeline biên soạn S1→S7 — nối máy trạng thái thuần (@bingoo.ai/authoring-workflow) với DB.
  * Chuyển trạng thái + lan STALE trong package; ở đây chỉ nạp/lưu + map lỗi.
  */
 
@@ -13,7 +13,7 @@ import {
   type PipelineHealth,
   type PipelineStep,
   type StepEvent,
-} from '@bingoo/authoring-workflow'
+} from '@bingoo.ai/authoring-workflow'
 import { createPipeline, loadSteps, pipelineExists, saveSteps } from '../repos/authoring-pipeline.repo'
 import { AppError } from '../lib/errors'
 

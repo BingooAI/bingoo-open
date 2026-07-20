@@ -1,8 +1,8 @@
 /**
  * spec.ts — the explainer's REQUIRED INPUT CONTRACT (explainer-spec/v1).
  *
- * The explainer does NOT own pedagogy: the skill graph (@bingoo/knowledge-engine),
- * the instruction plan (@bingoo/plans) and the source ingest (@bingoo/authoring)
+ * The explainer does NOT own pedagogy: the skill graph (@bingoo.ai/knowledge-engine),
+ * the instruction plan (@bingoo.ai/plans) and the source ingest (@bingoo.ai/authoring)
  * do. What the explainer owns is a hard boundary: it REFUSES to generate unless
  * the upstream supplies everything needed to make a *verifiably* good lesson.
  *
@@ -15,7 +15,7 @@
  *  • `planQuality` only proves referential integrity (slugs exist, objectives are
  *    covered) — NOT truth. So we additionally require GROUNDING (source quotes)
  *    and we verify every produced answer key by CODE (see gen's key-check).
- *  • The plan layer currently drops the evidence quotes that @bingoo/authoring
+ *  • The plan layer currently drops the evidence quotes that @bingoo.ai/authoring
  *    extracted (ConceptDraft.evidence). Until `KnowledgePoint` carries them, the
  *    caller must pass them here as `grounding` — otherwise narration would be
  *    written two hops away from the textbook.
@@ -26,7 +26,7 @@ import { z } from 'zod'
 
 export const LocalizedText = z.record(z.string(), z.string())
 
-/** A traceable quote from the source material (mirrors @bingoo/authoring EvidenceRef). */
+/** A traceable quote from the source material (mirrors @bingoo.ai/authoring EvidenceRef). */
 export const SourceEvidence = z.object({
   chunkId: z.string(),
   quote: z.string().min(1),
@@ -35,7 +35,7 @@ export type SourceEvidence = z.infer<typeof SourceEvidence>
 
 /* ------------------------------------------- ① WHAT TO TEACH (the plan) */
 
-/** Mirrors @bingoo/plans `Representation` — the seed that tells the explainer
+/** Mirrors @bingoo.ai/plans `Representation` — the seed that tells the explainer
  *  WHICH visual register to use for a knowledge point. Without it the model must
  *  guess between a manipulative, a picture and bare symbols. */
 export const Representation = z.object({
@@ -44,7 +44,7 @@ export const Representation = z.object({
   note: LocalizedText.optional(),
 })
 
-/** Mirrors @bingoo/plans `Misconception` — the REAL wrong answers, anchored to a
+/** Mirrors @bingoo.ai/plans `Misconception` — the REAL wrong answers, anchored to a
  *  KC, with diagnostic + remediation. These become the distractors; without them
  *  the model invents plausible-but-fake wrong answers. */
 export const Misconception = z.object({
@@ -73,7 +73,7 @@ export const KnowledgePointSpec = z.object({
 export type KnowledgePointSpec = z.infer<typeof KnowledgePointSpec>
 
 /** Which interaction to mount at an activity beat. `primitiveKinds` are
- *  @bingoo/core quiz types (or `manip:<kit>`); the generator never picks a type. */
+ *  @bingoo.ai/core quiz types (or `manip:<kit>`); the generator never picks a type. */
 export const ActivitySpec = z.object({
   slug: z.string(),
   purpose: z.enum(['teach', 'practice', 'assess']),
@@ -158,7 +158,7 @@ export const SnapshotSpec = z.object({
 export const ExplainerSpec = z.object({
   version: z.literal('explainer-spec/v1'),
   plan: PlanSpec,
-  /** planQuality() from @bingoo/plans — the explainer refuses a low-scoring plan. */
+  /** planQuality() from @bingoo.ai/plans — the explainer refuses a low-scoring plan. */
   planQuality: z.object({ score: z.number(), errors: z.number().int().nonnegative().optional() }),
   grounding: GroundingSpec,
   learner: LearnerSpec,
@@ -252,7 +252,7 @@ export function validateSpec(raw: unknown, isKnownPrimitive?: (kind: string) => 
         err(
           'kp-grounding',
           `KP "${kp.slug}" has no source evidence for any of its KCs (${kp.targets.join(', ')})`,
-          'Pass the EvidenceRef quotes that @bingoo/authoring extracted for these KCs. (Note: @bingoo/plans currently drops them — carry them through.)',
+          'Pass the EvidenceRef quotes that @bingoo.ai/authoring extracted for these KCs. (Note: @bingoo.ai/plans currently drops them — carry them through.)',
         )
       }
     }
@@ -293,7 +293,7 @@ export function validateSpec(raw: unknown, isKnownPrimitive?: (kind: string) => 
         err(
           'unknown-primitive',
           `unknown primitiveKind "${k}"`,
-          'Use a primitive the platform can render AND grade (a @bingoo/core quiz type, or manip:<kit>).',
+          'Use a primitive the platform can render AND grade (a @bingoo.ai/core quiz type, or manip:<kit>).',
         )
       }
     }

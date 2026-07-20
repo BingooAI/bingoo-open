@@ -20,8 +20,8 @@ import {
   type LocalizedText,
   type ObjectiveDraft,
   type RawSource,
-} from '@bingoo/authoring'
-import type { CompetencyKind, FrameworkKind, PrereqMode, RelType } from '@bingoo/knowledge-engine'
+} from '@bingoo.ai/authoring'
+import type { CompetencyKind, FrameworkKind, PrereqMode, RelType } from '@bingoo.ai/knowledge-engine'
 import { getAi, getVision } from '../providers'
 import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'

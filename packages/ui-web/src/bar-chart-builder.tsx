@@ -1,6 +1,6 @@
 'use client'
 
-import type { QuizItem } from '@bingoo/core'
+import type { QuizItem } from '@bingoo.ai/core'
 import { useQuizText } from './quiz-locale'
 import { cn } from './lib/cn'
 import { POP, SHAKE, stagger, tile } from './lib/interactive'
@@ -19,7 +19,7 @@ export interface BarChartBuilderProps {
 
 /**
  * Build a bar chart — tap a level in each column to set that bar's height (tap the
- * top again to lower it). Grading (heights === answer) in `@bingoo/core`. Tap-based
+ * top again to lower it). Grading (heights === answer) in `@bingoo.ai/core`. Tap-based
  * → web + mobile. i18n-free.
  */
 export function BarChartBuilder({

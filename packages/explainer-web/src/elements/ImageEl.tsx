@@ -4,8 +4,8 @@
  * SVG. Drawn into the element's laid-out box with the shared pose transform.
  */
 import * as React from 'react'
-import type { RenderItem, ImageContent } from '@bingoo/explainer'
-import type { ThemeTokens } from '@bingoo/explainer'
+import type { RenderItem, ImageContent } from '@bingoo.ai/explainer'
+import type { ThemeTokens } from '@bingoo.ai/explainer'
 import { itemTransform } from './util'
 
 export function ImageEl({ item, theme }: { item: RenderItem; theme: ThemeTokens }) {

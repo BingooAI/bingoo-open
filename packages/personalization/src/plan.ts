@@ -1,7 +1,7 @@
 /** contentPlan — Instruction Plan + persona + snapshot engine → GenerationSpec (per-persona). */
 
-import type { Slug } from '@bingoo/knowledge-engine'
-import type { LessonInstructionPlan } from '@bingoo/plans'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
+import type { LessonInstructionPlan } from '@bingoo.ai/plans'
 import type {
   DifficultyBand,
   EngineSnapshot,

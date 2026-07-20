@@ -1,6 +1,6 @@
 'use client'
 
-import type { ChoiceReveal, DiagramHotspot } from '@bingoo/core'
+import type { ChoiceReveal, DiagramHotspot } from '@bingoo.ai/core'
 import { Check, X } from 'lucide-react'
 import { cn } from './lib/cn'
 import { POP, SHAKE, tile } from './lib/interactive'
@@ -21,7 +21,7 @@ export interface HotspotFindProps {
 /**
  * Tap the correct spots in a scene ("find all the animals that fly"). With an
  * audio prompt (question `media`) this is listen-and-point. Scene = image and/or
- * emoji hotspots. Grading in `@bingoo/core`. i18n-free.
+ * emoji hotspots. Grading in `@bingoo.ai/core`. i18n-free.
  */
 export function HotspotFind({
   hotspots,

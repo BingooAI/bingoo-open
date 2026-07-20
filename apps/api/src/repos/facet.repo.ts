@@ -1,5 +1,5 @@
-import { db } from '@bingoo/db'
-import type { Prisma } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
+import type { Prisma } from '@bingoo.ai/db'
 
 /**
  * Profile facets (§3.8). A user "enables" a facet by filling it when they take

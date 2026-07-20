@@ -1,6 +1,6 @@
 'use client'
 
-import type { ContentBlock } from '@bingoo/core'
+import type { ContentBlock } from '@bingoo.ai/core'
 import { Heart, MessageCircle, Share2 } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Avatar } from './avatar'

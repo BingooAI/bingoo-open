@@ -1,4 +1,4 @@
-import type { ModerationStatus } from '@bingoo/db'
+import type { ModerationStatus } from '@bingoo.ai/db'
 import { hasAnyRole, type PlatformRole } from '../auth/roles'
 
 /**

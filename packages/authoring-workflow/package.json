@@ -1,5 +1,5 @@
 {
-  "name": "@bingoo/authoring-workflow",
+  "name": "@bingoo.ai/authoring-workflow",
   "version": "0.1.0",
   "private": true,
   "description": "Máy trạng thái pipeline biên soạn S1→S7: chia nhỏ, phê duyệt, tái sinh, STALE.",

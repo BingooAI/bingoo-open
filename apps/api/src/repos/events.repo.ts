@@ -1,5 +1,5 @@
-import { db } from '@bingoo/db'
-import type { Prisma } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
+import type { Prisma } from '@bingoo.ai/db'
 
 /**
  * Activity/event stream (§3.8) — append-only signals that nourish the 360°

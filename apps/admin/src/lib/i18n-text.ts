@@ -1,4 +1,4 @@
-import type { LocalizedText } from '@bingoo/core'
+import type { LocalizedText } from '@bingoo.ai/core'
 
 /**
  * Render a localized JSON value ({vi,en,…}) for the active locale, with a safe

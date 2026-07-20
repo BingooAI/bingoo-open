@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup'
 
 /**
- * Bundle the server for production. Workspace packages (@bingoo/*) ship as raw
+ * Bundle the server for production. Workspace packages (@bingoo.ai/*) ship as raw
  * TypeScript source, so they must be inlined; third-party deps stay external and
  * are resolved from node_modules at runtime.
  */

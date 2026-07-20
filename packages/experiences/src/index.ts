@@ -1,7 +1,7 @@
 /**
- * @bingoo/experiences — WEB VIEW của các mode học (Lesson · Practice · Arena · Feed · Project · Classroom).
+ * @bingoo.ai/experiences — WEB VIEW của các mode học (Lesson · Practice · Arena · Feed · Project · Classroom).
  * Cửa duy nhất `LearnExperience`: cho INPUT (descriptor + content + labels) → ra VIEW. i18n-free,
- * content-agnostic; dựng trên engine/component THẬT của bingoo (@bingoo/core quiz, DrawingCanvas,
+ * content-agnostic; dựng trên engine/component THẬT của bingoo (@bingoo.ai/core quiz, DrawingCanvas,
  * ContentBlocks) + máy trận đấu arena thuần (có test) trong package này.
  */
 

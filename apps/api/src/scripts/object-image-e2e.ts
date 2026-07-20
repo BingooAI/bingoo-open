@@ -10,9 +10,9 @@
  * Dọn asset sau khi xong. Chi phí: ~1 call item-gen + 1 ảnh gpt-image-1.
  * Run: `node --env-file=.env --import tsx src/scripts/object-image-e2e.ts`
  */
-import { db } from '@bingoo/db'
-import { applyMediaAsset } from '@bingoo/authored-item'
-import { CountObjects, compileManip } from '@bingoo/manipulatives'
+import { db } from '@bingoo.ai/db'
+import { applyMediaAsset } from '@bingoo.ai/authored-item'
+import { CountObjects, compileManip } from '@bingoo.ai/manipulatives'
 import { serializeAsset } from '../lib/media-serialize'
 import { deleteAsset, getAssetById, listRenditions } from '../repos/media-asset.repo'
 import { getStorage } from '../providers'

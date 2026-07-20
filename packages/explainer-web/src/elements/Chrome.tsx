@@ -9,7 +9,7 @@
  * decoration painted on top, it is territory the composition never owned.
  */
 import * as React from 'react'
-import type { ThemeTokens, Rect } from '@bingoo/explainer'
+import type { ThemeTokens, Rect } from '@bingoo.ai/explainer'
 import { resolveColor } from '../theme/tokens'
 import { wrapText } from './util'
 

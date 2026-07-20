@@ -1,5 +1,5 @@
 /**
- * @bingoo/authoring-workflow — máy trạng thái pipeline biên soạn S1→S7.
+ * @bingoo.ai/authoring-workflow — máy trạng thái pipeline biên soạn S1→S7.
  * Chia nhỏ · phê duyệt · tái sinh · tự STALE khi thượng nguồn đổi. Thuần TS.
  * Xem docs/KE-HOACH-AUTHORING.md, docs/KE-HOACH-CONTENT.md.
  */

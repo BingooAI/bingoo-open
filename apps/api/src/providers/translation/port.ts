@@ -1,9 +1,9 @@
-import type { Locale } from '@bingoo/i18n'
+import type { Locale } from '@bingoo.ai/i18n'
 
 /**
  * Machine-translation capability for *dynamic* content (AI output, lessons,
  * community posts) — NOT for static UI copy, which is authored by hand in
- * `@bingoo/i18n` (R3/R4). Vendor-neutral: the active engine is chosen by the
+ * `@bingoo.ai/i18n` (R3/R4). Vendor-neutral: the active engine is chosen by the
  * `TRANSLATION_PROVIDER` env (R6). Adapters return raw translations; child-facing
  * callers moderate the result at the service layer above (R5), same as `ai`.
  */

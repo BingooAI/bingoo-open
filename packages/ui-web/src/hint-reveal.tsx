@@ -1,6 +1,6 @@
 'use client'
 
-import type { Assist } from '@bingoo/core'
+import type { Assist } from '@bingoo.ai/core'
 import { Lightbulb } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Callout } from './callout'
@@ -9,7 +9,7 @@ import { ENTER, stagger, tile } from './lib/interactive'
 import { SoundButton } from './sound-button'
 
 export interface HintRevealProps {
-  /** Progressive hints — each is text and/or audio (`Assist` from @bingoo/core). */
+  /** Progressive hints — each is text and/or audio (`Assist` from @bingoo.ai/core). */
   hints: Assist[]
   /** How many hints are currently revealed (controlled). */
   revealed: number
@@ -24,7 +24,7 @@ export interface HintRevealProps {
 /**
  * Progressive hints: each tap reveals the next one as a soft callout — text is
  * shown, audio gets a play button (listen instead of reading). Controlled via
- * `revealed` so the count lives in the quiz session (`@bingoo/core`).
+ * `revealed` so the count lives in the quiz session (`@bingoo.ai/core`).
  */
 export function HintReveal({
   hints,

@@ -12,9 +12,9 @@
 'use client'
 import * as React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { ThemeTokens, Aspect } from '@bingoo/explainer'
-import { getManipulative, getInteractions } from '@bingoo/manipulatives'
-import type { ManipState, VerbClip, RenderCtx, ActionDesc } from '@bingoo/manipulatives'
+import type { ThemeTokens, Aspect } from '@bingoo.ai/explainer'
+import { getManipulative, getInteractions } from '@bingoo.ai/manipulatives'
+import type { ManipState, VerbClip, RenderCtx, ActionDesc } from '@bingoo.ai/manipulatives'
 import { Prims, computeFit, type Fit } from '../elements/prims'
 
 type Anim = { clip: VerbClip<unknown>; startClock: number }

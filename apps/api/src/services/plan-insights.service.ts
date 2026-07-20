@@ -9,7 +9,7 @@
  * Author lại những thứ này = tạo nguồn sự thật thứ hai, lệch khi ai đó sửa graph. Nên: DERIVE.
  */
 
-import { buildGraph, type SkillGraph, type Slug } from '@bingoo/knowledge-engine'
+import { buildGraph, type SkillGraph, type Slug } from '@bingoo.ai/knowledge-engine'
 import { loadGraphData } from '../repos/knowledge.repo'
 import { getCourse } from '../repos/course.repo'
 import { listPlans } from '../repos/plan-hierarchy.repo'

@@ -1,8 +1,8 @@
 /* Bingoo Admin — global stylesheet entry.
- * Tokens (primitives + semantic themes) come from the shared @bingoo/tokens
+ * Tokens (primitives + semantic themes) come from the shared @bingoo.ai/tokens
  * package, generated from tokens.json — the single source of truth. */
 @import 'tailwindcss';
-@import '@bingoo/tokens/css';
+@import '@bingoo.ai/tokens/css';
 @import '../styles/base.css';
 
 /* Tell Tailwind where class names live (v4 content auto-detection covers src/). */

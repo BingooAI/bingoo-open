@@ -1,15 +1,15 @@
 /**
  * explainer.service.ts — connect the explainer engine's provider ports to
  * bingoo's existing capability ports, IN-PROCESS (no HTTP). The explainer's
- * vendor-neutral logic lives in `@bingoo/explainer/providers` (illustration-first
+ * vendor-neutral logic lives in `@bingoo.ai/explainer/providers` (illustration-first
  * `resolveImage`, narration↔cue re-timing); here we supply the concrete
  * capabilities backed by bingoo's SearchPort / ImagePort / TtsPort / AiPort +
  * storage + media hydration. Child-facing search is APPROVED-only (R5).
  */
 import { createHash } from 'node:crypto'
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import { upsertTag, addAssetTags } from '../repos/media-tag.repo'
-import type { LocalizedText, MediaSearchQuery } from '@bingoo/core'
+import type { LocalizedText, MediaSearchQuery } from '@bingoo.ai/core'
 import {
   resolveImage,
   cueMarksFrom,
@@ -24,7 +24,7 @@ import {
   type LlmRequest,
   type MediaHit,
   type ResolvedImage,
-} from '@bingoo/explainer/providers'
+} from '@bingoo.ai/explainer/providers'
 import type { TtsPort } from '../providers/tts/port'
 import type { SessionUser } from '../auth/auth'
 import { getAi, getStorage, getTts } from '../providers'

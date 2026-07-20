@@ -9,7 +9,7 @@ import {
   type ExperienceDescriptor,
   type Scale,
   type Time,
-} from '@bingoo/learning-experience'
+} from '@bingoo.ai/learning-experience'
 import type { ReactNode } from 'react'
 import { IconChip, type IconChipColor } from './icon-chip'
 import { cn } from './lib/cn'
@@ -17,7 +17,7 @@ import { Tag, type TagColor } from './tag'
 
 /**
  * Nhãn hiển thị cho toàn bộ 5 trục + năng lực + verdict. Package i18n-free (R4): host dựng object này
- * từ `@bingoo/i18n` rồi truyền xuống — giống pattern `QuizLabels`/`discussLabels` trong lib.
+ * từ `@bingoo.ai/i18n` rồi truyền xuống — giống pattern `QuizLabels`/`discussLabels` trong lib.
  */
 export interface LearningExperienceLabels {
   axis: Record<Axis, string>

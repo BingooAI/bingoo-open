@@ -1,4 +1,4 @@
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import { parseRoles } from '../auth/roles'
 import { getAllFacets } from './facet.repo'
 import { activitySummary, listRecentEvents } from './events.repo'

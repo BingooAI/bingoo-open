@@ -25,7 +25,7 @@ const hand = (angleDeg: number, length: number) => {
 
 /**
  * Read/set an analog clock: tap an hour (1–12) and a minute option — the hands
- * move to match. Robust (tap, no drag) and gradable. Grading in `@bingoo/core`.
+ * move to match. Robust (tap, no drag) and gradable. Grading in `@bingoo.ai/core`.
  */
 export function ClockInput({
   hour,

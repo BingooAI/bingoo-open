@@ -1,4 +1,4 @@
-import { streakCalendar, type StreakCell } from '@bingoo/core'
+import { streakCalendar, type StreakCell } from '@bingoo.ai/core'
 import { cn } from './lib/cn'
 
 export interface StreakCalendarProps {
@@ -22,7 +22,7 @@ function toWeeks(cells: StreakCell[]): StreakCell[][] {
 }
 
 /**
- * A streak heatmap (GitHub-style week columns) built from `@bingoo/core`'s
+ * A streak heatmap (GitHub-style week columns) built from `@bingoo.ai/core`'s
  * streakCalendar. Scrolls horizontally when space is tight, so it fits both
  * 16:9 dashboards and 9:16 feeds without breaking. i18n-free.
  */

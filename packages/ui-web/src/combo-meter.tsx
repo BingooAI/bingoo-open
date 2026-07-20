@@ -1,6 +1,6 @@
 'use client'
 
-import { comboMultiplier } from '@bingoo/core'
+import { comboMultiplier } from '@bingoo.ai/core'
 import { Flame } from 'lucide-react'
 import { cn } from './lib/cn'
 import { hudSurfaceClass } from './lib/hud'
@@ -26,7 +26,7 @@ const SIZE = {
 
 /**
  * A combo/multiplier meter (flames + ×N) for streak feedback — reused in games,
- * arena, or a quiz run. The multiplier math lives in `@bingoo/core`. i18n-free.
+ * arena, or a quiz run. The multiplier math lives in `@bingoo.ai/core`. i18n-free.
  */
 export function ComboMeter({
   streak,

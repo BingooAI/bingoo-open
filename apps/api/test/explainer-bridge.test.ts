@@ -5,8 +5,8 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import { parseBrief } from '@bingoo/explainer'
-import type { KnowledgePoint, LessonStep } from '@bingoo/plans'
+import { parseBrief } from '@bingoo.ai/explainer'
+import type { KnowledgePoint, LessonStep } from '@bingoo.ai/plans'
 import { lessonStepToBrief, type ExplainerBridgeInput } from '../src/services/explainer-bridge'
 
 const step: LessonStep = {

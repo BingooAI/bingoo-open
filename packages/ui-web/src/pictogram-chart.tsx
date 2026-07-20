@@ -1,6 +1,6 @@
 'use client'
 
-import type { QuizItem } from '@bingoo/core'
+import type { QuizItem } from '@bingoo.ai/core'
 import { useQuizText } from './quiz-locale'
 import { cn } from './lib/cn'
 import { stagger, tile } from './lib/interactive'
@@ -23,7 +23,7 @@ export interface PictogramChartProps {
 /**
  * Pictogram — fill each row with icons; tap a cell to set the row's count (tap the
  * top again to lower it). Each icon can stand for several units (the key). Grading
- * (icon counts === answer) in `@bingoo/core`. Tap-based → web + mobile. i18n-free.
+ * (icon counts === answer) in `@bingoo.ai/core`. Tap-based → web + mobile. i18n-free.
  */
 export function PictogramChart({
   categories,

@@ -1,6 +1,6 @@
 'use client'
 
-import { gridArea, gridPerimeter } from '@bingoo/core'
+import { gridArea, gridPerimeter } from '@bingoo.ai/core'
 import { cn } from './lib/cn'
 import { stagger, tile } from './lib/interactive'
 
@@ -30,7 +30,7 @@ export interface GridShapeBoardProps {
 /**
  * Shade squares on a grid to build a shape with a given area / perimeter (Stage-3
  * area + perimeter work). Live readout of area + perimeter; grading (incl. the
- * one-connected-piece rule) lives in `@bingoo/core`. Tap-based → web + mobile.
+ * one-connected-piece rule) lives in `@bingoo.ai/core`. Tap-based → web + mobile.
  * i18n-free (readout labels are props).
  */
 export function GridShapeBoard({

@@ -2,7 +2,7 @@ import { Ban, Lock, ShieldCheck, SlidersHorizontal } from 'lucide-react'
 import type { Metadata } from 'next'
 import type { ComponentType } from 'react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { Callout, Card, Container, IconChip, type IconChipColor } from '@bingoo/ui-web'
+import { Callout, Card, Container, IconChip, type IconChipColor } from '@bingoo.ai/ui-web'
 import { SiteFooter } from '@/components/marketing/site-footer'
 import { SiteHeader } from '@/components/marketing/site-header'
 

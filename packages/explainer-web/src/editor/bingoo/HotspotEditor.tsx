@@ -7,7 +7,7 @@
 'use client'
 import * as React from 'react'
 import { useRef, useState } from 'react'
-import type { Scene, GateSpec } from '@bingoo/explainer'
+import type { Scene, GateSpec } from '@bingoo.ai/explainer'
 import { useStore } from '../store/ctx'
 
 type Hotspot = NonNullable<GateSpec['hotspots']>[number]

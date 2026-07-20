@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Button, Callout, Textarea, useToast } from '@bingoo/ui-web'
+import { Button, Callout, Textarea, useToast } from '@bingoo.ai/ui-web'
 import { Dropzone } from './dropzone'
 import { Stepper, type StepDef, type StepState } from './stepper'
 import {

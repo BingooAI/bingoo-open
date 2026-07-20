@@ -1,6 +1,6 @@
-import { db } from '@bingoo/db'
-import type { Prisma } from '@bingoo/db'
-import { evalRule, type SegmentRule } from '@bingoo/core'
+import { db } from '@bingoo.ai/db'
+import type { Prisma } from '@bingoo.ai/db'
+import { evalRule, type SegmentRule } from '@bingoo.ai/core'
 
 /**
  * Dynamic segmentation (§3.8). A Segment holds a typed rule; recompute evaluates

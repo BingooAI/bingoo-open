@@ -1,4 +1,4 @@
-import { db, Prisma } from '@bingoo/db'
+import { db, Prisma } from '@bingoo.ai/db'
 
 /**
  * Semantic index writes (docs/media-library-design.md §3.9). The `embedding`

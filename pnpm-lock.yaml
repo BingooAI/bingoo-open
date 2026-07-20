@@ -69,22 +69,22 @@ importers:
 
   apps/admin:
     dependencies:
-      '@bingoo/core':
+      '@bingoo.ai/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@bingoo/explainer':
+      '@bingoo.ai/explainer':
         specifier: workspace:*
         version: link:../../packages/explainer
-      '@bingoo/explainer-web':
+      '@bingoo.ai/explainer-web':
         specifier: workspace:*
         version: link:../../packages/explainer-web
-      '@bingoo/i18n':
+      '@bingoo.ai/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@bingoo/tokens':
+      '@bingoo.ai/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
-      '@bingoo/ui-web':
+      '@bingoo.ai/ui-web':
         specifier: workspace:*
         version: link:../../packages/ui-web
       '@tanstack/react-query':
@@ -175,43 +175,43 @@ importers:
       '@better-auth/expo':
         specifier: ^1.6.23
         version: 1.6.23(@better-auth/core@1.6.23(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(@opentelemetry/api@1.9.1)(better-call@1.3.7(zod@4.4.3))(jose@6.2.3)(kysely@0.29.4)(nanostores@1.4.0))(better-auth@1.6.23(@opentelemetry/api@1.9.1)(@prisma/client@7.8.0(prisma@7.8.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3))(typescript@5.9.3))(mysql2@3.15.3)(next@15.5.20(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(pg@8.22.0)(prisma@7.8.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(vitest@4.1.10(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(vite@8.1.5(@types/node@22.20.1)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))))
-      '@bingoo/authored-item':
+      '@bingoo.ai/authored-item':
         specifier: workspace:^
         version: link:../../packages/authored-item
-      '@bingoo/authoring':
+      '@bingoo.ai/authoring':
         specifier: workspace:^
         version: link:../../packages/authoring
-      '@bingoo/authoring-workflow':
+      '@bingoo.ai/authoring-workflow':
         specifier: workspace:^
         version: link:../../packages/authoring-workflow
-      '@bingoo/content-gen':
+      '@bingoo.ai/content-gen':
         specifier: workspace:^
         version: link:../../packages/content-gen
-      '@bingoo/core':
+      '@bingoo.ai/core':
         specifier: workspace:^
         version: link:../../packages/core
-      '@bingoo/db':
+      '@bingoo.ai/db':
         specifier: workspace:^
         version: link:../../packages/db
-      '@bingoo/explainer':
+      '@bingoo.ai/explainer':
         specifier: workspace:^
         version: link:../../packages/explainer
-      '@bingoo/facets':
+      '@bingoo.ai/facets':
         specifier: workspace:^
         version: link:../../packages/facets
-      '@bingoo/i18n':
+      '@bingoo.ai/i18n':
         specifier: workspace:^
         version: link:../../packages/i18n
-      '@bingoo/knowledge-engine':
+      '@bingoo.ai/knowledge-engine':
         specifier: workspace:^
         version: link:../../packages/knowledge-engine
-      '@bingoo/manipulatives':
+      '@bingoo.ai/manipulatives':
         specifier: workspace:^
         version: link:../../packages/manipulatives
-      '@bingoo/personalization':
+      '@bingoo.ai/personalization':
         specifier: workspace:^
         version: link:../../packages/personalization
-      '@bingoo/plans':
+      '@bingoo.ai/plans':
         specifier: workspace:^
         version: link:../../packages/plans
       '@hono/node-server':
@@ -290,31 +290,31 @@ importers:
 
   apps/web:
     dependencies:
-      '@bingoo/core':
+      '@bingoo.ai/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@bingoo/experiences':
+      '@bingoo.ai/experiences':
         specifier: workspace:*
         version: link:../../packages/experiences
-      '@bingoo/explainer':
+      '@bingoo.ai/explainer':
         specifier: workspace:*
         version: link:../../packages/explainer
-      '@bingoo/explainer-web':
+      '@bingoo.ai/explainer-web':
         specifier: workspace:*
         version: link:../../packages/explainer-web
-      '@bingoo/i18n':
+      '@bingoo.ai/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@bingoo/learning-experience':
+      '@bingoo.ai/learning-experience':
         specifier: workspace:*
         version: link:../../packages/learning-experience
-      '@bingoo/manipulatives':
+      '@bingoo.ai/manipulatives':
         specifier: workspace:*
         version: link:../../packages/manipulatives
-      '@bingoo/tokens':
+      '@bingoo.ai/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
-      '@bingoo/ui-web':
+      '@bingoo.ai/ui-web':
         specifier: workspace:*
         version: link:../../packages/ui-web
       better-auth:
@@ -387,13 +387,13 @@ importers:
 
   packages/authored-item:
     dependencies:
-      '@bingoo/core':
+      '@bingoo.ai/core':
         specifier: workspace:^
         version: link:../core
-      '@bingoo/knowledge-engine':
+      '@bingoo.ai/knowledge-engine':
         specifier: workspace:^
         version: link:../knowledge-engine
-      '@bingoo/manipulatives':
+      '@bingoo.ai/manipulatives':
         specifier: workspace:^
         version: link:../manipulatives
     devDependencies:
@@ -403,10 +403,10 @@ importers:
 
   packages/authoring:
     dependencies:
-      '@bingoo/facets':
+      '@bingoo.ai/facets':
         specifier: workspace:^
         version: link:../facets
-      '@bingoo/knowledge-engine':
+      '@bingoo.ai/knowledge-engine':
         specifier: workspace:^
         version: link:../knowledge-engine
     devDependencies:
@@ -427,13 +427,13 @@ importers:
 
   packages/content-gen:
     dependencies:
-      '@bingoo/authored-item':
+      '@bingoo.ai/authored-item':
         specifier: workspace:^
         version: link:../authored-item
-      '@bingoo/knowledge-engine':
+      '@bingoo.ai/knowledge-engine':
         specifier: workspace:^
         version: link:../knowledge-engine
-      '@bingoo/personalization':
+      '@bingoo.ai/personalization':
         specifier: workspace:^
         version: link:../personalization
 
@@ -473,13 +473,13 @@ importers:
 
   packages/experiences:
     dependencies:
-      '@bingoo/core':
+      '@bingoo.ai/core':
         specifier: workspace:*
         version: link:../core
-      '@bingoo/learning-experience':
+      '@bingoo.ai/learning-experience':
         specifier: workspace:*
         version: link:../learning-experience
-      '@bingoo/ui-web':
+      '@bingoo.ai/ui-web':
         specifier: workspace:*
         version: link:../ui-web
       lucide-react:
@@ -507,10 +507,10 @@ importers:
 
   packages/explainer:
     dependencies:
-      '@bingoo/core':
+      '@bingoo.ai/core':
         specifier: workspace:*
         version: link:../core
-      '@bingoo/manipulatives':
+      '@bingoo.ai/manipulatives':
         specifier: workspace:*
         version: link:../manipulatives
       zod:
@@ -519,19 +519,19 @@ importers:
 
   packages/explainer-web:
     dependencies:
-      '@bingoo/core':
+      '@bingoo.ai/core':
         specifier: workspace:*
         version: link:../core
-      '@bingoo/explainer':
+      '@bingoo.ai/explainer':
         specifier: workspace:*
         version: link:../explainer
-      '@bingoo/manipulatives':
+      '@bingoo.ai/manipulatives':
         specifier: workspace:*
         version: link:../manipulatives
-      '@bingoo/tokens':
+      '@bingoo.ai/tokens':
         specifier: workspace:*
         version: link:../tokens
-      '@bingoo/ui-web':
+      '@bingoo.ai/ui-web':
         specifier: workspace:*
         version: link:../ui-web
     devDependencies:
@@ -583,16 +583,16 @@ importers:
 
   packages/personalization:
     dependencies:
-      '@bingoo/knowledge-engine':
+      '@bingoo.ai/knowledge-engine':
         specifier: workspace:^
         version: link:../knowledge-engine
-      '@bingoo/plans':
+      '@bingoo.ai/plans':
         specifier: workspace:^
         version: link:../plans
 
   packages/plans:
     dependencies:
-      '@bingoo/knowledge-engine':
+      '@bingoo.ai/knowledge-engine':
         specifier: workspace:^
         version: link:../knowledge-engine
     devDependencies:
@@ -602,7 +602,7 @@ importers:
 
   packages/telemetry:
     dependencies:
-      '@bingoo/knowledge-engine':
+      '@bingoo.ai/knowledge-engine':
         specifier: workspace:^
         version: link:../knowledge-engine
 
@@ -610,10 +610,10 @@ importers:
 
   packages/ui-web:
     dependencies:
-      '@bingoo/core':
+      '@bingoo.ai/core':
         specifier: workspace:*
         version: link:../core
-      '@bingoo/learning-experience':
+      '@bingoo.ai/learning-experience':
         specifier: workspace:*
         version: link:../learning-experience
       '@hookform/resolvers':

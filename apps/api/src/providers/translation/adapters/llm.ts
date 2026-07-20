@@ -1,4 +1,4 @@
-import { localeMeta } from '@bingoo/i18n'
+import { localeMeta } from '@bingoo.ai/i18n'
 import { readEnv } from '../../core/config'
 import type { ProviderAdapter } from '../../core/registry'
 import { ProviderError } from '../../core/errors'

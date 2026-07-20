@@ -1,5 +1,5 @@
 /**
- * @bingoo/authored-item — lớp neo nối primitive nội dung (@bingoo/core) vào knowledge-engine.
+ * @bingoo.ai/authored-item — lớp neo nối primitive nội dung (@bingoo.ai/core) vào knowledge-engine.
  * Bọc quanh quiz/content/draw của core, KHÔNG sửa core. Xem docs/CONTENT-ARCHITECTURE.md §4–§5.
  */
 

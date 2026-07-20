@@ -1,4 +1,4 @@
-import { formatSlotTime, hourTicks, layoutWeek, type ScheduleSlot } from '@bingoo/core'
+import { formatSlotTime, hourTicks, layoutWeek, type ScheduleSlot } from '@bingoo.ai/core'
 import type { ReactNode } from 'react'
 import { cn } from './lib/cn'
 
@@ -34,7 +34,7 @@ const SLOT_TINT = {
 
 /**
  * A weekly schedule grid (periods / study slots). Layout math lives in
- * `@bingoo/core` (`layoutWeek`), so web and native position slots identically.
+ * `@bingoo.ai/core` (`layoutWeek`), so web and native position slots identically.
  * Scrolls horizontally when tight — fits 16:9 dashboards and 9:16 phones.
  */
 export function ScheduleCalendar({

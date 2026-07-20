@@ -1,15 +1,15 @@
 /**
- * Lớp NEO — nối primitive nội dung (@bingoo/core) vào knowledge-engine.
+ * Lớp NEO — nối primitive nội dung (@bingoo.ai/core) vào knowledge-engine.
  *
  * Envelope mỏng bọc quanh payload primitive, mang metadata engine cần (skills, difficulty,
  * mode, itemKey). KHÔNG sửa primitive — payload là hộp đen với engine.
- * `Grade` tái dùng của @bingoo/core (không định nghĩa lại).
+ * `Grade` tái dùng của @bingoo.ai/core (không định nghĩa lại).
  */
 
-import type { AssessmentMode, Elo, Slug } from '@bingoo/knowledge-engine'
-import type { Grade } from '@bingoo/core'
+import type { AssessmentMode, Elo, Slug } from '@bingoo.ai/knowledge-engine'
+import type { Grade } from '@bingoo.ai/core'
 
-export type { Grade } from '@bingoo/core'
+export type { Grade } from '@bingoo.ai/core'
 
 /** Cách chấm — ngầm theo primitiveKind (§5 engine). */
 export type GraderKind =
@@ -26,13 +26,13 @@ export interface AuthoredItem {
   readonly mode?: AssessmentMode
   /** true → thành Candidate + sinh Observation. Mặc định lấy từ registry theo primitiveKind. */
   readonly measurable?: boolean
-  /** = quiz type / AuthorableKind của @bingoo/core → chính là Candidate.kind (thẻ định dạng). */
+  /** = quiz type / AuthorableKind của @bingoo.ai/core → chính là Candidate.kind (thẻ định dạng). */
   readonly primitiveKind: string
   /** Bài/lesson chứa item — cho ưu tiên "củng cố bài đã dạy". */
   readonly lessonSlug?: Slug
-  /** Primitive Zod của @bingoo/core (single/fill/…); hộp đen với engine. */
+  /** Primitive Zod của @bingoo.ai/core (single/fill/…); hộp đen với engine. */
   readonly payload: unknown
 }
 
-/** Hàm chấm host cấp (thật: `gradeQuestion` của @bingoo/core — xem grade.ts `quizGrader`). */
+/** Hàm chấm host cấp (thật: `gradeQuestion` của @bingoo.ai/core — xem grade.ts `quizGrader`). */
 export type Grader = (payload: unknown, response: unknown) => Grade

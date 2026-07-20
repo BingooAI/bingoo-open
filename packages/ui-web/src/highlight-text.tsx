@@ -1,6 +1,6 @@
 'use client'
 
-import type { ChoiceReveal } from '@bingoo/core'
+import type { ChoiceReveal } from '@bingoo.ai/core'
 import { cn } from './lib/cn'
 import { tile } from './lib/interactive'
 

@@ -8,8 +8,8 @@
 'use client'
 import * as React from 'react'
 import { useState } from 'react'
-import type { GateSpec, ThemeTokens, Aspect } from '@bingoo/explainer'
-import { checkAnswer, getInteractions } from '@bingoo/manipulatives'
+import type { GateSpec, ThemeTokens, Aspect } from '@bingoo.ai/explainer'
+import { checkAnswer, getInteractions } from '@bingoo.ai/manipulatives'
 import { InteractiveManipulative } from '../InteractiveManipulative'
 
 export function ManipulateGate({

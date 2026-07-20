@@ -1,6 +1,6 @@
 /** Biên dịch bản nháp → GraphData + objectives (đầu ra engine-ready). */
 
-import type { FrameworkKind, GraphData, SkillEdge, SkillNode, Slug } from '@bingoo/knowledge-engine'
+import type { FrameworkKind, GraphData, SkillEdge, SkillNode, Slug } from '@bingoo.ai/knowledge-engine'
 import type { IngestDraft, LocalizedText } from './model'
 import { dedupeConcepts, type DedupResult } from './dedup'
 import { canonicalTitle, mintSlug, slugify } from './slug'

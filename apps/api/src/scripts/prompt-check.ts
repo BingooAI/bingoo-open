@@ -3,7 +3,7 @@
  * runtime override roundtrip (default → override → revert) via RemoteConfig.
  * Run: `node --env-file=.env --import tsx src/scripts/prompt-check.ts`
  */
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import {
   clearPromptOverride,
   getPromptTemplate,

@@ -1,10 +1,10 @@
 /**
- * Ôn tập flashcard theo SRS (SM-2 của @bingoo/core). ÔN TẬP ≠ EVIDENCE:
+ * Ôn tập flashcard theo SRS (SM-2 của @bingoo.ai/core). ÔN TẬP ≠ EVIDENCE:
  * review chỉ dời lịch ôn, KHÔNG fold vào mastery/SkillState. Date dùng ở host (không phải engine thuần).
  */
 
-import type { AuthoredItem } from '@bingoo/authored-item'
-import { epochDay, initSrsState, reviewCard, type SrsGrade, type SrsState } from '@bingoo/core'
+import type { AuthoredItem } from '@bingoo.ai/authored-item'
+import { epochDay, initSrsState, reviewCard, type SrsGrade, type SrsState } from '@bingoo.ai/core'
 import { loadFlashcards } from '../repos/content-item.repo'
 import { dueCardKeys, getSrsState, saveSrsState, seenCardKeys } from '../repos/srs.repo'
 

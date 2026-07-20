@@ -1,5 +1,5 @@
 import { setRequestLocale } from 'next-intl/server'
-import { PageHeader } from '@bingoo/ui-web'
+import { PageHeader } from '@bingoo.ai/ui-web'
 import { AlignmentView } from '@/components/authoring/alignment-view'
 
 export default async function AlignPage({ params }: { params: Promise<{ locale: string }> }) {

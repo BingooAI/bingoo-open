@@ -6,7 +6,7 @@
  */
 'use client'
 import { useSyncExternalStore } from 'react'
-import type { ExplainerDoc, LocaleBundle, Aspect } from '@bingoo/explainer'
+import type { ExplainerDoc, LocaleBundle, Aspect } from '@bingoo.ai/explainer'
 import { applyOp, applyBatch, type EditOp, type EditState } from './ops'
 
 export type AspectMode = Aspect | 'dual'

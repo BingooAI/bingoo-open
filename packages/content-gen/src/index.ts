@@ -1,13 +1,13 @@
 /**
- * @bingoo/content-gen — S4b: GenerationSpec → (GeneratorPort) → AuthoredItem[] → ráp & kiểm ContentBundle.
+ * @bingoo.ai/content-gen — S4b: GenerationSpec → (GeneratorPort) → AuthoredItem[] → ráp & kiểm ContentBundle.
  * Phần THUẦN: hợp đồng cổng + ráp/kiểm; adapter LLM thật ở apps/api.
  * Bất biến: engine chỉ nhận Observation; content là hộp đen (CONTENT-ARCHITECTURE §4).
  */
 
-import type { AuthoredItem } from '@bingoo/authored-item'
-import { isKnownPrimitive } from '@bingoo/authored-item'
-import type { Elo, Slug } from '@bingoo/knowledge-engine'
-import type { DifficultyBand, GenerationSpec } from '@bingoo/personalization'
+import type { AuthoredItem } from '@bingoo.ai/authored-item'
+import { isKnownPrimitive } from '@bingoo.ai/authored-item'
+import type { Elo, Slug } from '@bingoo.ai/knowledge-engine'
+import type { DifficultyBand, GenerationSpec } from '@bingoo.ai/personalization'
 
 /**
  * Cổng sinh CONTENT ĐÁNH GIÁ (đo) — quiz item measurable → Candidate → evidence.

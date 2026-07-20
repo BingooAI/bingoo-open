@@ -15,7 +15,7 @@ import {
   Progress,
   ProgressRing,
   StatCard,
-} from '@bingoo/ui-web'
+} from '@bingoo.ai/ui-web'
 import { cn } from '@/lib/cn'
 import {
   achievements,
@@ -25,7 +25,7 @@ import {
   subjectProgress,
   todayQuests,
 } from '@/lib/demo-data'
-import { greetingKey } from '@bingoo/core'
+import { greetingKey } from '@bingoo.ai/core'
 
 export default function StudentDashboard() {
   const t = useTranslations('student')

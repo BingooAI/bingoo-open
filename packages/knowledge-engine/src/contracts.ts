@@ -42,7 +42,7 @@ export interface SkillNode {
   /** Môn/ngành (vd "math", "language", "welding"). Engine KHÔNG đọc — chỉ host dùng để chọn DomainProfile. */
   readonly subject?: string
   /**
-   * FACETS — 6 trục phân biệt KC (@bingoo/facets). ĐỤC với engine: engine KHÔNG BAO GIỜ đọc field này.
+   * FACETS — 6 trục phân biệt KC (@bingoo.ai/facets). ĐỤC với engine: engine KHÔNG BAO GIỜ đọc field này.
    * Nó tồn tại để tầng biên soạn quyết định ĐỊNH DANH bằng cấu trúc thay vì so chuỗi (xem invariants).
    * Để opaque ở đây nhằm giữ engine không phụ thuộc package nào.
    */

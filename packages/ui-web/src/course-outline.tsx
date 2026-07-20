@@ -1,4 +1,4 @@
-import type { CourseChapter, CourseLesson, LessonStatus } from '@bingoo/core'
+import type { CourseChapter, CourseLesson, LessonStatus } from '@bingoo.ai/core'
 import { CheckCircle2, Circle, Lock, Play } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Accordion } from './accordion'

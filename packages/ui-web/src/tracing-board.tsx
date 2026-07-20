@@ -7,7 +7,7 @@ import {
   type DrawPoint,
   type StrokeScore,
   type TracingGlyph,
-} from '@bingoo/core'
+} from '@bingoo.ai/core'
 import { useRef, useState, type PointerEvent } from 'react'
 import { cn } from './lib/cn'
 import { POP, SHAKE } from './lib/interactive'
@@ -29,7 +29,7 @@ export interface TracingBoardProps {
 /**
  * Letter/shape tracing (tô chữ): the glyph's guide strokes show as dashed paths;
  * the child traces the highlighted stroke from the start dot. Scoring
- * (`scoreTracedStroke`) lives in `@bingoo/core` — a failed attempt shakes and
+ * (`scoreTracedStroke`) lives in `@bingoo.ai/core` — a failed attempt shakes and
  * clears, a passed one is inked and the next stroke lights up.
  */
 export function TracingBoard({

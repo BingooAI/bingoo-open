@@ -7,8 +7,8 @@
  * import fails loudly here instead of crashing the editor later. Lint errors are
  * surfaced but NOT fatal — the editor exists precisely to fix them.
  */
-import { parseDoc, parseBundle, lintDoc } from '@bingoo/explainer'
-import type { LocaleBundle } from '@bingoo/explainer'
+import { parseDoc, parseBundle, lintDoc } from '@bingoo.ai/explainer'
+import type { LocaleBundle } from '@bingoo.ai/explainer'
 import type { EditState } from './ops'
 
 export type ImportResult = { ok: true; state: EditState; lintErrors: string[] } | { ok: false; error: string }

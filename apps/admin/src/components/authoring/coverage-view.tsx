@@ -1,7 +1,16 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Badge, Callout, Card, CardContent, CardHeader, CardTitle, EmptyState, Spinner } from '@bingoo/ui-web'
+import {
+  Badge,
+  Callout,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  EmptyState,
+  Spinner,
+} from '@bingoo.ai/ui-web'
 import { GraphCanvas, type GEdge, type GNode } from './graph-canvas'
 import { useCourses, useCoverage, useFrameworks } from '@/lib/authoring-queries'
 

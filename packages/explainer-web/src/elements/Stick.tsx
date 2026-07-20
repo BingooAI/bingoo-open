@@ -5,8 +5,8 @@
  * vertical; the choreographer tweens `joints` between poses (spec §4 Pose).
  */
 import * as React from 'react'
-import type { RenderItem } from '@bingoo/explainer'
-import type { ThemeTokens, FaceExpr } from '@bingoo/explainer'
+import type { RenderItem } from '@bingoo.ai/explainer'
+import type { ThemeTokens, FaceExpr } from '@bingoo.ai/explainer'
 import { resolveStyle } from '../theme/tokens'
 import { itemTransform } from './util'
 

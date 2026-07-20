@@ -39,7 +39,7 @@ const fmt = (ms: number) => {
 /**
  * Read aloud / speaking — records the learner's voice with the browser's
  * MediaRecorder (no dependency) and offers playback + re-record. The response is
- * an open one (`@bingoo/core` counts any recording); ASR grading can come later.
+ * an open one (`@bingoo.ai/core` counts any recording); ASR grading can come later.
  * i18n-free (labels are props). Native twin captures duration via the app's engine.
  */
 export function SpeechRecorder({

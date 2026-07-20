@@ -1,6 +1,6 @@
 import { type HTMLAttributes } from 'react'
 import { cn } from './lib/cn'
-import { toPercent } from '@bingoo/core'
+import { toPercent } from '@bingoo.ai/core'
 
 const BAR_COLOR = {
   primary: 'bg-primary',

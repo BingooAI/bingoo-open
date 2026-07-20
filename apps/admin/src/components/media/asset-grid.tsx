@@ -3,7 +3,7 @@
 import { ImageOff } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
-import { EmptyState, Spinner } from '@bingoo/ui-web'
+import { EmptyState, Spinner } from '@bingoo.ai/ui-web'
 import type { MediaAssetDto } from '@/lib/api-types'
 import { AssetCard } from './asset-card'
 

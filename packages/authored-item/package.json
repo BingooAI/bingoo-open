@@ -1,8 +1,8 @@
 {
-  "name": "@bingoo/authored-item",
+  "name": "@bingoo.ai/authored-item",
   "version": "0.1.0",
   "private": true,
-  "description": "Lớp neo nối primitive @bingoo/core vào knowledge-engine (Candidate + cầu grading).",
+  "description": "Lớp neo nối primitive @bingoo.ai/core vào knowledge-engine (Candidate + cầu grading).",
   "author": "VietDevelopers.com (https://vietdevelopers.com)",
   "license": "UNLICENSED",
   "type": "module",
@@ -11,9 +11,9 @@
   },
   "types": "./src/index.ts",
   "dependencies": {
-    "@bingoo/core": "workspace:^",
-    "@bingoo/knowledge-engine": "workspace:^",
-    "@bingoo/manipulatives": "workspace:^"
+    "@bingoo.ai/core": "workspace:^",
+    "@bingoo.ai/knowledge-engine": "workspace:^",
+    "@bingoo.ai/manipulatives": "workspace:^"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

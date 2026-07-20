@@ -5,7 +5,7 @@ import type { MediaAssetDto } from './api-types'
 import type { CreateAssetResult } from './media-queries'
 
 /**
- * Authoring — sinh khung năng lực (framework) và vỏ khoá học, bám @bingoo/knowledge-engine.
+ * Authoring — sinh khung năng lực (framework) và vỏ khoá học, bám @bingoo.ai/knowledge-engine.
  * DTO viết tay mirror API (chưa có generated client). API là biên RBAC thật (CONTENT_EDITOR|ADMIN).
  */
 

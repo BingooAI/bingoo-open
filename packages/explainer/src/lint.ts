@@ -8,7 +8,7 @@
 import type { ExplainerDoc, LocaleBundle, Scene, Rect } from './schema'
 import { ExplainerDoc as DocSchema } from './schema'
 import { resolveLayout } from './layout'
-import { getManipulative, manipulativeKinds } from '@bingoo/manipulatives'
+import { getManipulative, manipulativeKinds } from '@bingoo.ai/manipulatives'
 
 export type LintIssue = {
   level: 'error' | 'warn'

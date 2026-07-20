@@ -4,8 +4,8 @@
  * they move. Draws a line + arrowhead (and optional label) in canvas coords.
  */
 import * as React from 'react'
-import type { RenderItem, ConnectorContent } from '@bingoo/explainer'
-import type { ThemeTokens } from '@bingoo/explainer'
+import type { RenderItem, ConnectorContent } from '@bingoo.ai/explainer'
+import type { ThemeTokens } from '@bingoo.ai/explainer'
 import { resolveStyle } from '../theme/tokens'
 import { itemTransform } from './util'
 

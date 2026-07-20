@@ -5,7 +5,7 @@
  * FAMILY: quiz = câu hỏi chấm tự động (~55) · kit = vật thao tác kéo/chạm (67) · block = khối tĩnh.
  */
 
-import { KIT_DOCS, kitAnswerDoc } from '@bingoo/manipulatives'
+import { KIT_DOCS, kitAnswerDoc } from '@bingoo.ai/manipulatives'
 import {
   BLOCK_PREFIX,
   MANIP_PREFIX,
@@ -13,7 +13,7 @@ import {
   isKnownPrimitive,
   manipKind,
   primitiveDisplay,
-} from '@bingoo/authored-item'
+} from '@bingoo.ai/authored-item'
 import { getAi } from '../providers'
 import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'

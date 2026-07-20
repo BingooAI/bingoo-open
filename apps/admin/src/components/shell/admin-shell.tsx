@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState, type ReactNode } from 'react'
-import { Avatar } from '@bingoo/ui-web'
+import { Avatar } from '@bingoo.ai/ui-web'
 import { Logo } from '@/components/brand/logo'
 import { LocaleSwitcher } from '@/components/brand/locale-switcher'
 import { ThemeToggle } from '@/components/brand/theme-toggle'

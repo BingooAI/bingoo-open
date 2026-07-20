@@ -13,7 +13,7 @@ import {
   checkInvariants,
   hasBlockingViolation,
   type RawSource,
-} from '@bingoo/authoring'
+} from '@bingoo.ai/authoring'
 import { buildAuthoringPorts } from './authoring-adapters'
 import { loadDomainProfiles, loadExistingConcepts, loadExistingNodes } from '../repos/authoring.repo'
 

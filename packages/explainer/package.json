@@ -1,5 +1,5 @@
 {
-  "name": "@bingoo/explainer",
+  "name": "@bingoo.ai/explainer",
   "version": "0.1.0",
   "private": true,
   "description": "Bingoo explainer engine — pure, deterministic frame(program,t) runtime + manipulative kits + doc schema/lint (platform-agnostic TS, no React/Next).",
@@ -12,9 +12,9 @@
   },
   "types": "./src/index.ts",
   "dependencies": {
-    "@bingoo/manipulatives": "workspace:*",
+    "@bingoo.ai/manipulatives": "workspace:*",
     "zod": "^4.4.3",
-    "@bingoo/core": "workspace:*"
+    "@bingoo.ai/core": "workspace:*"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

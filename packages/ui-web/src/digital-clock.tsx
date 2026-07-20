@@ -21,7 +21,7 @@ const pad = (n: number) => String(n).padStart(2, '0')
 
 /**
  * Set a digital clock (HH:MM) with ▲▼ steppers. 12h wraps 1–12, 24h wraps 0–23.
- * Grading (hour & minute) in `@bingoo/core`. i18n-free.
+ * Grading (hour & minute) in `@bingoo.ai/core`. i18n-free.
  */
 export function DigitalClock({
   mode = '12h',

@@ -20,7 +20,7 @@ export interface RulerMeasureProps {
 
 /**
  * Measure with a ruler — an object sits on a scale; the learner taps the tick
- * where it ends. Grading (tick === start + length) in `@bingoo/core`. Tap-based →
+ * where it ends. Grading (tick === start + length) in `@bingoo.ai/core`. Tap-based →
  * web + mobile. i18n-free.
  */
 export function RulerMeasure({

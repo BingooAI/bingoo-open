@@ -11,11 +11,11 @@
  * Change the "feel" of the whole system by editing THIS file.
  */
 import type { Scene, Element, Pose, Mark, Beat, Direction, VisualAction } from './schema'
-import { type EasingName, ease } from '@bingoo/manipulatives'
+import { type EasingName, ease } from '@bingoo.ai/manipulatives'
 import { lerpPose, seededNoise } from './interpolate'
 import { asManipulative } from './schema'
-import { compileManip, getManipulative } from '@bingoo/manipulatives'
-import type { ManipState } from '@bingoo/manipulatives'
+import { compileManip, getManipulative } from '@bingoo.ai/manipulatives'
+import type { ManipState } from '@bingoo.ai/manipulatives'
 
 /* --------------------------------------------------- house rules (spec §6.1) */
 

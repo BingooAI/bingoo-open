@@ -6,8 +6,8 @@
  * narration that had been spoken — both of which cost money — and there was
  * nothing to come back to, from this machine or any other.
  */
-import { db } from '@bingoo/db'
-import type { Prisma } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
+import type { Prisma } from '@bingoo.ai/db'
 
 export type LessonInput = {
   slug: string

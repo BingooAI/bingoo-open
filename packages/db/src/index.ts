@@ -1,5 +1,5 @@
 /**
- * @bingoo/db — server-only data access (Prisma). NEVER import from web / mobile
+ * @bingoo.ai/db — server-only data access (Prisma). NEVER import from web / mobile
  * or any client bundle: it carries DB credentials and the query engine (R1, R2).
  * Domain repositories live in the consuming server app (apps/api → repos).
  */

@@ -1,8 +1,8 @@
 {
-  "name": "@bingoo/experiences",
+  "name": "@bingoo.ai/experiences",
   "version": "0.1.0",
   "private": true,
-  "description": "Bingoo learning experiences — web view của các mode học (Lesson/Practice/Arena/Feed/Project/Classroom). Input (descriptor + content + labels) → view. Dựng trên @bingoo/ui-web + @bingoo/learning-experience.",
+  "description": "Bingoo learning experiences — web view của các mode học (Lesson/Practice/Arena/Feed/Project/Classroom). Input (descriptor + content + labels) → view. Dựng trên @bingoo.ai/ui-web + @bingoo.ai/learning-experience.",
   "author": "VietDevelopers.com (https://vietdevelopers.com)",
   "license": "UNLICENSED",
   "type": "module",
@@ -15,9 +15,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@bingoo/core": "workspace:*",
-    "@bingoo/learning-experience": "workspace:*",
-    "@bingoo/ui-web": "workspace:*",
+    "@bingoo.ai/core": "workspace:*",
+    "@bingoo.ai/learning-experience": "workspace:*",
+    "@bingoo.ai/ui-web": "workspace:*",
     "lucide-react": "^0.474.0"
   },
   "peerDependencies": {

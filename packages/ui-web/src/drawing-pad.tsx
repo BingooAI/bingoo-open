@@ -1,6 +1,6 @@
 'use client'
 
-import type { DrawStroke, RubricCriterion } from '@bingoo/core'
+import type { DrawStroke, RubricCriterion } from '@bingoo.ai/core'
 import { Eraser, Undo2 } from 'lucide-react'
 import { cn } from './lib/cn'
 import { POP, tile } from './lib/interactive'
@@ -31,7 +31,7 @@ export interface DrawingPadProps {
 /**
  * Draw the answer (vẽ tự do) — the single most common workbook instruction. No machine
  * can mark a drawing, so the learner ticks the success criteria against their own work
- * (`RubricList`); grading lives in `@bingoo/core`. The model drawing appears on reveal.
+ * (`RubricList`); grading lives in `@bingoo.ai/core`. The model drawing appears on reveal.
  */
 export function DrawingPad({
   strokes,

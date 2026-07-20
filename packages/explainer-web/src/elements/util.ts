@@ -4,7 +4,7 @@
  * group transform that places that box at the element's laid-out rect plus its
  * per-frame pose offset/scale (spec §2 — pose is a function of t).
  */
-import type { RenderItem } from '@bingoo/explainer'
+import type { RenderItem } from '@bingoo.ai/explainer'
 
 export type ItemXform = { transform: string; opacity: number }
 

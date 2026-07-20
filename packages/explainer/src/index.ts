@@ -1,9 +1,9 @@
 /**
- * @bingoo/explainer — public surface of the platform-agnostic engine.
+ * @bingoo.ai/explainer — public surface of the platform-agnostic engine.
  * Pure TS; imports nothing platform-specific (spec §7.1). The web renderer,
  * the editor, and (later) the RN Skia player all import from here.
  *
- * Manipulative kits live in the standalone `@bingoo/manipulatives` package
+ * Manipulative kits live in the standalone `@bingoo.ai/manipulatives` package
  * (reusable beyond the explainer); import them from there directly. This engine
  * owns the doc schema, layout, choreography, runtime, frame and lint.
  */

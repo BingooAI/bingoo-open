@@ -7,7 +7,7 @@ import {
   checkCompatibility,
   deriveCapabilities,
   type ExperienceDescriptor,
-} from '@bingoo/learning-experience'
+} from '@bingoo.ai/learning-experience'
 import { Callout } from './callout'
 import { type LearningExperienceLabels } from './learning-experience-card'
 import { cn } from './lib/cn'

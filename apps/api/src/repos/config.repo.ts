@@ -1,6 +1,6 @@
-import { db } from '@bingoo/db'
-import type { Prisma } from '@bingoo/db'
-import { DEFAULT_CONSENT_CONFIG, type ConsentAgeConfig } from '@bingoo/core'
+import { db } from '@bingoo.ai/db'
+import type { Prisma } from '@bingoo.ai/db'
+import { DEFAULT_CONSENT_CONFIG, type ConsentAgeConfig } from '@bingoo.ai/core'
 import { getCache } from '../providers'
 
 /**

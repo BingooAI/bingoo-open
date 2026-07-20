@@ -1,6 +1,6 @@
 'use client'
 
-import type { QuizItem } from '@bingoo/core'
+import type { QuizItem } from '@bingoo.ai/core'
 import { useQuizText } from './quiz-locale'
 import { Check, X } from 'lucide-react'
 import { useState } from 'react'
@@ -23,7 +23,7 @@ export interface CarrollGridProps {
 /**
  * Carroll diagram — sort items by two criteria into a rows × columns grid. Tap an
  * item to arm it, tap a cell to drop it. Tap-based → web + mobile. Grading in
- * `@bingoo/core`. i18n-free.
+ * `@bingoo.ai/core`. i18n-free.
  */
 export function CarrollGrid({
   rows,

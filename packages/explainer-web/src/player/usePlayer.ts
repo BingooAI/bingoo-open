@@ -7,14 +7,14 @@
  */
 'use client'
 import { useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
-import type { ExplainerDoc, LocaleBundle, Aspect } from '@bingoo/explainer'
+import type { ExplainerDoc, LocaleBundle, Aspect } from '@bingoo.ai/explainer'
 import {
   buildProgram,
   createPlayController,
   sceneAt,
   type SceneSlot,
   type PlayController,
-} from '@bingoo/explainer'
+} from '@bingoo.ai/explainer'
 import { blip } from './sfx'
 
 export type GateState = 'playing' | 'at-gate' | 'ended'

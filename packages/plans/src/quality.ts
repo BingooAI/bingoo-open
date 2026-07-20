@@ -4,7 +4,7 @@
  * thiếu pedagogy (misconception/representation/tiêu chí). Ra điểm → chặn publish nếu kém.
  */
 
-import { coverageReport, type SkillGraph, type Slug } from '@bingoo/knowledge-engine'
+import { coverageReport, type SkillGraph, type Slug } from '@bingoo.ai/knowledge-engine'
 import type { CoursePlan, LessonInstructionPlan } from './model'
 
 export type PlanIssueCode =

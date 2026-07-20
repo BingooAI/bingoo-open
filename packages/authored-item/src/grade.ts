@@ -1,8 +1,8 @@
-/** Cầu grading: @bingoo/core `Grade` → engine `Verdict` → Submission. */
+/** Cầu grading: @bingoo.ai/core `Grade` → engine `Verdict` → Submission. */
 
-import type { Submission, Verdict } from '@bingoo/knowledge-engine'
-import { gradeQuestion, type QuizQuestion, type QuizResponse } from '@bingoo/core'
-import { checkAnswer } from '@bingoo/manipulatives'
+import type { Submission, Verdict } from '@bingoo.ai/knowledge-engine'
+import { gradeQuestion, type QuizQuestion, type QuizResponse } from '@bingoo.ai/core'
+import { checkAnswer } from '@bingoo.ai/manipulatives'
 import type { AuthoredItem, Grade, Grader } from './model'
 import { primitiveMeta } from './registry'
 
@@ -22,7 +22,7 @@ export function gradeItem(item: AuthoredItem, response: unknown, grader: Grader)
 }
 
 /**
- * Grader sẵn cho primitive quiz — bọc `gradeQuestion` thật của @bingoo/core.
+ * Grader sẵn cho primitive quiz — bọc `gradeQuestion` thật của @bingoo.ai/core.
  * payload là một `QuizQuestion`, response là `QuizResponse`.
  */
 export const quizGrader: Grader = (payload, response) =>

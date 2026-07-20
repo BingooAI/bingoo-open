@@ -5,8 +5,8 @@
  * scene end). Clips are packed into non-overlapping rows (tracks) like a real
  * video editor. All timing derives from the engine — nothing is invented.
  */
-import type { ExplainerDoc, LocaleBundle, Aspect } from '@bingoo/explainer'
-import { buildProgram, type Program } from '@bingoo/explainer'
+import type { ExplainerDoc, LocaleBundle, Aspect } from '@bingoo.ai/explainer'
+import { buildProgram, type Program } from '@bingoo.ai/explainer'
 import { effectsOn, effectLabel } from '../effects'
 
 export type ClipFx = { t: number; label: string; cue: string; beatId: string; idx: number }

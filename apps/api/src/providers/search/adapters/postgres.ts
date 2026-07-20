@@ -4,8 +4,8 @@ import {
   reciprocalRankFusion,
   resolveSearchMode,
   type MediaSearchQuery,
-} from '@bingoo/core'
-import { db, Prisma } from '@bingoo/db'
+} from '@bingoo.ai/core'
+import { db, Prisma } from '@bingoo.ai/db'
 import type { ProviderAdapter } from '../../core/registry'
 import { embeddingRegistry } from '../../embedding'
 import type { SearchFilter, SearchHit, SearchPort, SearchResult } from '../port'
@@ -110,7 +110,7 @@ function semantic(vecLiteral: string, model: string, where: Prisma.Sql, k: numbe
 
 export const postgresSearchAdapter: ProviderAdapter<SearchPort> = {
   key: 'postgres',
-  requiredEnv: [], // uses the app's own Postgres (DATABASE_URL, via @bingoo/db)
+  requiredEnv: [], // uses the app's own Postgres (DATABASE_URL, via @bingoo.ai/db)
   create(): SearchPort {
     // Semantic retrieval is available only when the active embedding provider is
     // configured; otherwise we degrade to lexical transparently.

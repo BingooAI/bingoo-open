@@ -1,5 +1,5 @@
 /**
- * @bingoo/authoring — pipeline biên soạn: nguồn thô (PDF/ảnh/sách) → khung năng lực chuẩn.
+ * @bingoo.ai/authoring — pipeline biên soạn: nguồn thô (PDF/ảnh/sách) → khung năng lực chuẩn.
  *
  * Lõi THUẦN (slug, trigram, dedup, compile, validate, review) testable không cần LLM;
  * LLM/vision đặt sau ports. Đầu ra khớp GraphData + Framework mà engine đã nhận.

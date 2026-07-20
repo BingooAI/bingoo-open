@@ -1,6 +1,6 @@
 'use client'
 
-import type { ColoringPicture } from '@bingoo/core'
+import type { ColoringPicture } from '@bingoo.ai/core'
 import { cn } from './lib/cn'
 
 export interface ColoringBoardProps {

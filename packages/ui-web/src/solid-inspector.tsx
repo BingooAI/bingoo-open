@@ -1,6 +1,6 @@
 'use client'
 
-import { solidPartIds, makeSolid, type Solid3DName, type SolidPartKind } from '@bingoo/core'
+import { solidPartIds, makeSolid, type Solid3DName, type SolidPartKind } from '@bingoo.ai/core'
 import { useMemo } from 'react'
 import { GeoShape, type GeoShapePart } from './geo-shape'
 import { cn } from './lib/cn'
@@ -21,7 +21,7 @@ export interface SolidInspectorProps {
 
 /**
  * Tap every face / curved surface / edge / vertex of a solid — you must TURN it
- * to reach the hidden ones. Counting + grading live in `@bingoo/core`
+ * to reach the hidden ones. Counting + grading live in `@bingoo.ai/core`
  * (`solidPartIds`), so the answer is derived from the geometry, never authored.
  * i18n-free.
  */

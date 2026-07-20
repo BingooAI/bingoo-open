@@ -14,8 +14,8 @@ import type {
   Scene,
   GateSpec,
   Background,
-} from '@bingoo/explainer'
-import { resolveNarrations, contractOf, templateCatalog, SFX_NAMES, sfxUrl } from '@bingoo/explainer'
+} from '@bingoo.ai/explainer'
+import { resolveNarrations, contractOf, templateCatalog, SFX_NAMES, sfxUrl } from '@bingoo.ai/explainer'
 import { EXPLAINER_API, apiPost } from './endpoints'
 import { useSnap, useStore } from '../store/ctx'
 import type { EditOp } from '../store/ops'

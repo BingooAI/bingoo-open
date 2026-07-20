@@ -38,7 +38,7 @@ export interface ChoiceListProps {
 /**
  * A list of quiz choices (single- or multi-select) built on `AnswerOption`.
  * Fully controlled and i18n-free — labels are data, grading is revealed by the
- * caller (which uses `@bingoo/core`'s `gradeQuestion`). Re-skins with the pack.
+ * caller (which uses `@bingoo.ai/core`'s `gradeQuestion`). Re-skins with the pack.
  */
 export function ChoiceList({
   choices,

@@ -1,5 +1,5 @@
 {
-  "name": "@bingoo/admin",
+  "name": "@bingoo.ai/admin",
   "version": "0.1.0",
   "private": true,
   "description": "Bingoo admin app (Next.js) — media library, moderation, taxonomy & prompt management.",
@@ -15,12 +15,12 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\""
   },
   "dependencies": {
-    "@bingoo/core": "workspace:*",
-    "@bingoo/explainer": "workspace:*",
-    "@bingoo/explainer-web": "workspace:*",
-    "@bingoo/i18n": "workspace:*",
-    "@bingoo/tokens": "workspace:*",
-    "@bingoo/ui-web": "workspace:*",
+    "@bingoo.ai/core": "workspace:*",
+    "@bingoo.ai/explainer": "workspace:*",
+    "@bingoo.ai/explainer-web": "workspace:*",
+    "@bingoo.ai/i18n": "workspace:*",
+    "@bingoo.ai/tokens": "workspace:*",
+    "@bingoo.ai/ui-web": "workspace:*",
     "@tanstack/react-query": "^5.101.3",
     "better-auth": "^1.6.23",
     "class-variance-authority": "^0.7.1",

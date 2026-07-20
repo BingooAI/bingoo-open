@@ -4,7 +4,7 @@
  * Run: `node --env-file=.env --import tsx src/scripts/media-generate-check.ts`
  * (costs a little image + TTS credit).
  */
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import { getStorage } from '../providers'
 import { deleteAsset, getAssetById, listRenditions } from '../repos/media-asset.repo'
 import { generateAudioAsset, generateImageAssets } from '../services/media-generate.service'

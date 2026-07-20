@@ -1,5 +1,5 @@
 <!-- GENERATED từ engine đang chạy. Đừng sửa tay — sinh lại bằng:
-     pnpm --filter @bingoo/explainer prompt   (hoặc tải từ trang /vi/explainer-import) -->
+     pnpm --filter @bingoo.ai/explainer prompt   (hoặc tải từ trang /vi/explainer-import) -->
 
 # Sinh một bài giảng Explainer (JSON)
 
@@ -774,7 +774,7 @@ Học sinh **làm** ở đây. Có **4 kiểu**, và **cả 4 đều được CH
               {"id":"r3","d":"M60 10h40v40h-40z","targetColor":"#e07a42"} ] } }
 ```
 
-`activity.quiz` là **một câu hỏi @bingoo/core**. Sai shape thì QuizShell vẽ **thẻ rỗng** — và cổng kiểm tra sẽ từ chối bài.
+`activity.quiz` là **một câu hỏi @bingoo.ai/core**. Sai shape thì QuizShell vẽ **thẻ rỗng** — và cổng kiểm tra sẽ từ chối bài.
 
 ```json
 {

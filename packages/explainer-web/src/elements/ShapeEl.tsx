@@ -5,8 +5,8 @@
  * prop by name (spec §8, §12: element/verb is a shared, extendable kit).
  */
 import * as React from 'react'
-import type { RenderItem, ShapeContent } from '@bingoo/explainer'
-import type { ThemeTokens } from '@bingoo/explainer'
+import type { RenderItem, ShapeContent } from '@bingoo.ai/explainer'
+import type { ThemeTokens } from '@bingoo.ai/explainer'
 import { resolveStyle } from '../theme/tokens'
 import { getProp, type PropCtx } from '../kit/props'
 import { itemTransform } from './util'

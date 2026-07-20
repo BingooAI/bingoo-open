@@ -1,4 +1,4 @@
-import type { MediaScope } from '@bingoo/db'
+import type { MediaScope } from '@bingoo.ai/db'
 import { getStorage } from '../providers'
 
 /**

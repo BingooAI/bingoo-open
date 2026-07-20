@@ -9,8 +9,8 @@
  * Chạy TRƯỚC MỌI lần ghi đồ thị (/apply) và trong CI trên fixture nguồn thật.
  */
 
-import { compareIdentity, facetKey, type DomainProfile, type Facets } from '@bingoo/facets'
-import type { GraphData, SkillNode, Slug } from '@bingoo/knowledge-engine'
+import { compareIdentity, facetKey, type DomainProfile, type Facets } from '@bingoo.ai/facets'
+import type { GraphData, SkillNode, Slug } from '@bingoo.ai/knowledge-engine'
 
 export type InvariantCode =
   | 'I1_IDENTITY_COLLISION'

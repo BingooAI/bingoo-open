@@ -1,6 +1,6 @@
 /** Kiểm AuthoredItem — bảo vệ bất biến neo (no-orphan, đo được cần grader). */
 
-import type { SkillGraph } from '@bingoo/knowledge-engine'
+import type { SkillGraph } from '@bingoo.ai/knowledge-engine'
 import type { AuthoredItem } from './model'
 import { isMeasurable } from './compile'
 import { isKnownPrimitive, primitiveMeta } from './registry'

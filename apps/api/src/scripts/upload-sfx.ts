@@ -15,7 +15,7 @@
 import { createHash } from 'node:crypto'
 import { readFile, readdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import { getStorage } from '../providers'
 import { renditionStorageKey } from '../lib/media-serialize'
 import {

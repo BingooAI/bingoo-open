@@ -385,33 +385,33 @@ export const ManipGate = z.object({
 export type ManipGate = z.infer<typeof ManipGate>
 
 /**
- * A generic interactive activity beat. Either embeds a `@bingoo/core` quiz
+ * A generic interactive activity beat. Either embeds a `@bingoo.ai/core` quiz
  * question (`quiz` — ANY of the ~40 shared question types: single/multiple/
  * fill/order/match/wordbank/categorize/highlight/numberline/clock/venn/tablefill/
  * fraction/money/… — rendered + graded by the shared quiz engine, so a new
  * question type added to core is available here with NO explainer change), or a
  * manipulative kit (`manip` — drive any of the kits, graded by checkAnswer). The
  * payload is `unknown` here so the schema never needs editing when the quiz
- * engine or kit registry grows; the player validates it against @bingoo/core.
+ * engine or kit registry grows; the player validates it against @bingoo.ai/core.
  */
 /**
  * What a learner DOES at a gate. Four shapes, and every one of them is graded by
  * CODE, not by a model's opinion:
- *   • quiz     — a @bingoo/core question (55 types), graded by gradeQuestion
+ *   • quiz     — a @bingoo.ai/core question (55 types), graded by gradeQuestion
  *   • manip    — any of the 67 kits, driven live, graded by checkAnswer
  *   • tracing  — write the letter/shape, graded by scoreTracedStroke
  *   • coloring — colour to a target, graded by coloringScore
- * Tracing and colouring existed in @bingoo/core and @bingoo/ui-web the whole
+ * Tracing and colouring existed in @bingoo.ai/core and @bingoo.ai/ui-web the whole
  * time; the gate simply never reached for them, so a lesson for a five-year-old
  * who cannot yet read could only ever offer them buttons to press.
  */
 export const Activity = z.object({
-  quiz: z.unknown().optional(), // a @bingoo/core QuizQuestion
+  quiz: z.unknown().optional(), // a @bingoo.ai/core QuizQuestion
   manip: z
     .object({ kind: z.string(), params: z.unknown().optional(), target: z.unknown().optional() })
     .optional(),
-  tracing: z.unknown().optional(), // a @bingoo/core TracingGlyph
-  coloring: z.unknown().optional(), // a @bingoo/core ColoringPicture
+  tracing: z.unknown().optional(), // a @bingoo.ai/core TracingGlyph
+  coloring: z.unknown().optional(), // a @bingoo.ai/core ColoringPicture
 })
 export type Activity = z.infer<typeof Activity>
 

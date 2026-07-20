@@ -1,6 +1,6 @@
 /**
- * @bingoo/plans — Instruction Plan (khung chuẩn) + KP + planQuality.
- * Tầng ② của kiến trúc nội dung; thuần TS, neo vào @bingoo/knowledge-engine.
+ * @bingoo.ai/plans — Instruction Plan (khung chuẩn) + KP + planQuality.
+ * Tầng ② của kiến trúc nội dung; thuần TS, neo vào @bingoo.ai/knowledge-engine.
  * Xem docs/CONTENT-ARCHITECTURE.md, docs/GIAO-AN-MAU.md.
  */
 

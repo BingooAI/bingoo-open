@@ -1,5 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { PageHeader } from '@bingoo/ui-web'
+import { PageHeader } from '@bingoo.ai/ui-web'
 import { MediaBrowser } from '@/components/media/media-browser'
 import { resolveCapabilities } from '@/lib/roles'
 import { getServerSession } from '@/lib/session'

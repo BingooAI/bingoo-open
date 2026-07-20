@@ -4,7 +4,7 @@
  * are read straight from the registry, so adding a kit never touches this file's
  * logic. Used by the Library (insert) and the Inspector (configure + schedule).
  */
-import { MANIPULATIVES } from '@bingoo/manipulatives'
+import { MANIPULATIVES } from '@bingoo.ai/manipulatives'
 
 export type Subject = 'math' | 'english' | 'science'
 

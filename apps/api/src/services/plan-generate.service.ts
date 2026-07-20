@@ -6,8 +6,8 @@
  * context tổng thể thì LLM bịa — nên gate ở đây, không cho tắt.
  */
 
-import { planQuality, type CoursePlan, type LessonInstructionPlan, type PlanQuality } from '@bingoo/plans'
-import type { Slug } from '@bingoo/knowledge-engine'
+import { planQuality, type CoursePlan, type LessonInstructionPlan, type PlanQuality } from '@bingoo.ai/plans'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
 import { generateLessonPlan } from './plan-adapters'
 import { getSkillGraph } from './knowledge.service'
 import { getCourse } from '../repos/course.repo'

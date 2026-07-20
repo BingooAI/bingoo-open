@@ -1,6 +1,6 @@
 'use client'
 
-import type { RubricCriterion } from '@bingoo/core'
+import type { RubricCriterion } from '@bingoo.ai/core'
 import { Check } from 'lucide-react'
 import { cn } from './lib/cn'
 import { stagger, tile } from './lib/interactive'
@@ -23,7 +23,7 @@ export interface RubricListProps {
 /**
  * Success criteria the learner ticks off against their own work — how open tasks
  * (drawing, writing) are assessed, since no machine can mark them. Scoring lives in
- * `@bingoo/core` (`gradeQuestion`), so a teacher or a model can overwrite the same
+ * `@bingoo.ai/core` (`gradeQuestion`), so a teacher or a model can overwrite the same
  * `met` list later without any change here. i18n-free.
  */
 export function RubricList({

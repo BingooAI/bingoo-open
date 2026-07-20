@@ -27,7 +27,7 @@ const EnvSchema = z
           .map((origin) => origin.trim())
           .filter(Boolean),
       ),
-    /** Postgres connection string (consumed by @bingoo/db). Optional so the API can
+    /** Postgres connection string (consumed by @bingoo.ai/db). Optional so the API can
      *  boot for liveness checks without a database; queries fail as 503 if unset. */
     DATABASE_URL: z.string().optional(),
 

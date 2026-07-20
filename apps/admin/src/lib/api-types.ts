@@ -1,7 +1,7 @@
 /**
  * Client-facing API DTOs — the shape the backend actually serializes to the wire
  * (apps/api/src/lib/media-serialize.ts + the route handlers), NOT the raw Prisma
- * rows. Domain enums/unions are imported from @bingoo/core (the shared, client-
+ * rows. Domain enums/unions are imported from @bingoo.ai/core (the shared, client-
  * safe contract) so they never drift. Keep these in sync with the API; there is
  * no generated client yet.
  */
@@ -15,7 +15,7 @@ import type {
   MediaVisibility,
   ModerationStatus,
   TagKind,
-} from '@bingoo/core'
+} from '@bingoo.ai/core'
 
 /** Response envelope from the API (apps/api/src/lib/response.ts). */
 export interface ApiEnvelope<T> {

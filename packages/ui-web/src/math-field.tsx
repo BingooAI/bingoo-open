@@ -116,7 +116,7 @@ function pretty(s: string, keyBase = ''): ReactNode[] {
 
 /**
  * Enter a maths expression with an on-screen keyboard. The value is a linear maths
- * string (canonical); `@bingoo/core` grades it (numeric or exact) and can export
+ * string (canonical); `@bingoo.ai/core` grades it (numeric or exact) and can export
  * LaTeX for advanced rendering later. The keyboard adapts to the audience level.
  * i18n-free.
  */

@@ -5,8 +5,8 @@
  * node, `connect` self-draws an edge, `highlightPath` dims the rest.
  */
 import * as React from 'react'
-import type { RenderItem, DiagramContent } from '@bingoo/explainer'
-import type { ThemeTokens } from '@bingoo/explainer'
+import type { RenderItem, DiagramContent } from '@bingoo.ai/explainer'
+import type { ThemeTokens } from '@bingoo.ai/explainer'
 import { resolveStyle } from '../theme/tokens'
 import { getRegister } from '../theme/registers'
 import { clamp } from './util'

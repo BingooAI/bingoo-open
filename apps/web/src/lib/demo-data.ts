@@ -3,8 +3,8 @@
  * user-facing labels still come from the i18n message catalog. Swap this module
  * for real API data later; the components don't change.
  */
-import type { IconChipColor } from '@bingoo/ui-web'
-import type { MascotEmotion } from '@bingoo/core'
+import type { IconChipColor } from '@bingoo.ai/ui-web'
+import type { MascotEmotion } from '@bingoo.ai/core'
 
 export const student = {
   name: 'Minh Bảo',

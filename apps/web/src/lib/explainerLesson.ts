@@ -3,11 +3,11 @@
  * ported demo content): "Even & odd" for grade-1, bilingual (vi + en). Two scenes:
  * an exposition that reveals + pairs the stars (the SHOW manipulative), then a
  * gate — the interactive activity beat (a select question graded in the player,
- * rendered with @bingoo/ui-web). Proves the migrated engine + renderer play an
+ * rendered with @bingoo.ai/ui-web). Proves the migrated engine + renderer play an
  * authored ExplainerDoc end-to-end. Theme inlined so the lesson validates
  * headlessly (no renderer import).
  */
-import type { ExplainerDoc, LocaleBundle, ThemeTokens } from '@bingoo/explainer'
+import type { ExplainerDoc, LocaleBundle, ThemeTokens } from '@bingoo.ai/explainer'
 
 const theme: ThemeTokens = {
   colors: {
@@ -97,8 +97,8 @@ export const ACCEPTANCE_DOC: ExplainerDoc = {
           startVisible: true,
         },
       ],
-      // Activity beat: a @bingoo/core single-choice question, rendered + graded by
-      // @bingoo/ui-web's QuizShell (one of ~40 shared question types).
+      // Activity beat: a @bingoo.ai/core single-choice question, rendered + graded by
+      // @bingoo.ai/ui-web's QuizShell (one of ~40 shared question types).
       gate: {
         kind: 'activity',
         prompt: 'Cùng luyện tập nào!',

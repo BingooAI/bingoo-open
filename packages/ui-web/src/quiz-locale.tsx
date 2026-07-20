@@ -6,7 +6,7 @@
 'use client'
 
 import { createContext, useContext } from 'react'
-import { pickText, type LocalizedString } from '@bingoo/core'
+import { pickText, type LocalizedString } from '@bingoo.ai/core'
 
 /** Locale hiển thị hiện hành (mặc định 'vi' — sản phẩm ưu tiên tiếng Việt). */
 const QuizLocaleContext = createContext<string>('vi')

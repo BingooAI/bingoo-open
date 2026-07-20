@@ -1,6 +1,6 @@
 /** Biên dịch AuthoredItem → Candidate (đầu vào engine). */
 
-import type { Candidate } from '@bingoo/knowledge-engine'
+import type { Candidate } from '@bingoo.ai/knowledge-engine'
 import type { AuthoredItem } from './model'
 import { primitiveMeta } from './registry'
 

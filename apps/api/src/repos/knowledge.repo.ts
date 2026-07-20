@@ -1,9 +1,9 @@
 /**
  * Data access cho knowledge-engine (server-only). Map bảng Prisma ↔ kiểu engine.
- * Repo THUẦN data — logic đo lường ở @bingoo/knowledge-engine (service gọi).
+ * Repo THUẦN data — logic đo lường ở @bingoo.ai/knowledge-engine (service gọi).
  */
 
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import type {
   EvidenceInput,
   GraphData,
@@ -11,7 +11,7 @@ import type {
   SkillMastery,
   SkillNode,
   Slug,
-} from '@bingoo/knowledge-engine'
+} from '@bingoo.ai/knowledge-engine'
 
 /** Đọc toàn bộ Competency + CapabilityRelation → GraphData (slug-keyed). */
 export async function loadGraphData(): Promise<GraphData> {

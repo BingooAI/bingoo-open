@@ -24,7 +24,7 @@ const TONES: Record<string, number> = {
   sparkle: 1180,
 }
 
-import { sfxUrl } from '@bingoo/explainer'
+import { sfxUrl } from '@bingoo.ai/explainer'
 
 /** cache of preloaded <audio> per sound so repeated fires don't re-download */
 const clips = new Map<string, HTMLAudioElement>()

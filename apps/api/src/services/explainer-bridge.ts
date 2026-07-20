@@ -10,8 +10,8 @@
  * viết (feed, không sinh lại). `facts` (đã kiểm) chống bịa số. `durationMin` → `sceneCount` (~32s/cảnh).
  */
 
-import type { LessonBrief } from '@bingoo/explainer'
-import type { KnowledgePoint, LessonStep, LocalizedText } from '@bingoo/plans'
+import type { LessonBrief } from '@bingoo.ai/explainer'
+import type { KnowledgePoint, LessonStep, LocalizedText } from '@bingoo.ai/plans'
 
 export type AudienceStage = 'preschool' | 'primary' | 'middle' | 'high' | 'adult'
 

@@ -15,13 +15,13 @@
  * it. This walks the union and lifts them out, so the brief documents each type
  * FROM THE SCHEMA THE GRADER USES. A field renamed in core changes this text.
  *
- * Grading needs no annotation here: @bingoo/authored-item's registry marks EVERY
+ * Grading needs no annotation here: @bingoo.ai/authored-item's registry marks EVERY
  * member of this union `measurable` with `graderKind: "auto-key"` — the whole
- * union is graded by core's `gradeQuestion`, and @bingoo/ui-web's <QuizShell>
+ * union is graded by core's `gradeQuestion`, and @bingoo.ai/ui-web's <QuizShell>
  * renders all 55 (verified: 55/55). So the only thing that was ever missing was
  * telling the model what each one LOOKS LIKE.
  */
-import { QuizQuestion } from '@bingoo/core'
+import { QuizQuestion } from '@bingoo.ai/core'
 
 /** Fields shared by every question — documented once, not 55 times. */
 const BASE_FIELDS = new Set([

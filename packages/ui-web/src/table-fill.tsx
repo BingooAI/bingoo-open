@@ -1,6 +1,6 @@
 'use client'
 
-import type { TableFillQuestion } from '@bingoo/core'
+import type { TableFillQuestion } from '@bingoo.ai/core'
 import { cn } from './lib/cn'
 
 export interface TableFillProps {

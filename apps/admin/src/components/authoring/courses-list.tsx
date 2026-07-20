@@ -15,7 +15,7 @@ import {
   THead,
   TR,
   useToast,
-} from '@bingoo/ui-web'
+} from '@bingoo.ai/ui-web'
 import { Link } from '@/i18n/navigation'
 import { useCourses, useDeleteCourse, useSetCourseStatus } from '@/lib/authoring-queries'
 

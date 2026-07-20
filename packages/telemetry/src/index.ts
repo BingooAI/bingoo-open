@@ -1,10 +1,10 @@
 /**
- * @bingoo/telemetry — sự kiện thô UI → ngữ cảnh làm giàu bằng chứng.
+ * @bingoo.ai/telemetry — sự kiện thô UI → ngữ cảnh làm giàu bằng chứng.
  * BẤT BIẾN: Telemetry ≠ Evidence. Chỉ `attempt_submitted` sinh Observation;
  * view/hint chỉ bồi thêm hintsUsed/latency/retry (EVIDENCE-ANALYTICS §2.1). Thuần TS.
  */
 
-import type { EvidenceInput, Millis } from '@bingoo/knowledge-engine'
+import type { EvidenceInput, Millis } from '@bingoo.ai/knowledge-engine'
 
 export type RawEventKind =
   'session_start' | 'item_viewed' | 'hint_opened' | 'attempt_submitted' | 'session_end'

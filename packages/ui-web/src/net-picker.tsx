@@ -1,6 +1,6 @@
 'use client'
 
-import { getNet, netBounds, type NetDef, type Solid3DName } from '@bingoo/core'
+import { getNet, netBounds, type NetDef, type Solid3DName } from '@bingoo.ai/core'
 import { GeoShape } from './geo-shape'
 import { cn } from './lib/cn'
 import { stagger, tile, tileState } from './lib/interactive'
@@ -63,7 +63,7 @@ export function NetShape({ net, size = 110, className }: { net: NetDef; size?: n
 
 /**
  * Nets — match the flat shape to the solid it folds into, or name the solid a net makes.
- * The right answer is derived from `NET_LIBRARY` in `@bingoo/core`, never authored, and
+ * The right answer is derived from `NET_LIBRARY` in `@bingoo.ai/core`, never authored, and
  * the distractors are real nets that fold into nothing. Tap-based → web + mobile.
  */
 export function NetPicker({

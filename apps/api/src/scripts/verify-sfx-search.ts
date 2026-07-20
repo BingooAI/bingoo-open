@@ -9,7 +9,7 @@
  */
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import { getSearch } from '../providers'
 import { buildMediaSubject, toSearchFilter } from '../repos/media-access.repo'
 

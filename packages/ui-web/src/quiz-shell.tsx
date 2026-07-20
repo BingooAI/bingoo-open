@@ -13,7 +13,7 @@ import {
   type Solid3DName,
   type QuizResponse,
   type QuizSummary,
-} from '@bingoo/core'
+} from '@bingoo.ai/core'
 import { QuizLocaleProvider, useQuizText } from './quiz-locale'
 import { CheckCircle2, XCircle } from 'lucide-react'
 import { useEffect, useReducer, useRef, type ReactNode } from 'react'
@@ -161,7 +161,7 @@ export interface QuizShellProps {
 }
 
 /**
- * The quiz orchestrator: drives `@bingoo/core`'s reducer, renders the right input
+ * The quiz orchestrator: drives `@bingoo.ai/core`'s reducer, renders the right input
  * for each of the six question types, reveals grading, offers hints + explanation,
  * and shows a result screen. Pure UI over shared logic — its native twin behaves
  * identically. Every string is data (i18n-free); it re-skins with the active pack.

@@ -22,7 +22,7 @@ export interface ProofreadTextProps {
 
 /**
  * Proofreading — tap a word you think is wrong and type the correction ("I like
- * play outdoors" → "playing"). Also covers punctuation edits. `@bingoo/core`
+ * play outdoors" → "playing"). Also covers punctuation edits. `@bingoo.ai/core`
  * grades it and PENALISES editing a word that was never wrong. i18n-free.
  */
 export function ProofreadText({

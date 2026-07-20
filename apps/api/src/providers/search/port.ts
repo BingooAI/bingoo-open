@@ -1,4 +1,4 @@
-import type { MediaSearchMode, MediaSearchQuery, ModerationStatus } from '@bingoo/core'
+import type { MediaSearchMode, MediaSearchQuery, ModerationStatus } from '@bingoo.ai/core'
 
 /**
  * Media search capability (docs/media-library-design.md §4). The default adapter

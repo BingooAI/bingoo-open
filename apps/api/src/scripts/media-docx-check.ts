@@ -4,7 +4,7 @@
  * stored + downloadable, then cleans up.
  * Run: `node --env-file=.env --import tsx src/scripts/media-docx-check.ts`
  */
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import { getStorage } from '../providers'
 import { extForMime, renditionStorageKey } from '../lib/media-serialize'
 import {

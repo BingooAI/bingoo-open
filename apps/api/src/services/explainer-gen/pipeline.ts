@@ -11,12 +11,12 @@
  * pipeline still returns the validated WRITE output, so it is never worse than
  * the single-shot path. Pedagogy still comes from the LessonBrief (upstream).
  */
-import { parseDoc, parseBundle, lintDoc } from '@bingoo/explainer'
-import type { ExplainerDoc, LocaleBundle } from '@bingoo/explainer'
-import { briefPromptSections, AUDIENCE_PROFILES, planForScenes } from '@bingoo/explainer'
-import type { LessonBrief } from '@bingoo/explainer'
+import { parseDoc, parseBundle, lintDoc } from '@bingoo.ai/explainer'
+import type { ExplainerDoc, LocaleBundle } from '@bingoo.ai/explainer'
+import { briefPromptSections, AUDIENCE_PROFILES, planForScenes } from '@bingoo.ai/explainer'
+import type { LessonBrief } from '@bingoo.ai/explainer'
 import { extractJson } from './json'
-import { checkScene, checkLesson } from '@bingoo/explainer'
+import { checkScene, checkLesson } from '@bingoo.ai/explainer'
 import { Outline, Critique, RegenResult, REGEN_THRESHOLD } from './schemas'
 
 export type LlmLike = {
@@ -32,7 +32,7 @@ export type BankItem = {
   skills: string[]
   primitiveKind: string
   difficulty: number
-  /** a @bingoo/core QuizQuestion, valid as `gate.activity.quiz` verbatim */
+  /** a @bingoo.ai/core QuizQuestion, valid as `gate.activity.quiz` verbatim */
   payload: unknown
 }
 

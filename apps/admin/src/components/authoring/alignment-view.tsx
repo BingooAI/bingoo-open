@@ -13,7 +13,7 @@ import {
   Input,
   Textarea,
   useToast,
-} from '@bingoo/ui-web'
+} from '@bingoo.ai/ui-web'
 import {
   useAlignHistory,
   useAlignSource,

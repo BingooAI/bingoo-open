@@ -1,6 +1,6 @@
 'use client'
 
-import type { QuizItem } from '@bingoo/core'
+import type { QuizItem } from '@bingoo.ai/core'
 import { Check, X } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from './lib/cn'

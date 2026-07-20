@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react'
 import { cn } from './lib/cn'
-import { toPercent } from '@bingoo/core'
+import { toPercent } from '@bingoo.ai/core'
 
 const STROKE_COLOR = {
   primary: 'stroke-primary',

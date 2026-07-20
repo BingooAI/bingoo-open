@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { z } from 'zod'
-import type { EvidenceInput } from '@bingoo/knowledge-engine'
+import type { EvidenceInput } from '@bingoo.ai/knowledge-engine'
 import type { AppEnv } from '../lib/context'
 import { AppError } from '../lib/errors'
 import { ok } from '../lib/response'

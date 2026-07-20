@@ -11,9 +11,9 @@
  * Run (inside apps/api, costs real image + embedding + LLM credit):
  *   node --env-file=.env --import tsx src/scripts/media-generate-lesson-assets.ts
  */
-import type { LocalizedText } from '@bingoo/core'
-import { db } from '@bingoo/db'
-import type { TagKind } from '@bingoo/db'
+import type { LocalizedText } from '@bingoo.ai/core'
+import { db } from '@bingoo.ai/db'
+import type { TagKind } from '@bingoo.ai/db'
 import { createFolder } from '../repos/media-folder.repo'
 import { addAssetTags, upsertTag } from '../repos/media-tag.repo'
 import { getAssetById, updateAsset } from '../repos/media-asset.repo'

@@ -3,12 +3,12 @@
  *
  * Co-located CẠNH registry (nguồn sự thật primitive) để hết hardcode rải ở app:
  *   · QUIZ (auto-key core) → bảng `QUIZ_DISPLAY` NGAY ĐÂY.
- *   · KIT (manip:) → uỷ thác `kitDisplay()` của @bingoo/manipulatives (cạnh answer/objectImage của kit).
+ *   · KIT (manip:) → uỷ thác `kitDisplay()` của @bingoo.ai/manipulatives (cạnh answer/objectImage của kit).
  *   · BLOCK (block:) / loại chưa khai → titleize từ slug, và KIT_DOCS.en làm mô tả dự phòng cho kit.
  * App chỉ gọi `primitiveDisplay(kind)` — KHÔNG giữ map nhãn riêng nữa.
  */
 
-import { KIT_DOCS, kitDisplay } from '@bingoo/manipulatives'
+import { KIT_DOCS, kitDisplay } from '@bingoo.ai/manipulatives'
 import { BLOCK_PREFIX, MANIP_PREFIX } from './registry'
 
 export interface PrimitiveLoc {

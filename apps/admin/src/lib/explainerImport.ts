@@ -18,8 +18,8 @@
  * Steps 2 and 3 are idempotent: re-running skips anything already resolved, so a
  * partial failure is resumed, not restarted.
  */
-import type { ExplainerDoc, LocaleBundle } from '@bingoo/explainer'
-import { parseDoc, parseBundle, lintDoc, checkScene, checkLesson } from '@bingoo/explainer'
+import type { ExplainerDoc, LocaleBundle } from '@bingoo.ai/explainer'
+import { parseDoc, parseBundle, lintDoc, checkScene, checkLesson } from '@bingoo.ai/explainer'
 
 export type ImportIssue = {
   level: 'error' | 'warn'

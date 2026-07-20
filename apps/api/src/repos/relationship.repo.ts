@@ -1,5 +1,5 @@
-import { db } from '@bingoo/db'
-import { categoryOf, kinshipHonorific, reverseType, type RelationshipType } from '@bingoo/core'
+import { db } from '@bingoo.ai/db'
+import { categoryOf, kinshipHonorific, reverseType, type RelationshipType } from '@bingoo.ai/core'
 import { AppError } from '../lib/errors'
 import { isGuardianOf } from './children.repo'
 import { shareAnyClass } from './class.repo'

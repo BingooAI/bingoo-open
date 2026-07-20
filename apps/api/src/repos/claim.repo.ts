@@ -1,4 +1,4 @@
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import { env } from '../config/env'
 import { auth } from '../auth/auth'
 

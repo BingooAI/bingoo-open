@@ -1,6 +1,6 @@
 'use client'
 
-import { makeSolid, projectSolid, type Solid3DName, type SolidPartKind } from '@bingoo/core'
+import { makeSolid, projectSolid, type Solid3DName, type SolidPartKind } from '@bingoo.ai/core'
 import { useMemo, useRef, useState, type PointerEvent } from 'react'
 import { cn } from './lib/cn'
 
@@ -57,7 +57,7 @@ function shadeHex(hex: string, s: number): string {
 const SEL = '#f74c6c' // selection accent (coral)
 
 /**
- * 2D + 3D shape figures. The 3D solids are REAL geometry (`@bingoo/core`'s 3D
+ * 2D + 3D shape figures. The 3D solids are REAL geometry (`@bingoo.ai/core`'s 3D
  * engine): drag to TURN them, and TAP a part — a flat face, the curved surface,
  * an edge, or a vertex — to identify or count it. Hidden edges/vertices are drawn
  * dashed, and hidden parts can only be tapped after turning the solid, which is

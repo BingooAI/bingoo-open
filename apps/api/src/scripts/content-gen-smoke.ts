@@ -8,9 +8,9 @@
  * Không lưu DB (persist:false / trả về thẳng). Chi phí: ~2 call LLM.
  * Run: `node --env-file=.env --import tsx src/scripts/content-gen-smoke.ts`
  */
-import { db } from '@bingoo/db'
-import { pickText } from '@bingoo/core'
-import { primitiveMeta, validateItem, type AuthoredItem } from '@bingoo/authored-item'
+import { db } from '@bingoo.ai/db'
+import { pickText } from '@bingoo.ai/core'
+import { primitiveMeta, validateItem, type AuthoredItem } from '@bingoo.ai/authored-item'
 import { buildGeneratorPort } from '../services/content-adapters'
 import { generateOneItem } from '../services/content-item-gen.service'
 

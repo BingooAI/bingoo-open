@@ -25,7 +25,7 @@ function at(i: number, steps: number, radius = 38) {
 
 /**
  * Turns / rotation — a pointer on a dial. The start position is a ghost; tap where
- * the pointer lands after the described turn. Grading in `@bingoo/core`. i18n-free.
+ * the pointer lands after the described turn. Grading in `@bingoo.ai/core`. i18n-free.
  */
 export function RotationDial({
   steps,

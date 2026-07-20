@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest'
 import { stepServesState, stepsForState } from '../src/worklist'
 import { planQuality } from '../src/quality'
 import type { CoursePlan, KcArc, LessonStep } from '../src/model'
-import type { SkillGraph } from '@bingoo/knowledge-engine'
+import type { SkillGraph } from '@bingoo.ai/knowledge-engine'
 
 const graph = {
   has: () => true,

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Button, useToast } from '@bingoo/ui-web'
+import { Button, useToast } from '@bingoo.ai/ui-web'
 import { Check, RefreshCw, Search, Sparkles, X } from 'lucide-react'
 import {
   mediaJobAsset,

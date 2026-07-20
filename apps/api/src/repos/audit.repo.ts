@@ -1,5 +1,5 @@
-import { db } from '@bingoo/db'
-import type { Prisma } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
+import type { Prisma } from '@bingoo.ai/db'
 
 /**
  * A sensitive event to record in the audit trail (§7): auth (login/logout/reset),

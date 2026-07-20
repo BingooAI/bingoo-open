@@ -7,7 +7,7 @@
  */
 
 import type { KcArc, LearnerState, LessonInstructionPlan, LessonStep } from './model'
-import type { Slug } from '@bingoo/knowledge-engine'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
 
 export interface StepWork {
   /** KC của arc chứa bước — mọi item bước này sinh đều neo vào KC này (per-KC, không ôm đồm). */

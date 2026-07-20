@@ -26,8 +26,8 @@
  * to". Cannot.
  */
 import { z } from 'zod'
-import { QuizQuestion, TracingGlyph, ColoringPicture } from '@bingoo/core'
-import { getManipulative, KIT_DOCS } from '@bingoo/manipulatives'
+import { QuizQuestion, TracingGlyph, ColoringPicture } from '@bingoo.ai/core'
+import { getManipulative, KIT_DOCS } from '@bingoo.ai/manipulatives'
 import type { Aspect, Scene, ElementType } from './schema'
 import { resolveLayout } from './layout'
 import { templateCatalog, contractOf, type Template } from './catalog'
@@ -454,7 +454,7 @@ export function checkScene(
         out.push({
           level: 'error',
           code: `activity-${key}`,
-          message: `gate "${scene.id}": ${key} không đúng contract của @bingoo/core. ${r.error.issues
+          message: `gate "${scene.id}": ${key} không đúng contract của @bingoo.ai/core. ${r.error.issues
             .slice(0, 3)
             .map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`)
             .join(' · ')}`,
@@ -475,7 +475,7 @@ export function checkScene(
         out.push({
           level: 'error',
           code: 'activity-quiz',
-          message: `gate "${scene.id}": câu hỏi không đúng contract của @bingoo/core → QuizShell vẽ THẺ RỖNG. ${detail}`,
+          message: `gate "${scene.id}": câu hỏi không đúng contract của @bingoo.ai/core → QuizShell vẽ THẺ RỖNG. ${detail}`,
           fix:
             `Dùng đúng shape, ví dụ: {"id":"q1","type":"single","prompt":"Số 5 là chẵn hay lẻ?",` +
             `"choices":[{"id":"even","label":"Chẵn"},{"id":"odd","label":"Lẻ"}],"answerId":"odd"}. ` +

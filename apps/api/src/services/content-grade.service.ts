@@ -3,8 +3,8 @@
  * fold thành Observation/evidence cho từng skill item neo → cập nhật mức nắm. Idempotent qua attemptId.
  */
 
-import { gradeItem } from '@bingoo/authored-item'
-import type { EvidenceInput, RecordResult, Verdict } from '@bingoo/knowledge-engine'
+import { gradeItem } from '@bingoo.ai/authored-item'
+import type { EvidenceInput, RecordResult, Verdict } from '@bingoo.ai/knowledge-engine'
 import { loadItem } from '../repos/content-item.repo'
 import { recordLearnerEvidence } from './knowledge.service'
 import { graderFor } from './graders'

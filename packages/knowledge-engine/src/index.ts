@@ -1,5 +1,5 @@
 /**
- * @bingoo/knowledge-engine — lõi học thuật thuần (Capability · Evidence · Adaptive).
+ * @bingoo.ai/knowledge-engine — lõi học thuật thuần (Capability · Evidence · Adaptive).
  *
  * Barrel công khai. Lõi content-agnostic: đầu vào là Observation + tập ứng viên trừu
  * tượng; kho câu hỏi/nội dung/lớp học nằm ngoài lõi (SPEC §0). Xem ENGINE-LOI-HOC-THUAT-SPEC.md

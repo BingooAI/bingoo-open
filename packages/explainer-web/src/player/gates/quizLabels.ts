@@ -1,10 +1,10 @@
 /**
- * quizLabels.ts — default Vietnamese labels for the shared quiz UI (@bingoo/ui-web
+ * quizLabels.ts — default Vietnamese labels for the shared quiz UI (@bingoo.ai/ui-web
  * QuizShell is i18n-free — every string is data). Used by the activity gate so an
  * embedded quiz question renders with sensible copy out of the box. (Proper i18n
- * later routes these through @bingoo/i18n at the app layer.)
+ * later routes these through @bingoo.ai/i18n at the app layer.)
  */
-import type { QuizLabels } from '@bingoo/ui-web'
+import type { QuizLabels } from '@bingoo.ai/ui-web'
 
 export const VI_QUIZ_LABELS: QuizLabels = {
   questionOf: (i, t) => `Câu ${i + 1}/${t}`,

@@ -3,8 +3,8 @@
  * Mirror của EnginePorts: lõi authoring thuần; mọi I/O/model nằm sau các interface này.
  */
 
-import type { Awaitable, CompetencyKind } from '@bingoo/knowledge-engine'
-import type { Facets } from '@bingoo/facets'
+import type { Awaitable, CompetencyKind } from '@bingoo.ai/knowledge-engine'
+import type { Facets } from '@bingoo.ai/facets'
 import type { EvidenceRef, LocalizedText, SourceChunk } from './model'
 
 /** Khái niệm ứng viên do extractor trả về (kind tuỳ chọn — có thể để classifier gán sau). */

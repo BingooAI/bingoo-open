@@ -12,7 +12,7 @@ import {
   Select,
   Spinner,
   useToast,
-} from '@bingoo/ui-web'
+} from '@bingoo.ai/ui-web'
 import { AlertTriangle, Check, ClipboardCheck, RefreshCw } from 'lucide-react'
 import {
   useApproveItems,

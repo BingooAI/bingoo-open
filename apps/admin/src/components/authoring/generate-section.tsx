@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from 'react'
 import { ChevronDown, Plus } from 'lucide-react'
-import { Card, CardContent } from '@bingoo/ui-web'
+import { Card, CardContent } from '@bingoo.ai/ui-web'
 import { cn } from '@/lib/cn'
 
 /**

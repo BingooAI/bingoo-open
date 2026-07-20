@@ -1,5 +1,5 @@
 /**
- * @bingoo/explainer/providers — the explainer's pluggable service boundary.
+ * @bingoo.ai/explainer/providers — the explainer's pluggable service boundary.
  *
  * Pure interfaces + the explainer's vendor-neutral orchestration logic
  * (illustration-first image resolution, narration↔cue re-timing). The engine

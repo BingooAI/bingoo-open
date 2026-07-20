@@ -1,4 +1,4 @@
-import { deriveCapabilities, type ExperienceDescriptor } from '@bingoo/learning-experience'
+import { deriveCapabilities, type ExperienceDescriptor } from '@bingoo.ai/learning-experience'
 import type { ReactNode } from 'react'
 import { LearningExperienceBadge, type LearningExperienceLabels } from './learning-experience-card'
 import { cn } from './lib/cn'

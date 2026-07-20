@@ -14,9 +14,9 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import type { ExplainerDoc, LocaleBundle } from '@bingoo/explainer'
-import { ExplainerStudio } from '@bingoo/explainer-web'
-import '@bingoo/explainer-web/styles.css'
+import type { ExplainerDoc, LocaleBundle } from '@bingoo.ai/explainer'
+import { ExplainerStudio } from '@bingoo.ai/explainer-web'
+import '@bingoo.ai/explainer-web/styles.css'
 import { getLesson, saveLesson, type LessonFull } from '@/lib/explainerLessons'
 import { ACCEPTANCE_DOC, ACCEPTANCE_BUNDLES } from '@/lib/explainerLesson'
 

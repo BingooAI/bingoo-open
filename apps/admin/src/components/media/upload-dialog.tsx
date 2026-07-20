@@ -3,8 +3,8 @@
 import { UploadCloud } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
-import { Button, Dialog, Field, Input, Progress, Select, useToast } from '@bingoo/ui-web'
-import type { MediaKind, MediaVisibility } from '@bingoo/core'
+import { Button, Dialog, Field, Input, Progress, Select, useToast } from '@bingoo.ai/ui-web'
+import type { MediaKind, MediaVisibility } from '@bingoo.ai/core'
 import { ApiError, uploadToSignedUrl } from '@/lib/api-client'
 import { useCompleteAsset, useCreateAsset } from '@/lib/media-queries'
 

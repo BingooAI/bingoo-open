@@ -1,6 +1,6 @@
 'use client'
 
-import { appendPoint, pointsToSvgPath, type DrawPoint, type DrawStroke } from '@bingoo/core'
+import { appendPoint, pointsToSvgPath, type DrawPoint, type DrawStroke } from '@bingoo.ai/core'
 import { useRef, useState, type PointerEvent } from 'react'
 import { cn } from './lib/cn'
 
@@ -20,7 +20,7 @@ export interface DrawingCanvasProps {
 
 /**
  * Free-drawing canvas (vẽ tự do): pointer strokes over a 0–100 SVG viewBox.
- * Geometry/smoothing/export live in `@bingoo/core` (`strokesToSvg`), so the
+ * Geometry/smoothing/export live in `@bingoo.ai/core` (`strokesToSvg`), so the
  * native twin draws identically. Controlled: undo = drop the last stroke.
  */
 export function DrawingCanvas({

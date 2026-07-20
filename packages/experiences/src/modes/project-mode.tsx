@@ -1,4 +1,4 @@
-import { Card, Checkbox, Progress } from '@bingoo/ui-web'
+import { Card, Checkbox, Progress } from '@bingoo.ai/ui-web'
 import { useState } from 'react'
 import { EmptyState } from '../shared'
 import type { ExperienceLabels, LearnProjectData } from '../types'

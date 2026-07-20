@@ -2,8 +2,8 @@
 
 import { Search, Sparkles, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { Input, Select } from '@bingoo/ui-web'
-import type { MediaKind, ModerationStatus } from '@bingoo/core'
+import { Input, Select } from '@bingoo.ai/ui-web'
+import type { MediaKind, ModerationStatus } from '@bingoo.ai/core'
 import { cn } from '@/lib/cn'
 import { KindIcon } from './kind-icon'
 

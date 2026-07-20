@@ -1,13 +1,13 @@
 /**
  * Metadata primitive — khai "đo được không / chấm bằng gì" cho từng primitiveKind của
- * @bingoo/core (mảnh core còn thiếu). Đây là hợp đồng tầng ③ neo vào engine, KHÔNG sửa schema core.
+ * @bingoo.ai/core (mảnh core còn thiếu). Đây là hợp đồng tầng ③ neo vào engine, KHÔNG sửa schema core.
  *
- * Danh sách bám đúng @bingoo/core hiện tại: quiz.ts (20 loại), content.ts (11 block),
+ * Danh sách bám đúng @bingoo.ai/core hiện tại: quiz.ts (20 loại), content.ts (11 block),
  * draw.ts (tracingGlyph/coloringPicture), flashcard.ts. Khi core thêm loại → cập nhật ở đây.
  */
 
-import { CONTENT_BLOCK_META, CONTENT_BLOCK_TYPES, QuizQuestion } from '@bingoo/core'
-import { INTERACTIVE_KITS } from '@bingoo/manipulatives'
+import { CONTENT_BLOCK_META, CONTENT_BLOCK_TYPES, QuizQuestion } from '@bingoo.ai/core'
+import { INTERACTIVE_KITS } from '@bingoo.ai/manipulatives'
 import type { GraderKind } from './model'
 
 export interface PrimitiveMeta {
@@ -42,7 +42,7 @@ const QUIZ_FALLBACK = [
 ]
 
 /**
- * TỰ dẫn xuất mọi literal `type` của union QuizQuestion (@bingoo/core) LÚC CHẠY — core thêm loại
+ * TỰ dẫn xuất mọi literal `type` của union QuizQuestion (@bingoo.ai/core) LÚC CHẠY — core thêm loại
  * mới (arrow, wordsearch…) là registry tự biết, KHÔNG cần sửa tay. Union = nguồn sự thật duy nhất.
  * Bất biến: mọi thành viên union đều đo được + auto-key (gradeQuestion của core chấm hết).
  */
@@ -78,7 +78,7 @@ export const MANIP_PREFIX = 'manip:'
 export const manipKind = (kind: string): string => `${MANIP_PREFIX}${kind}`
 
 /**
- * Đăng ký kit là primitive CHẤM ĐƯỢC — ĐỘNG từ `INTERACTIVE_KITS` của @bingoo/manipulatives (chính là
+ * Đăng ký kit là primitive CHẤM ĐƯỢC — ĐỘNG từ `INTERACTIVE_KITS` của @bingoo.ai/manipulatives (chính là
  * khoá của REG). Kit mới thêm vào REG là tự có entry ở đây; KHÔNG liệt kê tay 63 kit. graderKind='manip'
  * → dispatcher gọi `checkAnswer(kind, ...)` (xem grade.ts manipGrader). baseConfidence 0.9: check trực
  * tiếp nhưng thao tác có nhiễu hơn khoá đáp án thuần. measurable=true: kit item mặc định sinh evidence

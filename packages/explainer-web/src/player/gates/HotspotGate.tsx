@@ -6,7 +6,7 @@
 'use client'
 import * as React from 'react'
 import { useState } from 'react'
-import type { GateSpec } from '@bingoo/explainer'
+import type { GateSpec } from '@bingoo.ai/explainer'
 
 export function HotspotGate({
   gate,

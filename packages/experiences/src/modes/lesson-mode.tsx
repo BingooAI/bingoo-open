@@ -10,7 +10,7 @@ import {
   StreakBadge,
   XPBar,
   type InteractiveBlock,
-} from '@bingoo/ui-web'
+} from '@bingoo.ai/ui-web'
 import { Sparkles, X } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { CompletedCard, EmptyState, ScrollArea } from '../shared'

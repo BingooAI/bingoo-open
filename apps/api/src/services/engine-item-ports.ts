@@ -3,8 +3,8 @@
  * Đây là adapter engine-facing; content là hộp đen — engine chỉ thấy Candidate + Verdict.
  */
 
-import { gradeItem } from '@bingoo/authored-item'
-import type { CandidatePort, GraderPort, Slug, Submission, Verdict } from '@bingoo/knowledge-engine'
+import { gradeItem } from '@bingoo.ai/authored-item'
+import type { CandidatePort, GraderPort, Slug, Submission, Verdict } from '@bingoo.ai/knowledge-engine'
 import { loadCandidates, loadItem } from '../repos/content-item.repo'
 import { graderFor } from './graders'
 import { AppError } from '../lib/errors'

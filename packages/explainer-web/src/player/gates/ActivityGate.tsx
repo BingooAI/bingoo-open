@@ -2,26 +2,26 @@
  * ActivityGate.tsx — the generic interactive activity beat. Two sources, both
  * from bingoo's shared libraries, so one host unlocks the whole interaction
  * catalogue:
- *  • `activity.quiz` → a @bingoo/core quiz question rendered + graded by
- *    @bingoo/ui-web's <QuizShell> (ALL ~40 question types; a new type added to
+ *  • `activity.quiz` → a @bingoo.ai/core quiz question rendered + graded by
+ *    @bingoo.ai/ui-web's <QuizShell> (ALL ~40 question types; a new type added to
  *    core appears here automatically — no change needed).
  *  • `activity.manip` → any manipulative kit, driven live and graded by
  *    checkAnswer (covers all 67 kits via the registry).
  *  • `activity.tracing` → write the letter/shape, graded by scoreTracedStroke.
  *  • `activity.coloring` → colour to a target, graded by coloringScore.
  *
- * Tracing and colouring were in @bingoo/core and @bingoo/ui-web all along; the
+ * Tracing and colouring were in @bingoo.ai/core and @bingoo.ai/ui-web all along; the
  * gate simply never reached for them. So a lesson for a five-year-old who cannot
  * read yet could only offer buttons to press — the two activities that actually
  * suit that learner were sitting there unused.
  */
 'use client'
 import { useState } from 'react'
-import type { GateSpec, ThemeTokens, Aspect } from '@bingoo/explainer'
-import type { QuizQuestion, TracingGlyph, ColoringPicture } from '@bingoo/core'
-import { coloringScore } from '@bingoo/core'
-import { checkAnswer, getInteractions } from '@bingoo/manipulatives'
-import { QuizShell, TracingBoard, ColoringBoard } from '@bingoo/ui-web'
+import type { GateSpec, ThemeTokens, Aspect } from '@bingoo.ai/explainer'
+import type { QuizQuestion, TracingGlyph, ColoringPicture } from '@bingoo.ai/core'
+import { coloringScore } from '@bingoo.ai/core'
+import { checkAnswer, getInteractions } from '@bingoo.ai/manipulatives'
+import { QuizShell, TracingBoard, ColoringBoard } from '@bingoo.ai/ui-web'
 import { InteractiveManipulative } from '../InteractiveManipulative'
 import { VI_QUIZ_LABELS } from './quizLabels'
 

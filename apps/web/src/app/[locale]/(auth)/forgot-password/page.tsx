@@ -4,11 +4,11 @@ import { ArrowLeft, Mail, MailCheck } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useState, type FormEvent } from 'react'
 import { AuthHeader } from '@/components/auth/auth-header'
-import { Button, Field, Input, IconChip } from '@bingoo/ui-web'
+import { Button, Field, Input, IconChip } from '@bingoo.ai/ui-web'
 import { Link } from '@/i18n/navigation'
 import { requestPasswordReset } from '@/lib/auth-client'
 import { authErrorKey } from '@/lib/auth-errors'
-import { isEmail } from '@bingoo/core'
+import { isEmail } from '@bingoo.ai/core'
 
 export default function ForgotPasswordPage() {
   const t = useTranslations('auth')

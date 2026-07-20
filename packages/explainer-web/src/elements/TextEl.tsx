@@ -21,16 +21,16 @@
  * always reads bigger than a label, in every scene and every aspect.
  */
 import * as React from 'react'
-import type { RenderItem, TextContent } from '@bingoo/explainer'
-import type { ThemeTokens } from '@bingoo/explainer'
+import type { RenderItem, TextContent } from '@bingoo.ai/explainer'
+import type { ThemeTokens } from '@bingoo.ai/explainer'
 import { resolveStyle } from '../theme/tokens'
 import { itemTransform, wrapText } from './util'
-import { rungSize, MIN_SHRINK } from '@bingoo/explainer'
+import { rungSize, MIN_SHRINK } from '@bingoo.ai/explainer'
 
 const BOX_W = 0.96
 const BOX_H = 0.96
 
-/* The type scale lives in the ENGINE (@bingoo/explainer type.ts), not here —
+/* The type scale lives in the ENGINE (@bingoo.ai/explainer type.ts), not here —
  * the authoring contract quotes character budgets computed from the SAME numbers
  * the renderer draws with. Two copies would drift, and generation would emit
  * text that overflows a slot the contract swore it fit in. */

@@ -9,8 +9,8 @@
  * Không có bức tranh này thì "khoá bám khung" chỉ là lời nói.
  */
 
-import { db } from '@bingoo/db'
-import type { CoursePlan } from '@bingoo/plans'
+import { db } from '@bingoo.ai/db'
+import type { CoursePlan } from '@bingoo.ai/plans'
 import { deriveKcStrands } from './strand'
 
 export interface CoverageNode {

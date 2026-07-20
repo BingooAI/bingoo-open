@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient, type UseQueryOptions } from '@tanstack/react-query'
-import type { MediaKind, MediaSearchMode, ModerationStatus } from '@bingoo/core'
+import type { MediaKind, MediaSearchMode, ModerationStatus } from '@bingoo.ai/core'
 import { api } from './api-client'
 import type { MediaAssetDto, MediaFolderDto, PageMeta, TagDto, UploadSlot } from './api-types'
 

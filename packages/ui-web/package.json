@@ -1,5 +1,5 @@
 {
-  "name": "@bingoo/ui-web",
+  "name": "@bingoo.ai/ui-web",
   "version": "0.1.0",
   "private": true,
   "description": "Bingoo web UI component library — primitives on shared tokens (React DOM).",
@@ -14,8 +14,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@bingoo/core": "workspace:*",
-    "@bingoo/learning-experience": "workspace:*",
+    "@bingoo.ai/core": "workspace:*",
+    "@bingoo.ai/learning-experience": "workspace:*",
     "@hookform/resolvers": "^5.4.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

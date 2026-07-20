@@ -1,6 +1,6 @@
-import type { ContentBlock } from '@bingoo/core'
-import type { ExperienceDescriptor } from '@bingoo/learning-experience'
-import type { IconChipColor, InteractiveBlock, LeaderboardEntry } from '@bingoo/ui-web'
+import type { ContentBlock } from '@bingoo.ai/core'
+import type { ExperienceDescriptor } from '@bingoo.ai/learning-experience'
+import type { IconChipColor, InteractiveBlock, LeaderboardEntry } from '@bingoo.ai/ui-web'
 import type { ReactNode } from 'react'
 
 /** Hình dạng nội dung DẠY — chỉ áp cho experience=learn (course/lesson/infinite). */

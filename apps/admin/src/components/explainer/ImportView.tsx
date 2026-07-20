@@ -11,11 +11,11 @@
  */
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import type { ExplainerDoc, LocaleBundle } from '@bingoo/explainer'
-import { promptMarkdown, promptMessage, AUDIENCES, DEFAULT_MINUTES, planFor } from '@bingoo/explainer'
-import { buildProgram, frame } from '@bingoo/explainer'
-import { ExplainerPlayer, ExplainerStudio, Stage } from '@bingoo/explainer-web'
-import '@bingoo/explainer-web/styles.css'
+import type { ExplainerDoc, LocaleBundle } from '@bingoo.ai/explainer'
+import { promptMarkdown, promptMessage, AUDIENCES, DEFAULT_MINUTES, planFor } from '@bingoo.ai/explainer'
+import { buildProgram, frame } from '@bingoo.ai/explainer'
+import { ExplainerPlayer, ExplainerStudio, Stage } from '@bingoo.ai/explainer-web'
+import '@bingoo.ai/explainer-web/styles.css'
 import { api } from '@/lib/api-client'
 import { saveLesson, listLessons, getLesson, deleteLesson, type LessonRow } from '@/lib/explainerLessons'
 import {

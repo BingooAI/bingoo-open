@@ -20,7 +20,7 @@
  * so it reflows the layout — it is not a paint job over a fixed composition.
  */
 import * as React from 'react'
-import type { Background, ThemeTokens, Aspect, Rect } from '@bingoo/explainer'
+import type { Background, ThemeTokens, Aspect, Rect } from '@bingoo.ai/explainer'
 import { resolveColor } from '../theme/tokens'
 
 /**

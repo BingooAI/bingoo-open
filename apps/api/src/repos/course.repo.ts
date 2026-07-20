@@ -1,7 +1,7 @@
 /** Data access vỏ khoá (Course). Lưu CoursePlan skeleton + map frameworkVersionId. */
 
-import { db, type Prisma } from '@bingoo/db'
-import type { CoursePlan } from '@bingoo/plans'
+import { db, type Prisma } from '@bingoo.ai/db'
+import type { CoursePlan } from '@bingoo.ai/plans'
 
 export interface SavedCourse {
   readonly slug: string

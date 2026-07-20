@@ -1,5 +1,5 @@
 {
-  "name": "@bingoo/knowledge-engine",
+  "name": "@bingoo.ai/knowledge-engine",
   "version": "0.1.0",
   "private": true,
   "description": "Lõi engine học thuật thuần — Capability · Evidence · Adaptive (content-agnostic).",

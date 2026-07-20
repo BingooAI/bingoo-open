@@ -8,8 +8,8 @@
  *   ② Bài không map được KC nào VẪN giữ đúng chỗ (bỏ đi là nói dối về cấu trúc sách).
  */
 
-import type { Slug } from '@bingoo/knowledge-engine'
-import type { CoursePlan, LessonInstructionPlan, LocalizedText, UnitPlan } from '@bingoo/plans'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
+import type { CoursePlan, LessonInstructionPlan, LocalizedText, UnitPlan } from '@bingoo.ai/plans'
 
 export const rec = (v: unknown): Record<string, unknown> =>
   v && typeof v === 'object' ? (v as Record<string, unknown>) : {}

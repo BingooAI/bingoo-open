@@ -1,5 +1,5 @@
-import { mintPublicId, type LocalizedText } from '@bingoo/core'
-import { db } from '@bingoo/db'
+import { mintPublicId, type LocalizedText } from '@bingoo.ai/core'
+import { db } from '@bingoo.ai/db'
 import type {
   AssetRelType,
   MediaKind,
@@ -9,7 +9,7 @@ import type {
   ModerationStatus,
   Prisma,
   RenditionKind,
-} from '@bingoo/db'
+} from '@bingoo.ai/db'
 
 /**
  * Media assets (docs/media-library-design.md §3.3) — the logical search+authz

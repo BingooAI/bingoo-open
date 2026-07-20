@@ -13,9 +13,9 @@
  * mới được chốt SAME — service này chỉ THI HÀNH, không tự phán.
  */
 
-import { db, type Prisma } from '@bingoo/db'
-import type { AlignVerdict } from '@bingoo/authoring'
-import type { Facets } from '@bingoo/facets'
+import { db, type Prisma } from '@bingoo.ai/db'
+import type { AlignVerdict } from '@bingoo.ai/authoring'
+import type { Facets } from '@bingoo.ai/facets'
 import { AppError } from '../lib/errors'
 import { indexKcEmbeddings } from '../repos/competency-embedding.repo'
 import { invalidateGraphCache } from './knowledge.service'

@@ -1,8 +1,8 @@
 'use client'
 
-import type { ExperienceDescriptor } from '@bingoo/learning-experience'
-import { LearnExperience, type ExperienceLabels } from '@bingoo/experiences'
-import { Avatar, BadgeTile, DailyGoalRing, StreakBadge, SubjectCard, XPBar } from '@bingoo/ui-web'
+import type { ExperienceDescriptor } from '@bingoo.ai/learning-experience'
+import { LearnExperience, type ExperienceLabels } from '@bingoo.ai/experiences'
+import { Avatar, BadgeTile, DailyGoalRing, StreakBadge, SubjectCard, XPBar } from '@bingoo.ai/ui-web'
 import { BookOpen, Compass, Flame, Home, Palette, Star, Swords, Trophy, User } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'

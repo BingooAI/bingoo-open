@@ -1,7 +1,7 @@
 'use client'
 
-import { ExplainerPlayer } from '@bingoo/explainer-web'
-import '@bingoo/explainer-web/styles.css'
+import { ExplainerPlayer } from '@bingoo.ai/explainer-web'
+import '@bingoo.ai/explainer-web/styles.css'
 import { ACCEPTANCE_DOC, ACCEPTANCE_BUNDLES } from '@/lib/explainerLesson'
 
 /** Client host for the explainer player (the player is a "use client" tree). The

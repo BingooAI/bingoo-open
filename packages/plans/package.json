@@ -1,5 +1,5 @@
 {
-  "name": "@bingoo/plans",
+  "name": "@bingoo.ai/plans",
   "version": "0.1.0",
   "private": true,
   "description": "Instruction Plan (khung chuẩn) + Knowledge Point + planQuality — tầng nội dung ②.",
@@ -11,7 +11,7 @@
   },
   "types": "./src/index.ts",
   "dependencies": {
-    "@bingoo/knowledge-engine": "workspace:^"
+    "@bingoo.ai/knowledge-engine": "workspace:^"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

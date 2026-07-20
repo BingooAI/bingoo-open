@@ -1,6 +1,6 @@
 'use client'
 
-import type { QuizItem } from '@bingoo/core'
+import type { QuizItem } from '@bingoo.ai/core'
 import { cn } from './lib/cn'
 import { stagger, tile } from './lib/interactive'
 import { useQuizText } from './quiz-locale'

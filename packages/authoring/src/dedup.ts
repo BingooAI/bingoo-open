@@ -1,6 +1,6 @@
 /** Chống trùng khái niệm + gán slug ổn định. SPEC D.4 (trigram-trước). */
 
-import type { Slug } from '@bingoo/knowledge-engine'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
 import type { ConceptDraft, ExistingConcept } from './model'
 import { canonicalTitle, mintSlug, slugify } from './slug'
 import { diceSimilarity } from './trigram'

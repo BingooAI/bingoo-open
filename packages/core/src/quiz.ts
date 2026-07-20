@@ -1,6 +1,6 @@
 /**
  * Quiz engine — the shared, platform-agnostic core of the learning interaction
- * layer (§R2: no `next/*`, no `react-native`, no UI). Both `@bingoo/ui-web` and
+ * layer (§R2: no `next/*`, no `react-native`, no UI). Both `@bingoo.ai/ui-web` and
  * `@bingoo.ai/ui-web` renders on top of this, so grading, scoring and session
  * flow behave IDENTICALLY on web and mobile — a single source of truth.
  *
@@ -27,7 +27,7 @@ import { clamp } from './utils'
 
 /**
  * Media attached to a question or choice. `assetId` references the shared media
- * library (@bingoo/db MediaAsset — moderated, permissioned); the server resolves
+ * library (@bingoo.ai/db MediaAsset — moderated, permissioned); the server resolves
  * it to a delivery `src` before render. A direct `src` is allowed for external
  * content. At least one of the two must be present.
  */

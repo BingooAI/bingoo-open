@@ -26,7 +26,7 @@ const SYMBOL: Record<BalanceChoice, string> = { lt: '<', eq: '=', gt: '>' }
 
 /**
  * Balance scale — a beam that tilts toward the heavier pan, so the learner reads
- * the picture then picks the relation (< = >). Grading in `@bingoo/core`. i18n-free
+ * the picture then picks the relation (< = >). Grading in `@bingoo.ai/core`. i18n-free
  * (button labels are props; symbols by default).
  */
 export function BalanceScale({

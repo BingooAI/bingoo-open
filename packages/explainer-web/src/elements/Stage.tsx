@@ -14,9 +14,9 @@
  * collide with them.
  */
 import * as React from 'react'
-import type { RenderModel, RenderItem } from '@bingoo/explainer'
-import type { ThemeTokens } from '@bingoo/explainer'
-import { CARD_SLOTS } from '@bingoo/explainer'
+import type { RenderModel, RenderItem } from '@bingoo.ai/explainer'
+import type { ThemeTokens } from '@bingoo.ai/explainer'
+import { CARD_SLOTS } from '@bingoo.ai/explainer'
 import { Stroke } from './Stroke'
 import { TextEl } from './TextEl'
 import { ShapeEl } from './ShapeEl'

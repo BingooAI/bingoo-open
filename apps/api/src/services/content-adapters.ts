@@ -1,10 +1,10 @@
 /**
- * Adapter GeneratorPort (content-gen S4b) — LLM sinh QuizQuestion theo ĐÚNG schema @bingoo/core
+ * Adapter GeneratorPort (content-gen S4b) — LLM sinh QuizQuestion theo ĐÚNG schema @bingoo.ai/core
  * (quizJsonSchema), rồi QuizQuestion.safeParse LỌC bản hợp lệ. BÁM 20 loại quiz có sẵn trong
  * registry — KHÔNG chế primitive mới. Bản hỏng schema bị loại thẳng.
  */
 
-import type { AuthoredItem } from '@bingoo/authored-item'
+import type { AuthoredItem } from '@bingoo.ai/authored-item'
 import {
   QUIZ_PRIMITIVE_KINDS,
   blockKind,
@@ -13,8 +13,8 @@ import {
   manipKind,
   primitiveMeta,
   validateItem,
-} from '@bingoo/authored-item'
-import { KIT_DOCS, kitAnswerDoc } from '@bingoo/manipulatives'
+} from '@bingoo.ai/authored-item'
+import { KIT_DOCS, kitAnswerDoc } from '@bingoo.ai/manipulatives'
 import {
   ContentBlock,
   Flashcard,
@@ -22,10 +22,10 @@ import {
   contentJsonSchema,
   flashcardDeckJsonSchema,
   quizJsonSchema,
-} from '@bingoo/core'
-import type { ExpositionPort, FlashcardPort, GeneratorPort } from '@bingoo/content-gen'
-import type { Slug } from '@bingoo/knowledge-engine'
-import type { DifficultyBand, GenerationSpec } from '@bingoo/personalization'
+} from '@bingoo.ai/core'
+import type { ExpositionPort, FlashcardPort, GeneratorPort } from '@bingoo.ai/content-gen'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
+import type { DifficultyBand, GenerationSpec } from '@bingoo.ai/personalization'
 import { getAi } from '../providers'
 import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'

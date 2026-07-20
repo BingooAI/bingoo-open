@@ -3,8 +3,8 @@
  * Chặn chu trình tiên quyết trước khi ghi (đồ thị phải là DAG). Sau ghi → invalidate cache graph.
  */
 
-import { checkInvariants, hasBlockingViolation, type CompiledObjective } from '@bingoo/authoring'
-import type { GraphData } from '@bingoo/knowledge-engine'
+import { checkInvariants, hasBlockingViolation, type CompiledObjective } from '@bingoo.ai/authoring'
+import type { GraphData } from '@bingoo.ai/knowledge-engine'
 import {
   loadDomainProfiles,
   loadExistingNodes,

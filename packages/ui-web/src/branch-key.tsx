@@ -1,6 +1,6 @@
 'use client'
 
-import type { BranchKeyNode } from '@bingoo/core'
+import type { BranchKeyNode } from '@bingoo.ai/core'
 import { Check, RotateCcw, X } from 'lucide-react'
 import { cn } from './lib/cn'
 import { ENTER, stagger, tile } from './lib/interactive'
@@ -29,7 +29,7 @@ export interface BranchKeyProps {
 /**
  * Identification key (dichotomous key) — answer yes/no questions until you reach a
  * result, exactly as in the Science books ("Does it have fur?" → mammal …). The
- * walk + grading live in `@bingoo/core` (`traverseKey`). i18n-free.
+ * walk + grading live in `@bingoo.ai/core` (`traverseKey`). i18n-free.
  */
 export function BranchKey({
   subject,

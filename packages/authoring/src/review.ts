@@ -1,6 +1,6 @@
 /** Áp quyết định duyệt của chuyên gia lên bản nháp — hàm THUẦN (change-set). */
 
-import type { CompetencyKind, PrereqMode, RelType } from '@bingoo/knowledge-engine'
+import type { CompetencyKind, PrereqMode, RelType } from '@bingoo.ai/knowledge-engine'
 import type { EdgeDraft, IngestDraft, LocalizedText } from './model'
 
 export type ReviewDecision =

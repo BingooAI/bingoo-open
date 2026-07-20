@@ -1,6 +1,6 @@
 'use client'
 
-import { solveWordSearch } from '@bingoo/core'
+import { solveWordSearch } from '@bingoo.ai/core'
 import { useState } from 'react'
 import { cn } from './lib/cn'
 import { tile } from './lib/interactive'

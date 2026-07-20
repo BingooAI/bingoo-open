@@ -1,8 +1,8 @@
 {
-  "name": "@bingoo/explainer-web",
+  "name": "@bingoo.ai/explainer-web",
   "version": "0.1.0",
   "private": true,
-  "description": "Bingoo explainer web renderer — React/SVG player that draws the engine's RenderModel, resolves design tokens, and mounts @bingoo/ui-web at activity beats. Used by the player (apps/web) and studio (apps/admin).",
+  "description": "Bingoo explainer web renderer — React/SVG player that draws the engine's RenderModel, resolves design tokens, and mounts @bingoo.ai/ui-web at activity beats. Used by the player (apps/web) and studio (apps/admin).",
   "author": "VietDevelopers.com (https://vietdevelopers.com)",
   "license": "UNLICENSED",
   "type": "module",
@@ -12,11 +12,11 @@
   },
   "types": "./src/index.ts",
   "dependencies": {
-    "@bingoo/core": "workspace:*",
-    "@bingoo/explainer": "workspace:*",
-    "@bingoo/manipulatives": "workspace:*",
-    "@bingoo/tokens": "workspace:*",
-    "@bingoo/ui-web": "workspace:*"
+    "@bingoo.ai/core": "workspace:*",
+    "@bingoo.ai/explainer": "workspace:*",
+    "@bingoo.ai/manipulatives": "workspace:*",
+    "@bingoo.ai/tokens": "workspace:*",
+    "@bingoo.ai/ui-web": "workspace:*"
   },
   "peerDependencies": {
     "react": "^19.0.0",

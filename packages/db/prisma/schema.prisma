@@ -1,4 +1,4 @@
-// Bingoo database schema — SERVER-ONLY (R1/R2). Never import @bingoo/db from a
+// Bingoo database schema — SERVER-ONLY (R1/R2). Never import @bingoo.ai/db from a
 // client bundle: it carries DB credentials + the query engine.
 //
 // AAA foundation (identity · authN · authZ · audit) — see
@@ -923,7 +923,7 @@ model DocumentTemplate {
 }
 
 // ── Knowledge Engine — Capability · Evidence · Adaptive ──────────────────────
-// Đồ thị năng lực + xương sống bằng chứng cho @bingoo/knowledge-engine.
+// Đồ thị năng lực + xương sống bằng chứng cho @bingoo.ai/knowledge-engine.
 // Xem docs/COMPETENCY-GRAPH-SPEC.md, docs/EVIDENCE-ANALYTICS-SPEC.md.
 // Bất biến: mức nắm chỉ sống ở cấp KHÁI NIỆM (KC); tham chiếu bền bằng slug;
 // chỉ OBJECTIVE mang frameworkVersionId (publish version không di trú evidence).
@@ -1019,7 +1019,7 @@ model Competency {
   stage              String? // CHỈ đặt trên OBJECTIVE — nhãn riêng của từng khung (bất biến I2)
   strand             String?
   subject            String? // môn/ngành — chọn DomainProfile để xét định danh
-  facets             Json? // 6 trục phân biệt (@bingoo/facets) — cái quyết định 2 KC có phải một
+  facets             Json? // 6 trục phân biệt (@bingoo.ai/facets) — cái quyết định 2 KC có phải một
   relFrom            CapabilityRelation[]  @relation("capRelFrom")
   relTo              CapabilityRelation[]  @relation("capRelTo")
   createdAt          DateTime              @default(now())
@@ -1181,7 +1181,7 @@ model ContentItem {
   measurable    Boolean           @default(true)
   primitiveKind String // = QuizQuestion.type (single/multiple/…)
   lessonSlug    String?
-  payload       Json // QuizQuestion @bingoo/core (hộp đen)
+  payload       Json // QuizQuestion @bingoo.ai/core (hộp đen)
   status        ContentItemStatus @default(NEEDS_REVIEW)
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
@@ -1208,7 +1208,7 @@ model SrsCardState {
   @@map("srs_card_state")
 }
 
-// Pipeline biên soạn S1→S7 (máy trạng thái @bingoo/authoring-workflow). Mỗi bước: draft→generating→
+// Pipeline biên soạn S1→S7 (máy trạng thái @bingoo.ai/authoring-workflow). Mỗi bước: draft→generating→
 // needs_review→approved, tự STALE khi thượng nguồn đổi version. Chỉ LƯU trạng thái; logic ở package thuần.
 model AuthoringPipeline {
   id        String          @id @default(cuid())

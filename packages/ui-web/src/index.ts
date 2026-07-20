@@ -1,6 +1,6 @@
 /**
- * Bingoo UI — web component library public API (@bingoo/ui-web).
- * Primitives built on shared tokens; import from '@bingoo/ui-web' anywhere.
+ * Bingoo UI — web component library public API (@bingoo.ai/ui-web).
+ * Primitives built on shared tokens; import from '@bingoo.ai/ui-web' anywhere.
  */
 export { cn } from './lib/cn'
 export { PackScope, type PackScopeProps, type StylePack, type AccentPack } from './pack-scope'
@@ -82,7 +82,7 @@ export { QuizShell, type QuizShellProps, type QuizLabels } from './quiz-shell'
 export { QuestionMedia, type QuestionMediaProps } from './quiz-media'
 export { AssistBlock, type AssistBlockProps } from './assist-block'
 
-// Learning Experience pack (@bingoo/learning-experience) — 5-axis experience UI.
+// Learning Experience pack (@bingoo.ai/learning-experience) — 5-axis experience UI.
 export {
   LearningExperienceCard,
   type LearningExperienceCardProps,
@@ -202,7 +202,7 @@ export { SoundButton, type SoundButtonProps } from './sound-button'
 export { AchievementToast, type AchievementToastProps } from './achievement-toast'
 
 // Content & lessons (Batch B) — render the shared, LLM-authorable content schema
-// from @bingoo/core (ContentBlock / Flashcard / Course / SRS). Reused across
+// from @bingoo.ai/core (ContentBlock / Flashcard / Course / SRS). Reused across
 // lesson / game / feed / arena.
 export { ContentBlocks, type ContentBlocksProps, type InteractiveBlock } from './content-blocks'
 export {
@@ -224,7 +224,7 @@ export { CourseOutline, type CourseOutlineProps } from './course-outline'
 export { CodePlayground, type CodePlaygroundProps } from './code-playground'
 
 // Role surfaces (Batch C) — parent / teacher / community. Runtime data via props
-// (i18n-free); schedule layout math lives in @bingoo/core.
+// (i18n-free); schedule layout math lives in @bingoo.ai/core.
 export { ChildCard, type ChildCardProps } from './child-card'
 export { ClassCard, type ClassCardProps } from './class-card'
 export {

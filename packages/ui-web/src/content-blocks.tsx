@@ -1,6 +1,6 @@
 'use client'
 
-import type { ContentBlock } from '@bingoo/core'
+import type { ContentBlock } from '@bingoo.ai/core'
 import { ChevronDown } from 'lucide-react'
 import { Fragment, useState, type ReactNode } from 'react'
 import { Callout } from './callout'
@@ -23,7 +23,7 @@ export type InteractiveBlock = Extract<
 >
 
 export interface ContentBlocksProps {
-  /** Validated content (from `@bingoo/core`'s Content schema — LLM-authorable). */
+  /** Validated content (from `@bingoo.ai/core`'s Content schema — LLM-authorable). */
   blocks: ContentBlock[]
   /**
    * Render an interactive block (quiz / flashcards / tracing / coloring /

@@ -1,5 +1,5 @@
 /**
- * @bingoo/core — platform-agnostic domain logic shared across web, mobile & api.
+ * @bingoo.ai/core — platform-agnostic domain logic shared across web, mobile & api.
  * Pure TypeScript: NEVER import from `next/*`, `react-native`, or any UI layer.
  */
 export * from './utils'

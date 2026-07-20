@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Badge, Button, Field, Input, Textarea, useToast } from '@bingoo/ui-web'
+import { Badge, Button, Field, Input, Textarea, useToast } from '@bingoo.ai/ui-web'
 import { ArrowRight } from 'lucide-react'
 import { Dropzone } from './dropzone'
 import { Stepper, type StepDef, type StepState } from './stepper'

@@ -1,6 +1,6 @@
 'use client'
 
-import type { RichBlock } from '@bingoo/core'
+import type { RichBlock } from '@bingoo.ai/core'
 import { cn } from './lib/cn'
 import { SoundButton } from './sound-button'
 

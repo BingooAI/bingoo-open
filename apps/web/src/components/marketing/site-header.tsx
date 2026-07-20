@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { Logo } from '@/components/brand/logo'
 import { LocaleSwitcher } from '@/components/brand/locale-switcher'
 import { ThemeToggle } from '@/components/brand/theme-toggle'
-import { buttonVariants, Container } from '@bingoo/ui-web'
+import { buttonVariants, Container } from '@bingoo.ai/ui-web'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 

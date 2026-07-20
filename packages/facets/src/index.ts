@@ -1,5 +1,5 @@
 /**
- * @bingoo/facets — 6 TRỤC phân biệt KC (code, cố định) + luật ĐỊNH DANH phổ quát.
+ * @bingoo.ai/facets — 6 TRỤC phân biệt KC (code, cố định) + luật ĐỊNH DANH phổ quát.
  * "Chất liệu" từng môn là DỮ LIỆU (DomainProfile) → hàng nghìn môn/ngành mà KHÔNG đụng code.
  * Thuần TS, không I/O.
  */

@@ -1,5 +1,5 @@
-import type { DrawStroke } from '@bingoo/core'
-import { Button, cn, DrawingCanvas, Input } from '@bingoo/ui-web'
+import type { DrawStroke } from '@bingoo.ai/core'
+import { Button, cn, DrawingCanvas, Input } from '@bingoo.ai/ui-web'
 import {
   Hand,
   LayoutGrid,

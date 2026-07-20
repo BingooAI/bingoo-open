@@ -1,12 +1,12 @@
 'use client'
 
-import type { FillSegment } from '@bingoo/core'
+import type { FillSegment } from '@bingoo.ai/core'
 import { Check, X } from 'lucide-react'
 import { cn } from './lib/cn'
 import { tile } from './lib/interactive'
 
 export interface FillBlankProps {
-  /** Interleaved text + blank segments (from `@bingoo/core`). */
+  /** Interleaved text + blank segments (from `@bingoo.ai/core`). */
   segments: FillSegment[]
   /** Controlled value per blank. */
   values: string[]

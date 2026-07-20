@@ -1,6 +1,6 @@
-import type { LocalizedText, MediaSearchQuery } from '@bingoo/core'
-import { db } from '@bingoo/db'
-import type { MediaScope, Prisma } from '@bingoo/db'
+import type { LocalizedText, MediaSearchQuery } from '@bingoo.ai/core'
+import { db } from '@bingoo.ai/db'
+import type { MediaScope, Prisma } from '@bingoo.ai/db'
 
 /**
  * Collections (docs/media-library-design.md §3.8) — virtual grouping (M4). A

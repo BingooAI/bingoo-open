@@ -1,5 +1,5 @@
 {
-  "name": "@bingoo/core",
+  "name": "@bingoo.ai/core",
   "version": "0.1.0",
   "private": true,
   "description": "Bingoo shared domain logic — utils, validation, mascot catalog (platform-agnostic TS).",

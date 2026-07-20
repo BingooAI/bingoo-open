@@ -23,7 +23,7 @@ import type {
   Rect,
   Aspect,
   WordTiming,
-} from '@bingoo/explainer'
+} from '@bingoo.ai/explainer'
 
 export type EditState = { doc: ExplainerDoc; bundles: Record<string, LocaleBundle> }
 

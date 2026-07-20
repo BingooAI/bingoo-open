@@ -4,7 +4,7 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import { manipKind } from '@bingoo/authored-item'
+import { manipKind } from '@bingoo.ai/authored-item'
 import { graderFor } from '../src/services/graders'
 
 describe('graderFor', () => {

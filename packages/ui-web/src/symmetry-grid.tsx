@@ -19,7 +19,7 @@ export interface SymmetryGridProps {
 
 /**
  * Complete a symmetric figure — the given cells are shown; tap empty cells to
- * mirror them across the axis. Grading (mirror the givens) in `@bingoo/core`.
+ * mirror them across the axis. Grading (mirror the givens) in `@bingoo.ai/core`.
  * Tap-based → web + mobile. i18n-free.
  */
 export function SymmetryGrid({

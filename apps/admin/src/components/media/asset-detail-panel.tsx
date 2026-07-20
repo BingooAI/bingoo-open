@@ -14,8 +14,8 @@ import {
   Textarea,
   useToast,
   type ComboboxOption,
-} from '@bingoo/ui-web'
-import type { LocalizedText, MediaVisibility } from '@bingoo/core'
+} from '@bingoo.ai/ui-web'
+import type { LocalizedText, MediaVisibility } from '@bingoo.ai/core'
 import { ApiError } from '@/lib/api-client'
 import { pickText } from '@/lib/i18n-text'
 import {

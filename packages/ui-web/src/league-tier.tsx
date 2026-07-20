@@ -17,7 +17,7 @@ export interface LeagueTierProps {
 
 /**
  * A league/rank tier medallion + progress toward the next tier. The tier
- * resolution (`leagueFromPoints`) lives in `@bingoo/core`; this renders the
+ * resolution (`leagueFromPoints`) lives in `@bingoo.ai/core`; this renders the
  * result. Reused on a profile, a leaderboard header, or an arena banner.
  */
 export function LeagueTier({ icon, tierLabel, progress, caption, onMedia, className }: LeagueTierProps) {

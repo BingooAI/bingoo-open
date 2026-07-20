@@ -18,7 +18,7 @@ export interface ArrayBuilderProps {
 
 /**
  * Build a multiplication array — tap a dot to select the r×c rectangle up to it;
- * the label shows rows × cols = product. Grading in `@bingoo/core`. Tap-based →
+ * the label shows rows × cols = product. Grading in `@bingoo.ai/core`. Tap-based →
  * web + mobile. i18n-free.
  */
 export function ArrayBuilder({

@@ -1,6 +1,6 @@
 'use client'
 
-import { formatMoney, type CurrencyCode, type MoneyItem } from '@bingoo/core'
+import { formatMoney, type CurrencyCode, type MoneyItem } from '@bingoo.ai/core'
 import { X } from 'lucide-react'
 import { cn } from './lib/cn'
 import { POP, stagger, tile } from './lib/interactive'
@@ -18,7 +18,7 @@ export interface MoneyTrayProps {
 
 /**
  * Count money — tap coins/notes to add them to the tray and reach a target.
- * Tap a coin in the tray to remove it. Grading (sum === target) in `@bingoo/core`.
+ * Tap a coin in the tray to remove it. Grading (sum === target) in `@bingoo.ai/core`.
  * i18n-free (currency label is a prop).
  */
 export function MoneyTray({

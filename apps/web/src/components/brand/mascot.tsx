@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react'
 import { cn } from '@/lib/cn'
-import { mascotSrc, type MascotEmotion } from '@bingoo/core'
+import { mascotSrc, type MascotEmotion } from '@bingoo.ai/core'
 
 export interface MascotProps {
   emotion?: MascotEmotion

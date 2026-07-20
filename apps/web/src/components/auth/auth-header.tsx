@@ -1,5 +1,5 @@
 import { MascotMessage } from '@/components/brand/mascot'
-import { type MascotEmotion } from '@bingoo/core'
+import { type MascotEmotion } from '@bingoo.ai/core'
 
 export function AuthHeader({
   emotion,

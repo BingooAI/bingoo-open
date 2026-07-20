@@ -1,6 +1,6 @@
 'use client'
 
-import type { QuizItem } from '@bingoo/core'
+import type { QuizItem } from '@bingoo.ai/core'
 import { useQuizText } from './quiz-locale'
 import { Check, X } from 'lucide-react'
 import { useState } from 'react'
@@ -27,7 +27,7 @@ export interface ChanceScaleProps {
 /**
  * Chance / likelihood scale — place each event on an ORDERED scale (won't → might
  * → will happen). Tap an event to arm it, tap a level to drop it. The ordering is
- * what makes this different from a plain categorize. Grading in `@bingoo/core`.
+ * what makes this different from a plain categorize. Grading in `@bingoo.ai/core`.
  * Tap-based → web + mobile. i18n-free.
  */
 export function ChanceScale({

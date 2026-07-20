@@ -2,7 +2,7 @@ import type { ContentfulStatusCode } from 'hono/utils/http-status'
 
 /**
  * Stable, machine-readable error codes. The API returns codes (not display
- * text); clients map them to localized copy via `@bingoo/i18n`, so no
+ * text); clients map them to localized copy via `@bingoo.ai/i18n`, so no
  * user-facing strings are hardcoded server-side (R4) and the API stays
  * locale-agnostic.
  */

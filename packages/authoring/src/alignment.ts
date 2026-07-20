@@ -17,8 +17,8 @@
  * làm đúng cái này nhưng sai cái kia), chứ không phải một điểm số cảm tính.
  */
 
-import { compareIdentity, type DomainProfile, type Facets } from '@bingoo/facets'
-import type { CompetencyKind, Slug } from '@bingoo/knowledge-engine'
+import { compareIdentity, type DomainProfile, type Facets } from '@bingoo.ai/facets'
+import type { CompetencyKind, Slug } from '@bingoo.ai/knowledge-engine'
 
 export type AlignVerdict =
   | 'SAME' // cùng một kiến thức → tái dùng slug cũ

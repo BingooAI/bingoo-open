@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
-import { db } from '@bingoo/db'
-import { deriveAccountType, mintPublicId, synthEmail } from '@bingoo/core'
+import { db } from '@bingoo.ai/db'
+import { deriveAccountType, mintPublicId, synthEmail } from '@bingoo.ai/core'
 import { auth } from '../auth/auth'
 import { parseRoles } from '../auth/roles'
 import { resolveConsentConfig } from './config.repo'

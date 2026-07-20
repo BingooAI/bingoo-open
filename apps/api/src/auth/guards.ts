@@ -1,5 +1,5 @@
 import { createMiddleware } from 'hono/factory'
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 import type { AppEnv } from '../lib/context'
 import { AppError } from '../lib/errors'
 import { resolveOrgRole, type OrgRole } from '../repos/org.repo'

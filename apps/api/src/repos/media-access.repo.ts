@@ -4,9 +4,9 @@ import {
   type MediaGrantFact,
   type MediaPermission,
   type MediaResourceFacts,
-} from '@bingoo/core'
-import { db } from '@bingoo/db'
-import type { GrantSubjectType, MediaScope, MediaVisibility } from '@bingoo/db'
+} from '@bingoo.ai/core'
+import { db } from '@bingoo.ai/db'
+import type { GrantSubjectType, MediaScope, MediaVisibility } from '@bingoo.ai/db'
 import type { SessionUser } from '../auth/auth'
 import { parseRoles } from '../auth/roles'
 import type { SearchFilter } from '../providers/search/port'
@@ -15,7 +15,7 @@ import type { SearchFilter } from '../providers/search/port'
  * Access resolution for media (docs/media-library-design.md §5). All authz is
  * enforced HERE on the server (R1/R6). The subject is assembled from the session;
  * a resource's grants are the UNION of its own grants and every ancestor folder's
- * grants (inheritance down the tree). resolveMediaAccess (pure, @bingoo/core)
+ * grants (inheritance down the tree). resolveMediaAccess (pure, @bingoo.ai/core)
  * folds these into a single effective permission.
  */
 

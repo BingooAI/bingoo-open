@@ -1,5 +1,5 @@
 /**
- * @bingoo/manipulatives — public surface + kind registration.
+ * @bingoo.ai/manipulatives — public surface + kind registration.
  *
  * Importing this module registers every kit. Consumers (the explainer engine's
  * choreographer/frame, and other bingoo surfaces — games, practice, arena) all

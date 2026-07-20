@@ -7,7 +7,7 @@
  * rule" to "you're done". Every scene passes. The lesson is still bad.
  *
  * So the arc is a contract too. It is not a style preference — it is two results
- * that bingoo's own `@bingoo/plans` already encodes:
+ * that bingoo's own `@bingoo.ai/plans` already encodes:
  *
  *   • CPA (concrete → pictorial → abstract). A child must HANDLE eight stars
  *     before they can accept "8 is even". A lesson that opens on the rule has
@@ -22,7 +22,7 @@
  * between the rule and the first test" is actionable in a way that "make it more
  * pedagogical" never is.
  */
-import { getManipulative } from '@bingoo/manipulatives'
+import { getManipulative } from '@bingoo.ai/manipulatives'
 import type { ExplainerDoc, LocaleBundle, Scene } from './schema'
 import type { Finding } from './authoring'
 

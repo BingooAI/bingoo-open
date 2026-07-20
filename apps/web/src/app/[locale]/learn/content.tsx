@@ -1,6 +1,6 @@
 'use client'
 
-import { pickText, type ContentBlock, type QuizQuestion } from '@bingoo/core'
+import { pickText, type ContentBlock, type QuizQuestion } from '@bingoo.ai/core'
 import type {
   FeedTopic,
   LearnCourseData,
@@ -9,11 +9,11 @@ import type {
   LearnStep,
   Participant,
   TopicAccent,
-} from '@bingoo/experiences'
-import { defaultTheme, ExplainerPlayer, InteractiveManipulative } from '@bingoo/explainer-web'
-import '@bingoo/explainer-web/styles.css'
+} from '@bingoo.ai/experiences'
+import { defaultTheme, ExplainerPlayer, InteractiveManipulative } from '@bingoo.ai/explainer-web'
+import '@bingoo.ai/explainer-web/styles.css'
 import { ACCEPTANCE_BUNDLES, ACCEPTANCE_DOC } from '@/lib/explainerLesson'
-import { manipulativeKinds } from '@bingoo/manipulatives'
+import { manipulativeKinds } from '@bingoo.ai/manipulatives'
 import {
   AnswerOption,
   Button,
@@ -23,7 +23,7 @@ import {
   SelfAssessment,
   type InteractiveBlock,
   type LeaderboardEntry,
-} from '@bingoo/ui-web'
+} from '@bingoo.ai/ui-web'
 import type { ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
 

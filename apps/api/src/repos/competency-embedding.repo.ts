@@ -13,7 +13,7 @@
  * đúng như media_embedding.
  */
 
-import { db, Prisma } from '@bingoo/db'
+import { db, Prisma } from '@bingoo.ai/db'
 import { createHash } from 'node:crypto'
 import { getEmbedding } from '../providers'
 

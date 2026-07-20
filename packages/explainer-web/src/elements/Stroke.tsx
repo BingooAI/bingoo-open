@@ -4,8 +4,8 @@
  * `strokeDashoffset = 1 - drawProgress` self-draws regardless of path length.
  */
 import * as React from 'react'
-import type { RenderItem, StrokeContent } from '@bingoo/explainer'
-import type { ThemeTokens } from '@bingoo/explainer'
+import type { RenderItem, StrokeContent } from '@bingoo.ai/explainer'
+import type { ThemeTokens } from '@bingoo.ai/explainer'
 import { resolveStyle } from '../theme/tokens'
 import { getRegister } from '../theme/registers'
 import { itemTransform } from './util'

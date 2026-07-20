@@ -30,7 +30,7 @@ export interface EstimateStepProps {
  * Estimate first, THEN measure/work it out — the pairing the books drill 200+ times.
  * Only the measured value is marked; the estimate is never right or wrong, it just gets
  * compared to the truth so the learner can see how good their sense of size is.
- * Grading lives in `@bingoo/core`. i18n-free.
+ * Grading lives in `@bingoo.ai/core`. i18n-free.
  */
 export function EstimateStep({
   estimate,

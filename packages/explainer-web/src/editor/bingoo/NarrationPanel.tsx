@@ -7,7 +7,7 @@
 'use client'
 import * as React from 'react'
 import { useState } from 'react'
-import { Button } from '@bingoo/ui-web'
+import { Button } from '@bingoo.ai/ui-web'
 import { useSnap, useStore } from '../store/ctx'
 import type { EditOp } from '../store/ops'
 import { EXPLAINER_API, apiPost } from './endpoints'

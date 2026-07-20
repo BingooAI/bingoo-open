@@ -2,11 +2,11 @@
  * Media library — platform-agnostic domain logic (docs/media-library-design.md).
  * PURE TS (R2): no DB, no UI, no next/react-native. The server assembles plain
  * facts from the DB and calls these; the same helpers run on the client for
- * optimistic UI. The string-union types MIRROR the Prisma enums in @bingoo/db —
+ * optimistic UI. The string-union types MIRROR the Prisma enums in @bingoo.ai/db —
  * kept here (not imported) because core must stay client-safe.
  */
 
-// ── Vocabulary (mirrors @bingoo/db enums) ────────────────────────────────────
+// ── Vocabulary (mirrors @bingoo.ai/db enums) ────────────────────────────────────
 
 export type MediaKind = 'IMAGE' | 'VIDEO' | 'AUDIO' | 'DOCUMENT' | 'ANIMATION' | 'FONT' | 'ARCHIVE' | 'OTHER'
 export type MediaStatus = 'DRAFT' | 'UPLOADING' | 'PROCESSING' | 'READY' | 'FAILED' | 'ARCHIVED'

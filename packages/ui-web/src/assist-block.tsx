@@ -1,6 +1,6 @@
 'use client'
 
-import type { Assist } from '@bingoo/core'
+import type { Assist } from '@bingoo.ai/core'
 import { cn } from './lib/cn'
 import { SoundButton } from './sound-button'
 

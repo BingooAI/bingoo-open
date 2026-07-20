@@ -26,7 +26,7 @@ import {
   Progress,
   ProgressRing,
   StatCard,
-} from '@bingoo/ui-web'
+} from '@bingoo.ai/ui-web'
 import { cn } from '@/lib/cn'
 import { activities, children, parent, recommendations, weeklySubjects } from '@/lib/demo-data'
 

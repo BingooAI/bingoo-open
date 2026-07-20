@@ -1,4 +1,4 @@
-import { db } from '@bingoo/db'
+import { db } from '@bingoo.ai/db'
 
 /**
  * Lightweight DB connectivity probe. Uses a raw `SELECT 1` so it needs no domain

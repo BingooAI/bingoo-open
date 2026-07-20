@@ -1,6 +1,6 @@
 'use client'
 
-import type { QuizItem } from '@bingoo/core'
+import type { QuizItem } from '@bingoo.ai/core'
 import { useQuizText } from './quiz-locale'
 import { Minus, Plus } from 'lucide-react'
 import { cn } from './lib/cn'
@@ -56,7 +56,7 @@ function TallyMarks({ count }: { count: number }) {
 
 /**
  * Tally chart — record a count per category as tally marks (grouped in fives).
- * Tap +/− to change each row. Grading (counts === answer) in `@bingoo/core`. i18n-free.
+ * Tap +/− to change each row. Grading (counts === answer) in `@bingoo.ai/core`. i18n-free.
  */
 export function TallyChart({ categories, counts, onChange, reveal, disabled, className }: TallyChartProps) {
   const t = useQuizText()

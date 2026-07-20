@@ -3,8 +3,8 @@
  * "quên nhớ khi cộng qua 10" → kỳ vọng LLM đặt một đáp án SAI = 13→3 (quên nhớ). In choices để soát.
  * Run: `node --env-file=.env --import tsx src/scripts/item-brief-verify.ts`
  */
-import { db } from '@bingoo/db'
-import type { Misconception } from '@bingoo/plans'
+import { db } from '@bingoo.ai/db'
+import type { Misconception } from '@bingoo.ai/plans'
 import { generateOneItem } from '../services/content-item-gen.service'
 
 const MCS: Misconception[] = [

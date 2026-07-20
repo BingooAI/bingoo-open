@@ -7,10 +7,10 @@
 'use client'
 import * as React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { ExplainerDoc, LocaleBundle, Aspect } from '@bingoo/explainer'
-import { frame, collectLocalizable } from '@bingoo/explainer'
-import { resolveNarrations } from '@bingoo/explainer'
-import { lintDoc } from '@bingoo/explainer'
+import type { ExplainerDoc, LocaleBundle, Aspect } from '@bingoo.ai/explainer'
+import { frame, collectLocalizable } from '@bingoo.ai/explainer'
+import { resolveNarrations } from '@bingoo.ai/explainer'
+import { lintDoc } from '@bingoo.ai/explainer'
 import { useSfx } from '../../player/useSfx'
 import { PreviewStage } from './PreviewStage'
 import { createEditorStore, loadSaved } from '../store/editorStore'
@@ -19,7 +19,7 @@ import { importLesson, HANDOFF_KEY } from '../store/importLesson'
 import { EditorProvider, useSnap, useStore, genId } from '../store/ctx'
 import { buildProject } from './clips'
 import { MediaPanel } from './MediaPanel'
-import { Button, Select } from '@bingoo/ui-web'
+import { Button, Select } from '@bingoo.ai/ui-web'
 import { Properties, BackgroundDialog } from './Properties'
 import { SceneStrip } from './SceneStrip'
 import { TrackTimeline } from './TrackTimeline'
@@ -27,7 +27,7 @@ import { NarrationPanel } from './NarrationPanel'
 import { Preview } from '../panels/Preview'
 import { EXPLAINER_API, apiPost } from './endpoints'
 
-/** Locales bingoo ships (@bingoo/i18n) — pick a translate target that the
+/** Locales bingoo ships (@bingoo.ai/i18n) — pick a translate target that the
  *  product actually supports instead of typing a raw code. */
 const BINGOO_LOCALES = [
   { code: 'vi', label: 'Tiếng Việt' },

@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl'
 import { Mascot } from '@/components/brand/mascot'
-import { buttonVariants } from '@bingoo/ui-web'
+import { buttonVariants } from '@bingoo.ai/ui-web'
 import { Link } from '@/i18n/navigation'
 
 export default function NotFound() {

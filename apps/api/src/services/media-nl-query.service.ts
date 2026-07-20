@@ -1,4 +1,4 @@
-import type { MediaKind, MediaSearchQuery } from '@bingoo/core'
+import type { MediaKind, MediaSearchQuery } from '@bingoo.ai/core'
 import { getAi, ProviderNotConfiguredError } from '../providers'
 import { renderPrompt } from '../prompts'
 

@@ -4,7 +4,7 @@
  * phủ đủ unit/bài, có mục tiêu/đầu ra/đánh giá, không bỏ sót.
  */
 
-import type { Slug } from '@bingoo/knowledge-engine'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
 import type { CoursePlanDoc, UnitPlanDoc } from './hierarchy'
 
 export type HierIssueCode =

@@ -9,7 +9,7 @@
  * Nguồn: `LessonInstructionPlan.knowledgePoints[].misconceptions` (mỗi misconception ghim `targetsKc`).
  */
 
-import type { KnowledgePoint, LessonInstructionPlan, Misconception } from '@bingoo/plans'
+import type { KnowledgePoint, LessonInstructionPlan, Misconception } from '@bingoo.ai/plans'
 
 /** Hợp đồng grounding cấp item — dữ liệu tường minh cho bộ sinh (không chôn trong một string thô). */
 export interface ItemBrief {

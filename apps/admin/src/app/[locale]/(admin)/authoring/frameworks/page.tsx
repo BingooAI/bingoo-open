@@ -1,5 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { PageHeader } from '@bingoo/ui-web'
+import { PageHeader } from '@bingoo.ai/ui-web'
 import { FrameworksList } from '@/components/authoring/frameworks-list'
 import { FrameworkWizard } from '@/components/authoring/framework-wizard'
 import { GenerateSection } from '@/components/authoring/generate-section'

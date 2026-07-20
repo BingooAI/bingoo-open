@@ -1,6 +1,6 @@
 'use client'
 
-import { countWords, type RubricCriterion } from '@bingoo/core'
+import { countWords, type RubricCriterion } from '@bingoo.ai/core'
 import { cn } from './lib/cn'
 import { POP, stagger, tile } from './lib/interactive'
 import { RubricList } from './rubric-list'
@@ -33,7 +33,7 @@ export interface WritingPadProps {
 /**
  * Write a sentence / paragraph / explanation. There is no right answer, so the learner
  * ticks the success criteria against their own work (see `RubricList`); grading lives in
- * `@bingoo/core`. A model answer is revealed only after they check. i18n-free.
+ * `@bingoo.ai/core`. A model answer is revealed only after they check. i18n-free.
  */
 export function WritingPad({
   text,

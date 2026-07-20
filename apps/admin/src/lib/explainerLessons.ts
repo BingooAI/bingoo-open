@@ -6,7 +6,7 @@
  * already MediaAssets with permanent URLs, so re-opening a lesson plays what was
  * made — it never regenerates, and it never pays twice.
  */
-import type { ExplainerDoc, LocaleBundle } from '@bingoo/explainer'
+import type { ExplainerDoc, LocaleBundle } from '@bingoo.ai/explainer'
 import { api } from './api-client'
 
 export type LessonRow = {

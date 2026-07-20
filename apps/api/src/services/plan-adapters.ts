@@ -16,8 +16,8 @@ import type {
   Representation,
   StepDeliveryKind,
   SuccessCriterion,
-} from '@bingoo/plans'
-import type { Slug } from '@bingoo/knowledge-engine'
+} from '@bingoo.ai/plans'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
 import { contentReadyPrimitives } from './primitive-info.service'
 
 /**

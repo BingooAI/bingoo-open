@@ -12,8 +12,8 @@
  * budgets from the layout engine, the kit list from the live registry, the worked
  * examples from `examples.ts` (each re-checked against the gate before shipping).
  */
-import { MANIPULATIVES, KIT_DOCS } from '@bingoo/manipulatives'
-import { QUIZ_TYPES } from '@bingoo/core'
+import { MANIPULATIVES, KIT_DOCS } from '@bingoo.ai/manipulatives'
+import { QUIZ_TYPES } from '@bingoo.ai/core'
 import { quizGuide } from './quizdoc'
 import { arcGuide, planFor, DEFAULT_MINUTES, RICHNESS } from './arc'
 import { SFX_NAMES } from './sfx-catalog'
@@ -118,7 +118,7 @@ export function promptMarkdown(minutes = DEFAULT_MINUTES, brief = false): string
     .join('\n')
 
   return `<!-- GENERATED từ engine đang chạy. Đừng sửa tay — sinh lại bằng:
-     pnpm --filter @bingoo/explainer prompt   (hoặc tải từ trang /vi/explainer-import) -->
+     pnpm --filter @bingoo.ai/explainer prompt   (hoặc tải từ trang /vi/explainer-import) -->
 
 # Sinh một bài giảng Explainer (JSON)
 
@@ -367,7 +367,7 @@ Học sinh **làm** ở đây. Có **4 kiểu**, và **cả 4 đều được CH
               {"id":"r3","d":"M60 10h40v40h-40z","targetColor":"#e07a42"} ] } }
 \`\`\`
 
-\`activity.quiz\` là **một câu hỏi @bingoo/core**. Sai shape thì QuizShell vẽ **thẻ rỗng** — và cổng kiểm tra sẽ từ chối bài.
+\`activity.quiz\` là **một câu hỏi @bingoo.ai/core**. Sai shape thì QuizShell vẽ **thẻ rỗng** — và cổng kiểm tra sẽ từ chối bài.
 
 \`\`\`json
 { "id":"g1", "kind":"gate", "layout":{"template":"practice","regions":{}},

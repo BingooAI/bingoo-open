@@ -6,7 +6,7 @@
  */
 'use client'
 import * as React from 'react'
-import type { GateSpec, ThemeTokens, Aspect } from '@bingoo/explainer'
+import type { GateSpec, ThemeTokens, Aspect } from '@bingoo.ai/explainer'
 import { SelectGate } from './gates/SelectGate'
 import { SequenceGate } from './gates/SequenceGate'
 import { HotspotGate } from './gates/HotspotGate'

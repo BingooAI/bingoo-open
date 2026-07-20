@@ -1,7 +1,7 @@
 import type { ErrorHandler, NotFoundHandler } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
-import { Prisma } from '@bingoo/db'
+import { Prisma } from '@bingoo.ai/db'
 import { ZodError } from 'zod'
 import type { AppEnv } from '../lib/context'
 import { AppError, ErrorCode } from '../lib/errors'

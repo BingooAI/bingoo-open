@@ -20,7 +20,7 @@ export interface NumberLineInputProps {
 
 /**
  * Mark a value on a number line by tapping — snaps to the nearest step. Counting
- * and add/subtract (Cambridge "mark 13", jump lines). Grading in `@bingoo/core`.
+ * and add/subtract (Cambridge "mark 13", jump lines). Grading in `@bingoo.ai/core`.
  */
 export function NumberLineInput({
   min,

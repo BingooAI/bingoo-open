@@ -8,7 +8,7 @@
 import * as React from 'react'
 import { useState } from 'react'
 import { EFFECTS, EFFECT_GROUPS, buildAddEffectOps, type Effect } from '../effects'
-import { SFX_NAMES, sfxUrl } from '@bingoo/explainer'
+import { SFX_NAMES, sfxUrl } from '@bingoo.ai/explainer'
 import { useSnap, useStore, genId } from '../store/ctx'
 import { getEl } from '../store/ops'
 

@@ -1,5 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { PageHeader } from '@bingoo/ui-web'
+import { PageHeader } from '@bingoo.ai/ui-web'
 import { CoursesList } from '@/components/authoring/courses-list'
 import { CourseWizard } from '@/components/authoring/course-wizard'
 import { GenerateSection } from '@/components/authoring/generate-section'

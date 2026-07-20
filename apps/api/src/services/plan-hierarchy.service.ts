@@ -3,8 +3,8 @@
  * chảy xuống cấp con để LLM hiểu tổng thể (chống bịa). CỔNG: chưa duyệt cha thì KHÔNG sinh con.
  */
 
-import type { CoursePlanDoc, UnitPlanDoc } from '@bingoo/plans'
-import { coursePlanQuality, unitPlanQuality } from '@bingoo/plans'
+import type { CoursePlanDoc, UnitPlanDoc } from '@bingoo.ai/plans'
+import { coursePlanQuality, unitPlanQuality } from '@bingoo.ai/plans'
 import { getAi } from '../providers'
 import { readEnv } from '../providers/core/config'
 import { renderPrompt } from '../prompts'

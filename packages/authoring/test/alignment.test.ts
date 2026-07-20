@@ -4,7 +4,7 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import type { DomainProfile } from '@bingoo/facets'
+import type { DomainProfile } from '@bingoo.ai/facets'
 import {
   compareScope,
   proposeAlignment,

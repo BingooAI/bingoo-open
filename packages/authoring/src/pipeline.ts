@@ -1,6 +1,6 @@
 /** Orchestrator ①→⑤: nguồn thô → bản nháp (dùng cổng LLM/vision). Ranh giới async. */
 
-import type { CompetencyKind } from '@bingoo/knowledge-engine'
+import type { CompetencyKind } from '@bingoo.ai/knowledge-engine'
 import type { ConceptDraft, EdgeDraft, IngestDraft, LocalizedText, RawSource } from './model'
 import { canonicalTitle } from './slug'
 import type { AuthoringPorts, ConceptCandidate } from './ports'

@@ -9,10 +9,10 @@
  * sinh khi text đã duyệt (xem media resolver + luồng per-item ở admin).
  */
 
-import type { AuthoredItem } from '@bingoo/authored-item'
-import { MANIP_PREFIX } from '@bingoo/authored-item'
-import type { DifficultyBand, GenerationSpec } from '@bingoo/personalization'
-import type { Misconception } from '@bingoo/plans'
+import type { AuthoredItem } from '@bingoo.ai/authored-item'
+import { MANIP_PREFIX } from '@bingoo.ai/authored-item'
+import type { DifficultyBand, GenerationSpec } from '@bingoo.ai/personalization'
+import type { Misconception } from '@bingoo.ai/plans'
 import { buildGeneratorPort, buildKitGeneratorPort } from './content-adapters'
 import { renderMisconceptions } from './item-brief'
 import { saveItems } from '../repos/content-item.repo'

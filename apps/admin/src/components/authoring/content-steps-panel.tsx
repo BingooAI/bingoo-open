@@ -2,9 +2,9 @@
 
 import { Component, useState, type ReactNode } from 'react'
 import { useTranslations } from 'next-intl'
-import { Badge, Button, QuizShell, useToast } from '@bingoo/ui-web'
-import type { QuizQuestion } from '@bingoo/core'
-import { InteractiveManipulative, VI_QUIZ_LABELS, checkAnswer, defaultTheme } from '@bingoo/explainer-web'
+import { Badge, Button, QuizShell, useToast } from '@bingoo.ai/ui-web'
+import type { QuizQuestion } from '@bingoo.ai/core'
+import { InteractiveManipulative, VI_QUIZ_LABELS, checkAnswer, defaultTheme } from '@bingoo.ai/explainer-web'
 import { Check, ChevronDown, Plus, Sparkles, Wand2, X } from 'lucide-react'
 import {
   useAllPrimitives,

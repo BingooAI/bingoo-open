@@ -4,7 +4,7 @@
  * migrated engine + renderer play an authored ExplainerDoc end-to-end. The theme
  * is inlined so the lesson validates headlessly (no renderer import).
  */
-import type { ExplainerDoc, LocaleBundle, ThemeTokens } from '@bingoo/explainer'
+import type { ExplainerDoc, LocaleBundle, ThemeTokens } from '@bingoo.ai/explainer'
 
 const theme: ThemeTokens = {
   colors: {

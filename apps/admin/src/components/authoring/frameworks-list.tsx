@@ -13,7 +13,7 @@ import {
   TH,
   THead,
   TR,
-} from '@bingoo/ui-web'
+} from '@bingoo.ai/ui-web'
 import { Link } from '@/i18n/navigation'
 import { useFrameworks } from '@/lib/authoring-queries'
 

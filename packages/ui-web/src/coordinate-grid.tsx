@@ -1,6 +1,6 @@
 'use client'
 
-import type { CoordPoint } from '@bingoo/core'
+import type { CoordPoint } from '@bingoo.ai/core'
 import { Minus, Plus } from 'lucide-react'
 import { cn } from './lib/cn'
 import { POP, stagger, tile } from './lib/interactive'
@@ -24,7 +24,7 @@ export interface CoordinateGridProps {
 /**
  * Coordinate grid (first quadrant) — tap the intersections to PLOT the given
  * coordinates, or READ the coordinates of the marked points. Grading in
- * `@bingoo/core`, which treats (3,5) and (5,3) as different — the classic mistake.
+ * `@bingoo.ai/core`, which treats (3,5) and (5,3) as different — the classic mistake.
  * i18n-free.
  */
 export function CoordinateGrid({
