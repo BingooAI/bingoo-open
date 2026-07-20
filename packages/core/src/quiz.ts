@@ -1668,8 +1668,8 @@ function checkQuestion(q: z.infer<typeof QuizQuestionShape>, ctx: z.RefinementCt
       const ids = q.items.map((it) => it.id)
       const dup = findDuplicate(ids)
       if (dup) dupIssue(['items'], dup)
-      const wanted = [...ids].sort().join(' ')
-      const got = [...q.correctOrder].sort().join(' ')
+      const wanted = [...ids].sort().join('\u0000')
+      const got = [...q.correctOrder].sort().join('\u0000')
       if (wanted !== got)
         ctx.addIssue({
           code: 'custom',
