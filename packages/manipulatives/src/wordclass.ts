@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * wordclass.ts — parts of speech (Cambridge Primary English: Grammar). Each word
  * in a sentence carries a word class; revealing/ tagging colours it and shows a

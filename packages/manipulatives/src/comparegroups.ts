@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * comparegroups.ts — CompareGroups (so sánh nhiều hơn / ít hơn / bằng nhau).
  * Two groups of counters (left = accent, right = accent2) with ONE-TO-ONE

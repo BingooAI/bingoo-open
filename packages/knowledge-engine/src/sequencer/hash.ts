@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** FNV-1a 32-bit → dayRank: xoay vòng tie-break theo ngày, tái lập được. SPEC §8.3. */
 
 export function fnv1a32(str: string): number {

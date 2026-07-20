@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * paraphrase.ts — ParaphrasePair (nhận diện đồng nghĩa giữa câu hỏi và bài đọc —
  * kỹ năng IELTS reading/listening, exam prep). Two sentences as rows of word

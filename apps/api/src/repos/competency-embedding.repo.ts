@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Chỉ mục NGỮ NGHĨA của KC — dùng để TRUY HỒI ứng viên đối chiếu, và CHỈ để truy hồi.
  *

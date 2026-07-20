@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ItemBrief — BRIEF SƯ PHẠM CẤP ITEM (Lớp 2 hợp đồng nội dung). Bộ sinh bank vốn chỉ nhận `brief` string
  * thô (role+brief+mustCover đã gộp ở client) + representation + band. Còn THIẾU: điểm SAI THƯỜNG GẶP

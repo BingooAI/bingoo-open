@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * MÔ TẢ PRIMITIVE cho NGƯỜI SOẠN (author-facing) — TÊN + "học sinh làm gì", SONG NGỮ (UI hiện tiếng
  * Việt). Nhóm B (hiển thị) nên VI; KIT_DOCS/AnswerDoc (Nhóm A, cho LLM) vẫn English riêng.

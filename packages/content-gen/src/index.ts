@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * @bingoo.ai/content-gen — S4b: GenerationSpec → (GeneratorPort) → AuthoredItem[] → ráp & kiểm ContentBundle.
  * Phần THUẦN: hợp đồng cổng + ráp/kiểm; adapter LLM thật ở apps/api.

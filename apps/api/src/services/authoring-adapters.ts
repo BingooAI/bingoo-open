@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Adapter LLM cho pipeline @bingoo.ai/authoring — hiện thực các port bằng hạ tầng provider
  * sẵn có (getAi = Claude mặc định, getEmbedding). Lõi authoring vẫn thuần; đây là biên "bẩn".

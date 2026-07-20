@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * hundredsquare.ts — 1..100 grid (Cambridge: counting, patterns, multiples).
  * verbs: highlightNumber(n) · highlightMultiples(k) · countBy(step) · coverRange(a,b).

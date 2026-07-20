@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Flattener arcs→steps: giữ THỨ TỰ + đầy đủ; bước nào đổ bank. Thuần, offline. */
 
 import { describe, expect, it } from 'vitest'

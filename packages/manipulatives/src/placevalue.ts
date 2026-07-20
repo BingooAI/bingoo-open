@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * placevalue.ts — Place-value chart with counters/discs (Cambridge: place value,
  * exchange/regroup). Columns labelled (Th H T O …) hold a digit card + that many

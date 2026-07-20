@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { z } from 'zod'
 
 /** Sane defaults + a hard cap so a client can't request an unbounded page. */

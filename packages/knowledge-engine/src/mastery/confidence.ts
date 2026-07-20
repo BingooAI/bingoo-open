@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Quy đổi độ tin cậy → trọng số. SPEC §5.1. */
 
 import type { ConfidenceParams } from '../policy'

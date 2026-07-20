@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Client-facing API DTOs — the shape the backend actually serializes to the wire
  * (apps/api/src/lib/media-serialize.ts + the route handlers), NOT the raw Prisma

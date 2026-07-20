@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import type { LocalizedText, MediaSearchQuery } from '@bingoo.ai/core'
 import { db } from '@bingoo.ai/db'
 import type { MediaScope, Prisma } from '@bingoo.ai/db'

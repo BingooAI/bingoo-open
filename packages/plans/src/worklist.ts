@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Duyệt kế hoạch bài thành DANH SÁCH VIỆC SINH — theo ĐÚNG thứ tự arc → step. Thuần, không I/O.
  *

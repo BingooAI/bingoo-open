@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * stresspattern.ts — WordStress: word stress & syllables (academic
  * pronunciation, IELTS speaking; teens–adult). Syllable boxes joined by dots;

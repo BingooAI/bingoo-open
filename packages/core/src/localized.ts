@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Text ĐA NGÔN NGỮ cho nội dung học (đề bài, nhãn đáp án, giải thích…). Một field có thể là:
  *   · CHUỖI thường (một ngôn ngữ) — tương thích NGƯỢC: mọi content cũ vẫn hợp lệ, không migration;

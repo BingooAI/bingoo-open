@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * explainer.service.ts — connect the explainer engine's provider ports to
  * bingoo's existing capability ports, IN-PROCESS (no HTTP). The explainer's

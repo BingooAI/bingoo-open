@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * CẤU TRÚC bài = MỖI KC MỘT CHUỖI (arc). Sanitizer phải ép hợp lệ mà KHÔNG áp luồng cứng, và không
  * cho gộp nhiều KC. Chạy offline, không LLM.

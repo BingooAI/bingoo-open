@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Ưu tiên ôn theo mức nắm + đường cong quên. SPEC §8.1. */
 
 import type { Millis, Slug } from '../contracts'

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { AlertTriangle, Check } from 'lucide-react'
 import type { HTMLAttributes, ReactNode } from 'react'
 import { Card } from './card'

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Lõi đo mức nắm — SPEC §3–§5, §8.1. Tất cả hàm THUẦN. */
 
 export { DAY_MS, LN2, clamp01, clamp, shrink, mean } from './math'

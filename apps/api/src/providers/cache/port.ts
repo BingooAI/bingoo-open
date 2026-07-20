@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Key-value cache capability (Redis today, swappable). */
 export interface CachePort {
   get(key: string): Promise<string | null>

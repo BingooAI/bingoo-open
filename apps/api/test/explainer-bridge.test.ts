@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * BRIDGE explainer-step → LessonBrief. Canh: brief ra HỢP LỆ (parseBrief nhận) + đúng điểm nối:
  * skills=[kc] (feed bank), facts (chống bịa), durationMin→sceneCount, brief/mustCover→notes,

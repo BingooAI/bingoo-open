@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * verify-sfx-search.ts — proves the uploaded SFX are findable by NLP/semantic
  * search. Runs real hybrid (semantic + lexical, RRF) queries against the media

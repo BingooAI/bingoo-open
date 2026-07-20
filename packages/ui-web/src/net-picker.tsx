@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 'use client'
 
 import { getNet, netBounds, type NetDef, type Solid3DName } from '@bingoo.ai/core'

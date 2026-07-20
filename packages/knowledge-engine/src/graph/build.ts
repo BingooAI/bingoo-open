@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Đồ thị năng lực in-memory, chỉ-đọc. SPEC Phụ lục A.
  *

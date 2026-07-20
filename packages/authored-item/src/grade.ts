@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Cầu grading: @bingoo.ai/core `Grade` → engine `Verdict` → Submission. */
 
 import type { Submission, Verdict } from '@bingoo.ai/knowledge-engine'

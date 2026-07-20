@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ÁP quyết định đối chiếu (sau khi NGƯỜI duyệt chốt).
  *

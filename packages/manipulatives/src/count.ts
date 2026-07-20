@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * count.ts — CountObjects (đếm vật thật). Shows `count` icons (apple / star /
  * flower / heart / dot) arranged like a ten-frame (rows of 5) with a big number,

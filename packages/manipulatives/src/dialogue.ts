@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * dialogue.ts — DialogueFlow: conversation / exchange builder (TOEIC
  * conversations, business email chains, speaking-test role-play; teens–adult).

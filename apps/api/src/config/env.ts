@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { z } from 'zod'
 
 // Prisma 7 / 12-factor: load a local .env for dev if present; in prod the

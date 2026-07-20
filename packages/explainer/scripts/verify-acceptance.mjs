@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * verify-acceptance.mjs — validate the fresh acceptance lesson (authored for the
  * bingoo migration, NOT ported demo content) against the real engine: parseDoc +

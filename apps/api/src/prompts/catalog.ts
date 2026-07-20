@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Prompt catalog — the SINGLE place every LLM prompt is defined (no more inline
  * prompts scattered across services). Each entry has a stable id, a default

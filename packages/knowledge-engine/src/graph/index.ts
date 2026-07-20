@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Đồ thị năng lực + suy luận cấu trúc — SPEC Phụ lục A, §6–§7. */
 
 export { SkillGraph, buildGraph, findOrderingCycle, type BuildOpts, type WeightedNode } from './build'

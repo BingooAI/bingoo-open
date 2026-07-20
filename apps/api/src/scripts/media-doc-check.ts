@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Document-generation self-test. Seeds a DocumentTemplate, generates a worksheet
  * via the LLM (structured → rubric-verified → Markdown), verifies the PENDING

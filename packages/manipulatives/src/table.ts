@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * table.ts — data table (bảng số liệu) for Statistics. Rows × columns of values
  * with headers and optional totals; highlight a row/column while reading it.

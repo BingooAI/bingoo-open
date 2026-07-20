@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Stage.tsx — the web SVG renderer. Consumes a platform-neutral RenderModel
  * (spec §2, §7.2) and paints it to SVG. This is the ONLY place web drawing

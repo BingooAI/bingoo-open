@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ratiotable.ts — RatioTable (bảng tỉ số / quy tắc tam suất). Ratio &
  * proportion on a double-row table for upper primary / middle school (9–13):

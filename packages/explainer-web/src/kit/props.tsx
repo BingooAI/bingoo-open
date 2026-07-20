@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * kit/props.tsx — the reusable whiteboard prop library ("kho") (spec §8, FR-C-06).
  *

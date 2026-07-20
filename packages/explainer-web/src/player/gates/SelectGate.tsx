@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * SelectGate.tsx — the select / predict-check gate (spec §11, §12, B8).
  * Real-time input isolated from the seekable timeline: tap an option → validate

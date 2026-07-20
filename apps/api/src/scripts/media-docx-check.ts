@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * DOCX export self-test (no LLM). Creates a DOCUMENT asset with a Markdown
  * ORIGINAL in R2, renders the DOCX rendition, verifies it's a real .docx (zip)

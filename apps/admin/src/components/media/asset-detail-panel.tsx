@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 'use client'
 
 import { Download, Loader2, Plus, Trash2 } from 'lucide-react'

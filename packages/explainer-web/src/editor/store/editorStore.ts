@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * editorStore.ts — the editor's single source of truth (editor-spec §3.2).
  * Holds { doc, bundles } + undo/redo stacks + ephemeral UI state. Every doc

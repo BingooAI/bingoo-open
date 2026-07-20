@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 // @bingoo.ai/tokens — build step.
 // Reads src/tokens.json (single source of truth) and generates:
 //   dist/tokens.css         → Tailwind v4 @theme + semantic themes (web)

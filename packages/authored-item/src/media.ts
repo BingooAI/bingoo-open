@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * HỢP ĐỒNG MEDIA per-item — THUẦN, không I/O. Nói CẦN media gì cho một item + ĐIỀU PHỐI resolve, nhưng
  * việc sinh/tìm thật (search thư viện · vision · TTS) được TIÊM VÀO (`resolve`) nên test được offline.

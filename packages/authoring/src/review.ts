@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Áp quyết định duyệt của chuyên gia lên bản nháp — hàm THUẦN (change-set). */
 
 import type { CompetencyKind, PrereqMode, RelType } from '@bingoo.ai/knowledge-engine'

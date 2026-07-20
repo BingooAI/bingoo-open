@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * fractionwall.ts — Fraction wall (Cambridge: compare & equivalent fractions).
  * Stacked unit bars each split into 1, 2, 3 … equal parts. verbs: addRow(n) ·

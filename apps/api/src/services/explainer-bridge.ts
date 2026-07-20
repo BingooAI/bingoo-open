@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * BRIDGE: bước explainer trong kế hoạch bài → `LessonBrief` (brief/v1) cho hệ explainer.
  *

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { buildTreePath, type LocalizedText } from '@bingoo.ai/core'
 import { db } from '@bingoo.ai/db'
 import type { MediaScope, MediaVisibility } from '@bingoo.ai/db'

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import type { MediaKind, MediaSearchQuery } from '@bingoo.ai/core'
 import { getAi, ProviderNotConfiguredError } from '../providers'
 import { renderPrompt } from '../prompts'

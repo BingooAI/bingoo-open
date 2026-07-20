@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Rasch / 1PL — quy đổi Elo ↔ logit. SPEC §12. */
 
 /** SPEC §12 — θ người học từ Elo (tâm base, ELO_PER_LOGIT). */

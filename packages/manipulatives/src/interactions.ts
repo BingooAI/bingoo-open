@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * interactions.ts — direct-manipulation descriptors for the sandbox (pure, no
  * React). Maps a kit `kind` → { hint, actions, onTap, onDrag }. Every kit still

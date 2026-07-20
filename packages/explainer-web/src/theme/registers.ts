@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * registers.ts — style registers (spec §8). A register is a token bundle that
  * decides the "hand-drawn" look WITHOUT touching the document or choreographer.

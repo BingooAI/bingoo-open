@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Text embedding capability — turns text into a dense vector for semantic search
  * (docs/media-library-design.md §4). Vendor-neutral. The active model's `dim`

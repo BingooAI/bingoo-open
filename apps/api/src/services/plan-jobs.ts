@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * REGISTRY JOB SINH KẾ HOẠCH — chạy nền, client poll trạng thái.
  *

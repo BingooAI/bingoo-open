@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * interpolate.ts — tween math + seeded noise (spec §7.2, §6.2).
  *

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * measurescale.ts — pan balance (Cambridge: mass, comparing, equality). The beam
  * tilts by the difference of the two pans; equal → level. verbs: setLeft(n) ·

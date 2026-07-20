@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** contentPlan — Instruction Plan + persona + snapshot engine → GenerationSpec (per-persona). */
 
 import type { Slug } from '@bingoo.ai/knowledge-engine'

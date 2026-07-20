@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Single source of truth for supported locales — shared by every platform.
  * Add a locale here + a matching `messages/<code>.json` and it flows everywhere

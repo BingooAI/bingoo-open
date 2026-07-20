@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import en from '../messages/en.json'
 import vi from '../messages/vi.json'
 import type { Locale } from './config'

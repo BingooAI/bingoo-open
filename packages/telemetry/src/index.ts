@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * @bingoo.ai/telemetry — sự kiện thô UI → ngữ cảnh làm giàu bằng chứng.
  * BẤT BIẾN: Telemetry ≠ Evidence. Chỉ `attempt_submitted` sinh Observation;

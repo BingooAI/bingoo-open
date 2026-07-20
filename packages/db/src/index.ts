@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * @bingoo.ai/db — server-only data access (Prisma). NEVER import from web / mobile
  * or any client bundle: it carries DB credentials and the query engine (R1, R2).

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Drawing / tracing / coloring engine — the shared, pure-TS core of the
  * preschool canvas batch (§R2: no UI, no platform APIs). Both platforms render

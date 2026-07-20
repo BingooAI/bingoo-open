@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ShapeEl.tsx — thin adapter: resolves style tokens, builds a PropCtx, and
  * delegates drawing to the shared prop kit (src/kit/props.tsx). All the visual

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * SUY RA MẠCH (strand) CỦA KC TỪ OBJECTIVE map vào nó — thuần, không I/O, test được offline.
  *

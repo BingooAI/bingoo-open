@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Máy trận đấu arena — golden vectors, tất định (rng seed cố định). */
 import { describe, expect, it } from 'vitest'
 import { initMatch, resolveRound, specialReady, useSpecial, type MatchState } from '../src/arena/engine'

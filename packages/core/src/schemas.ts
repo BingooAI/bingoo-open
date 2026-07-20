@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Authorable-content registry — the single entry point an LLM (or any authoring
  * tool) uses. For every kind of content the platform renders, it exposes a JSON

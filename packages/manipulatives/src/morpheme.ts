@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * morpheme.ts — prefix + root + suffix (Cambridge Primary English: vocabulary &
  * spelling — word building, e.g. un + happy + ness). verbs: addPrefix(p) ·

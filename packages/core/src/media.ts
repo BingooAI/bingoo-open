@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Media library — platform-agnostic domain logic (docs/media-library-design.md).
  * PURE TS (R2): no DB, no UI, no next/react-native. The server assembles plain

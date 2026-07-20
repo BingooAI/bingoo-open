@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * phonics.ts — Phonics sound blocks (Cambridge Primary English: Reading — phonics
  * & word recognition). A word shown as grapheme boxes with "sound buttons";

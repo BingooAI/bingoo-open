@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * verify-engine.mjs — headless verification of @bingoo.ai/explainer against the REAL
  * engine (no test runner, no deps, NO demo lessons). Drives every registered

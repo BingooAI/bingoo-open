@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Nhân objective, đối chiếu, di trú course — change-set thuần. SPEC §9. */
 
 import type { FrameworkReleaseType, PrereqMode } from '../domain'

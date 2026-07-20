@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * RUNTIME-VERIFY end-to-end: count kit → objectLabel → ảnh-vật (1 vật đơn lẻ) → render kit dùng ảnh.
  * Chứng minh cả CHUỖI chạy thật, đúng thứ tự memory content-authoring #2:

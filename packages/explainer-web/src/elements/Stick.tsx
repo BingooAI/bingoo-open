@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Stick.tsx — the universal humanoid rig (spec §8). One anonymous stick figure
  * reused across every topic: skeleton + per-beat joint angles + a minimal face

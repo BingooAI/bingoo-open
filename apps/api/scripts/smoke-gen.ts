@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * smoke-gen.ts — prove the ported generation pipeline runs server-side with a
  * MOCK llm (no API key/credits). The mock returns a known-valid {doc, bundle} for

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 'use client'
 
 import { ArrowRight, Calculator, Check, Clock, Crown, Flame, Play, Target, Trophy, Zap } from 'lucide-react'

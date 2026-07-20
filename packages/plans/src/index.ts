@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * @bingoo.ai/plans — Instruction Plan (khung chuẩn) + KP + planQuality.
  * Tầng ② của kiến trúc nội dung; thuần TS, neo vào @bingoo.ai/knowledge-engine.

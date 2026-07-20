@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * transformgrid.ts — TransformGrid (phép biến hình trên lưới, THPT 15–18).
  * Geometric transformations of a polygon on a −R..R coordinate grid: tịnh tiến

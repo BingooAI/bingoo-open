@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * verify-providers.mjs — headless checks that the explainer's provider LOGIC is
  * preserved after the move into bingoo: cue re-timing + illustration-first

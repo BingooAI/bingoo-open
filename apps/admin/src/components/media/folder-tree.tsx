@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 'use client'
 
 import { ChevronRight, Folder, FolderOpen, Images, Loader2 } from 'lucide-react'

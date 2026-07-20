@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { useMutation, useQuery, useQueryClient, type UseQueryOptions } from '@tanstack/react-query'
 import type { MediaKind, MediaSearchMode, ModerationStatus } from '@bingoo.ai/core'
 import { api } from './api-client'

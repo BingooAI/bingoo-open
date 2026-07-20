@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Instruction Plan — khung CHUẨN, dùng chung, versioned (CONTENT-ARCHITECTURE §4–§5).
  * KHÔNG chứa presentation (que tính/kịch bản) hay story theme — đó là tầng Content (per-persona).

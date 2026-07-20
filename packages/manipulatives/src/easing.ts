@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * easing.ts — the easing library + baked springs (spec §6.2, §6.4).
  *

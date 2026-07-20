@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * One-off content generation: the "counting lesson" demo asset set (teacher poses,
  * counted objects, scenery, rewards). Each image is generated via OpenAI, stored in

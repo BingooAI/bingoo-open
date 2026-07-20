@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Lớp phủ chuẩn & di trú — SPEC §9–§10. Change-set thuần để host áp vào store. */
 
 export { compareSemver, nextSemver, formatSemver, type Semver } from './semver'

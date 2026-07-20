@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Fold thuần một bằng chứng LEARNER vào SkillState. SPEC §2 + §5 (DISPOSITION). */
 
 import type { BktParams, BetaParams, EloParams } from '../policy'

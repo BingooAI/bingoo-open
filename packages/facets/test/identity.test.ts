@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Luật ĐỊNH DANH — mỗi test ở đây canh MỘT lớp lỗi đã thực sự xảy ra khi chạy dữ liệu thật.
  * Không có test nào là giả định: 6 lớp lỗi dưới đây đều được phát hiện bằng tay, rất muộn.

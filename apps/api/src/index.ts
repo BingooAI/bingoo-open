@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { serve } from '@hono/node-server'
 import { env } from './config/env'
 import { createApp } from './app'

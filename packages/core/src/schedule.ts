@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Weekly-schedule math — shared, pure TS (§R2). Lays out class periods / study
  * slots on a week grid identically on web and native. Times are minutes from

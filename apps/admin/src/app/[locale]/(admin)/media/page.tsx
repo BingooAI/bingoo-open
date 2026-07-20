@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { PageHeader } from '@bingoo.ai/ui-web'
 import { MediaBrowser } from '@/components/media/media-browser'

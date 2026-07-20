@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * arrayarea.ts — Array / area model (kit #4) for multiplication & area.
  * params: { rows, cols }  verbs: fill · splitArea(a,b) · highlightCell(r,c)

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Tín hiệu Dreyfus & xếp bậc trình độ. SPEC §4. */
 
 import type { DreyfusLevel } from '../domain'

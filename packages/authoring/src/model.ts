@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Mô hình dữ liệu trung gian cho pipeline biên soạn (ingestion).
  *

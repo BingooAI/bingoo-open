@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Sinh Instruction Plan (S4): tập KC → LessonInstructionPlan bằng LLM, coerce về đúng shape
  * (plans dùng TS interface, không Zod) rồi planQuality kiểm sư phạm. Adapter TỰ ép cấu trúc hợp lệ.

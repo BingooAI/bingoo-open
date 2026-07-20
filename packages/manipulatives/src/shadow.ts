@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * shadow.ts — light & shadow (Cambridge Primary Science: Physics — light, how
  * shadows form and change). A light source casts an object's shadow on the

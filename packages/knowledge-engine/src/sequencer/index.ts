@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Sắp trình tự thích ứng — SPEC §8. Một bộ chọn cho mọi chế độ (§8.6). */
 
 export { fnv1a32, dayRank } from './hash'

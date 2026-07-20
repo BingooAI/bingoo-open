@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** BKT — Bayesian Knowledge Tracing. SPEC §3.2. */
 
 import type { BktParams } from '../policy'

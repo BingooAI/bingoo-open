@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Điểm vào ghi bằng chứng có bảo vệ — BỔ SUNG §3.1, §3.3, §9.1.
  *

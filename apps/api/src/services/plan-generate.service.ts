@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * S4 — sinh Instruction Plan cho MỘT BÀI (kcArcs), grounding bằng context KHOÁ+UNIT đã duyệt, kèm
  * chấm chất lượng sư phạm (planQuality). Lưu lại (DRAFT) để người DUYỆT trước khi sinh nội dung.

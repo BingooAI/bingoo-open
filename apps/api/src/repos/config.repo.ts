@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { db } from '@bingoo.ai/db'
 import type { Prisma } from '@bingoo.ai/db'
 import { DEFAULT_CONSENT_CONFIG, type ConsentAgeConfig } from '@bingoo.ai/core'

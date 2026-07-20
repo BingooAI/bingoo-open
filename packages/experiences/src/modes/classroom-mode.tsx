@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import type { DrawStroke } from '@bingoo.ai/core'
 import { Button, cn, DrawingCanvas, Input } from '@bingoo.ai/ui-web'
 import {

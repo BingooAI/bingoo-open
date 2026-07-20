@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Knowledge engine service — nối @bingoo.ai/knowledge-engine với repo (db).
  * Đường nóng: ghi bằng chứng (fold) + đọc biên học (frontier). Cache graph 60s (SPEC §D).

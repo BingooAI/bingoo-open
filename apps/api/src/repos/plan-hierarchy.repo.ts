@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Lưu KẾ HOẠCH PHÂN CẤP (Khoá/Unit/Bài) + trạng thái DUYỆT. Bảng `authoring_plan`, khoá
  * (courseSlug, level, refSlug). Đây là nơi giữ CỔNG: cấp con chỉ sinh khi cấp cha đã APPROVED.

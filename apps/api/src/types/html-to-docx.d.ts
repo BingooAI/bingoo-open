@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Minimal type shim for `html-to-docx` (ships no types). We use only the default
  * function: HTML → DOCX bytes. In Node it resolves to a Buffer.

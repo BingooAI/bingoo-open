@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * catalog.ts — the AUTHORING CONTRACT, derived from the layout engine itself.
  *

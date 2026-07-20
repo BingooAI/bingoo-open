@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** DIF — công bằng đề giữa hai nhóm. SPEC §12. */
 
 export interface DifResult {

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Sinh FRAMEWORK cho admin — 2 nguồn:
  *  • from-prompt: LLM SINH thẳng cấu trúc (concepts + edges + objectives) từ chủ đề.

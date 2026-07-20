@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * prims.tsx — shared SVG renderer for manipulative primitives. Used by both the
  * baked player element (ManipulativeEl) and the interactive sandbox, so a kit

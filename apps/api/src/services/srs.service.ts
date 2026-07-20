@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Ôn tập flashcard theo SRS (SM-2 của @bingoo.ai/core). ÔN TẬP ≠ EVIDENCE:
  * review chỉ dời lịch ôn, KHÔNG fold vào mastery/SkillState. Date dùng ở host (không phải engine thuần).

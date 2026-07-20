@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Đấu ngân hàng item vào engine: CandidatePort (kéo ứng viên đo được) + GraderPort (chấm 1 submission).
  * Đây là adapter engine-facing; content là hộp đen — engine chỉ thấy Candidate + Verdict.

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * base10.ts — Base-10 blocks (kit #2). The regroup / "nhớ" (carry) is the whole
  * point: ten loose ones physically gather and snap into a single ten-rod (or ten

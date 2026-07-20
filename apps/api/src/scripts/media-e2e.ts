@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Media library end-to-end self-test (CLAUDE.md §0.5). Exercises the real stack:
  * Neon Postgres (tree, tsvector trigger, GIN, HNSW), R2 (signed upload/download),

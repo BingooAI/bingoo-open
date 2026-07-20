@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Máy TRẬN ĐẤU arena — thuần, TẤT ĐỊNH, kiểm thử được (không Math.random, không Date). Đây là "lõi"
  * thật của arena: HP · combo · năng lượng · bot đối thủ theo độ khó · điều kiện thắng/thua. View chỉ

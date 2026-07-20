@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Image generation capability. (R5): generated images shown to children must be
  * moderated at the service layer before delivery.

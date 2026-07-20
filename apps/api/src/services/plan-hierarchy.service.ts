@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Sinh KẾ HOẠCH PHÂN CẤP — Khoá → Unit → (Bài ở plan-generate.service). Context của cấp cha ĐÃ DUYỆT
  * chảy xuống cấp con để LLM hiểu tổng thể (chống bịa). CỔNG: chưa duyệt cha thì KHÔNG sinh con.

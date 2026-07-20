@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Scope khái niệm liên quan — mở rộng một-hop trên đồ thị. SPEC §7.5. */
 
 import type { Slug } from '../contracts'

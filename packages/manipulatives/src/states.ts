@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * states.ts — states of matter (Cambridge Primary Science: Chemistry — solids,
  * liquids, gases & changes of state). A particle model: heating loosens the

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * gen/pipeline.ts — the multi-stage lesson generator (studio-owned quality).
  *

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * pattern.ts — PatternTrain (quy luật lặp: AB, AAB, ABC…). A train of coloured
  * shapes sits on a baseline; the repeating unit is bracketed and lettered

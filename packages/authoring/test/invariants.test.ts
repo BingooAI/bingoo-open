@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * BẤT BIẾN I1–I8 — cổng chặn ghi. Đây là thứ biến "quy ước trong đầu" thành "code chạy được".
  * Mọi bug đã gặp đều là một bất biến bị vi phạm mà KHÔNG AI BÁO.

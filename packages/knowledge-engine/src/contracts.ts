@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Kiểu dữ liệu biên (data contracts) — các hình dạng đi qua cổng adapter.
  *

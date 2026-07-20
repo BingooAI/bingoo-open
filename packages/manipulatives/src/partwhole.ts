@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * partwhole.ts — Part-whole ("cherry") model (Cambridge: number bonds, missing
  * part). A whole on top, parts below joined by connectors. verbs: split(parts)

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Data access cho knowledge-engine (server-only). Map bảng Prisma ↔ kiểu engine.
  * Repo THUẦN data — logic đo lường ở @bingoo.ai/knowledge-engine (service gọi).

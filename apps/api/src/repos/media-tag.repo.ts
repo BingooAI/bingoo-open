@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { buildTreePath, normalizeTagSlug, pathToIds, type LocalizedText } from '@bingoo.ai/core'
 import { db } from '@bingoo.ai/db'
 import type { TagKind, TagRelType } from '@bingoo.ai/db'

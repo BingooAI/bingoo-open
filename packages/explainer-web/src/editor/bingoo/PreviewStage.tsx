@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * PreviewStage.tsx — the interactive preview for the Bingoo editor. Renders the
  * engine RenderModel and overlays selection/drag handles + INLINE text editing

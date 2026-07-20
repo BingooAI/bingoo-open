@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Authoring service — áp một đồ thị đã biên soạn/duyệt vào db, có CỔNG AN TOÀN dùng engine.
  * Chặn chu trình tiên quyết trước khi ghi (đồ thị phải là DAG). Sau ghi → invalidate cache graph.

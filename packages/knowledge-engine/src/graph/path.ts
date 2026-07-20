@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Đường học tới mục tiêu. SPEC §7.2. */
 
 import type { Slug } from '../contracts'

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * algebratile.ts — AlgebraTiles (giải phương trình bằng gạch đại số). Middle
  * school (THCS, grades 6–8): model a linear equation on a two-sided mat —

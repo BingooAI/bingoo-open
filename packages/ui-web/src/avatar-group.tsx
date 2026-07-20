@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { Avatar, type AvatarProps } from './avatar'
 import { cn } from './lib/cn'
 

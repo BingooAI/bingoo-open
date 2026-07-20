@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Map a Better Auth error code to an `auth.errors.*` i18n key, so the UI shows a
  * localized message (R4) instead of the raw English server text. Unknown codes

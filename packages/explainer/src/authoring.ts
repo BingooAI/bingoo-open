@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * authoring.ts — the contract a GENERATOR must satisfy, and the gate that
  * enforces it.

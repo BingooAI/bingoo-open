@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * clipOps.ts — translate Bingoo-style clip drags into engine ops. Moving a clip
  * shifts its entrance/exit cue marks; trimming sets them absolutely. If a clip

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Rewards: league tiers, badge unlocking, mission progress, countdown breakdown —
  * shared gamification logic (§R2: pure TS, no UI/copy). Tier names are ids, not

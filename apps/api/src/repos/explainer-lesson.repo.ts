@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * explainer-lesson.repo.ts — a lesson is a THING WITH AN OWNER, not React state.
  *

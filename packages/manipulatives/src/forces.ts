@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * forces.ts — forces & motion (Cambridge Primary Science: Physics — pushes,
  * pulls, balanced/unbalanced forces). Arrows on a box; the net force shifts it.

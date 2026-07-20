@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Data access cho ngân hàng item. AuthoredItem ↔ bảng content_item.
  * Đo được + đã duyệt → Candidate (CandidatePort); tra theo itemKey để chấm (GraderPort).

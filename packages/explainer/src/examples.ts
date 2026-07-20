@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * examples.ts — one WORKED EXAMPLE per template: the few-shot the model actually
  * copies from.

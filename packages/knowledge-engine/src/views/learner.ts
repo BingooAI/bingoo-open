@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** learnerView — mặt đọc của người học. BỔ SUNG §3.4. */
 
 import type { Millis, SkillSnapshot, Slug } from '../contracts'

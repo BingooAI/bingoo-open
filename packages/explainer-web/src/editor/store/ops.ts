@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ops.ts — EditOp command layer (editor-spec §3.1). Every mutation to the
  * document/bundles is a pure `EditOp` with `apply(state, op) → { state, inverse }`.

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Cổng tiên quyết — REQUIRED chặn, RECOMMENDED chỉ cảnh báo. SPEC §7.3. */
 
 import type { PrerequisiteRef } from '../contracts'

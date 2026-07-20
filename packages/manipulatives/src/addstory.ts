@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * addstory.ts — AdditionStory (bài toán có lời văn trực quan: gộp vào / bớt
  * đi). A scene: `a` icons (birds / fish / apples / dots) settled on a branch;

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * equationbalance.ts — EquationBalance (cân thăng bằng phương trình ax+b=c).
  * Middle school (THCS, grades 6–8): a beam balance that stays LEVEL — the

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Bingoo UI — web component library public API (@bingoo.ai/ui-web).
  * Primitives built on shared tokens; import from '@bingoo.ai/ui-web' anywhere.

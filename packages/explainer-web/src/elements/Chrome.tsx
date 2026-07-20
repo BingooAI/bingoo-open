@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Chrome.tsx — the persistent frame around every scene: a HEADER (which lesson,
  * how far in) and a FOOTER (the caption band).

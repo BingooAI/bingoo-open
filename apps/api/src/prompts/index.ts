@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Prompt management (docs/media-library-design.md §6.3). One module owns every
  * LLM prompt: services call `renderPrompt(id, vars)` instead of hardcoding text.

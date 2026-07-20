@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Biên dịch Instruction Plan → dữ liệu host/engine dùng (lessonTeaches, blueprint certify). */
 
 import type { Slug } from '@bingoo.ai/knowledge-engine'

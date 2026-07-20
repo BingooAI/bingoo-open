@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * thermometer.ts — thermometer (Cambridge Primary Science: measuring temperature;
  * enquiry). A scale + liquid column. verbs: setTemp(n) · mark(n) · compare(n).

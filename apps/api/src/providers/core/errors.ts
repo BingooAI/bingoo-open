@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Errors raised by the provider layer. Kept separate from HTTP `AppError` so the
  * provider code stays transport-agnostic; the API error middleware maps these to

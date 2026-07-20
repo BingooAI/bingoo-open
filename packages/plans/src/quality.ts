@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * planQuality — chấm chất lượng Instruction Plan TRÊN đồ thị năng lực (CONTENT-ARCHITECTURE §8,§24).
  * Bắt lỗi LLM hay mắc: trỏ slug không có, dạy sai thứ tự tiên quyết, đánh giá cái chưa dạy,

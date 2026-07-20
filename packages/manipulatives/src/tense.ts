@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * tense.ts — verb tense timeline (Cambridge Primary English: Grammar — past /
  * present / future). A verb form sits in the active time zone; `conjugate`

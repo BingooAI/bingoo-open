@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Sample data for the dashboard demos. This is *content* (names, numbers) — all
  * user-facing labels still come from the i18n message catalog. Swap this module

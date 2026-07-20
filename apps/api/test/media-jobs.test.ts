@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Registry job sinh media — logic thuần in-memory: start → running, done MANG result, error MANG
  * message, cancel abort signal thật → cancelled. Chạy offline (không provider, không I/O).

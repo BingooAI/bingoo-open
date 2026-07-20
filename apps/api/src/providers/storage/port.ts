@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Object storage capability (files, media). Vendor-agnostic. */
 export interface PutObjectInput {
   key: string

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * LÕI THUẦN của sinh vỏ khoá — biến output LLM (đầy rác, thiếu trường, slug bịa) thành CoursePlan neo
  * vào đồ thị thật. Không I/O, không provider, không db → test được offline (đúng R2: lõi thuần tách

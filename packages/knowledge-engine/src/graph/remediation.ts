@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Ôn bù — chẩn đoán tiên quyết yếu nhất chưa đạt. SPEC §7.4. */
 
 import type { Slug } from '../contracts'

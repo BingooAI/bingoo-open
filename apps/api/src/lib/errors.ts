@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 
 /**

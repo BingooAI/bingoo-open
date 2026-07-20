@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Prompt-management self-test (no LLM calls). Verifies interpolation + the
  * runtime override roundtrip (default → override → revert) via RemoteConfig.

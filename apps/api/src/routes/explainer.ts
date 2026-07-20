@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * routes/explainer.ts — same-origin endpoints the explainer surfaces (player in
  * apps/web, studio in apps/admin) call to reach bingoo's capabilities through

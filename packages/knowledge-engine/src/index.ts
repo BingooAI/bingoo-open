@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * @bingoo.ai/knowledge-engine — lõi học thuật thuần (Capability · Evidence · Adaptive).
  *

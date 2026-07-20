@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Luật TƯƠNG THÍCH — không phải tổ hợp 5 trục nào cũng có nghĩa. Thay "cảm giác kỳ kỳ" bằng một
  * VỊ TỪ dứt khoát trên dữ liệu có cấu trúc (giống `@bingoo.ai/facets.compareIdentity`):

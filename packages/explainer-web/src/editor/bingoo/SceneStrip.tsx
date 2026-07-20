@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * SceneStrip.tsx — the scene filmstrip (like Bingoo/PowerPoint). See every
  * scene as a thumbnail, click to jump, and manage them: add a blank scene,

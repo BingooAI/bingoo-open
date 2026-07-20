@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Beta-Binomial cho DISPOSITION (thói quen là tỷ lệ tích luỹ). SPEC §5. */
 
 import type { BetaParams } from '../policy'

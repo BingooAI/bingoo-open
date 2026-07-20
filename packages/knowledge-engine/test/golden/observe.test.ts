@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { describe, expect, it } from 'vitest'
 import { DAY_MS, DEFAULT_POLICY, freshMastery, observe, type ObserveParams } from '../../src/index'
 

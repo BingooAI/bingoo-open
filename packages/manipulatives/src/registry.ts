@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * manipulative/registry.ts — the `kind` → Manipulative lookup. Kinds register
  * themselves in index.ts; the choreographer (to bake) and frame (to render) both

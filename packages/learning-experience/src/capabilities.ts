@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Từ descriptor → tập NĂNG LỰC host phải cung cấp. Đây là SEAM sạch giữa engine (thuần) và app:
  * engine không biết cách dựng video call hay matchmaking, nó chỉ nói "trải nghiệm này CẦN gì".

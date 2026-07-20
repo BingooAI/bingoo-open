@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Age tier + age-of-consent logic (§3.3, §3.7) and the synthetic-email helper
  * for children (§3.6). Platform-agnostic (R2): pure functions, no I/O.

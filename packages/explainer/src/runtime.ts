@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * runtime.ts — compiles a doc+bundle into a seekable Program and exposes the
  * ExplainerRuntime contract (spec §3): { duration, seek(t) }.

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Rater model — độ tin cậy theo người chấm. BỔ SUNG §3.2. */
 
 import type { EvidenceActor } from '../domain'

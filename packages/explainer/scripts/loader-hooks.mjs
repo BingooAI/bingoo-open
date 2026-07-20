@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * loader-hooks.mjs — a Node ESM resolve hook so the headless verifier can import
  * the REAL engine (TypeScript, `@/` aliases, extensionless relative imports).

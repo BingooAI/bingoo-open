@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * QUALITY cho kế hoạch KHOÁ & UNIT — thuần, không I/O. Đây là cổng: `approvable=false` thì người
  * KHÔNG nên duyệt (và cấp dưới không nên sinh). KHÔNG ép văn phong, chỉ kiểm những gì thiếu là hỏng:

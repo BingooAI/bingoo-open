@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * VisionPort — ảnh/trang PDF-đã-rasterize → văn bản (OCR + đọc bố cục). Cổng capability mới;
  * vendor chọn qua env VISION_PROVIDER (mặc định claude). Dùng cho nguồn biên soạn PDF/ảnh.

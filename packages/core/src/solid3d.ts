@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * A tiny 3D engine for the geometry primitives — pure TS, no dependency, so the
  * SAME geometry drives web (SVG) and native (react-native-svg).

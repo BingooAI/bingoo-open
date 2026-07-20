@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * itemMediaSlots — dẫn xuất ô media per-item. Khoá 2 điều dễ lệch (chạy offline):
  *  · kit ảnh-vật → ô "Ảnh cho vật" ghi URL vào ĐÚNG khoá `params.assets.<shape>` mà render đọc, query

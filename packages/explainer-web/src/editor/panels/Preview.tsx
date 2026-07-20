@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Preview.tsx — "Học thử" (editor-spec §4.11 / player-spec §7). Opens the REAL
  * learner Player over the current (unpublished) document → instant make-test-fix

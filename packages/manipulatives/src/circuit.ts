@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * circuit.ts — simple electric circuit (Cambridge Primary Science: Physics —
  * electricity). A loop with a cell, a bulb and a switch. Closing the switch lets

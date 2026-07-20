@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * graderFor — dispatch theo graderKind (dữ liệu registry), KHÔNG theo tên kind cứng. Kit (namespace
  * `manip:`) route sang manipGrader; quiz trùng tên vẫn auto-key. Chạy offline.

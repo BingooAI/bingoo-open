@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Data access pipeline biên soạn. DB rows ↔ PipelineStep của @bingoo.ai/authoring-workflow.
  * Repo THUẦN lưu trạng thái; chuyển trạng thái/lan STALE do service gọi package thuần.

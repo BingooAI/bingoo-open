@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { AnswerOption, Button, Card, cn, IconChip, type IconChipColor } from '@bingoo.ai/ui-web'
 import { useRef, useState, type ReactNode } from 'react'
 import type { ExperienceLabels, LearnQuizItem } from './types'

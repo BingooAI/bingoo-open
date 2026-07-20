@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * lifecycle.ts — life cycle (Cambridge Primary Science: Biology — life cycles of
  * plants & animals). Stages arranged in a ring with arrows; advance moves the

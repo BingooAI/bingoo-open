@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * organism.ts — labelled organism (Cambridge Primary Science: Biology — parts of
  * a plant / animal). A simple plant diagram; reveal leader-lines + labels for

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * resolveDescriptor — biến một cấu hình DỞ DANG (người dùng mới chọn vài trục) thành ĐẦY ĐỦ, kèm
  * phán quyết tương thích + năng lực cần và blueprint khớp (nếu có). Đây là cửa duy nhất host cần gọi

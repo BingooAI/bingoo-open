@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import type { ContentBlock } from '@bingoo.ai/core'
 import type { ExperienceDescriptor } from '@bingoo.ai/learning-experience'
 import type { IconChipColor, InteractiveBlock, LeaderboardEntry } from '@bingoo.ai/ui-web'

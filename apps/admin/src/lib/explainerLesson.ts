@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * explainerLesson.ts — a small acceptance lesson authored fresh for bingoo (NOT
  * ported demo content): "Even & odd" for grade-1, bilingual (vi + en). Proves the

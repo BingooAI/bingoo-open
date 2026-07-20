@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * frame.ts — the spine (spec §2):
  *   frame(program, t) → RenderModel

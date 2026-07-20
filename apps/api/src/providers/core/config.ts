@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { ProviderNotConfiguredError } from './errors'
 
 /** Read an env var, treating empty/whitespace as absent. */

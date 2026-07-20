@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ManipulateGate.tsx — the interactive checkpoint, rendered INLINE in the stage
  * (not a popup): the whiteboard the learner was watching simply becomes

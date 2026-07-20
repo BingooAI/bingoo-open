@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { cva, type VariantProps } from 'class-variance-authority'
 import { Loader2 } from 'lucide-react'
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'

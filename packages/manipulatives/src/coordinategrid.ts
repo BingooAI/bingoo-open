@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * coordinategrid.ts — coordinate grid (Cambridge: position & direction). First-
  * quadrant integer grid; plot points, read coordinates, translate/reflect a

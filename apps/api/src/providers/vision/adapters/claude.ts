@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import Anthropic from '@anthropic-ai/sdk'
 import { readEnv, requireEnv } from '../../core/config'
 import type { ProviderAdapter } from '../../core/registry'

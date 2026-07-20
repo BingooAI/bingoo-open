@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * SlideEls.tsx — the "slide layer" renderers: list · table · chart · stat · quote.
  *

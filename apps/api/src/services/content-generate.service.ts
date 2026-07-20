@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Nhà máy nội dung S4b — end-to-end, TÁCH 2 loại:
  *  • content HỌC (phơi bày, measurable=false) — để đọc/hiểu.

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { Hono } from 'hono'
 import { db } from '@bingoo.ai/db'
 import type { AppEnv } from '../lib/context'

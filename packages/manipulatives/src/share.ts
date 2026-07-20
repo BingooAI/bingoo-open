@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * share.ts — equal sharing / grouping (chia đều) — division. `total` objects are
  * dealt one-by-one, round-robin, into `groups` bins; the leftover is the

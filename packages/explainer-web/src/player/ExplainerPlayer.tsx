@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Player.tsx — the learner player surface (player-spec §0-§4). A thin app over
  * the engine runtime: it renders the pure RenderModel via the SVG Stage, drives

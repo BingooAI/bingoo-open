@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Stroke.tsx — whiteboard stroke with drawOn (spec §8 default look, B4).
  * The path lives in a 0..100 local box; we normalize pathLength to 1 so

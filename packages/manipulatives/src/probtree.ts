@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * probtree.ts — ProbabilityTree (cây xác suất hai tầng). A two-stage probability
  * tree: root → stage-1 branches → stage-2 sub-branches, with the branch

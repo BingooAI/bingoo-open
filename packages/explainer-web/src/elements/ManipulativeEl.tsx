@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ManipulativeEl.tsx — web SVG renderer for the math kit in the baked player. It
  * draws the platform-neutral `Prim[]` the engine computed, via the shared Prims

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Quality cấp KHOÁ & UNIT — cổng duyệt. Luật: phủ đúng con (không thiếu, không bịa), có mục tiêu/
  * đầu ra/đánh giá. Chạy offline.

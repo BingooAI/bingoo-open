@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { randomUUID } from 'node:crypto'
 import { db } from '@bingoo.ai/db'
 import { auth } from '../auth/auth'

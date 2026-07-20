@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Điều phối pipeline biên soạn S1→S7 — nối máy trạng thái thuần (@bingoo.ai/authoring-workflow) với DB.
  * Chuyển trạng thái + lan STALE trong package; ở đây chỉ nạp/lưu + map lỗi.

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 'use client'
 
 import { appendPoint, pointsToSvgPath, type DrawPoint, type DrawStroke } from '@bingoo.ai/core'

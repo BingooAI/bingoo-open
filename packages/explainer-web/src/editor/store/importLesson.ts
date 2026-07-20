@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * importLesson.ts — validate an external `{ doc, bundles }` lesson (from the AI
  * `/generate` page, a downloaded JSON, or a paste) into a loadable EditState.

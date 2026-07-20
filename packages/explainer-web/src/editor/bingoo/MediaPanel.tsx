@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * MediaPanel.tsx — the "add media" rail (Bingoo-style). Click a tile to drop an
  * object into the scene at the playhead; it's selected so its clip appears on

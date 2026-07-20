@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * S2 — biên khung năng lực: nguồn thô (PDF/ảnh/text) → (LLM) đồ thị KC ứng viên → compile + validate.
  * DỪNG ở "cần duyệt" (KHÔNG auto-persist). Người duyệt xong mới applyAuthoredGraph (workflow S1→S7).

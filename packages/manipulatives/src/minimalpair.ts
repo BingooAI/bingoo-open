@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * minimalpair.ts — MinimalPair (cặp âm tối thiểu: ship–sheep). Two word cards
  * whose ONLY difference is one grapheme/phoneme — the contrasting letters are

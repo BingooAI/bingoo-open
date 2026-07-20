@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Service tokens for machine/AI consumers of the media library (docs §7). The
  * RAG/generation layer authenticates with an `X-Service-Token` header instead of

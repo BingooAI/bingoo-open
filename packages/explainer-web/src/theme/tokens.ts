@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * tokens.ts — design tokens (spec §4 ThemeTokens, FR-C-05).
  *

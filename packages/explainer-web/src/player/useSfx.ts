@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * useSfx — fire scene sound-effects as one-shots when the playhead crosses each
  * effect's time. Seeking backward re-arms them. Shared by the learner Player and

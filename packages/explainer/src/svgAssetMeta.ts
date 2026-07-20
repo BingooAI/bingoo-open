@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 // AUTO-GENERATED from /assets by scripts/gen-assets — do not edit by hand.
 import type { PropMeta } from './props'
 export const SVG_ASSET_META: Record<string, PropMeta> = {

@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2026 Bingoo.ai
+# SPDX-License-Identifier: Apache-2.0
 name: Bug report
 description: A type or schema does not describe what it should
 labels: ['bug', 'needs-triage']

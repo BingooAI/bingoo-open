@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * DERIVED INSIGHTS cho kế hoạch — KHÔNG author, TÍNH từ competency graph. Trả lời câu hỏi "giáo án
  * xây KIẾN THỨC gì, KỸ NĂNG gì, PHẨM CHẤT gì, phục vụ MỤC TIÊU nào, cần TIÊN QUYẾT gì" ở CẢ 3 cấp

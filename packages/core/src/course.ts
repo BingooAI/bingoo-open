@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Course / curriculum outline schema (Zod, LLM-authorable). Note: authored
  * STRUCTURE only — per-user progress (done/current/locked) is runtime state passed

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** coverageReport — lỗ phủ objective. SPEC §11 (gate KHÔNG chặn, chỉ để lộ). */
 
 import type { Slug } from '../contracts'

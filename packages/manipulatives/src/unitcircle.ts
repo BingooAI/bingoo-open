@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * unitcircle.ts — UnitCircle (đường tròn lượng giác, THPT 15–18). The trig
  * unit circle: a radius GLIDES to any angle (linear in angle value — never the

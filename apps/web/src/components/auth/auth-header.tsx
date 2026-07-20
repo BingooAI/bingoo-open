@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { MascotMessage } from '@/components/brand/mascot'
 import { type MascotEmotion } from '@bingoo.ai/core'
 

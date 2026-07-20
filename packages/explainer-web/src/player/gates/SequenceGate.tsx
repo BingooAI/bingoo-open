@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * SequenceGate.tsx — order-the-steps gate (spec §12: auto-graded). The learner
  * taps chips to build an order; grading compares against `answer` (an ordered

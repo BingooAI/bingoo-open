@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Máy trạng thái pipeline biên soạn S1→S7 (KE-HOACH-AUTHORING / KE-HOACH-CONTENT).
  * Mỗi bước: chia nhỏ · phê duyệt · tái sinh · tự STALE khi thượng nguồn đổi version.

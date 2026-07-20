@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Lớp NEO — nối primitive nội dung (@bingoo.ai/core) vào knowledge-engine.
  *

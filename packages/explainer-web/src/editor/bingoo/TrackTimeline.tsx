@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * TrackTimeline.tsx — the Bingoo-style track timeline. A time ruler, a draggable
  * playhead, scene bands, a narration track, and object clips packed into rows.

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Segment rule DSL (§3.8) — a small TYPED criteria language, never raw SQL, so a
  * segment definition can't inject queries. The server derives each user's facts

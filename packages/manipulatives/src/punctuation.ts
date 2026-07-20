@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * punctuation.ts — capital letters & punctuation (Cambridge Primary English:
  * Writing — punctuation). Fix a plain string: capitalise words, drop in end

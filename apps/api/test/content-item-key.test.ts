@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * contentItemKey — định dạng itemKey scope theo BƯỚC: `kc::stepSlug::kind::seq`. Khoá cái bug "duyệt 1
  * item mà nhiều bước cùng KC hiện đã duyệt": item của bước A KHÔNG được khớp prefix của bước B.

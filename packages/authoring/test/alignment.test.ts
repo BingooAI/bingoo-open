@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ĐỐI CHIẾU bằng CẤU TRÚC — tất định, miễn phí, không LLM.
  * Mỗi test canh một lớp lỗi đã xảy ra thật khi đối chiếu Cambridge ↔ Bộ GD&ĐT.

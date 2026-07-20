@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * choreographer.ts — ⭐ THE core (spec §6). "Smooth like an editor made it" vs
  * "stiff demo" lives entirely here.

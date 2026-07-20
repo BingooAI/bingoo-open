@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * VERIFY B2 — misconception → distractor nhắm đúng. Sinh 1 item `single` cho KC, TIÊM misconception
  * "quên nhớ khi cộng qua 10" → kỳ vọng LLM đặt một đáp án SAI = 13→3 (quên nhớ). In choices để soát.

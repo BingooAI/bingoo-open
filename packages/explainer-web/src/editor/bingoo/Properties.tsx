@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Properties.tsx — visual properties for the selected object (Bingoo inspector).
  * Colour swatches, a size slider, an animation gallery, per-type extras (text

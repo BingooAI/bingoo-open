@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * @bingoo.ai/learning-experience — engine "Learning Experience": 5 TRỤC cấu hình (code, xương sống) +
  * luật tương thích, năng lực suy ra, blueprint đặt sẵn (dữ liệu). Đây là MỘT experience pack; các

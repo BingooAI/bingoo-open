@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { defineRouting } from 'next-intl/routing'
 import { defaultLocale, locales } from '@bingoo.ai/i18n'
 

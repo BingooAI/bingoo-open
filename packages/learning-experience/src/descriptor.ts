@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ExperienceDescriptor — MỘT ĐIỂM trong không gian 5 trục. Đây là "hợp đồng" mà host đọc để biết
  * phải dựng trải nghiệm học kiểu gì. Không mang text hiển thị (i18n ở host), không mang logic môn học.

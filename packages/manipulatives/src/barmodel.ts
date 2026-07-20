@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * barmodel.ts — Singapore bar model (kit #5). params: { bars:[{label,value,
  * unknown?}] }  verbs: partition · compare · showUnknown · combine.

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Luật TƯƠNG THÍCH — mỗi test canh MỘT lớp mâu thuẫn cụ thể. Đây là golden vectors: đổi luật mà
  * làm sai một dòng ở đây là đổi hành vi thấy được của người học.

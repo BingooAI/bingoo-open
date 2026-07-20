@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { cookies } from 'next/headers'
 import { redirect } from '@/i18n/navigation'
 

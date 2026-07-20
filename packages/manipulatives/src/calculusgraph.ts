@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * calculusgraph.ts — CalculusGraph (giải tích: đạo hàm là hệ số góc tiếp tuyến,
  * tích phân là diện tích dưới đường cong). One curve, two modes:

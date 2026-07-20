@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * orbit.ts — Sun–planet orbit & day/night (Cambridge Primary Science: Earth &
  * Space). A planet circles the Sun; its lit half faces the Sun (day), the far

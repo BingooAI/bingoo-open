@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * TextEl.tsx — localized text (spec §9). String comes from the locale bundle
  * (resolved in frame()), so switching locale swaps text with no re-authoring.

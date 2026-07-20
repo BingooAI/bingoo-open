@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Chuyển trạng thái + lan truyền STALE cho pipeline biên soạn. Thuần, tất định. */
 
 import type { PipelineStep, Stage, StepEvent, StepStatus } from './model'

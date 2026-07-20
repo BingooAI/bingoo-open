@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * functionmachine.ts — FunctionMachine (máy hàm số). A linear function
  * y = kx + b as an input → rule → output machine for upper primary / middle

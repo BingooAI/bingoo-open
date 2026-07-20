@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * SMOKE-TEST sinh content NGOÀI explainer (bank item: quiz auto-key + kit thao tác). Trả lời câu
  * "sinh content ổn chưa" bằng bằng chứng chạy LLM thật:

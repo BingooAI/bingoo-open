@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Personalization (L3) — chân dung + dữ liệu engine → GenerationSpec (chưa payload).
  * Cùng Instruction Plan → nhiều spec khác nhau; CHUẨN/cut KHÔNG đổi theo level (CONTENT-ARCHITECTURE §6).

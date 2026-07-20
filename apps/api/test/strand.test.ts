@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * KC lấy MẠCH từ objective map vào nó — không dùng strand thô đoán bừa trên KC.
  * Cùng luật với `stage`: nhãn của khung sống trên OBJECTIVE, KC suy ra qua MAPS_TO.

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * One source of truth for the "chrome" of HUD chips that overlay content —
  * reused by CoinCounter, ComboMeter, CountdownTimer, LeagueTier… so a stat pill

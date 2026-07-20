@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * estimate.ts — estimation (ước lượng). A jar of `actual` objects (scattered, so
  * hard to count exactly); the learner sets a `guess` on a 0..max scale, then

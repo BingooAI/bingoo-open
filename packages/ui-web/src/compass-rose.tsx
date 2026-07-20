@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 'use client'
 
 import { COMPASS_DIRECTIONS, type CompassDirection } from '@bingoo.ai/core'

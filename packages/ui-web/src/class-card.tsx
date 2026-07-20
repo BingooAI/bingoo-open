@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import type { ReactNode } from 'react'
 import { AvatarGroup, type AvatarGroupProps } from './avatar-group'
 import { cn } from './lib/cn'

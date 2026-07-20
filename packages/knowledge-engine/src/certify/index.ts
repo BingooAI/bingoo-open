@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Đo lường chứng chỉ — SPEC §12 (BỔ SUNG: bắt buộc). */
 
 export { thetaFromElo, betaFromElo, pCorrectRasch } from './rasch'

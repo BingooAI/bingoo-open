@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import type { CourseChapter, CourseLesson, LessonStatus } from '@bingoo.ai/core'
 import { CheckCircle2, Circle, Lock, Play } from 'lucide-react'
 import type { ReactNode } from 'react'

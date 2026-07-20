@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Time-of-day bucket used to pick a localized greeting. */
 export function greetingKey(date = new Date()): 'morning' | 'afternoon' | 'evening' {
   const h = date.getHours()

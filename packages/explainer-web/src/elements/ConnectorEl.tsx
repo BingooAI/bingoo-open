@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ConnectorEl.tsx — a flow arrow between two elements. Endpoints are computed in
  * the engine (frame) from the two boxes' laid-out edges, so it follows them when

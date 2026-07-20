@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { hasEnv } from './config'
 import { ProviderError } from './errors'
 import type { ProviderStatus } from './types'

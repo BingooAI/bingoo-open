@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * graph.ts — Cartesian graph (kit #6). Functions are *descriptors* (linear /
  * quadratic / sin), not strings, so evaluation is pure & code-verifiable.

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Data access cho authoring — bền hoá kết quả biên soạn (GraphData) xuống đồ thị năng lực.
  * Cầu: @bingoo.ai/authoring compile → db (Competency + CapabilityRelation) → engine đọc lại.

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * subitize.ts — Subitize (nhìn nhanh số lượng — instant recognition of 1–10
  * without counting). A big dot card shows `count` dots in one of four

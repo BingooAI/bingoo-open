@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Flashcard + deck content schema (Zod, LLM-authorable). The review scheduling
  * lives in `./srs`. One source of truth: schema → types → component → validator.

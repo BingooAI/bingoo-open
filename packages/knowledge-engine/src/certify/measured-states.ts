@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** measuredStates — chỉ bằng chứng MEASURE, đúng ngôn ngữ. SPEC §12. */
 
 import type { AssessmentMode } from '../domain'

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * primitiveDisplay — nhãn/mô tả song ngữ co-located: kit lấy từ KIT_META (@bingoo.ai/manipulatives),
  * quiz lấy từ bảng cạnh registry, còn lại titleize. Khoá: KHÔNG còn titleize thô cho kit/quiz đã khai.

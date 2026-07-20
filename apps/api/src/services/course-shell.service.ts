@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Sinh VỎ KHOÁ (course shell) — cây course→unit→lesson, MAP vào framework:
  * mọi teaches/concepts/objectives chỉ được dùng slug năng lực CÓ THẬT trong đồ thị (lọc cứng).

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * KHÉP VÒNG BẰNG CHỨNG CHO 67 KIT — kit thao tác chấm được → Verdict → (Observation → mastery).
  * Trước đây `graderFor` trả null cho kit nên hệ MÙ với mọi tương tác kit → không adaptive được.

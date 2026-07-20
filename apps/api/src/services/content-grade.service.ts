@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Khép vòng: học viên trả lời item trong ngân hàng → chấm (grader quiz core) → Verdict →
  * fold thành Observation/evidence cho từng skill item neo → cập nhật mức nắm. Idempotent qua attemptId.

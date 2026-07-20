@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { useTranslations } from 'next-intl'
 import { Mascot } from '@/components/brand/mascot'
 import { buttonVariants } from '@bingoo.ai/ui-web'

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * engine/brief.ts — LessonBrief: the REQUIRED input contract for lesson generation.
  *

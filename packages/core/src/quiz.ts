@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Quiz engine — the shared, platform-agnostic core of the learning interaction
  * layer (§R2: no `next/*`, no `react-native`, no UI). Both `@bingoo.ai/ui-web` and

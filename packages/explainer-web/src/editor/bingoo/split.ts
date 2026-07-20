@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * split.ts — inserting an interaction SPLITS the scene at the playhead:
  * [ first half ] · [ INTERACTION ] · [ second half ]. Beats/marks before the

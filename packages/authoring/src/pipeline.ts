@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Orchestrator ①→⑤: nguồn thô → bản nháp (dùng cổng LLM/vision). Ranh giới async. */
 
 import type { CompetencyKind } from '@bingoo.ai/knowledge-engine'

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * @bingoo.ai/authoring — pipeline biên soạn: nguồn thô (PDF/ảnh/sách) → khung năng lực chuẩn.
  *

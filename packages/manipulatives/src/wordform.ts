@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * wordform.ts — WordFormFamily (họ từ / word form — exam prep TOEIC/TOEFL/IELTS,
  * e.g. decide → decision → decisive → decisively). The root word sits in a hub;

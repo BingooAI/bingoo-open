@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * AI media-generation self-test. Hits live OpenAI (image) + ElevenLabs (TTS),
  * lands the results as PENDING library assets in R2, verifies them, cleans up.

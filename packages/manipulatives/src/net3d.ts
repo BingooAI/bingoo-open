@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * net3d.ts — 2D net ↔ 3D solid (Cambridge: 3D shapes, nets, faces/edges/vertices).
  * Shows a cube net and an isometric cube; `fold` crossfades net→solid.

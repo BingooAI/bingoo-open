@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * HỢP ĐỒNG MEDIA — trích ĐÚNG ô chưa resolve theo cấu trúc + policy, có dedupKey để tái dùng.
  * Không sinh gì (thuần). Canh: không ép media thừa, đọc-to/đáp-án-tranh theo policy, dedup ổn định.

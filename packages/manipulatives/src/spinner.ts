@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * spinner.ts — probability spinner (Cambridge: probability, likelihood). A wheel
  * of weighted sectors + a pointer. `spin(to)` rotates the pointer (baked, multi-

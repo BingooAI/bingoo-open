@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * manipulative/types.ts — the shared Manipulative interface (spec: math kit).
  *

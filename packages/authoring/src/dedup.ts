@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Chống trùng khái niệm + gán slug ổn định. SPEC D.4 (trigram-trước). */
 
 import type { Slug } from '@bingoo.ai/knowledge-engine'

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * schema.ts — `explainer/v2` document + LocaleBundle (spec §4).
  *

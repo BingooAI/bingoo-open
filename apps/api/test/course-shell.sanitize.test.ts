@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * VỎ KHOÁ TỪ SÁCH — hai lời hứa với người dùng, khoá lại bằng test (chạy offline, không LLM):
  *   ① Sinh từ sách thì GIỮ ĐÚNG cấu trúc & thứ tự của sách (không sắp lại theo tiên quyết).

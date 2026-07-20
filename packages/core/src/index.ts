@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * @bingoo.ai/core — platform-agnostic domain logic shared across web, mobile & api.
  * Pure TypeScript: NEVER import from `next/*`, `react-native`, or any UI layer.

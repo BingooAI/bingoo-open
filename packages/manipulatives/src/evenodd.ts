@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * evenodd.ts — even / odd (số chẵn, số lẻ). `number` objects arranged in pairs
  * (2 columns); if one is left over the number is odd, else even. Teaches

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { describe, expect, it } from 'vitest'
 import * as contracts from '@bingoo.ai/contracts'
 import { EVIDENCE_ACTORS, LEARNABLE_KINDS, ORDERING_RELS, isOrdering } from '../src/domain'

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** teacherView — mặt đọc của người dạy. BỔ SUNG §3.4. */
 
 import type { Slug } from '../contracts'

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import type { LearningExperienceLabels } from '@bingoo.ai/ui-web'
 
 /** Translator (next-intl) đã bound namespace `kitchenSink.experiences`. */

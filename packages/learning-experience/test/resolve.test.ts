@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * resolveDescriptor + blueprints — canh cửa vào chính của host: cấu hình lỏng → đầy đủ, và mọi
  * blueprint đặt sẵn phải KHÔNG mâu thuẫn cứng (sai một cái là lỗi phát ra tận UI người học).

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * essaymap.ts — EssayMap: essay structure builder (IELTS Writing Task 2 /
  * academic writing; ages 15+ / adult). A vertical map of essay blocks

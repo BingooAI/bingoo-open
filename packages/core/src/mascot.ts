@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Bingoo mascot catalog. The animated SVGs live in `public/brand/mascot/emotions`
  * (copied from the brand kit). Each emotion maps to an optional sound effect.

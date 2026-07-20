@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Cổng adapter — SPEC Phụ lục B (7 cổng) + BỔ SUNG §3.2, §3.3 (2 cổng).
  *

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * HotspotEditor.tsx — draw the tap-zones of a "hotspot" gate DIRECTLY on the
  * canvas: drag on empty space to rubber-band a new zone, drag a zone to move it,

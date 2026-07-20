@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * foodchain.ts — food chain / energy flow (Cambridge Primary Science: Biology —
  * feeding relationships). Organisms linked left→right by energy arrows.

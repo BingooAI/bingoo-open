@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { setRequestLocale } from 'next-intl/server'
 import { AppShell } from '@/components/dashboard/app-shell'
 import { requireSession } from '@/lib/session'

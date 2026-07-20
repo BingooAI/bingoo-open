@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * explainer-gen — the multi-stage lesson generator (outline → write → critic →
  * regen) run server-side on bingoo's AiPort. The engine-owned pipeline is

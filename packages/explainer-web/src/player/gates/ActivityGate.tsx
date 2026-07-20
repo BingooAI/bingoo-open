@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ActivityGate.tsx — the generic interactive activity beat. Two sources, both
  * from bingoo's shared libraries, so one host unlocks the whole interaction

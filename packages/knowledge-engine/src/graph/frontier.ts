@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Biên học — suy luận cấu trúc trên đồ thị. SPEC §7.1 + Phụ lục A.3. */
 
 import { LEARNABLE_KINDS } from '../domain'

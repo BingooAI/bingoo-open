@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { Heart } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Logo } from '@/components/brand/logo'

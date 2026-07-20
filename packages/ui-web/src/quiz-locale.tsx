@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Locale NỘI DUNG cho quiz — text của quiz (đề, nhãn đáp án…) giờ có thể là đa ngôn ngữ
  * (`LocalizedString` = chuỗi HOẶC map {en,vi,…}). QuizShell cấp locale người xem qua context; các input

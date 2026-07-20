@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react'
 import type { ComponentType, ReactNode } from 'react'
 import { cn } from './lib/cn'

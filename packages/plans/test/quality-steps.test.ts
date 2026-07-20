@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * planQuality kiểm CẤU TRÚC theo từng KC (kcArcs) — hai ràng buộc QUAN TRỌNG:
  *   ① mỗi KC phải được DẠY và ĐƯỢC ĐO (arc có bước teach + assessment);

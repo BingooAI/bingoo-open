@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { formatSlotTime, hourTicks, layoutWeek, type ScheduleSlot } from '@bingoo.ai/core'
 import type { ReactNode } from 'react'
 import { cn } from './lib/cn'

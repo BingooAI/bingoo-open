@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * @bingoo.ai/experiences — WEB VIEW của các mode học (Lesson · Practice · Arena · Feed · Project · Classroom).
  * Cửa duy nhất `LearnExperience`: cho INPUT (descriptor + content + labels) → ra VIEW. i18n-free,

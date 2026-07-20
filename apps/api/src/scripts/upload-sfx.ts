@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * upload-sfx.ts — publish the DevUP sound-effect pack into Bingoo's media library
  * (R2 + MediaAsset records), so the app plays SFX from OUR storage — moderated,

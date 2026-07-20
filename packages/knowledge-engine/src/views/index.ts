@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Mặt đọc theo vai — BỔ SUNG §3.4. Query API thuần, không thêm state. */
 
 export { learningCurve, type CurvePoint } from './curve'

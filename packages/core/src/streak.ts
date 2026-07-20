@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Streak + combo math — shared gamification logic (§R2: pure TS). Both platforms
  * derive the same streak state and heatmap grid so the UI never drifts.

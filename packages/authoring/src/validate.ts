@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Kiểm bản nháp đã compile — tái dùng validator của engine. Lưới an toàn học thuật. */
 
 import { buildGraph, coverageReport, findOrderingCycle, type GraphData } from '@bingoo.ai/knowledge-engine'

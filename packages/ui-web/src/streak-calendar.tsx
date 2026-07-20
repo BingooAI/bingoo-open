@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { streakCalendar, type StreakCell } from '@bingoo.ai/core'
 import { cn } from './lib/cn'
 

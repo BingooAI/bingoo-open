@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Độ tương tự trigram (Dice) để chống trùng node rẻ trước khi gọi embedding (SPEC D.4). */
 
 import { slugify } from './slug'

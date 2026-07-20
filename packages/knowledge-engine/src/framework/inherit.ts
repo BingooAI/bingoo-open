@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Di trú SkillState khi chuẩn/node đổi — primitive thuần. SPEC §10. */
 
 import type { Slug } from '../contracts'

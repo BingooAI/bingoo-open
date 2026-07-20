@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Adapter GeneratorPort (content-gen S4b) — LLM sinh QuizQuestion theo ĐÚNG schema @bingoo.ai/core
  * (quizJsonSchema), rồi QuizQuestion.safeParse LỌC bản hợp lệ. BÁM 20 loại quiz có sẵn trong

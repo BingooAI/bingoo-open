@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * gen-contract.mjs — EMIT the authoring contract as files, and prove they are true.
  *

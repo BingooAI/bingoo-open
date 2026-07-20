@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * alphabet.ts — alphabet arc (Cambridge Primary English: phonics/handwriting —
  * letter knowledge, upper/lower case, vowels). verbs: highlightLetter(ch) ·

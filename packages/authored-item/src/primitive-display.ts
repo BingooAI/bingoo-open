@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * NHÃN + "học sinh làm gì" SONG NGỮ cho từng primitiveKind (author-facing; VI là ngôn ngữ UI).
  *

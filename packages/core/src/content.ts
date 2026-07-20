@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Declarative content schema — the CONTRACT between content authors (incl. LLMs)
  * and the UI. One source of truth (§R3), platform-agnostic (§R2, Zod is pure TS).

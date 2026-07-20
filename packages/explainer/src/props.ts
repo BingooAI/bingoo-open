@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * props.ts — pure metadata for the reusable prop kit (spec §8, FR-C-06).
  *

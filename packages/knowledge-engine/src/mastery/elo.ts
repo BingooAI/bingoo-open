@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Elo — trình độ người học & độ khó đối tượng. SPEC §3.3. */
 
 import type { EloParams } from '../policy'

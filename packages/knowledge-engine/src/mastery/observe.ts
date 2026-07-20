@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Hợp nhất BKT + Elo cho một quan sát; phát lại chuỗi. SPEC §3.1, §3.4. */
 
 import type { CompetencyKind } from '../domain'

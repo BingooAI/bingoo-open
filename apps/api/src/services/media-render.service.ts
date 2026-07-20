@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { createHash } from 'node:crypto'
 import htmlToDocx from 'html-to-docx'
 import MarkdownIt from 'markdown-it'

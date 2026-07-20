@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * gen-verbdoc.mjs — extract each kit's VERB SIGNATURES from its source header.
  *

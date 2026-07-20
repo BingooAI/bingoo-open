@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * dragState.ts — ephemeral hand-off for dragging a media tile onto the canvas.
  * A tile's dragstart stashes its element FACTORY here; PreviewStage's drop reads

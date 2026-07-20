@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { AvatarGroup } from '@bingoo.ai/ui-web'
 import { Radio } from 'lucide-react'
 import type { ReactNode } from 'react'

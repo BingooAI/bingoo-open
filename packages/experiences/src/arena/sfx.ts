@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Âm thanh arena — SFX là FILE THẬT do host phục vụ tại `/sfx/{id}.mp3` (bộ 161 hiệu ứng). Ánh xạ
  * sự kiện game → id SFX; phát chồng lấn được (clone node). Nhạc nền (BGM) tổng hợp WebAudio nhẹ, tắt

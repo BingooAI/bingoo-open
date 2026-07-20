@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Shared media + rich-content schema — the ONE place that defines what a picture, a
  * sound, a clip or a block of prose looks like, so every learning primitive AND the

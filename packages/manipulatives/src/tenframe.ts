@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * tenframe.ts — Ten frame (Cambridge Primary, early number / bonds). A 2×5 grid
  * (or two, for 20) filled with counters. verbs: add(n) · remove(n) · bond(k)

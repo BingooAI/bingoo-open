@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { AlertCircle } from 'lucide-react'
 import { cloneElement, isValidElement, useId, type ReactElement, type ReactNode } from 'react'
 import { cn } from './lib/cn'

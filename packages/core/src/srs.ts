@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Spaced-repetition scheduling (SM-2 lite) — shared, pure TS (§R2). Drives
  * FlashcardDeck review on both web and native identically. Dates are passed in

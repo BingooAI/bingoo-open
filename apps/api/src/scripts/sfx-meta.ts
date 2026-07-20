@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * sfx-meta.ts — turns a sound-effect id (e.g. "level_up", "animal_cat") into
  * rich, bilingual media-library metadata: a title, a searchable description and

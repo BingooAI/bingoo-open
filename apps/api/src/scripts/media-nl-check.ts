@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Parse-only sanity check for NL search (no DB writes). Confirms the LLM turns a
  * Vietnamese sentence into a structured MediaSearchQuery with the right kind + a

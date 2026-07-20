@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * CHÍNH SÁCH ĐỘ DÀY NGÂN HÀNG (rich bank) — mỗi KC cần bao nhiêu bản theo các TRỤC, để vòng-trong của
  * Decision Engine luôn có cái để CHÈN khi học viên sai/hổng mà KHÔNG lặp item. "Rich" CÓ CHỦ ĐÍCH:

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { describe, expect, it } from 'vitest'
 import { buildGraph, compositeMastery, type GraphData, type SkillMastery } from '../../src/index'
 

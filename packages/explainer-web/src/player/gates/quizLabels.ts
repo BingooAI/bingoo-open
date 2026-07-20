@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * quizLabels.ts — default Vietnamese labels for the shared quiz UI (@bingoo.ai/ui-web
  * QuizShell is i18n-free — every string is data). Used by the activity gate so an

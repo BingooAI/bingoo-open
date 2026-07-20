@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * BLUEPRINTS — công thức trải nghiệm đặt sẵn. Đây là DỮ LIỆU, không phải code: thêm công thức mới =
  * thêm một dòng, không đụng logic. (Sau này có thể chuyển sang remote config theo §6 CLAUDE.md để

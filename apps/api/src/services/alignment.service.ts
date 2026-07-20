@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ĐỐI CHIẾU khung thứ 2+ vào vốn KC canonical đã có.
  *

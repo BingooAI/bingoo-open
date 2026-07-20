@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ĐỐI CHIẾU KHUNG — khung thứ 2 trở đi KHÔNG "trích" mà "ánh xạ" vào vốn KC canonical đã có.
  *

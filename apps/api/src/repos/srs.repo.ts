@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Data access lịch ôn SRS (flashcard). Trạng thái per (userId, itemKey).
  * ÔN TẬP ≠ EVIDENCE — bảng này KHÔNG dính SkillState/mastery.

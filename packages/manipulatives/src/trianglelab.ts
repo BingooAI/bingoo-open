@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * trianglelab.ts — TriangleLab (tam giác THPT 15–18): three reasoning modes.
  * "angles": a triangle built from two given angles; showWork tears the three

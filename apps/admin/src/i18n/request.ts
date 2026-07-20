@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { getRequestConfig } from 'next-intl/server'
 import { defaultLocale, isValidLocale, messages } from '@bingoo.ai/i18n'
 

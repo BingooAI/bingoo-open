@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Provider facade — the only thing the rest of the API imports. Every external
  * vendor (R2, Resend, ElevenLabs, OpenAI, LiveKit, Claude, Bunny, Redis) sits

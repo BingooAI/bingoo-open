@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * sfx.ts — minimal WebAudio blips so cue-bound `sfx` actions are audible in v1
  * without shipping audio assets (spec §15: TTS/audio mocked in v1). Position of

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Metadata primitive — khai "đo được không / chấm bằng gì" cho từng primitiveKind của
  * @bingoo.ai/core (mảnh core còn thiếu). Đây là hợp đồng tầng ③ neo vào engine, KHÔNG sửa schema core.

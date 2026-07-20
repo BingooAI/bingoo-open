@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { Baloo_2, Be_Vietnam_Pro } from 'next/font/google'
 import '@/app/globals.css'
 

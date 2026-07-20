@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * clips.ts — turns the cue/beat document into a CLIP model for a Bingoo-style
  * track timeline. Each object becomes a clip on the GLOBAL timeline: it starts

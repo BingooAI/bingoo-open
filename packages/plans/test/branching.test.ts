@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * PLAN ĐA NHÁNH theo trạng thái người học — nền adaptive. Canh: chọn nhánh đúng theo trạng thái
  * (stepsForState), bước mặc định phục vụ mọi trạng thái, cảnh báo thiếu nhánh novice. Thuần, offline.

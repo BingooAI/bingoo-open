@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Chấm rubric → outcome + confidence. SPEC §5. */
 
 import type { RubricCriterion } from '../contracts'

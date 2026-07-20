@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { randomUUID } from 'node:crypto'
 import { createMiddleware } from 'hono/factory'
 import type { AppEnv } from '../lib/context'

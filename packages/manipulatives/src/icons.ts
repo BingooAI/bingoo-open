@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * icons.ts — shared themed-object renderer so counting kits draw the ACTUAL
  * object the lesson talks about (a star, an apple, a heart…) instead of a

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** SLUG = khoá VĨNH VIỄN. TIẾNG ANH LÀ GỐC — cùng kiến thức phải ra cùng slug dù nguồn viết bằng gì. */
 
 import { describe, expect, it } from 'vitest'

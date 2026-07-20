@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ExplainerStudio.tsx — a Bingoo-style editor: big preview on top, a media panel,
  * visual properties, and a track timeline of draggable clips at the bottom.

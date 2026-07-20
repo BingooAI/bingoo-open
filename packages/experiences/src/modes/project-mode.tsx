@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { Card, Checkbox, Progress } from '@bingoo.ai/ui-web'
 import { useState } from 'react'
 import { EmptyState } from '../shared'

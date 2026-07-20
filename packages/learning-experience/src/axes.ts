@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * 5 TRỤC cấu hình một trải nghiệm học. Xương sống này là CODE (cố định, nhỏ) — mọi trải nghiệm,
  * dù môn gì / vai gì, đều là MỘT ĐIỂM trong không gian 5 trục. "Chất liệu" (công thức đặt sẵn,

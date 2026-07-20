@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * manipulative/bake.ts — keyframe *baking* + verb compilation (spec: math kit).
  *

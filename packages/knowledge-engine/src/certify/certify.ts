@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** certifyFramework — đạt chuẩn theo objective. SPEC §12. */
 
 import type { Slug } from '../contracts'

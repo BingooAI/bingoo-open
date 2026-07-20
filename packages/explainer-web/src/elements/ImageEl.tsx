@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ImageEl.tsx — renders an `image` element from a media library: `content.src`
  * is any URL/path (Cloudflare R2, local project asset, or data-URI), raster or

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * syllable.ts — syllable splitting & stress (Cambridge Primary English: reading
  * longer words, spelling). verbs: split(syllables) · clap · stress(i).

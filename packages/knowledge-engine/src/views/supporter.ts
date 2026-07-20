@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** supporterView — mặt đọc của người hỗ trợ (phụ huynh/trợ giảng). BỔ SUNG §3.4. */
 
 import type { Millis, SkillSnapshot, Slug } from '../contracts'

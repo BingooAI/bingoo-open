@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Chính sách độ dày rich-bank — ma trận ĐÍCH (rep×band×misconception) + coverage đối chiếu bank. Thuần.
  * Khoá: "rich CÓ CHỦ ĐÍCH" (số bản theo richness, misconception mỗi cái 1 ô) + gap đúng chỗ thiếu.

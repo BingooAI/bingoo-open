@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Relationship taxonomy + Vietnamese kinship honorifics (§6). Pure/platform-
  * agnostic (R2). A relationship row stores ONE direction (from → to) where

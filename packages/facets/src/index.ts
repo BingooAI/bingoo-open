@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * @bingoo.ai/facets — 6 TRỤC phân biệt KC (code, cố định) + luật ĐỊNH DANH phổ quát.
  * "Chất liệu" từng môn là DỮ LIỆU (DomainProfile) → hàng nghìn môn/ngành mà KHÔNG đụng code.

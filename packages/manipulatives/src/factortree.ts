@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * factortree.ts — FactorTree (cây thừa số nguyên tố). Prime factorization as a
  * splitting tree for upper primary / middle school (ages 10–14): the number n

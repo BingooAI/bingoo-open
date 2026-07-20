@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * DiagramEl.tsx — first-class diagram/flow (spec §10.1, FR-C-13). Nodes and
  * edges are positioned by the engine's graph auto-layout (absolute canvas

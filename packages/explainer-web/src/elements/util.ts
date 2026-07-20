@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * elements/util.ts — shared helpers for the web SVG renderer.
  * Each element draws in a LOCAL box [0..rect.w × 0..rect.h]; this computes the

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { deriveCapabilities, type ExperienceDescriptor } from '@bingoo.ai/learning-experience'
 import type { ReactNode } from 'react'
 import { LearningExperienceBadge, type LearningExperienceLabels } from './learning-experience-card'

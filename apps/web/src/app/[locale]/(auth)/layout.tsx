@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { ArrowLeft, ShieldCheck, Sparkles, Star } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'

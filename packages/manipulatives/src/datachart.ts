@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * datachart.ts — categorical data (Cambridge: Statistics — pictogram, bar chart,
  * tally). One dataset, three views. verbs: setMode(mode) · addData(label,n) ·

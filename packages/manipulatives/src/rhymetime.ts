@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * rhymetime.ts — RhymeTime (vần điệu / word families: cat–hat–bat). A rime
  * (e.g. "-at") sits in a central box; onset letters queue on the left and

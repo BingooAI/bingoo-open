@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Cổng LLM/vision — biên "bẩn" của pipeline. Host cấp adapter (Claude vision, embedding…).
  * Mirror của EnginePorts: lõi authoring thuần; mọi I/O/model nằm sau các interface này.

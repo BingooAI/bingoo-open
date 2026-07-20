@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Text-to-speech capability. */
 export type AudioFormat = 'mp3' | 'wav' | 'ogg' | 'pcm'
 

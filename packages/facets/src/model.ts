@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * FACETS — thứ PHÂN BIỆT hai KC, đưa vào DỮ LIỆU thay vì chôn trong câu chữ.
  *

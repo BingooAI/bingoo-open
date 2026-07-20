@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * HotspotGate.tsx — tap-the-right-region gate (spec §12: auto-graded). Hotspots
  * are normalized (0..1) rects laid over the frozen exposition frame, so the same

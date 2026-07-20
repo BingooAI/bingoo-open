@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * wordbuilder.ts — letter tiles (Cambridge Primary English: spelling, word
  * families, minimal pairs — cat → cot → cog). verbs: addLetter(ch) ·

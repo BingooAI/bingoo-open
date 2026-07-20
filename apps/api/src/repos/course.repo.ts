@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Data access vỏ khoá (Course). Lưu CoursePlan skeleton + map frameworkVersionId. */
 
 import { db, type Prisma } from '@bingoo.ai/db'

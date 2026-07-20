@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * LLM / agent capability. Deliberately a small, vendor-neutral chat surface.
  * NOTE (R5): output shown to children must pass moderation/guardrails at the

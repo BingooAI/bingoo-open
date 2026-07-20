@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * GateHost.tsx — the PLAYING → PAUSED_AT_GATE → PLAYING handoff (spec §11).
  * The exposition frame is frozen underneath (rendered by Player); GateHost picks

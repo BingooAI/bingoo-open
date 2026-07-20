@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * arc.ts — the PEDAGOGICAL SHAPE of a lesson, and the gate that enforces it.
  *

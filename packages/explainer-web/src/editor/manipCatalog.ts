@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * manipCatalog.ts — editor-facing catalog of the engine's interactive
  * manipulatives (41 kits). Labels/subjects are metadata; verbs & defaultParams

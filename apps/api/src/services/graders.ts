@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Bộ chấm theo primitiveKind — dispatcher. auto-key (quiz) + coverage (draw) + manip (67 kit thao tác).
  * rubric/code/peer/observation KHÔNG chấm tự động từ payload → cần verdict NGOÀI (rater/LLM/sandbox cấp).

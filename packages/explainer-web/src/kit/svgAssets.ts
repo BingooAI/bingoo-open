@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 // AUTO-GENERATED from /assets by scripts/gen-assets — do not edit by hand.
 export type SvgAsset = { viewW: number; markup: string }
 export const SVG_ASSETS: Record<string, SvgAsset> = {

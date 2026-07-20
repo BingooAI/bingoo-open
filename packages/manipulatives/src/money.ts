@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * money.ts — coins & notes (Cambridge: money, making amounts, change). Values in
  * the smallest unit (e.g. cents). `total` is the sum → verifiable by code.

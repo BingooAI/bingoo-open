@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * EffectGallery.tsx — pick a named animation (no verb/cue knowledge). Adding
  * one stamps the effect at the current playhead via buildAddEffectOps. You can

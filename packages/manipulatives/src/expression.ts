@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * expression.ts — algebra expression (kit #7). params: { tree } — an AST of
  * num / var / binary-op nodes. Rendered as an infix token row; verbs highlight,

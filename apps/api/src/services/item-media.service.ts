@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Ô MEDIA per-item — MỘT NGUỒN dẫn xuất mọi ô media (ảnh + audio) của một AuthoredItem, có NHÃN rõ để
  * người soạn biết sinh cho GÌ (ảnh-vật kit · minh hoạ câu hỏi · đáp án A/B/C · đọc đề). Route

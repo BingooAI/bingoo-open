@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ItemBrief — rút misconceptions của KC từ plan bài + render seed cho prompt (chạy offline).
  * Khoá: distractor phải NHẮM đúng hiểu-sai của ĐÚNG KC (targetsKc), không lấy nhầm KC khác.

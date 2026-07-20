@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * useSpeech.ts — keyless voice-over fallback via the browser Web Speech API.
  *

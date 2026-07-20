@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * geoshape.ts — geometry shape (kit #9). A polygon (normalised vertices) with
  * side labels, angle arcs and tick marks. Rigid transforms are stored as a POSE

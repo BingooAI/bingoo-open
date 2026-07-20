@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * XP + leveling math — the shared, platform-agnostic core of the gamification
  * layer (§R2: no UI, no next/rn). Web and native compute levels identically.

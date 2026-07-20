@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * SINH TỪNG ITEM MỘT (per-item, KHÔNG batch) — trụ cột của luồng soạn nội dung mới: người soạn bấm →
  * sinh 1 item → xem → DUYỆT hoặc SINH LẠI. Không sinh cả lô (để giữ chất lượng, soát từng cái).

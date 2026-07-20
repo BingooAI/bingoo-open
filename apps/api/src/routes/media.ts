@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { permissionSatisfies, type MediaPermission } from '@bingoo.ai/core'
 import { Hono, type Context } from 'hono'
 import { z } from 'zod'

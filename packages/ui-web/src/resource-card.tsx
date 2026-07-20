@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { Download, FileText } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { IconChip, type IconChipColor } from './icon-chip'

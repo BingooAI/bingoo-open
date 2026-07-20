@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * fraction.ts — Fraction (kit #3). A bar or circle divided into `denominator`
  * equal parts, some shaded. verbs: split(n) · shade(k) · merge · compare(other)

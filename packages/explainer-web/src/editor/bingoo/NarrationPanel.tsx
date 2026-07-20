@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * NarrationPanel.tsx — the voice-over editor (Bingoo "audio" surface). Edit the
  * per-scene script, then "Tạo giọng" calls ElevenLabs (/api/tts) to generate

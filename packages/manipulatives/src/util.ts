@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * manipulative/util.ts — tiny pure helpers shared by the math kits. Colours are
  * referenced as design-token IDs (resolved by the renderer), collected here so a

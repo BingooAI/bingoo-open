@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Lắp ráp phiên thích ứng. SPEC §8.3. */
 
 import type { Candidate, Slug } from '../contracts'

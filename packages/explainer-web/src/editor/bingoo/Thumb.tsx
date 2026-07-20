@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Thumb.tsx — a tiny visual preview of an object, so media tiles and timeline
  * clips SHOW what they are (a real shape/prop/asset drawing, a text glyph, a

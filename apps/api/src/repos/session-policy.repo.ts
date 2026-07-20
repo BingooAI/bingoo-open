@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { db } from '@bingoo.ai/db'
 import { writeAudit } from './audit.repo'
 import { getRemoteConfig } from './config.repo'

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Biên dịch bản nháp → GraphData + objectives (đầu ra engine-ready). */
 
 import type { FrameworkKind, GraphData, SkillEdge, SkillNode, Slug } from '@bingoo.ai/knowledge-engine'

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * integerchips.ts — IntegerChips (số nguyên âm — chip dương/âm & cặp triệt tiêu).
  * Middle-school (THCS, grade 6) integers: plus chips live in a top zone, minus

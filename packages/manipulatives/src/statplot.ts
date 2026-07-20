@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * statplot.ts — StatPlot (thống kê mô tả: trung bình, trung vị, mốt, khoảng
  * biến thiên). A dot plot on a number axis with live COMPUTED statistics:

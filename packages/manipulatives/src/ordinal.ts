@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * ordinal.ts — OrdinalQueue (số thứ tự 1st..10th). A queue of little stick
  * figures walks toward a flag; positions are counted FROM the flag, so

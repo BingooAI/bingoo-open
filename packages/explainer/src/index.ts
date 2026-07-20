@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * @bingoo.ai/explainer — public surface of the platform-agnostic engine.
  * Pure TS; imports nothing platform-specific (spec §7.1). The web renderer,

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Ma trận quyền ghi bằng chứng — BỔ SUNG §3.1. Lỗ hổng toàn vẹn quan trọng nhất. */
 
 import type { AssessmentMode, CompetencyKind, EvidenceActor, EvidenceSource } from '../domain'

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Platform roles (§1, §4). A user carries a SET of roles stored on `User.role`
  * as a comma-separated string (Better Auth admin plugin), defaulting to `USER`.

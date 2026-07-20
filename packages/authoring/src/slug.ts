@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 /** Sinh slug ổn định từ tiêu đề. Slug là khoá tham chiếu bền (B5) — TIẾNG ANH LÀ GỐC. */
 
 import type { LocalizedText } from './model'

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Bingoo.ai
+// SPDX-License-Identifier: Apache-2.0
 import { AnswerOption, AvatarGroup, Button, cn, Confetti, IconChip, Leaderboard } from '@bingoo.ai/ui-web'
 import {
   Crown,
