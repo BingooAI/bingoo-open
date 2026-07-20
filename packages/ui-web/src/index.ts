@@ -69,7 +69,7 @@ export { AnswerOption, type AnswerOptionProps, type AnswerState } from './answer
 export { LearningPath, type LearningPathProps, type PathNode, type PathStatus } from './learning-path'
 
 // Quiz interaction core (P4) — the 6 question types + orchestrator. Grading and
-// session flow live in @bingoo/core (shared with @bingoo/ui-native).
+// session flow live in @bingoo.ai/core, so a native renderer could share them.
 export { ChoiceList, TrueFalse, type ChoiceListProps, type TrueFalseProps, type Choice } from './quiz-choice'
 export { FillBlank, type FillBlankProps } from './fill-blank'
 export { OrderList, type OrderListProps, type OrderItem } from './order-list'
@@ -95,7 +95,7 @@ export { LearningExperiencePicker, type LearningExperiencePickerProps } from './
 export { LearningExperienceShell, type LearningExperienceShellProps } from './learning-experience-shell'
 
 // Preschool canvas (tracing / coloring / free drawing) — geometry, stroke
-// scoring and SVG export live in @bingoo/core (shared with @bingoo/ui-native).
+// scoring and SVG export live in @bingoo.ai/core, platform-free by design.
 export { ColorPalette, type ColorPaletteProps } from './color-palette'
 export { DrawingCanvas, type DrawingCanvasProps } from './drawing-canvas'
 export { TracingBoard, type TracingBoardProps } from './tracing-board'
@@ -177,7 +177,7 @@ export {
 export { WorkedExample, type WorkedExampleProps } from './worked-example'
 
 // Gamification & rewards (Batch A) — reused across lesson / game / feed / arena.
-// XP/streak/reward math lives in @bingoo/core (shared with @bingoo/ui-native).
+// XP/streak/reward math lives in @bingoo.ai/core, platform-free by design.
 export { hudSurfaceClass } from './lib/hud'
 export {
   Confetti,

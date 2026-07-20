@@ -17,7 +17,7 @@ export { Controller }
 /**
  * react-hook-form wired to a zod schema — typed to the schema's input/output.
  * Use the returned `register` / `handleSubmit` / `formState.errors` as usual;
- * validation runs from the shared zod schema (see `@bingoo/contracts` later).
+ * validation runs from the shared zod schema in `@bingoo.ai/contracts`.
  */
 export function useZodForm<TIn extends FieldValues, TOut extends FieldValues = TIn>(
   schema: z.ZodType<TOut, TIn>,

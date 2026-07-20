@@ -342,7 +342,7 @@ module.exports = {
       // RN/Fabric needs fontFamily as a STRING (an array throws
       // "expected string, had array"). These are the family names the app loads
       // via @expo-google-fonts (see apps/mobile). Weight-specific families are
-      // applied per text variant in @bingoo/ui-native's Text.
+      // applied per text variant by the consuming text component.
       fontFamily: {
         display: ${JSON.stringify(t.native?.fontDisplay ?? 'Baloo2_700Bold')},
         sans: ${JSON.stringify(t.native?.fontText ?? 'BeVietnamPro_400Regular')},
