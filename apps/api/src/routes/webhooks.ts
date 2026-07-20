@@ -1,6 +1,6 @@
-import { Hono } from 'hono';
-import type { AppEnv } from '../lib/context';
-import { getPayment } from '../providers';
+import { Hono } from 'hono'
+import type { AppEnv } from '../lib/context'
+import { getPayment } from '../providers'
 
 /**
  * Inbound payment webhook. The bank-notification relay POSTs here with a shared
@@ -9,16 +9,16 @@ import { getPayment } from '../providers';
  * increment — for now we verify, parse, and acknowledge.
  */
 export const paymentWebhooks = new Hono<AppEnv>().post('/:provider', async (c) => {
-  const provider = c.req.param('provider');
-  const rawBody = await c.req.text();
-  const tx = getPayment(provider).verifyWebhook({ rawBody, headers: c.req.header() });
+  const provider = c.req.param('provider')
+  const rawBody = await c.req.text()
+  const tx = getPayment(provider).verifyWebhook({ rawBody, headers: c.req.header() })
 
   // TODO(payment): persist + reconcile against the Payment model (idempotent).
   console.log(`[${c.get('requestId')}] payment webhook (${provider}):`, {
     reference: tx.reference,
     amount: tx.amount,
     txId: tx.txId,
-  });
+  })
 
-  return c.json({ received: true, reference: tx.reference }, 200);
-});
+  return c.json({ received: true, reference: tx.reference }, 200)
+})

@@ -1,27 +1,27 @@
-'use client';
+'use client'
 
-import type { QuizItem } from '@bingoo/core';
-import { useQuizText } from './quiz-locale';
-import { Check, X } from 'lucide-react';
-import { useState } from 'react';
-import { cn } from './lib/cn';
-import { stagger, tile } from './lib/interactive';
+import type { QuizItem } from '@bingoo/core'
+import { useQuizText } from './quiz-locale'
+import { Check, X } from 'lucide-react'
+import { useState } from 'react'
+import { cn } from './lib/cn'
+import { stagger, tile } from './lib/interactive'
 
 export interface ChanceLevel {
-  id: string;
-  label?: string;
+  id: string
+  label?: string
 }
 
 export interface ChanceScaleProps {
   /** Likelihood levels in order, least → most likely. */
-  levels: ChanceLevel[];
-  items: QuizItem[];
+  levels: ChanceLevel[]
+  items: QuizItem[]
   /** Controlled: itemId → levelId. */
-  assignment: Record<string, string>;
-  onChange: (assignment: Record<string, string>) => void;
-  reveal?: { items: Record<string, boolean>; answer: Record<string, string> };
-  disabled?: boolean;
-  className?: string;
+  assignment: Record<string, string>
+  onChange: (assignment: Record<string, string>) => void
+  reveal?: { items: Record<string, boolean>; answer: Record<string, string> }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -39,30 +39,30 @@ export function ChanceScale({
   disabled,
   className,
 }: ChanceScaleProps) {
-  const t = useQuizText();
-  const [armed, setArmed] = useState<string | null>(null);
-  const locked = !!reveal || disabled;
+  const t = useQuizText()
+  const [armed, setArmed] = useState<string | null>(null)
+  const locked = !!reveal || disabled
 
   function tapItem(id: string) {
-    if (locked) return;
+    if (locked) return
     if (assignment[id]) {
-      const next = { ...assignment };
-      delete next[id];
-      onChange(next);
-      setArmed(null);
-      return;
+      const next = { ...assignment }
+      delete next[id]
+      onChange(next)
+      setArmed(null)
+      return
     }
-    setArmed((cur) => (cur === id ? null : id));
+    setArmed((cur) => (cur === id ? null : id))
   }
   function drop(levelId: string) {
-    if (locked || !armed) return;
-    onChange({ ...assignment, [armed]: levelId });
-    setArmed(null);
+    if (locked || !armed) return
+    onChange({ ...assignment, [armed]: levelId })
+    setArmed(null)
   }
 
-  const pool = items.filter((it) => !(it.id in assignment));
+  const pool = items.filter((it) => !(it.id in assignment))
   const chip = (item: QuizItem) => {
-    const ok = reveal?.items[item.id];
+    const ok = reveal?.items[item.id]
     return (
       <button
         key={item.id}
@@ -72,14 +72,7 @@ export function ChanceScale({
         onClick={() => tapItem(item.id)}
         className={cn(
           tile({
-            state:
-              ok === true
-                ? 'correct'
-                : ok === false
-                  ? 'wrong'
-                  : armed === item.id
-                    ? 'selected'
-                    : 'idle',
+            state: ok === true ? 'correct' : ok === false ? 'wrong' : armed === item.id ? 'selected' : 'idle',
             size: 'none',
           }),
           'inline-flex max-w-full items-center gap-1 rounded-lg px-2 py-1 text-left text-xs font-semibold',
@@ -90,8 +83,8 @@ export function ChanceScale({
         {ok === true ? <Check className="size-3 shrink-0" /> : null}
         {ok === false ? <X className="size-3 shrink-0" /> : null}
       </button>
-    );
-  };
+    )
+  }
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>
@@ -105,8 +98,8 @@ export function ChanceScale({
           style={{ gridTemplateColumns: `repeat(${levels.length}, minmax(0, 1fr))` }}
         >
           {levels.map((lv, i) => {
-            const droppable = !!armed && !locked;
-            const inLevel = items.filter((it) => assignment[it.id] === lv.id);
+            const droppable = !!armed && !locked
+            const inLevel = items.filter((it) => assignment[it.id] === lv.id)
             return (
               <div
                 key={lv.id}
@@ -115,9 +108,7 @@ export function ChanceScale({
                 tabIndex={droppable ? 0 : -1}
                 onClick={() => drop(lv.id)}
                 onKeyDown={(e) =>
-                  droppable &&
-                  (e.key === 'Enter' || e.key === ' ') &&
-                  (e.preventDefault(), drop(lv.id))
+                  droppable && (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), drop(lv.id))
                 }
                 className={cn(
                   tile({ state: droppable ? 'selected' : 'quiet', size: 'none' }),
@@ -130,10 +121,10 @@ export function ChanceScale({
                 </span>
                 <div className="flex flex-col gap-1">{inLevel.map(chip)}</div>
               </div>
-            );
+            )
           })}
         </div>
       </div>
     </div>
-  );
+  )
 }

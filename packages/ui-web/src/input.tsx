@@ -1,19 +1,19 @@
-import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  leftIcon?: ReactNode;
-  rightIcon?: ReactNode;
+  leftIcon?: ReactNode
+  rightIcon?: ReactNode
   /** Renders error styling; wire real messaging via <Field>. */
-  invalid?: boolean;
-  inputSize?: 'md' | 'lg';
+  invalid?: boolean
+  inputSize?: 'md' | 'lg'
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   { className, leftIcon, rightIcon, invalid, inputSize = 'md', disabled, ...props },
   ref,
 ) {
-  const height = inputSize === 'lg' ? 'h-13 text-base' : 'h-11 text-sm';
+  const height = inputSize === 'lg' ? 'h-13 text-base' : 'h-11 text-sm'
 
   return (
     <div
@@ -50,5 +50,5 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         </span>
       )}
     </div>
-  );
-});
+  )
+})

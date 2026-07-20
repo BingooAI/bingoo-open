@@ -1,9 +1,9 @@
-'use client';
+'use client'
 
-import { useMemo, useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { Badge, Button, useToast } from '@bingoo/ui-web';
-import { Check, ChevronDown, Lock, RefreshCw } from 'lucide-react';
+import { useMemo, useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { Badge, Button, useToast } from '@bingoo/ui-web'
+import { Check, ChevronDown, Lock, RefreshCw } from 'lucide-react'
 import {
   useApprovePlan,
   useCancelPlanJob,
@@ -14,10 +14,10 @@ import {
   type HierQualityDto,
   type PlanLevel,
   type StoredPlanDto,
-} from '@/lib/authoring-queries';
-import { cn } from '@/lib/cn';
-import { PlanJobProgress } from './plan-job-progress';
-import { CompetencyBreakdown } from './competency-breakdown';
+} from '@/lib/authoring-queries'
+import { cn } from '@/lib/cn'
+import { PlanJobProgress } from './plan-job-progress'
+import { CompetencyBreakdown } from './competency-breakdown'
 
 /**
  * CỔNG DUYỆT PHÂN CẤP — Khoá → Unit. Chưa duyệt cấp trên thì cấp dưới KHÔNG sinh được (nút khoá).
@@ -29,37 +29,37 @@ export function PlanHierarchyPanel({
   courseSlug,
   units,
 }: {
-  courseSlug: string;
-  units: { slug: string; title: Record<string, string> }[];
+  courseSlug: string
+  units: { slug: string; title: Record<string, string> }[]
 }) {
-  const { toast } = useToast();
-  const t = useTranslations('admin.authoring');
-  const plans = useCoursePlans(courseSlug);
-  const genCourse = useGenCoursePlan(courseSlug);
-  const genUnit = useGenUnitPlan(courseSlug);
-  const approve = useApprovePlan(courseSlug);
+  const { toast } = useToast()
+  const t = useTranslations('admin.authoring')
+  const plans = useCoursePlans(courseSlug)
+  const genCourse = useGenCoursePlan(courseSlug)
+  const genUnit = useGenUnitPlan(courseSlug)
+  const approve = useApprovePlan(courseSlug)
 
   const byKey = useMemo(() => {
-    const m = new Map<string, StoredPlanDto>();
-    for (const p of plans.data ?? []) m.set(`${p.level}:${p.refSlug}`, p);
-    return m;
-  }, [plans.data]);
+    const m = new Map<string, StoredPlanDto>()
+    for (const p of plans.data ?? []) m.set(`${p.level}:${p.refSlug}`, p)
+    return m
+  }, [plans.data])
 
-  const course = byKey.get(`course:${courseSlug}`);
-  const courseApproved = course?.status === 'APPROVED';
+  const course = byKey.get(`course:${courseSlug}`)
+  const courseApproved = course?.status === 'APPROVED'
 
   const onErr = (e: unknown) =>
     toast({
       variant: 'danger',
       title: 'Thất bại',
       description: e instanceof Error ? e.message : String(e),
-    });
+    })
 
   const doApprove = (level: PlanLevel, refSlug: string) =>
     approve.mutate(
       { level, refSlug },
       { onError: onErr, onSuccess: () => toast({ variant: 'success', title: 'Đã duyệt' }) },
-    );
+    )
 
   return (
     <div className="space-y-3">
@@ -86,7 +86,7 @@ export function PlanHierarchyPanel({
           </p>
         ) : null}
         {units.map((u) => {
-          const p = byKey.get(`unit:${u.slug}`);
+          const p = byKey.get(`unit:${u.slug}`)
           return (
             <PlanRow
               key={u.slug}
@@ -103,17 +103,17 @@ export function PlanHierarchyPanel({
               approvePending={approve.isPending}
               renderDoc={(d) => <UnitDoc doc={d} />}
             />
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }
 
 function qualityTone(q: HierQualityDto | null | undefined): 'success' | 'warning' | 'danger' {
-  if (!q) return 'danger';
-  if (q.approvable) return 'success';
-  return q.issues.some((i) => i.severity === 'error') ? 'danger' : 'warning';
+  if (!q) return 'danger'
+  if (q.approvable) return 'success'
+  return q.issues.some((i) => i.severity === 'error') ? 'danger' : 'warning'
 }
 
 function PlanRow({
@@ -130,28 +130,28 @@ function PlanRow({
   approvePending,
   renderDoc,
 }: {
-  title: string;
-  subtitle: string;
-  plan: StoredPlanDto | undefined;
-  courseSlug: string;
-  level: PlanLevel;
-  refSlug: string;
-  locked?: boolean;
-  onGen: () => void;
-  genPending: boolean;
-  onApprove: () => void;
-  approvePending: boolean;
-  renderDoc: (doc: Record<string, unknown>) => React.ReactNode;
+  title: string
+  subtitle: string
+  plan: StoredPlanDto | undefined
+  courseSlug: string
+  level: PlanLevel
+  refSlug: string
+  locked?: boolean
+  onGen: () => void
+  genPending: boolean
+  onApprove: () => void
+  approvePending: boolean
+  renderDoc: (doc: Record<string, unknown>) => React.ReactNode
 }) {
-  const t = useTranslations('admin.authoring');
-  const [open, setOpen] = useState(false);
-  const approved = plan?.status === 'APPROVED';
-  const q = plan?.quality;
+  const t = useTranslations('admin.authoring')
+  const [open, setOpen] = useState(false)
+  const approved = plan?.status === 'APPROVED'
+  const q = plan?.quality
 
   // Job sinh nền: poll on-mount (bắt được job đang chạy sau khi reload), cho HỦY.
-  const job = usePlanJob(courseSlug, level, refSlug).data;
-  const cancel = useCancelPlanJob(courseSlug);
-  const running = job?.state === 'running';
+  const job = usePlanJob(courseSlug, level, refSlug).data
+  const cancel = useCancelPlanJob(courseSlug)
+  const running = job?.state === 'running'
 
   return (
     <div
@@ -221,10 +221,7 @@ function PlanRow({
       {q && q.issues.length && !approved ? (
         <ul className="mt-2 list-disc space-y-0.5 pl-8 text-xs">
           {q.issues.slice(0, 5).map((i, k) => (
-            <li
-              key={`${i.code}-${k}`}
-              className={i.severity === 'error' ? 'text-danger' : 'text-warning'}
-            >
+            <li key={`${i.code}-${k}`} className={i.severity === 'error' ? 'text-danger' : 'text-warning'}>
               {i.message}
             </li>
           ))}
@@ -249,19 +246,19 @@ function PlanRow({
         </div>
       ) : null}
     </div>
-  );
+  )
 }
 
 // ── Hiển thị nội dung kế hoạch (đọc lỏng, doc là JSON tự do) ───────────────────
 const line = (v: unknown): string => {
-  const o = (v ?? {}) as Record<string, string>;
-  return o.vi ?? o.en ?? '';
-};
-const lines = (v: unknown): string[] => (Array.isArray(v) ? v : []).map(line).filter(Boolean);
+  const o = (v ?? {}) as Record<string, string>
+  return o.vi ?? o.en ?? ''
+}
+const lines = (v: unknown): string[] => (Array.isArray(v) ? v : []).map(line).filter(Boolean)
 
 /** Một mục kế hoạch: nhãn nhỏ TRÊN, nội dung DƯỚI — có phân cấp, dễ quét. */
 function Section({ label, children }: { label: string; children: React.ReactNode }) {
-  if (!children) return null;
+  if (!children) return null
   return (
     <div>
       <h4 className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-foreground-subtle">
@@ -269,12 +266,12 @@ function Section({ label, children }: { label: string; children: React.ReactNode
       </h4>
       {children}
     </div>
-  );
+  )
 }
 
 /** Danh sách gạch đầu dòng — MỖI Ý MỘT DÒNG (thay vì nối "·" thành một khối rối). */
 function BulletList({ items }: { items: string[] }) {
-  if (!items.length) return null;
+  if (!items.length) return null
   return (
     <ul className="space-y-1">
       {items.map((it, i) => (
@@ -284,19 +281,17 @@ function BulletList({ items }: { items: string[] }) {
         </li>
       ))}
     </ul>
-  );
+  )
 }
 
 /** Đoạn văn dài (mạch học / lý do / đánh giá) — giãn dòng cho dễ đọc. */
 function Para({ text }: { text: string }) {
-  if (!text) return null;
-  return (
-    <p className="whitespace-pre-line text-[13px] leading-relaxed text-foreground-muted">{text}</p>
-  );
+  if (!text) return null
+  return <p className="whitespace-pre-line text-[13px] leading-relaxed text-foreground-muted">{text}</p>
 }
 
 function CourseDoc({ doc }: { doc: Record<string, unknown> }) {
-  const t = useTranslations('admin.authoring');
+  const t = useTranslations('admin.authoring')
   return (
     <div className="space-y-4">
       {line(doc.bigIdea) ? (
@@ -325,12 +320,12 @@ function CourseDoc({ doc }: { doc: Record<string, unknown> }) {
         <Para text={line(doc.assessmentStrategy)} />
       </Section>
     </div>
-  );
+  )
 }
 
 function UnitDoc({ doc }: { doc: Record<string, unknown> }) {
-  const t = useTranslations('admin.authoring');
-  const lessons = (Array.isArray(doc.lessons) ? doc.lessons : []) as Record<string, unknown>[];
+  const t = useTranslations('admin.authoring')
+  const lessons = (Array.isArray(doc.lessons) ? doc.lessons : []) as Record<string, unknown>[]
   return (
     <div className="space-y-4">
       {line(doc.bigIdea) ? (
@@ -372,9 +367,7 @@ function UnitDoc({ doc }: { doc: Record<string, unknown> }) {
                 </span>
                 <span>
                   <b className="text-foreground">{line(l.title)}</b>
-                  {line(l.role) ? (
-                    <span className="text-foreground-muted"> — {line(l.role)}</span>
-                  ) : null}
+                  {line(l.role) ? <span className="text-foreground-muted"> — {line(l.role)}</span> : null}
                 </span>
               </li>
             ))}
@@ -382,5 +375,5 @@ function UnitDoc({ doc }: { doc: Record<string, unknown> }) {
         </Section>
       ) : null}
     </div>
-  );
+  )
 }

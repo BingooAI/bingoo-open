@@ -8,8 +8,8 @@ import {
   Type,
   Video,
   type LucideIcon,
-} from 'lucide-react';
-import type { MediaKind } from '@bingoo/core';
+} from 'lucide-react'
+import type { MediaKind } from '@bingoo/core'
 
 const ICONS: Record<MediaKind, LucideIcon> = {
   IMAGE: ImageIcon,
@@ -20,13 +20,13 @@ const ICONS: Record<MediaKind, LucideIcon> = {
   FONT: Type,
   ARCHIVE: Archive,
   OTHER: File,
-};
+}
 
 export function kindIcon(kind: MediaKind): LucideIcon {
-  return ICONS[kind] ?? File;
+  return ICONS[kind] ?? File
 }
 
 export function KindIcon({ kind, className }: { kind: MediaKind; className?: string }) {
-  const Icon = kindIcon(kind);
-  return <Icon className={className} />;
+  const Icon = kindIcon(kind)
+  return <Icon className={className} />
 }

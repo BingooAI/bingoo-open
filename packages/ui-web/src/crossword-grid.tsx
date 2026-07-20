@@ -1,22 +1,22 @@
-'use client';
+'use client'
 
-import { crosswordCells, type CrosswordEntry } from '@bingoo/core';
-import { cn } from './lib/cn';
-import { tile } from './lib/interactive';
+import { crosswordCells, type CrosswordEntry } from '@bingoo/core'
+import { cn } from './lib/cn'
+import { tile } from './lib/interactive'
 
 export interface CrosswordGridProps {
-  rows: number;
-  cols: number;
-  entries: CrosswordEntry[];
+  rows: number
+  cols: number
+  entries: CrosswordEntry[]
   /** Controlled: cellKey "r-c" → letter. */
-  letters: Record<string, string>;
-  onChange: (letters: Record<string, string>) => void;
-  reveal?: { cells: Record<string, { expected: string; ok: boolean }> };
-  disabled?: boolean;
+  letters: Record<string, string>
+  onChange: (letters: Record<string, string>) => void
+  reveal?: { cells: Record<string, { expected: string; ok: boolean }> }
+  disabled?: boolean
   /** Localized headings for the clue lists. */
-  acrossLabel?: string;
-  downLabel?: string;
-  className?: string;
+  acrossLabel?: string
+  downLabel?: string
+  className?: string
 }
 
 /**
@@ -36,16 +36,16 @@ export function CrosswordGrid({
   downLabel,
   className,
 }: CrosswordGridProps) {
-  const locked = !!reveal || disabled;
-  const { expected, numbers } = crosswordCells({ entries });
+  const locked = !!reveal || disabled
+  const { expected, numbers } = crosswordCells({ entries })
 
   const set = (k: string, ch: string) => {
-    if (locked) return;
-    onChange({ ...letters, [k]: ch.slice(-1).toUpperCase() });
-  };
+    if (locked) return
+    onChange({ ...letters, [k]: ch.slice(-1).toUpperCase() })
+  }
 
-  const across = entries.filter((e) => e.dir === 'across').sort((a, b) => a.number - b.number);
-  const down = entries.filter((e) => e.dir === 'down').sort((a, b) => a.number - b.number);
+  const across = entries.filter((e) => e.dir === 'across').sort((a, b) => a.number - b.number)
+  const down = entries.filter((e) => e.dir === 'down').sort((a, b) => a.number - b.number)
 
   return (
     <div className={cn('flex flex-col gap-4 sm:flex-row sm:items-start', className)}>
@@ -55,10 +55,10 @@ export function CrosswordGrid({
       >
         {Array.from({ length: rows }, (_, r) =>
           Array.from({ length: cols }, (_, c) => {
-            const k = `${r}-${c}`;
-            const open = k in expected;
-            if (!open) return <div key={k} className="size-9 rounded-sm bg-foreground-subtle/15" />;
-            const mark = reveal?.cells[k];
+            const k = `${r}-${c}`
+            const open = k in expected
+            if (!open) return <div key={k} className="size-9 rounded-sm bg-foreground-subtle/15" />
+            const mark = reveal?.cells[k]
             return (
               <div key={k} className="relative">
                 {numbers[k] ? (
@@ -84,7 +84,7 @@ export function CrosswordGrid({
                   )}
                 />
               </div>
-            );
+            )
           }),
         )}
       </div>
@@ -115,5 +115,5 @@ export function CrosswordGrid({
         ) : null}
       </div>
     </div>
-  );
+  )
 }

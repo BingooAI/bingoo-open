@@ -1,20 +1,20 @@
-'use client';
+'use client'
 
-import type { ReactNode } from 'react';
-import { Button } from './button';
-import { CelebrationOverlay } from './celebration';
+import type { ReactNode } from 'react'
+import { Button } from './button'
+import { CelebrationOverlay } from './celebration'
 
 export interface LevelUpModalProps {
-  open: boolean;
-  onClose: () => void;
-  level: number;
+  open: boolean
+  onClose: () => void
+  level: number
   /** Prefix before the level number, e.g. "Lv.". */
-  levelPrefix?: string;
-  title: ReactNode;
-  message?: ReactNode;
-  cta?: ReactNode;
-  onCta?: () => void;
-  className?: string;
+  levelPrefix?: string
+  title: ReactNode
+  message?: ReactNode
+  cta?: ReactNode
+  onCta?: () => void
+  className?: string
 }
 
 /** Level-up celebration — a glowing level medallion with confetti. i18n-free. */
@@ -34,9 +34,7 @@ export function LevelUpModal({
       <div className="flex flex-col items-center gap-4">
         <div className="grid size-28 place-items-center rounded-full bg-gradient-brand text-white shadow-pop motion-safe:animate-[pop-in_.45s_var(--ease-spring)]">
           <span className="flex flex-col items-center leading-none">
-            <span className="text-2xs font-bold uppercase tracking-wide opacity-90">
-              {levelPrefix}
-            </span>
+            <span className="text-2xs font-bold uppercase tracking-wide opacity-90">{levelPrefix}</span>
             <span className="font-display text-4xl font-extrabold tabular-nums">{level}</span>
           </span>
         </div>
@@ -49,5 +47,5 @@ export function LevelUpModal({
         ) : null}
       </div>
     </CelebrationOverlay>
-  );
+  )
 }

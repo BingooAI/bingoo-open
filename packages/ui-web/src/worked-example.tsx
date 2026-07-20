@@ -1,24 +1,24 @@
-'use client';
+'use client'
 
-import { Lightbulb, Sparkles } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
-import { ENTER, POP, stagger } from './lib/interactive';
+import { Lightbulb, Sparkles } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
+import { ENTER, POP, stagger } from './lib/interactive'
 
 export interface WorkedExampleProps {
   /** Badge copy, e.g. "Worked example" / "Ví dụ mẫu". */
-  label: string;
+  label: string
   /** The problem being modelled. */
-  prompt: ReactNode;
+  prompt: ReactNode
   /** The solution, one node per step (rendered as a numbered list). */
-  steps: ReactNode[];
+  steps: ReactNode[]
   /** The final answer, highlighted. */
-  answer: ReactNode;
+  answer: ReactNode
   /** Label before the answer, e.g. "Answer". */
-  answerLabel?: string;
+  answerLabel?: string
   /** Optional tip shown under the answer. */
-  note?: ReactNode;
-  className?: string;
+  note?: ReactNode
+  className?: string
 }
 
 /**
@@ -70,9 +70,7 @@ export function WorkedExample({
         )}
       >
         {answerLabel ? (
-          <span className="text-xs font-bold uppercase tracking-wide text-success">
-            {answerLabel}
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wide text-success">{answerLabel}</span>
         ) : null}
         <span className="font-bold text-success">{answer}</span>
       </div>
@@ -84,5 +82,5 @@ export function WorkedExample({
         </p>
       ) : null}
     </div>
-  );
+  )
 }

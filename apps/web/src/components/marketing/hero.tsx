@@ -1,10 +1,10 @@
-import { FlaskConical, Palette, Play, ShieldCheck } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import type { ReactNode } from 'react';
-import { Mascot } from '@/components/brand/mascot';
-import { buttonVariants, Container, IconChip, type IconChipColor } from '@bingoo/ui-web';
-import { Link } from '@/i18n/navigation';
-import { cn } from '@/lib/cn';
+import { FlaskConical, Palette, Play, ShieldCheck } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import type { ReactNode } from 'react'
+import { Mascot } from '@/components/brand/mascot'
+import { buttonVariants, Container, IconChip, type IconChipColor } from '@bingoo/ui-web'
+import { Link } from '@/i18n/navigation'
+import { cn } from '@/lib/cn'
 
 /** A small floating subject tile — white card + 3D colored icon (the DS look). */
 function FloatTile({
@@ -13,10 +13,10 @@ function FloatTile({
   icon,
   label,
 }: {
-  className: string;
-  color: IconChipColor;
-  icon: ReactNode;
-  label: ReactNode;
+  className: string
+  color: IconChipColor
+  icon: ReactNode
+  label: ReactNode
 }) {
   return (
     <div
@@ -30,12 +30,12 @@ function FloatTile({
       </IconChip>
       <span className="font-display text-sm font-bold text-foreground">{label}</span>
     </div>
-  );
+  )
 }
 
 export function Hero() {
-  const t = useTranslations('landing.hero');
-  const ts = useTranslations('landing.subjects.items');
+  const t = useTranslations('landing.hero')
+  const ts = useTranslations('landing.subjects.items')
 
   return (
     <section id="hero" className="relative overflow-hidden">
@@ -84,10 +84,7 @@ export function Hero() {
           {/* visual — mascot stage + floating subject tiles */}
           <div className="relative mx-auto w-full max-w-sm">
             <div className="relative grid aspect-square place-items-center rounded-[2.5rem] border border-border bg-surface shadow-lg">
-              <div
-                aria-hidden
-                className="absolute inset-10 rounded-full bg-primary-soft blur-2xl"
-              />
+              <div aria-hidden className="absolute inset-10 rounded-full bg-primary-soft blur-2xl" />
               <Mascot emotion="excited" size={248} float alt="" />
               <span className="absolute bottom-4 right-4 rounded-full bg-accent-sunbeam px-3 py-1.5 font-display text-xs font-extrabold text-accent-sunbeam-foreground shadow-md">
                 +20 XP
@@ -116,5 +113,5 @@ export function Hero() {
         </div>
       </Container>
     </section>
-  );
+  )
 }

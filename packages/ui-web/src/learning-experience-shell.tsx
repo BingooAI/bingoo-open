@@ -1,17 +1,17 @@
-import { deriveCapabilities, type ExperienceDescriptor } from '@bingoo/learning-experience';
-import type { ReactNode } from 'react';
-import { LearningExperienceBadge, type LearningExperienceLabels } from './learning-experience-card';
-import { cn } from './lib/cn';
+import { deriveCapabilities, type ExperienceDescriptor } from '@bingoo/learning-experience'
+import type { ReactNode } from 'react'
+import { LearningExperienceBadge, type LearningExperienceLabels } from './learning-experience-card'
+import { cn } from './lib/cn'
 
 export interface LearningExperienceShellProps {
-  descriptor: ExperienceDescriptor;
-  labels: LearningExperienceLabels;
-  title?: ReactNode;
+  descriptor: ExperienceDescriptor
+  labels: LearningExperienceLabels
+  title?: ReactNode
   /** Panel đồng hành (AI tutor / avatar giáo viên…). Chỉ hiện khi cần theo năng lực suy ra. */
-  companionSlot?: ReactNode;
+  companionSlot?: ReactNode
   /** Bề mặt trải nghiệm thật do host cắm vào (lesson runtime, arena board, feed…). */
-  children: ReactNode;
-  className?: string;
+  children: ReactNode
+  className?: string
 }
 
 /**
@@ -27,10 +27,9 @@ export function LearningExperienceShell({
   children,
   className,
 }: LearningExperienceShellProps) {
-  const capabilities = deriveCapabilities(descriptor);
+  const capabilities = deriveCapabilities(descriptor)
   const hasCompanion =
-    companionSlot != null &&
-    (capabilities.includes('ai-tutor') || capabilities.includes('human-presence'));
+    companionSlot != null && (capabilities.includes('ai-tutor') || capabilities.includes('human-presence'))
 
   return (
     <section
@@ -40,9 +39,7 @@ export function LearningExperienceShell({
       )}
     >
       <header className="flex flex-col gap-2">
-        {title != null ? (
-          <h3 className="font-display text-lg font-bold text-foreground">{title}</h3>
-        ) : null}
+        {title != null ? <h3 className="font-display text-lg font-bold text-foreground">{title}</h3> : null}
         <LearningExperienceBadge descriptor={descriptor} labels={labels} />
       </header>
 
@@ -53,5 +50,5 @@ export function LearningExperienceShell({
         ) : null}
       </div>
     </section>
-  );
+  )
 }

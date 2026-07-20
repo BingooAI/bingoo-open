@@ -1,19 +1,19 @@
-import { ArrowLeft, ShieldCheck, Sparkles, Star } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
-import { Logo } from '@/components/brand/logo';
-import { LocaleSwitcher } from '@/components/brand/locale-switcher';
-import { Mascot } from '@/components/brand/mascot';
-import { ThemeToggle } from '@/components/brand/theme-toggle';
-import { Link } from '@/i18n/navigation';
+import { ArrowLeft, ShieldCheck, Sparkles, Star } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { setRequestLocale } from 'next-intl/server'
+import { Logo } from '@/components/brand/logo'
+import { LocaleSwitcher } from '@/components/brand/locale-switcher'
+import { Mascot } from '@/components/brand/mascot'
+import { ThemeToggle } from '@/components/brand/theme-toggle'
+import { Link } from '@/i18n/navigation'
 
 function BrandPanel() {
-  const t = useTranslations();
+  const t = useTranslations()
   const highlights = [
     { Icon: Sparkles, text: t('landing.features.items.personalized.title') },
     { Icon: Star, text: t('landing.features.items.gamified.title') },
     { Icon: ShieldCheck, text: t('landing.features.items.safe.title') },
-  ];
+  ]
 
   return (
     <aside className="relative hidden overflow-hidden bg-gradient-brand p-10 lg:flex lg:flex-col">
@@ -50,18 +50,18 @@ function BrandPanel() {
 
       <p className="relative text-sm text-white/70">bingoo.ai</p>
     </aside>
-  );
+  )
 }
 
 export default async function AuthLayout({
   children,
   params,
 }: {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
+  const { locale } = await params
+  setRequestLocale(locale)
 
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
@@ -74,11 +74,11 @@ export default async function AuthLayout({
         </main>
       </div>
     </div>
-  );
+  )
 }
 
 function TopBar() {
-  const t = useTranslations('auth.shared');
+  const t = useTranslations('auth.shared')
   return (
     <div className="flex items-center justify-between gap-3 px-5 py-5 sm:px-8">
       <Link
@@ -98,5 +98,5 @@ function TopBar() {
         <ThemeToggle />
       </div>
     </div>
-  );
+  )
 }

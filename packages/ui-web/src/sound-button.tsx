@@ -1,33 +1,33 @@
-'use client';
+'use client'
 
-import { Volume2 } from 'lucide-react';
-import { useRef, type ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { Volume2 } from 'lucide-react'
+import { useRef, type ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export interface SoundButtonProps {
   /** Audio URL to play on press (browser Audio). */
-  src?: string;
+  src?: string
   /** Called after (or instead of) playing — wire custom playback here. */
-  onPlay?: () => void;
+  onPlay?: () => void
   /** Accessible label (data). */
-  label: string;
-  icon?: ReactNode;
-  size?: 'sm' | 'md' | 'lg';
-  tone?: 'soft' | 'solid' | 'ghost';
-  className?: string;
+  label: string
+  icon?: ReactNode
+  size?: 'sm' | 'md' | 'lg'
+  tone?: 'soft' | 'solid' | 'ghost'
+  className?: string
 }
 
 const SIZE = {
   sm: 'size-8 [&_svg]:size-4',
   md: 'size-11 [&_svg]:size-5',
   lg: 'size-14 [&_svg]:size-6',
-} as const;
+} as const
 
 const TONE = {
   soft: 'bg-primary-soft text-primary hover:brightness-95',
   solid: 'bg-primary text-primary-foreground hover:bg-primary-hover',
   ghost: 'text-foreground hover:bg-surface-muted',
-} as const;
+} as const
 
 /**
  * A round button that plays a sound — used for reward stingers, pronunciation,
@@ -43,16 +43,16 @@ export function SoundButton({
   tone = 'soft',
   className,
 }: SoundButtonProps) {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   function play() {
     if (src) {
-      const el = audioRef.current ?? new Audio(src);
-      audioRef.current = el;
-      el.currentTime = 0;
-      void el.play().catch(() => {});
+      const el = audioRef.current ?? new Audio(src)
+      audioRef.current = el
+      el.currentTime = 0
+      void el.play().catch(() => {})
     }
-    onPlay?.();
+    onPlay?.()
   }
 
   return (
@@ -69,5 +69,5 @@ export function SoundButton({
     >
       {icon ?? <Volume2 />}
     </button>
-  );
+  )
 }

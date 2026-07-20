@@ -1,16 +1,16 @@
-import { expo } from '@better-auth/expo';
-import { betterAuth } from 'better-auth';
-import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { admin, bearer, organization, username } from 'better-auth/plugins';
-import { db } from '@bingoo/db';
-import { mintPublicId } from '@bingoo/core';
-import { env } from '../config/env';
-import { writeAudit } from '../repos/audit.repo';
-import { emitEvent } from '../repos/events.repo';
-import { onUserUpdated, refreshAccountType } from '../repos/lifecycle.repo';
-import { enforceDeviceLimit } from '../repos/session-policy.repo';
-import { ADMIN_ROLES, DEFAULT_ROLE } from './roles';
-import { sendAuthEmail } from './emails';
+import { expo } from '@better-auth/expo'
+import { betterAuth } from 'better-auth'
+import { prismaAdapter } from 'better-auth/adapters/prisma'
+import { admin, bearer, organization, username } from 'better-auth/plugins'
+import { db } from '@bingoo/db'
+import { mintPublicId } from '@bingoo/core'
+import { env } from '../config/env'
+import { writeAudit } from '../repos/audit.repo'
+import { emitEvent } from '../repos/events.repo'
+import { onUserUpdated, refreshAccountType } from '../repos/lifecycle.repo'
+import { enforceDeviceLimit } from '../repos/session-policy.repo'
+import { ADMIN_ROLES, DEFAULT_ROLE } from './roles'
+import { sendAuthEmail } from './emails'
 
 /**
  * The Better Auth server instance — the single source of authentication for the
@@ -24,8 +24,8 @@ import { sendAuthEmail } from './emails';
  * P2 — their columns already exist in the covering schema.
  */
 
-const baseURL = env.BETTER_AUTH_URL ?? `http://localhost:${env.PORT}`;
-const googleConfigured = Boolean(env.GOOGLE_OAUTH_CLIENT_ID && env.GOOGLE_OAUTH_CLIENT_SECRET);
+const baseURL = env.BETTER_AUTH_URL ?? `http://localhost:${env.PORT}`
+const googleConfigured = Boolean(env.GOOGLE_OAUTH_CLIENT_ID && env.GOOGLE_OAUTH_CLIENT_SECRET)
 
 export const auth = betterAuth({
   appName: 'Bingoo',
@@ -47,8 +47,8 @@ export const auth = betterAuth({
     minPasswordLength: 6,
     sendResetPassword: async ({ user, url }) => {
       // Dev convenience: surface the link when no mailbox receives it (never in prod).
-      if (env.NODE_ENV !== 'production') console.log(`[dev] reset ${user.email}: ${url}`);
-      await sendAuthEmail('reset', user, url);
+      if (env.NODE_ENV !== 'production') console.log(`[dev] reset ${user.email}: ${url}`)
+      await sendAuthEmail('reset', user, url)
     },
   },
 
@@ -57,8 +57,8 @@ export const auth = betterAuth({
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       // Dev convenience: surface the link when no mailbox receives it (never in prod).
-      if (env.NODE_ENV !== 'production') console.log(`[dev] verify ${user.email}: ${url}`);
-      await sendAuthEmail('verify', user, url);
+      if (env.NODE_ENV !== 'production') console.log(`[dev] verify ${user.email}: ${url}`)
+      await sendAuthEmail('verify', user, url)
     },
   },
 
@@ -96,14 +96,14 @@ export const auth = betterAuth({
         // a verified email (Google) or verification-disabled dev → ACTIVE; an
         // adult awaiting email verification → PENDING (§3.2). Sync — no await.
         before: (user) => {
-          const active = user.emailVerified || !env.AUTH_REQUIRE_EMAIL_VERIFICATION;
+          const active = user.emailVerified || !env.AUTH_REQUIRE_EMAIL_VERIFICATION
           return Promise.resolve({
             data: {
               ...user,
               publicId: mintPublicId(),
               status: active ? 'ACTIVE' : 'PENDING',
             },
-          });
+          })
         },
         after: async (user) => {
           await writeAudit({
@@ -111,7 +111,7 @@ export const auth = betterAuth({
             actorUserId: user.id,
             targetType: 'user',
             targetId: user.id,
-          });
+          })
         },
       },
       update: {
@@ -125,7 +125,7 @@ export const auth = betterAuth({
             emailVerified: user.emailVerified,
             status: String(user.status ?? ''),
             managedByGuardian: Boolean(user.managedByGuardian),
-          });
+          })
         },
       },
     },
@@ -134,7 +134,7 @@ export const auth = betterAuth({
         after: async (session) => {
           // Keep the age tier fresh (auto CHILD→TEEN→ADULT), log the login (audit)
           // and record it on the activity stream (feeds the 360°, §3.8).
-          await refreshAccountType(session.userId);
+          await refreshAccountType(session.userId)
           await writeAudit({
             action: 'auth.login',
             actorUserId: session.userId,
@@ -142,10 +142,10 @@ export const auth = betterAuth({
             targetId: session.id,
             ipAddress: session.ipAddress ?? null,
             userAgent: session.userAgent ?? null,
-          });
-          await emitEvent(session.userId, 'auth.login');
+          })
+          await emitEvent(session.userId, 'auth.login')
           // Cap concurrent devices (remote config) — revoke oldest beyond the limit.
-          await enforceDeviceLimit(session.userId);
+          await enforceDeviceLimit(session.userId)
         },
       },
     },
@@ -169,12 +169,12 @@ export const auth = betterAuth({
     // deep-links back to the app scheme. Additive — web is unaffected.
     expo(),
   ],
-});
+})
 
-export type Auth = typeof auth;
+export type Auth = typeof auth
 /** The `{ user, session }` payload Better Auth returns from `getSession` (or null). */
-export type AuthSession = Awaited<ReturnType<typeof auth.api.getSession>>;
+export type AuthSession = Awaited<ReturnType<typeof auth.api.getSession>>
 /** The authenticated user (Better Auth core + admin plugin + Bingoo fields). */
-export type SessionUser = NonNullable<AuthSession>['user'];
+export type SessionUser = NonNullable<AuthSession>['user']
 /** The active session row (includes activeOrganizationId / activeTeamId). */
-export type SessionData = NonNullable<AuthSession>['session'];
+export type SessionData = NonNullable<AuthSession>['session']

@@ -1,10 +1,10 @@
-import { forwardRef, type HTMLAttributes } from 'react';
-import { cn } from './lib/cn';
+import { forwardRef, type HTMLAttributes } from 'react'
+import { cn } from './lib/cn'
 
 export type BadgeColor =
-  'neutral' | 'primary' | 'teal' | 'sunbeam' | 'coral' | 'success' | 'warning' | 'danger' | 'info';
+  'neutral' | 'primary' | 'teal' | 'sunbeam' | 'coral' | 'success' | 'warning' | 'danger' | 'info'
 
-export type BadgeTone = 'soft' | 'solid' | 'outline';
+export type BadgeTone = 'soft' | 'solid' | 'outline'
 
 const SOFT: Record<BadgeColor, string> = {
   neutral: 'bg-surface-muted text-foreground-muted',
@@ -16,7 +16,7 @@ const SOFT: Record<BadgeColor, string> = {
   warning: 'bg-warning-soft text-warning',
   danger: 'bg-danger-soft text-danger',
   info: 'bg-info-soft text-info',
-};
+}
 
 const SOLID: Record<BadgeColor, string> = {
   neutral: 'bg-foreground text-background',
@@ -28,7 +28,7 @@ const SOLID: Record<BadgeColor, string> = {
   warning: 'bg-warning text-warning-foreground',
   danger: 'bg-danger text-danger-foreground',
   info: 'bg-info text-info-foreground',
-};
+}
 
 const OUTLINE: Record<BadgeColor, string> = {
   neutral: 'border border-border-strong text-foreground-muted',
@@ -40,20 +40,20 @@ const OUTLINE: Record<BadgeColor, string> = {
   warning: 'border border-warning/50 text-warning',
   danger: 'border border-danger/40 text-danger',
   info: 'border border-info/40 text-info',
-};
+}
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  color?: BadgeColor;
-  tone?: BadgeTone;
-  size?: 'sm' | 'md';
-  dot?: boolean;
+  color?: BadgeColor
+  tone?: BadgeTone
+  size?: 'sm' | 'md'
+  dot?: boolean
 }
 
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   { className, color = 'neutral', tone = 'soft', size = 'md', dot, children, ...props },
   ref,
 ) {
-  const tones = { soft: SOFT, solid: SOLID, outline: OUTLINE }[tone];
+  const tones = { soft: SOFT, solid: SOLID, outline: OUTLINE }[tone]
   return (
     <span
       ref={ref}
@@ -68,5 +68,5 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       {dot && <span className="size-1.5 rounded-full bg-current" aria-hidden />}
       {children}
     </span>
-  );
-});
+  )
+})

@@ -1,14 +1,14 @@
 /** Fold thuần một bằng chứng LEARNER vào SkillState. SPEC §2 + §5 (DISPOSITION). */
 
-import type { BktParams, BetaParams, EloParams } from '../policy';
-import type { EvidenceInput } from '../contracts';
-import { betaPosterior } from '../mastery/beta';
-import { observe, type Observation, type SkillMastery } from '../mastery/observe';
+import type { BktParams, BetaParams, EloParams } from '../policy'
+import type { EvidenceInput } from '../contracts'
+import { betaPosterior } from '../mastery/beta'
+import { observe, type Observation, type SkillMastery } from '../mastery/observe'
 
 export interface FoldParams {
-  readonly bkt: BktParams;
-  readonly elo: EloParams;
-  readonly beta: BetaParams;
+  readonly bkt: BktParams
+  readonly elo: EloParams
+  readonly beta: BetaParams
 }
 
 /**
@@ -21,8 +21,8 @@ export function foldEvidence(
   ev: EvidenceInput,
   params: FoldParams,
 ): SkillMastery {
-  const outcome = ev.outcome ?? (ev.correct ? 1 : 0);
-  const correct = outcome >= 0.5;
+  const outcome = ev.outcome ?? (ev.correct ? 1 : 0)
+  const correct = outcome >= 0.5
 
   const obs: Observation = {
     skill: ev.skill,
@@ -31,18 +31,18 @@ export function foldEvidence(
     ...(ev.difficulty !== undefined ? { difficulty: ev.difficulty } : {}),
     ...(ev.atMs !== undefined ? { atMs: ev.atMs } : {}),
     ...(ev.kind !== undefined ? { kind: ev.kind } : {}),
-  };
+  }
 
-  const folded = observe(prior, obs, { bkt: params.bkt, elo: params.elo });
+  const folded = observe(prior, obs, { bkt: params.bkt, elo: params.elo })
 
   if (ev.kind === 'DISPOSITION') {
-    const mean = betaPosterior(folded.correct, folded.attempts - folded.correct, params.beta).mean;
-    return { ...folded, pKnown: mean };
+    const mean = betaPosterior(folded.correct, folded.attempts - folded.correct, params.beta).mean
+    return { ...folded, pKnown: mean }
   }
-  return folded;
+  return folded
 }
 
 /** SPEC §2 — lấy mẫu snapshot: lần đầu (attempts ≤ 1) rồi mỗi `sampleEvery` lần. */
 export function shouldSnapshot(attempts: number, sampleEvery: number): boolean {
-  return attempts <= 1 || attempts % sampleEvery === 0;
+  return attempts <= 1 || attempts % sampleEvery === 0
 }

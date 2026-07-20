@@ -1,9 +1,9 @@
-import { randomUUID } from 'node:crypto';
-import { db } from '@bingoo/db';
-import { deriveAccountType, mintPublicId, synthEmail } from '@bingoo/core';
-import { auth } from '../auth/auth';
-import { parseRoles } from '../auth/roles';
-import { resolveConsentConfig } from './config.repo';
+import { randomUUID } from 'node:crypto'
+import { db } from '@bingoo/db'
+import { deriveAccountType, mintPublicId, synthEmail } from '@bingoo/core'
+import { auth } from '../auth/auth'
+import { parseRoles } from '../auth/roles'
+import { resolveConsentConfig } from './config.repo'
 
 /**
  * Child + guardianship data access (§3.5, §3.6, §10). A child is minted entirely
@@ -15,26 +15,26 @@ import { resolveConsentConfig } from './config.repo';
  */
 
 export interface CreateChildInput {
-  guardianId: string;
-  name: string;
+  guardianId: string
+  name: string
   /** Already trimmed, lowercased and validated by the route. */
-  username: string;
+  username: string
   /** 6-digit PIN, validated by the route. */
-  pin: string;
-  dateOfBirth: Date;
-  country?: string | null;
-  gender?: string | null;
-  relationship?: string | null;
+  pin: string
+  dateOfBirth: Date
+  country?: string | null
+  gender?: string | null
+  relationship?: string | null
 }
 
 export async function createChild(input: CreateChildInput) {
-  const ctx = await auth.$context;
-  const publicId = mintPublicId();
-  const userId = ctx.generateId({ model: 'user' }) || randomUUID();
-  const accountId = ctx.generateId({ model: 'account' }) || randomUUID();
-  const hashedPin = await ctx.password.hash(input.pin);
-  const consentConfig = await resolveConsentConfig();
-  const accountType = deriveAccountType(input.dateOfBirth, input.country ?? null, consentConfig);
+  const ctx = await auth.$context
+  const publicId = mintPublicId()
+  const userId = ctx.generateId({ model: 'user' }) || randomUUID()
+  const accountId = ctx.generateId({ model: 'account' }) || randomUUID()
+  const hashedPin = await ctx.password.hash(input.pin)
+  const consentConfig = await resolveConsentConfig()
+  const accountType = deriveAccountType(input.dateOfBirth, input.country ?? null, consentConfig)
 
   return db.$transaction(async (tx) => {
     const child = await tx.user.create({
@@ -55,7 +55,7 @@ export async function createChild(input: CreateChildInput) {
         managedByGuardian: true,
         role: 'USER',
       },
-    });
+    })
 
     // Credential account: username lives on the user; the PIN is the password.
     await tx.account.create({
@@ -66,7 +66,7 @@ export async function createChild(input: CreateChildInput) {
         accountId: userId,
         password: hashedPin,
       },
-    });
+    })
 
     await tx.guardianship.create({
       data: {
@@ -77,23 +77,23 @@ export async function createChild(input: CreateChildInput) {
         consentAt: new Date(),
         consentBy: input.guardianId,
       },
-    });
+    })
 
     // Creating a child makes the creator a parent — add PARENT to their role set.
     const guardian = await tx.user.findUnique({
       where: { id: input.guardianId },
       select: { role: true },
-    });
-    const roles = parseRoles(guardian?.role);
+    })
+    const roles = parseRoles(guardian?.role)
     if (!roles.includes('PARENT')) {
       await tx.user.update({
         where: { id: input.guardianId },
         data: { role: [...roles, 'PARENT'].join(',') },
-      });
+      })
     }
 
-    return child;
-  });
+    return child
+  })
 }
 
 /** The children a guardian actively manages, newest first. */
@@ -118,12 +118,12 @@ export async function listChildren(guardianId: string) {
         },
       },
     },
-  });
+  })
   return links.map((link) => ({
     ...link.child,
     relationship: link.relationship,
     consentAt: link.consentAt,
-  }));
+  }))
 }
 
 /** True when `guardianId` actively guards `childId` — the authz check for any
@@ -132,16 +132,16 @@ export async function isGuardianOf(guardianId: string, childId: string): Promise
   const link = await db.guardianship.findUnique({
     where: { guardianId_childId: { guardianId, childId } },
     select: { status: true },
-  });
-  return link?.status === 'active';
+  })
+  return link?.status === 'active'
 }
 
 /** Replace a child's PIN (guardian-initiated credential management, §3.5). */
 export async function resetChildPin(childId: string, pin: string): Promise<void> {
-  const ctx = await auth.$context;
-  const hashed = await ctx.password.hash(pin);
+  const ctx = await auth.$context
+  const hashed = await ctx.password.hash(pin)
   await db.account.updateMany({
     where: { userId: childId, providerId: 'credential' },
     data: { password: hashed },
-  });
+  })
 }

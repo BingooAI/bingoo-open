@@ -1,23 +1,23 @@
-'use client';
+'use client'
 
-import type { ContentBlock } from '@bingoo/core';
-import { Minus, Plus } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
-import { ContentBlocks } from './content-blocks';
-import { cn } from './lib/cn';
+import type { ContentBlock } from '@bingoo/core'
+import { Minus, Plus } from 'lucide-react'
+import { useState, type ReactNode } from 'react'
+import { ContentBlocks } from './content-blocks'
+import { cn } from './lib/cn'
 
 export interface ReadingPaneProps {
   /** Render validated content blocks… */
-  blocks?: ContentBlock[];
+  blocks?: ContentBlock[]
   /** …or arbitrary children. */
-  children?: ReactNode;
+  children?: ReactNode
   /** Show the A− / A+ text-size control. */
-  showFontControl?: boolean;
-  fontControlLabels?: { smaller: string; larger: string };
-  className?: string;
+  showFontControl?: boolean
+  fontControlLabels?: { smaller: string; larger: string }
+  className?: string
 }
 
-const SIZES = ['text-base', 'text-lg', 'text-xl'] as const;
+const SIZES = ['text-base', 'text-lg', 'text-xl'] as const
 
 /**
  * A long-form reading container with comfortable measure + an optional text-size
@@ -31,7 +31,7 @@ export function ReadingPane({
   fontControlLabels,
   className,
 }: ReadingPaneProps) {
-  const [size, setSize] = useState(1);
+  const [size, setSize] = useState(1)
   return (
     <div className={cn('mx-auto w-full max-w-2xl', className)}>
       {showFontControl ? (
@@ -58,5 +58,5 @@ export function ReadingPane({
       ) : null}
       <div className={cn(SIZES[size])}>{blocks ? <ContentBlocks blocks={blocks} /> : children}</div>
     </div>
-  );
+  )
 }

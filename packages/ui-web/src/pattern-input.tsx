@@ -1,24 +1,24 @@
-'use client';
+'use client'
 
-import type { QuizItem } from '@bingoo/core';
-import { cn } from './lib/cn';
-import { stagger, tile } from './lib/interactive';
-import { useQuizText } from './quiz-locale';
+import type { QuizItem } from '@bingoo/core'
+import { cn } from './lib/cn'
+import { stagger, tile } from './lib/interactive'
+import { useQuizText } from './quiz-locale'
 
 export interface PatternInputProps {
   /** The shown lead-in of the pattern. */
-  sequence: QuizItem[];
+  sequence: QuizItem[]
   /** How many trailing slots to fill. */
-  blanks: number;
+  blanks: number
   /** Tappable choices. */
-  palette: QuizItem[];
+  palette: QuizItem[]
   /** Controlled fills: palette item ids, in slot order. */
-  picks: string[];
-  onChange: (picks: string[]) => void;
+  picks: string[]
+  onChange: (picks: string[]) => void
   /** After checking: per-slot correctness + the expected ids. */
-  reveal?: { positions: boolean[]; answer: string[] };
-  disabled?: boolean;
-  className?: string;
+  reveal?: { positions: boolean[]; answer: string[] }
+  disabled?: boolean
+  className?: string
 }
 
 const face = (item: QuizItem | undefined, t: ReturnType<typeof useQuizText>) =>
@@ -26,7 +26,7 @@ const face = (item: QuizItem | undefined, t: ReturnType<typeof useQuizText>) =>
     <span className="text-2xl">{item.emoji}</span>
   ) : (
     <span className="font-bold">{t(item?.label)}</span>
-  );
+  )
 
 /** Continue a repeating pattern: tap palette items to fill the trailing blanks. */
 export function PatternInput({
@@ -39,20 +39,20 @@ export function PatternInput({
   disabled,
   className,
 }: PatternInputProps) {
-  const t = useQuizText();
-  const locked = !!reveal || disabled;
-  const byId = new Map(palette.map((p) => [p.id, p]));
+  const t = useQuizText()
+  const locked = !!reveal || disabled
+  const byId = new Map(palette.map((p) => [p.id, p]))
 
   function tapPalette(id: string) {
-    if (locked || picks.length >= blanks) return;
-    onChange([...picks, id]);
+    if (locked || picks.length >= blanks) return
+    onChange([...picks, id])
   }
   function clearSlot(i: number) {
-    if (locked) return;
-    onChange(picks.filter((_, idx) => idx !== i));
+    if (locked) return
+    onChange(picks.filter((_, idx) => idx !== i))
   }
 
-  const cell = 'grid size-14 shrink-0 place-items-center';
+  const cell = 'grid size-14 shrink-0 place-items-center'
 
   return (
     <div className={cn('flex flex-col gap-4', className)}>
@@ -63,10 +63,10 @@ export function PatternInput({
           </span>
         ))}
         {Array.from({ length: blanks }, (_, i) => {
-          const id = picks[i];
-          const item = id ? byId.get(id) : undefined;
-          const ok = reveal?.positions[i];
-          const revealItem = reveal && !ok ? byId.get(reveal.answer[i]!) : undefined;
+          const id = picks[i]
+          const item = id ? byId.get(id) : undefined
+          const ok = reveal?.positions[i]
+          const revealItem = reveal && !ok ? byId.get(reveal.answer[i]!) : undefined
           return (
             <button
               key={`b${i}`}
@@ -75,8 +75,7 @@ export function PatternInput({
               onClick={() => clearSlot(i)}
               className={cn(
                 tile({
-                  state:
-                    ok === true ? 'correct' : ok === false ? 'wrong' : item ? 'selected' : 'idle',
+                  state: ok === true ? 'correct' : ok === false ? 'wrong' : item ? 'selected' : 'idle',
                   size: 'none',
                 }),
                 cell,
@@ -92,7 +91,7 @@ export function PatternInput({
                 <span className="text-foreground-subtle">?</span>
               )}
             </button>
-          );
+          )
         })}
       </div>
       <div className="flex flex-wrap gap-2">
@@ -114,5 +113,5 @@ export function PatternInput({
         ))}
       </div>
     </div>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-import type { LocalizedText, MediaSearchQuery } from '@bingoo/core';
-import { db } from '@bingoo/db';
-import type { MediaScope, Prisma } from '@bingoo/db';
+import type { LocalizedText, MediaSearchQuery } from '@bingoo/core'
+import { db } from '@bingoo/db'
+import type { MediaScope, Prisma } from '@bingoo/db'
 
 /**
  * Collections (docs/media-library-design.md §3.8) — virtual grouping (M4). A
@@ -10,13 +10,13 @@ import type { MediaScope, Prisma } from '@bingoo/db';
  */
 
 export interface CreateCollectionInput {
-  name: LocalizedText;
-  description?: LocalizedText;
-  scope?: MediaScope;
-  scopeId?: string | null;
-  isSmart?: boolean;
-  query?: MediaSearchQuery;
-  createdById?: string | null;
+  name: LocalizedText
+  description?: LocalizedText
+  scope?: MediaScope
+  scopeId?: string | null
+  isSmart?: boolean
+  query?: MediaSearchQuery
+  createdById?: string | null
 }
 
 export function createCollection(input: CreateCollectionInput) {
@@ -30,11 +30,11 @@ export function createCollection(input: CreateCollectionInput) {
       query: input.isSmart ? (input.query as Prisma.InputJsonValue) : undefined,
       createdById: input.createdById ?? null,
     },
-  });
+  })
 }
 
 export function getCollection(id: string) {
-  return db.collection.findUnique({ where: { id } });
+  return db.collection.findUnique({ where: { id } })
 }
 
 export function listCollections(scope?: MediaScope, scopeId?: string | null) {
@@ -44,7 +44,7 @@ export function listCollections(scope?: MediaScope, scopeId?: string | null) {
       ...(scopeId !== undefined ? { scopeId } : {}),
     },
     orderBy: { createdAt: 'desc' },
-  });
+  })
 }
 
 export async function addCollectionItem(
@@ -57,11 +57,11 @@ export async function addCollectionItem(
     where: { collectionId_assetId: { collectionId, assetId } },
     create: { collectionId, assetId, addedById, position },
     update: { position },
-  });
+  })
 }
 
 export function removeCollectionItem(collectionId: string, assetId: string) {
-  return db.collectionItem.deleteMany({ where: { collectionId, assetId } });
+  return db.collectionItem.deleteMany({ where: { collectionId, assetId } })
 }
 
 /** Asset ids of a manual collection, in curated order. */
@@ -70,6 +70,6 @@ export async function listCollectionItemIds(collectionId: string): Promise<strin
     where: { collectionId },
     orderBy: [{ position: 'asc' }, { addedAt: 'asc' }],
     select: { assetId: true },
-  });
-  return items.map((i) => i.assetId);
+  })
+  return items.map((i) => i.assetId)
 }

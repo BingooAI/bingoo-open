@@ -1,10 +1,10 @@
-import { setRequestLocale } from 'next-intl/server';
-import { PageHeader } from '@bingoo/ui-web';
-import { AlignmentView } from '@/components/authoring/alignment-view';
+import { setRequestLocale } from 'next-intl/server'
+import { PageHeader } from '@bingoo/ui-web'
+import { AlignmentView } from '@/components/authoring/alignment-view'
 
 export default async function AlignPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
+  const { locale } = await params
+  setRequestLocale(locale)
   return (
     <div className="space-y-6">
       <PageHeader
@@ -13,5 +13,5 @@ export default async function AlignPage({ params }: { params: Promise<{ locale: 
       />
       <AlignmentView />
     </div>
-  );
+  )
 }

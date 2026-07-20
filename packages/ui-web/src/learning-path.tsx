@@ -1,18 +1,18 @@
-import { Check, Lock } from 'lucide-react';
-import { Fragment, type ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { Check, Lock } from 'lucide-react'
+import { Fragment, type ReactNode } from 'react'
+import { cn } from './lib/cn'
 
-export type PathStatus = 'done' | 'current' | 'locked';
+export type PathStatus = 'done' | 'current' | 'locked'
 
 export interface PathNode {
-  id: string;
-  status: PathStatus;
-  label?: ReactNode;
+  id: string
+  status: PathStatus
+  label?: ReactNode
 }
 
 export interface LearningPathProps {
-  nodes: PathNode[];
-  className?: string;
+  nodes: PathNode[]
+  className?: string
 }
 
 /** Gamified lesson path — done / current / locked nodes with connectors. */
@@ -40,9 +40,7 @@ export function LearningPath({ nodes, className }: LearningPathProps) {
               )}
             </span>
             {n.label ? (
-              <span className="max-w-16 text-center text-[11px] text-foreground-muted">
-                {n.label}
-              </span>
+              <span className="max-w-16 text-center text-[11px] text-foreground-muted">{n.label}</span>
             ) : null}
           </div>
           {i < nodes.length - 1 ? (
@@ -56,5 +54,5 @@ export function LearningPath({ nodes, className }: LearningPathProps) {
         </Fragment>
       ))}
     </div>
-  );
+  )
 }

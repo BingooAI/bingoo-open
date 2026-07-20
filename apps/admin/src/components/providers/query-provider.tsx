@@ -1,8 +1,8 @@
-'use client';
+'use client'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState, type ReactNode } from 'react';
-import { ApiError } from '@/lib/api-client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useState, type ReactNode } from 'react'
+import { ApiError } from '@/lib/api-client'
 
 /**
  * TanStack Query provider for the admin app — the single data-fetching layer.
@@ -20,20 +20,20 @@ function makeClient() {
         refetchOnWindowFocus: false,
         retry: (failureCount, error) => {
           if (error instanceof ApiError) {
-            if (error.isAuth) return false;
-            if (error.status >= 400 && error.status < 500) return false;
+            if (error.isAuth) return false
+            if (error.status >= 400 && error.status < 500) return false
           }
-          return failureCount < 2;
+          return failureCount < 2
         },
       },
       mutations: {
         retry: false,
       },
     },
-  });
+  })
 }
 
 export function QueryProvider({ children }: { children: ReactNode }) {
-  const [client] = useState(makeClient);
-  return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+  const [client] = useState(makeClient)
+  return <QueryClientProvider client={client}>{children}</QueryClientProvider>
 }

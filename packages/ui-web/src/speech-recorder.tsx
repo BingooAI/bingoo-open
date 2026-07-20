@@ -1,40 +1,40 @@
-'use client';
+'use client'
 
-import { Mic, Pause, Play, RotateCcw, Square } from 'lucide-react';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { cn } from './lib/cn';
-import { tile } from './lib/interactive';
+import { Mic, Pause, Play, RotateCcw, Square } from 'lucide-react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { cn } from './lib/cn'
+import { tile } from './lib/interactive'
 
 export interface SpeechLabels {
-  readAloud?: ReactNode;
-  record: string;
-  stop: string;
-  rerecord: string;
-  play: string;
-  recording: string;
-  micDenied?: string;
+  readAloud?: ReactNode
+  record: string
+  stop: string
+  rerecord: string
+  play: string
+  recording: string
+  micDenied?: string
 }
 
 export interface SpeechRecorderProps {
   /** The passage/word to read aloud. */
-  text?: ReactNode;
+  text?: ReactNode
   /** Controlled: has a recording been made (from the response)? */
-  recorded: boolean;
-  durationMs?: number;
+  recorded: boolean
+  durationMs?: number
   /** Fired when a recording finishes. */
-  onRecorded: (durationMs: number) => void;
+  onRecorded: (durationMs: number) => void
   /** Fired to clear the recording (re-record). */
-  onReset?: () => void;
-  maxSeconds?: number;
-  labels: SpeechLabels;
-  disabled?: boolean;
-  className?: string;
+  onReset?: () => void
+  maxSeconds?: number
+  labels: SpeechLabels
+  disabled?: boolean
+  className?: string
 }
 
 const fmt = (ms: number) => {
-  const s = Math.floor(ms / 1000);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-};
+  const s = Math.floor(ms / 1000)
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+}
 
 /**
  * Read aloud / speaking — records the learner's voice with the browser's
@@ -53,75 +53,75 @@ export function SpeechRecorder({
   disabled,
   className,
 }: SpeechRecorderProps) {
-  const [status, setStatus] = useState<'idle' | 'recording'>('idle');
-  const [elapsed, setElapsed] = useState(0);
-  const [playing, setPlaying] = useState(false);
-  const [denied, setDenied] = useState(false);
-  const recRef = useRef<MediaRecorder | null>(null);
-  const chunks = useRef<BlobPart[]>([]);
-  const startedAt = useRef(0);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [url, setUrl] = useState<string | null>(null);
+  const [status, setStatus] = useState<'idle' | 'recording'>('idle')
+  const [elapsed, setElapsed] = useState(0)
+  const [playing, setPlaying] = useState(false)
+  const [denied, setDenied] = useState(false)
+  const recRef = useRef<MediaRecorder | null>(null)
+  const chunks = useRef<BlobPart[]>([])
+  const startedAt = useRef(0)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const [url, setUrl] = useState<string | null>(null)
 
   // Timer while recording (+ auto-stop at maxSeconds).
   useEffect(() => {
-    if (status !== 'recording') return;
+    if (status !== 'recording') return
     const id = window.setInterval(() => {
-      const ms = Date.now() - startedAt.current;
-      setElapsed(ms);
-      if (maxSeconds && ms >= maxSeconds * 1000) stop();
-    }, 200);
-    return () => window.clearInterval(id);
-  }, [status, maxSeconds]);
+      const ms = Date.now() - startedAt.current
+      setElapsed(ms)
+      if (maxSeconds && ms >= maxSeconds * 1000) stop()
+    }, 200)
+    return () => window.clearInterval(id)
+  }, [status, maxSeconds])
 
-  useEffect(() => () => void (url && URL.revokeObjectURL(url)), [url]);
+  useEffect(() => () => void (url && URL.revokeObjectURL(url)), [url])
 
   async function start() {
-    if (disabled) return;
+    if (disabled) return
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      chunks.current = [];
-      const rec = new MediaRecorder(stream);
-      rec.ondataavailable = (e) => e.data.size > 0 && chunks.current.push(e.data);
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      chunks.current = []
+      const rec = new MediaRecorder(stream)
+      rec.ondataavailable = (e) => e.data.size > 0 && chunks.current.push(e.data)
       rec.onstop = () => {
-        stream.getTracks().forEach((t) => t.stop());
-        const blob = new Blob(chunks.current, { type: rec.mimeType || 'audio/webm' });
+        stream.getTracks().forEach((t) => t.stop())
+        const blob = new Blob(chunks.current, { type: rec.mimeType || 'audio/webm' })
         setUrl((prev) => {
-          if (prev) URL.revokeObjectURL(prev);
-          return URL.createObjectURL(blob);
-        });
-        onRecorded(Date.now() - startedAt.current);
-      };
-      recRef.current = rec;
-      startedAt.current = Date.now();
-      setElapsed(0);
-      setDenied(false);
-      rec.start();
-      setStatus('recording');
+          if (prev) URL.revokeObjectURL(prev)
+          return URL.createObjectURL(blob)
+        })
+        onRecorded(Date.now() - startedAt.current)
+      }
+      recRef.current = rec
+      startedAt.current = Date.now()
+      setElapsed(0)
+      setDenied(false)
+      rec.start()
+      setStatus('recording')
     } catch {
-      setDenied(true);
+      setDenied(true)
     }
   }
   function stop() {
-    recRef.current?.stop();
-    recRef.current = null;
-    setStatus('idle');
+    recRef.current?.stop()
+    recRef.current = null
+    setStatus('idle')
   }
   function reset() {
-    if (url) URL.revokeObjectURL(url);
-    setUrl(null);
-    setElapsed(0);
-    setPlaying(false);
-    onReset?.();
+    if (url) URL.revokeObjectURL(url)
+    setUrl(null)
+    setElapsed(0)
+    setPlaying(false)
+    onReset?.()
   }
   function togglePlay() {
-    const el = audioRef.current;
-    if (!el) return;
-    if (playing) el.pause();
-    else void el.play();
+    const el = audioRef.current
+    if (!el) return
+    if (playing) el.pause()
+    else void el.play()
   }
 
-  const isRecording = status === 'recording';
+  const isRecording = status === 'recording'
 
   return (
     <div
@@ -131,9 +131,7 @@ export function SpeechRecorder({
       )}
     >
       {text ? <p className="text-center text-lg font-semibold text-foreground">{text}</p> : null}
-      {labels.readAloud ? (
-        <p className="text-sm text-foreground-muted">{labels.readAloud}</p>
-      ) : null}
+      {labels.readAloud ? <p className="text-sm text-foreground-muted">{labels.readAloud}</p> : null}
 
       {/* Timer / status */}
       <div className="flex items-center gap-2 text-sm font-semibold text-foreground-muted">
@@ -207,5 +205,5 @@ export function SpeechRecorder({
 
       {denied ? <p className="text-xs font-medium text-danger">{labels.micDenied}</p> : null}
     </div>
-  );
+  )
 }

@@ -4,81 +4,81 @@
  * on double-click, so the creator edits directly on the canvas (no side panel
  * needed). Every manipulation emits an op → the engine stays the source of truth.
  */
-'use client';
-import * as React from 'react';
-import { useRef, useState } from 'react';
-import type { RenderModel, ConnectorContent } from '@bingoo/explainer';
-import type { Aspect, Place, ThemeTokens } from '@bingoo/explainer';
-import { Stage } from '../../elements/Stage';
-import { GateHost } from '../../player/GateHost';
-import { HotspotEditor } from './HotspotEditor';
-import { useSnap, useStore, genId } from '../store/ctx';
-import { dragState } from './dragState';
+'use client'
+import * as React from 'react'
+import { useRef, useState } from 'react'
+import type { RenderModel, ConnectorContent } from '@bingoo/explainer'
+import type { Aspect, Place, ThemeTokens } from '@bingoo/explainer'
+import { Stage } from '../../elements/Stage'
+import { GateHost } from '../../player/GateHost'
+import { HotspotEditor } from './HotspotEditor'
+import { useSnap, useStore, genId } from '../store/ctx'
+import { dragState } from './dragState'
 
 export function PreviewStage({
   model,
   theme,
   aspect,
 }: {
-  model: RenderModel;
-  theme: ThemeTokens;
-  aspect: Aspect;
+  model: RenderModel
+  theme: ThemeTokens
+  aspect: Aspect
 }) {
-  const store = useStore();
-  const { doc, bundles, ui } = useSnap();
-  const { w: W, h: H } = model.canvas;
-  const scene = doc.scenes.find((s) => s.id === model.sceneId);
-  const svgRef = useRef<SVGSVGElement | null>(null);
+  const store = useStore()
+  const { doc, bundles, ui } = useSnap()
+  const { w: W, h: H } = model.canvas
+  const scene = doc.scenes.find((s) => s.id === model.sceneId)
+  const svgRef = useRef<SVGSVGElement | null>(null)
   const drag = useRef<{
-    id: string;
-    place?: Place;
-    mode: 'move' | 'resize' | 'rotate';
-    cx: number;
-    cy: number;
-    ox?: number;
-    oy?: number;
-  } | null>(null);
-  const [editing, setEditing] = useState<string | null>(null);
+    id: string
+    place?: Place
+    mode: 'move' | 'resize' | 'rotate'
+    cx: number
+    cy: number
+    ox?: number
+    oy?: number
+  } | null>(null)
+  const [editing, setEditing] = useState<string | null>(null)
   const [connLine, setConnLine] = useState<{
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-  } | null>(null);
-  const [connTarget, setConnTarget] = useState<string | null>(null);
+    x1: number
+    y1: number
+    x2: number
+    y2: number
+  } | null>(null)
+  const [connTarget, setConnTarget] = useState<string | null>(null)
 
   const elById = (id: string) =>
-    doc.scenes.find((s) => s.id === model.sceneId)?.elements.find((e) => e.id === id);
+    doc.scenes.find((s) => s.id === model.sceneId)?.elements.find((e) => e.id === id)
   const toLogical = (e: React.PointerEvent | React.MouseEvent) => {
-    const r = svgRef.current!.getBoundingClientRect();
-    return { x: ((e.clientX - r.left) / r.width) * W, y: ((e.clientY - r.top) / r.height) * H };
-  };
+    const r = svgRef.current!.getBoundingClientRect()
+    return { x: ((e.clientX - r.left) / r.width) * W, y: ((e.clientY - r.top) / r.height) * H }
+  }
   const hit = (x: number, y: number) => {
     for (let i = model.items.length - 1; i >= 0; i--) {
-      const it = model.items[i]!;
+      const it = model.items[i]!
       // connectors are lines — hit-test by distance to the segment, not the bbox,
       // so clicking empty space near a diagonal arrow doesn't select the arrow.
       if (it.type === 'connector') {
-        if (nearConnector(x, y, it.content as ConnectorContent)) return it.id;
-        continue;
+        if (nearConnector(x, y, it.content as ConnectorContent)) return it.id
+        continue
       }
-      const rc = it.rect;
-      if (x >= rc.x && x <= rc.x + rc.w && y >= rc.y && y <= rc.y + rc.h) return it.id;
+      const rc = it.rect
+      if (x >= rc.x && x <= rc.x + rc.w && y >= rc.y && y <= rc.y + rc.h) return it.id
     }
-    return null;
-  };
+    return null
+  }
 
   const onDown = (e: React.PointerEvent) => {
-    if (editing) return;
-    const p = toLogical(e);
-    const id = hit(p.x, p.y);
+    if (editing) return
+    const p = toLogical(e)
+    const id = hit(p.x, p.y)
     // "draw flow" mode: click one shape, then another → arrow between them
     if (ui.connecting) {
-      const el = id ? elById(id) : undefined;
+      const el = id ? elById(id) : undefined
       if (el && el.type !== 'connector') {
-        if (!ui.connectFrom) store.setUI({ connectFrom: id });
+        if (!ui.connectFrom) store.setUI({ connectFrom: id })
         else if (ui.connectFrom !== id) {
-          const cid = genId('conn');
+          const cid = genId('conn')
           store.dispatch({
             t: 'el.add',
             sceneId: model.sceneId,
@@ -90,22 +90,22 @@ export function PreviewStage({
               z: -1,
               style: { color: 'ink', weight: 'md' },
             },
-          });
-          store.setUI({ connectFrom: null, selection: cid }); // keep connecting → chain more
+          })
+          store.setUI({ connectFrom: null, selection: cid }) // keep connecting → chain more
         }
-      } else if (!id) store.setUI({ connectFrom: null }); // click empty → reset pick
-      return;
+      } else if (!id) store.setUI({ connectFrom: null }) // click empty → reset pick
+      return
     }
-    store.setUI({ selection: id });
-    if (!id) return;
+    store.setUI({ selection: id })
+    if (!id) return
     try {
-      (e.target as Element).setPointerCapture?.(e.pointerId);
+      ;(e.target as Element).setPointerCapture?.(e.pointerId)
     } catch {
       /* ignore */
     }
-    const item = model.items.find((it) => it.id === id)!;
+    const item = model.items.find((it) => it.id === id)!
     const cx = item.rect.x + item.rect.w / 2,
-      cy = item.rect.y + item.rect.h / 2;
+      cy = item.rect.y + item.rect.h / 2
     drag.current = {
       id,
       place: elById(id)?.place,
@@ -114,23 +114,23 @@ export function PreviewStage({
       cy,
       ox: cx - p.x,
       oy: cy - p.y,
-    };
-  };
+    }
+  }
   const onMove = (e: React.PointerEvent) => {
-    const d = drag.current;
-    if (!d) return;
-    const p = toLogical(e);
-    const item = model.items.find((it) => it.id === d.id);
-    if (!item) return;
+    const d = drag.current
+    if (!d) return
+    const p = toLogical(e)
+    const item = model.items.find((it) => it.id === d.id)
+    if (!item) return
     // A slot-positioned element ignores `place`; dragging it did nothing. Detach
     // it from its slot on first drag so the free placement takes effect. One
     // dispatch, coalesced under the same drag key, so it's a single undo.
-    const el = elById(d.id);
+    const el = elById(d.id)
     if (el?.region) {
       store.dispatch(
         { t: 'el.setRegion', sceneId: model.sceneId, elId: d.id, region: undefined },
         `drag:${d.id}`,
-      );
+      )
     }
     if (d.mode === 'move') {
       const base: Place = d.place ?? {
@@ -139,7 +139,7 @@ export function PreviewStage({
         y: 0.5,
         size: item.rect.h / H,
         w: item.rect.w / W,
-      };
+      }
       // free 2-axis drag for every object (grab offset keeps the cursor on the
       // same spot). Ground-anchored props become free once you move them, so
       // nothing is locked to the horizontal any more.
@@ -156,7 +156,7 @@ export function PreviewStage({
           },
         },
         `drag:${d.id}`,
-      );
+      )
     } else if (d.mode === 'resize') {
       const base: Place = d.place ?? {
         at: 'free',
@@ -164,7 +164,7 @@ export function PreviewStage({
         y: d.cy / H,
         size: item.rect.h / H,
         w: item.rect.w / W,
-      };
+      }
       store.dispatch(
         {
           t: 'el.setPlace',
@@ -177,12 +177,12 @@ export function PreviewStage({
           },
         },
         `resize:${d.id}`,
-      );
+      )
     } else if (d.mode === 'rotate') {
-      const base: Place | undefined = d.place;
+      const base: Place | undefined = d.place
       if (base) {
-        let deg = (Math.atan2(p.x - d.cx, -(p.y - (item.rect.y + item.rect.h))) * 180) / Math.PI;
-        if (Math.abs(deg % 45) < 4) deg = Math.round(deg / 45) * 45;
+        let deg = (Math.atan2(p.x - d.cx, -(p.y - (item.rect.y + item.rect.h))) * 180) / Math.PI
+        if (Math.abs(deg % 45) < 4) deg = Math.round(deg / 45) * 45
         store.dispatch(
           {
             t: 'el.setPlace',
@@ -191,30 +191,30 @@ export function PreviewStage({
             place: { ...base, rotate: Math.round(deg) },
           },
           `rot:${d.id}`,
-        );
+        )
       }
     }
-  };
+  }
   const onUp = () => {
-    if (drag.current) store.endCoalesce();
-    drag.current = null;
-  };
+    if (drag.current) store.endCoalesce()
+    drag.current = null
+  }
 
   const onDbl = (e: React.MouseEvent) => {
-    const p = toLogical(e);
-    const id = hit(p.x, p.y);
-    const el = id ? elById(id) : undefined;
+    const p = toLogical(e)
+    const id = hit(p.x, p.y)
+    const el = id ? elById(id) : undefined
     // double-click a TEXT or a SHAPE → edit its label inline (shapes render the
     // label centered, from bundle.strings[id]); double-click a stick → its label too
     if (el && (el.type === 'text' || el.type === 'shape')) {
-      store.setUI({ selection: id });
-      setEditing(id!);
+      store.setUI({ selection: id })
+      setEditing(id!)
     } else if (el && el.type === 'image') {
       // double-click a picture → open the media library picker (the button in
       // the inspector still works; this is the expected gesture)
-      store.setUI({ selection: id, pickImageFor: id });
+      store.setUI({ selection: id, pickImageFor: id })
     }
-  };
+  }
 
   const startHandle = (
     e: React.PointerEvent,
@@ -222,9 +222,9 @@ export function PreviewStage({
     mode: 'resize' | 'rotate',
     item: RenderModel['items'][number],
   ) => {
-    e.stopPropagation();
+    e.stopPropagation()
     try {
-      (e.target as Element).setPointerCapture?.(e.pointerId);
+      ;(e.target as Element).setPointerCapture?.(e.pointerId)
     } catch {
       /* ignore */
     }
@@ -234,34 +234,34 @@ export function PreviewStage({
       mode,
       cx: item.rect.x + item.rect.w / 2,
       cy: item.rect.y + item.rect.h / 2,
-    };
-  };
+    }
+  }
   // drag from an anchor dot on the selected shape to ANOTHER shape → connector.
   // Window listeners so it survives re-render (same reliable pattern elsewhere).
   const onConnDown = (e: React.PointerEvent, fromId: string, sx: number, sy: number) => {
-    e.stopPropagation();
-    setConnLine({ x1: sx, y1: sy, x2: sx, y2: sy });
+    e.stopPropagation()
+    setConnLine({ x1: sx, y1: sy, x2: sx, y2: sy })
     const toLog = (ev: PointerEvent) => {
-      const r = svgRef.current!.getBoundingClientRect();
-      return { x: ((ev.clientX - r.left) / r.width) * W, y: ((ev.clientY - r.top) / r.height) * H };
-    };
+      const r = svgRef.current!.getBoundingClientRect()
+      return { x: ((ev.clientX - r.left) / r.width) * W, y: ((ev.clientY - r.top) / r.height) * H }
+    }
     const mv = (ev: PointerEvent) => {
-      const p = toLog(ev);
-      const tid = hit(p.x, p.y);
-      const tgt = tid && tid !== fromId ? elById(tid) : undefined;
-      setConnTarget(tgt && tgt.type !== 'connector' ? tid : null);
-      setConnLine({ x1: sx, y1: sy, x2: p.x, y2: p.y });
-    };
+      const p = toLog(ev)
+      const tid = hit(p.x, p.y)
+      const tgt = tid && tid !== fromId ? elById(tid) : undefined
+      setConnTarget(tgt && tgt.type !== 'connector' ? tid : null)
+      setConnLine({ x1: sx, y1: sy, x2: p.x, y2: p.y })
+    }
     const up = (ev: PointerEvent) => {
-      window.removeEventListener('pointermove', mv);
-      window.removeEventListener('pointerup', up);
-      setConnLine(null);
-      setConnTarget(null);
-      const p = toLog(ev);
-      const targetId = hit(p.x, p.y);
-      const target = targetId ? elById(targetId) : undefined;
+      window.removeEventListener('pointermove', mv)
+      window.removeEventListener('pointerup', up)
+      setConnLine(null)
+      setConnTarget(null)
+      const p = toLog(ev)
+      const targetId = hit(p.x, p.y)
+      const target = targetId ? elById(targetId) : undefined
       if (targetId && targetId !== fromId && target && target.type !== 'connector') {
-        const cid = genId('conn');
+        const cid = genId('conn')
         store.dispatch({
           t: 'el.add',
           sceneId: model.sceneId,
@@ -273,29 +273,24 @@ export function PreviewStage({
             z: -1,
             style: { color: 'ink', weight: 'md' },
           },
-        });
-        store.setUI({ selection: cid });
+        })
+        store.setUI({ selection: cid })
       }
-    };
-    window.addEventListener('pointermove', mv);
-    window.addEventListener('pointerup', up);
-  };
+    }
+    window.addEventListener('pointermove', mv)
+    window.addEventListener('pointerup', up)
+  }
   // drag the connector's midpoint handle to bend it (author bend = offset of the
   // control point from the chord midpoint). Follows the shapes when they move.
-  const onConnBend = (
-    e: React.PointerEvent,
-    elId: string,
-    chordMidX: number,
-    chordMidY: number,
-  ) => {
-    e.stopPropagation();
+  const onConnBend = (e: React.PointerEvent, elId: string, chordMidX: number, chordMidY: number) => {
+    e.stopPropagation()
     const toLog = (ev: PointerEvent) => {
-      const r = svgRef.current!.getBoundingClientRect();
-      return { x: ((ev.clientX - r.left) / r.width) * W, y: ((ev.clientY - r.top) / r.height) * H };
-    };
+      const r = svgRef.current!.getBoundingClientRect()
+      return { x: ((ev.clientX - r.left) / r.width) * W, y: ((ev.clientY - r.top) / r.height) * H }
+    }
     const mv = (ev: PointerEvent) => {
-      const p = toLog(ev);
-      const cur = (elById(elId)?.content ?? {}) as Record<string, unknown>;
+      const p = toLog(ev)
+      const cur = (elById(elId)?.content ?? {}) as Record<string, unknown>
       store.dispatch(
         {
           t: 'el.setContent',
@@ -308,44 +303,43 @@ export function PreviewStage({
           },
         },
         `bend:${elId}`,
-      );
-    };
+      )
+    }
     const up = () => {
-      window.removeEventListener('pointermove', mv);
-      window.removeEventListener('pointerup', up);
-      store.endCoalesce();
-    };
-    window.addEventListener('pointermove', mv);
-    window.addEventListener('pointerup', up);
-  };
+      window.removeEventListener('pointermove', mv)
+      window.removeEventListener('pointerup', up)
+      store.endCoalesce()
+    }
+    window.addEventListener('pointermove', mv)
+    window.addEventListener('pointerup', up)
+  }
 
   // drop a dragged media tile onto the canvas → add it at the drop point
   const onDragOver = (e: React.DragEvent) => {
     if (dragState.make) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'copy';
+      e.preventDefault()
+      e.dataTransfer.dropEffect = 'copy'
     }
-  };
+  }
   const onDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const mk = dragState.make;
-    dragState.make = null;
-    if (!mk || !svgRef.current) return;
-    const r = svgRef.current.getBoundingClientRect();
+    e.preventDefault()
+    const mk = dragState.make
+    dragState.make = null
+    if (!mk || !svgRef.current) return
+    const r = svgRef.current.getBoundingClientRect()
     const x = cl((e.clientX - r.left) / r.width),
-      y = cl((e.clientY - r.top) / r.height);
-    const id = genId('el');
-    const { el, text } = mk(id);
-    const place: Place = { ...(el.place ?? { at: 'free', size: 0.2 }), at: 'free', x, y };
-    store.dispatch({ t: 'el.add', sceneId: model.sceneId, element: { ...el, place } });
-    if (text !== undefined)
-      store.dispatch({ t: 'str.set', locale: ui.activeLocale, elId: id, text });
-    store.setUI({ selection: id });
-  };
+      y = cl((e.clientY - r.top) / r.height)
+    const id = genId('el')
+    const { el, text } = mk(id)
+    const place: Place = { ...(el.place ?? { at: 'free', size: 0.2 }), at: 'free', x, y }
+    store.dispatch({ t: 'el.add', sceneId: model.sceneId, element: { ...el, place } })
+    if (text !== undefined) store.dispatch({ t: 'str.set', locale: ui.activeLocale, elId: id, text })
+    store.setUI({ selection: id })
+  }
 
-  const sel = model.items.find((it) => it.id === ui.selection);
-  const editEl = editing ? model.items.find((it) => it.id === editing) : undefined;
-  const editVal = editing ? (bundles[ui.activeLocale]?.strings[editing] ?? '') : '';
+  const sel = model.items.find((it) => it.id === ui.selection)
+  const editEl = editing ? model.items.find((it) => it.id === editing) : undefined
+  const editVal = editing ? (bundles[ui.activeLocale]?.strings[editing] ?? '') : ''
 
   return (
     <div
@@ -367,8 +361,7 @@ export function PreviewStage({
       )}
       {ui.connecting && (
         <div className="cc-connect-bar">
-          🔗 {ui.connectFrom ? 'Bấm hình thứ HAI để nối' : 'Bấm hình thứ NHẤT'} · bấm nền trống để
-          bỏ chọn
+          🔗 {ui.connectFrom ? 'Bấm hình thứ HAI để nối' : 'Bấm hình thứ NHẤT'} · bấm nền trống để bỏ chọn
         </div>
       )}
       <svg
@@ -385,7 +378,7 @@ export function PreviewStage({
         {ui.connecting &&
           ui.connectFrom &&
           (() => {
-            const f = model.items.find((it) => it.id === ui.connectFrom);
+            const f = model.items.find((it) => it.id === ui.connectFrom)
             return f ? (
               <rect
                 x={f.rect.x - 5}
@@ -398,18 +391,18 @@ export function PreviewStage({
                 strokeWidth={4}
                 strokeDasharray="9 6"
               />
-            ) : null;
+            ) : null
           })()}
         {sel &&
           !editing &&
           !ui.connecting &&
           sel.type === 'connector' &&
           (() => {
-            const c = sel.content as ConnectorContent;
+            const c = sel.content as ConnectorContent
             const mx = 0.25 * c.x1 + 0.5 * c.cx + 0.25 * c.x2,
-              my = 0.25 * c.y1 + 0.5 * c.cy + 0.25 * c.y2;
+              my = 0.25 * c.y1 + 0.5 * c.cy + 0.25 * c.y2
             const chordMidX = (c.x1 + c.x2) / 2,
-              chordMidY = (c.y1 + c.y2) / 2;
+              chordMidY = (c.y1 + c.y2) / 2
             return (
               <g>
                 <path
@@ -434,7 +427,7 @@ export function PreviewStage({
                   <title>Kéo để uốn cong</title>
                 </circle>
               </g>
-            );
+            )
           })()}
         {sel && !editing && !ui.connecting && sel.type !== 'connector' && (
           <g>
@@ -515,14 +508,14 @@ export function PreviewStage({
         )}
         {connTarget &&
           (() => {
-            const t = model.items.find((it) => it.id === connTarget);
-            if (!t) return null;
+            const t = model.items.find((it) => it.id === connTarget)
+            if (!t) return null
             const dots: [number, number][] = [
               [t.rect.x + t.rect.w / 2, t.rect.y],
               [t.rect.x + t.rect.w, t.rect.y + t.rect.h / 2],
               [t.rect.x + t.rect.w / 2, t.rect.y + t.rect.h],
               [t.rect.x, t.rect.y + t.rect.h / 2],
-            ];
+            ]
             return (
               <g pointerEvents="none">
                 <rect
@@ -537,18 +530,10 @@ export function PreviewStage({
                   strokeDasharray="9 6"
                 />
                 {dots.map(([dx, dy], i) => (
-                  <circle
-                    key={i}
-                    cx={dx}
-                    cy={dy}
-                    r={9}
-                    fill="#22c55e"
-                    stroke="#fff"
-                    strokeWidth={2.5}
-                  />
+                  <circle key={i} cx={dx} cy={dy} r={9} fill="#22c55e" stroke="#fff" strokeWidth={2.5} />
                 ))}
               </g>
-            );
+            )
           })()}
         {connLine && (
           <g pointerEvents="none">
@@ -594,13 +579,13 @@ export function PreviewStage({
             )
           }
           onBlur={() => {
-            store.endCoalesce();
-            setEditing(null);
+            store.endCoalesce()
+            setEditing(null)
           }}
           onKeyDown={(e) => {
             if (e.key === 'Escape' || (e.key === 'Enter' && !e.shiftKey)) {
-              e.preventDefault();
-              (e.target as HTMLTextAreaElement).blur();
+              e.preventDefault()
+              ;(e.target as HTMLTextAreaElement).blur()
             }
           }}
           style={{
@@ -613,36 +598,36 @@ export function PreviewStage({
         />
       )}
     </div>
-  );
+  )
 }
 
-const cl = (v: number, lo = 0, hi = 1) => (v < lo ? lo : v > hi ? hi : v);
+const cl = (v: number, lo = 0, hi = 1) => (v < lo ? lo : v > hi ? hi : v)
 
 /** true if (px,py) is within ~16px of the connector's quadratic curve. */
 function nearConnector(px: number, py: number, c: ConnectorContent): boolean {
-  const TOL = 16;
+  const TOL = 16
   let prevx = c.x1,
-    prevy = c.y1;
+    prevy = c.y1
   for (let i = 1; i <= 18; i++) {
     const t = i / 18,
-      mt = 1 - t;
-    const x = mt * mt * c.x1 + 2 * mt * t * c.cx + t * t * c.x2;
-    const y = mt * mt * c.y1 + 2 * mt * t * c.cy + t * t * c.y2;
-    if (distToSeg(px, py, prevx, prevy, x, y) <= TOL) return true;
-    prevx = x;
-    prevy = y;
+      mt = 1 - t
+    const x = mt * mt * c.x1 + 2 * mt * t * c.cx + t * t * c.x2
+    const y = mt * mt * c.y1 + 2 * mt * t * c.cy + t * t * c.y2
+    if (distToSeg(px, py, prevx, prevy, x, y) <= TOL) return true
+    prevx = x
+    prevy = y
   }
-  return false;
+  return false
 }
 
 /** distance from point (px,py) to segment (ax,ay)-(bx,by), in canvas units. */
 function distToSeg(px: number, py: number, ax: number, ay: number, bx: number, by: number): number {
   const dx = bx - ax,
-    dy = by - ay;
-  const len2 = dx * dx + dy * dy || 1;
-  let t = ((px - ax) * dx + (py - ay) * dy) / len2;
-  t = t < 0 ? 0 : t > 1 ? 1 : t;
+    dy = by - ay
+  const len2 = dx * dx + dy * dy || 1
+  let t = ((px - ax) * dx + (py - ay) * dy) / len2
+  t = t < 0 ? 0 : t > 1 ? 1 : t
   const cx = ax + t * dx,
-    cy = ay + t * dy;
-  return Math.hypot(px - cx, py - cy);
+    cy = ay + t * dy
+  return Math.hypot(px - cx, py - cy)
 }

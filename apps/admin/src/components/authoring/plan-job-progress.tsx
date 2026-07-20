@@ -1,10 +1,10 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { Button } from '@bingoo/ui-web';
-import { AlertTriangle, Ban, X } from 'lucide-react';
-import type { PlanJobDto } from '@/lib/authoring-queries';
+import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { Button } from '@bingoo/ui-web'
+import { AlertTriangle, Ban, X } from 'lucide-react'
+import type { PlanJobDto } from '@/lib/authoring-queries'
 
 /**
  * THANH TIẾN TRÌNH + kết quả cho job SINH kế hoạch (chạy nền ~2 phút).
@@ -18,22 +18,22 @@ export function PlanJobProgress({
   onCancel,
   canceling,
 }: {
-  job: PlanJobDto | undefined;
-  onCancel?: () => void;
-  canceling?: boolean;
+  job: PlanJobDto | undefined
+  onCancel?: () => void
+  canceling?: boolean
 }) {
-  const t = useTranslations('admin.authoring');
-  const running = job?.state === 'running';
+  const t = useTranslations('admin.authoring')
+  const running = job?.state === 'running'
 
   // Nhịp lại mỗi 0.5s để thanh tiến trình + đồng hồ trôi mượt trong khi chờ.
-  const [, tick] = useState(0);
+  const [, tick] = useState(0)
   useEffect(() => {
-    if (!running) return;
-    const t = setInterval(() => tick((n) => n + 1), 500);
-    return () => clearInterval(t);
-  }, [running]);
+    if (!running) return
+    const t = setInterval(() => tick((n) => n + 1), 500)
+    return () => clearInterval(t)
+  }, [running])
 
-  if (!job || job.state === 'idle' || job.state === 'done') return null;
+  if (!job || job.state === 'idle' || job.state === 'done') return null
 
   if (job.state === 'error') {
     return (
@@ -43,7 +43,7 @@ export function PlanJobProgress({
           <b>{t('jobFailed')}</b> {job.error ?? ''}
         </span>
       </div>
-    );
+    )
   }
 
   if (job.state === 'cancelled') {
@@ -51,15 +51,15 @@ export function PlanJobProgress({
       <div className="mt-3 flex items-center gap-2 rounded-lg border border-border bg-surface-muted/40 p-2.5 text-xs text-foreground-muted">
         <Ban className="size-3.5 shrink-0" /> {t('jobCancelled')}
       </div>
-    );
+    )
   }
 
   // running — progress theo elapsed/eta (chặn ở 95% để không "đầy" trước khi thật xong).
-  const elapsed = job.startedAt ? Math.max(0, Date.now() - job.startedAt) : 0;
-  const etaMs = job.etaMs && job.etaMs > 0 ? job.etaMs : 120_000;
-  const pct = Math.min(95, Math.round((elapsed / etaMs) * 100));
-  const sec = Math.round(elapsed / 1000);
-  const etaSec = Math.round(etaMs / 1000);
+  const elapsed = job.startedAt ? Math.max(0, Date.now() - job.startedAt) : 0
+  const etaMs = job.etaMs && job.etaMs > 0 ? job.etaMs : 120_000
+  const pct = Math.min(95, Math.round((elapsed / etaMs) * 100))
+  const sec = Math.round(elapsed / 1000)
+  const etaSec = Math.round(etaMs / 1000)
 
   return (
     <div className="mt-3 rounded-lg border border-primary/30 bg-primary-soft/5 p-2.5">
@@ -88,5 +88,5 @@ export function PlanJobProgress({
         ) : null}
       </div>
     </div>
-  );
+  )
 }

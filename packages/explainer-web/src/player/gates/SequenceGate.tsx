@@ -4,45 +4,45 @@
  * array of option ids). This is the kind of graded interaction a flat video
  * fundamentally can't do — the core differentiator (spec §1, §11).
  */
-'use client';
-import * as React from 'react';
-import { useState } from 'react';
-import type { GateSpec } from '@bingoo/explainer';
+'use client'
+import * as React from 'react'
+import { useState } from 'react'
+import type { GateSpec } from '@bingoo/explainer'
 
 export function SequenceGate({
   gate,
   onPass,
   onSkip,
 }: {
-  gate: GateSpec;
-  onPass: () => void;
-  onSkip?: () => void;
+  gate: GateSpec
+  onPass: () => void
+  onSkip?: () => void
 }) {
-  const options = gate.options ?? [];
-  const answer = (Array.isArray(gate.answer) ? gate.answer : [gate.answer]) as string[];
-  const [order, setOrder] = useState<string[]>([]);
-  const [status, setStatus] = useState<'idle' | 'correct' | 'wrong'>('idle');
+  const options = gate.options ?? []
+  const answer = (Array.isArray(gate.answer) ? gate.answer : [gate.answer]) as string[]
+  const [order, setOrder] = useState<string[]>([])
+  const [status, setStatus] = useState<'idle' | 'correct' | 'wrong'>('idle')
 
-  const remaining = options.filter((o) => !order.includes(o.id));
+  const remaining = options.filter((o) => !order.includes(o.id))
 
   function pick(id: string) {
-    if (status === 'correct') return;
-    const next = [...order, id];
-    setStatus('idle');
-    setOrder(next);
-    if (next.length === options.length) grade(next);
+    if (status === 'correct') return
+    const next = [...order, id]
+    setStatus('idle')
+    setOrder(next)
+    if (next.length === options.length) grade(next)
   }
   function reset() {
-    setOrder([]);
-    setStatus('idle');
+    setOrder([])
+    setStatus('idle')
   }
   function grade(seq: string[]) {
-    const ok = seq.length === answer.length && seq.every((id, i) => id === answer[i]);
+    const ok = seq.length === answer.length && seq.every((id, i) => id === answer[i])
     if (ok) {
-      setStatus('correct');
-      window.setTimeout(onPass, 1000);
+      setStatus('correct')
+      window.setTimeout(onPass, 1000)
     } else {
-      setStatus('wrong');
+      setStatus('wrong')
     }
   }
 
@@ -54,14 +54,14 @@ export function SequenceGate({
 
         <div className={`seq-slots ${status}`}>
           {options.map((_, i) => {
-            const id = order[i];
-            const opt = options.find((o) => o.id === id);
+            const id = order[i]
+            const opt = options.find((o) => o.id === id)
             return (
               <div key={i} className={`seq-slot ${id ? 'filled' : ''}`}>
                 <span className="seq-num">{i + 1}</span>
                 {opt ? opt.label : '…'}
               </div>
-            );
+            )
           })}
         </div>
 
@@ -96,5 +96,5 @@ export function SequenceGate({
         )}
       </div>
     </div>
-  );
+  )
 }

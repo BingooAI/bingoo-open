@@ -1,30 +1,30 @@
-'use client';
+'use client'
 
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { cn } from './lib/cn';
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { cn } from './lib/cn'
 
 export interface PaginationProps {
-  page: number;
-  total: number;
-  onChange: (page: number) => void;
+  page: number
+  total: number
+  onChange: (page: number) => void
   /** Pages shown either side of the current page. */
-  siblingCount?: number;
-  ariaLabel?: string;
-  prevLabel?: string;
-  nextLabel?: string;
+  siblingCount?: number
+  ariaLabel?: string
+  prevLabel?: string
+  nextLabel?: string
 }
 
 function pageList(page: number, total: number, siblings: number): (number | 'gap')[] {
-  const out: (number | 'gap')[] = [];
-  const push = (n: number | 'gap') => out.push(n);
-  const start = Math.max(2, page - siblings);
-  const end = Math.min(total - 1, page + siblings);
-  push(1);
-  if (start > 2) push('gap');
-  for (let i = start; i <= end; i += 1) push(i);
-  if (end < total - 1) push('gap');
-  if (total > 1) push(total);
-  return out;
+  const out: (number | 'gap')[] = []
+  const push = (n: number | 'gap') => out.push(n)
+  const start = Math.max(2, page - siblings)
+  const end = Math.min(total - 1, page + siblings)
+  push(1)
+  if (start > 2) push('gap')
+  for (let i = start; i <= end; i += 1) push(i)
+  if (end < total - 1) push('gap')
+  if (total > 1) push(total)
+  return out
 }
 
 /** Accessible pager — prev/next + numbered pages with ellipsis. */
@@ -38,7 +38,7 @@ export function Pagination({
   nextLabel = 'Next',
 }: PaginationProps) {
   const cell =
-    'grid size-9 place-items-center rounded-xl text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40 disabled:cursor-default';
+    'grid size-9 place-items-center rounded-xl text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40 disabled:cursor-default'
   return (
     <nav aria-label={ariaLabel}>
       <ul className="flex items-center gap-1">
@@ -90,5 +90,5 @@ export function Pagination({
         </li>
       </ul>
     </nav>
-  );
+  )
 }

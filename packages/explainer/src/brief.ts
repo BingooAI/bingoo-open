@@ -21,12 +21,12 @@
  * Pure TS + zod only. No platform imports (this file ships with the engine
  * package when the studio is embedded in a host app).
  */
-import { z } from 'zod';
+import { z } from 'zod'
 
 /* ------------------------------------------------------------------ schema */
 
-export const AudienceStage = z.enum(['preschool', 'primary', 'middle', 'high', 'adult']);
-export type AudienceStage = z.infer<typeof AudienceStage>;
+export const AudienceStage = z.enum(['preschool', 'primary', 'middle', 'high', 'adult'])
+export type AudienceStage = z.infer<typeof AudienceStage>
 
 export const Objective = z.object({
   id: z.string().min(1),
@@ -41,8 +41,8 @@ export const Objective = z.object({
    *  these skills and REUSES them verbatim in the gate — instead of authoring a
    *  fresh, unmoderated question. Optional: upstream supplies them when known. */
   skills: z.array(z.string()).default([]),
-});
-export type Objective = z.infer<typeof Objective>;
+})
+export type Objective = z.infer<typeof Objective>
 
 export const SourceMaterial = z.object({
   id: z.string().min(1),
@@ -51,8 +51,8 @@ export const SourceMaterial = z.object({
   /** The material body. For kind:"url" this is the FETCHED text — the studio
    *  never fetches; the upstream engine resolves URLs before feeding. */
   content: z.string().min(1),
-});
-export type SourceMaterial = z.infer<typeof SourceMaterial>;
+})
+export type SourceMaterial = z.infer<typeof SourceMaterial>
 
 export const BriefAsset = z.object({
   id: z.string().min(1),
@@ -63,8 +63,8 @@ export const BriefAsset = z.object({
   label: z.string().min(1),
   /** Optional routing hints ("animal", "phonics:a", "money:vnd"…). */
   tags: z.array(z.string()).default([]),
-});
-export type BriefAsset = z.infer<typeof BriefAsset>;
+})
+export type BriefAsset = z.infer<typeof BriefAsset>
 
 export const VerifiedFact = z.object({
   id: z.string().min(1),
@@ -74,8 +74,8 @@ export const VerifiedFact = z.object({
   value: z.union([z.string(), z.number()]).optional(),
   /** Upstream verification note ("solver", "curriculum p.14") — provenance only. */
   verifiedBy: z.string().optional(),
-});
-export type VerifiedFact = z.infer<typeof VerifiedFact>;
+})
+export type VerifiedFact = z.infer<typeof VerifiedFact>
 
 export const LessonBrief = z
   .object({
@@ -142,33 +142,33 @@ export const LessonBrief = z
         code: 'custom',
         path: ['source', 'materials'],
         message: 'grounding "strict" requires at least one source material',
-      });
+      })
     }
-    const ids = new Set<string>();
+    const ids = new Set<string>()
     for (const o of b.objectives) {
       if (ids.has(o.id)) {
         ctx.addIssue({
           code: 'custom',
           path: ['objectives'],
           message: `duplicate objective id "${o.id}"`,
-        });
+        })
       }
-      ids.add(o.id);
+      ids.add(o.id)
     }
-  });
-export type LessonBrief = z.infer<typeof LessonBrief>;
+  })
+export type LessonBrief = z.infer<typeof LessonBrief>
 
 /** Boundary API: never throws. Invalid input → structured issues for the caller
  *  (the upstream engine) to fix — the studio does not repair briefs. */
 export type BriefParse =
-  { ok: true; brief: LessonBrief } | { ok: false; issues: { path: string; message: string }[] };
+  { ok: true; brief: LessonBrief } | { ok: false; issues: { path: string; message: string }[] }
 export function parseBrief(raw: unknown): BriefParse {
-  const r = LessonBrief.safeParse(raw);
-  if (r.success) return { ok: true, brief: r.data };
+  const r = LessonBrief.safeParse(raw)
+  if (r.success) return { ok: true, brief: r.data }
   return {
     ok: false,
     issues: r.error.issues.map((i) => ({ path: i.path.join('.'), message: i.message })),
-  };
+  }
 }
 
 /* -------------------------------------------------------- audience profiles */
@@ -179,22 +179,22 @@ export function parseBrief(raw: unknown): BriefParse {
  * site enumerates stages.
  */
 export type AudienceProfile = {
-  label: string;
+  label: string
   /** Who the learner is, for the writer's role line. */
-  learner: string;
+  learner: string
   /** Vocabulary + sentence guidance. */
-  language: string;
+  language: string
   /** Narration persona and tone. */
-  voice: string;
+  voice: string
   /** How correct/wrong feedback should sound. */
-  feedback: string;
+  feedback: string
   /** Target pace: seconds of narration per beat/idea. */
-  paceSecPerBeat: number;
+  paceSecPerBeat: number
   /** Multiplier applied to theme fontSizes (bigger for younger learners). */
-  fontScale: number;
+  fontScale: number
   /** Interaction guidance for gates. */
-  interaction: string;
-};
+  interaction: string
+}
 
 export const AUDIENCE_PROFILES: Record<AudienceStage, AudienceProfile> = {
   preschool: {
@@ -266,7 +266,7 @@ export const AUDIENCE_PROFILES: Record<AudienceStage, AudienceProfile> = {
     interaction:
       'Prefer scenario/process gates (sequence, decision diagrams, predict-check on a realistic case) over toy manipulatives.',
   },
-};
+}
 
 /* -------------------------------------------------------- subject strategies */
 /**
@@ -275,11 +275,11 @@ export const AUDIENCE_PROFILES: Record<AudienceStage, AudienceProfile> = {
  * domain is adding data.
  */
 export type SubjectStrategy = {
-  label: string;
-  moves: string;
-  kits: string;
-  gates: string;
-};
+  label: string
+  moves: string
+  kits: string
+  gates: string
+}
 
 export const SUBJECT_STRATEGIES: Record<string, SubjectStrategy> = {
   math: {
@@ -337,19 +337,19 @@ export const SUBJECT_STRATEGIES: Record<string, SubjectStrategy> = {
     kits: 'Choose the manipulative or diagram that makes the invisible visible; never use a wall of text where a kit exists.',
     gates: 'Every gate must test an objective that was explicitly taught earlier in THIS lesson.',
   },
-};
+}
 
 export function strategyFor(domain: string): SubjectStrategy {
-  return SUBJECT_STRATEGIES[domain] ?? SUBJECT_STRATEGIES.default!;
+  return SUBJECT_STRATEGIES[domain] ?? SUBJECT_STRATEGIES.default!
 }
 
 /* ------------------------------------------------------- prompt compilation */
 
-const MATERIAL_CHAR_CAP = 6000; // per material
-const MATERIALS_TOTAL_CAP = 24000; // across all materials
+const MATERIAL_CHAR_CAP = 6000 // per material
+const MATERIALS_TOTAL_CAP = 24000 // across all materials
 
 function clamp(s: string, n: number): string {
-  return s.length <= n ? s : s.slice(0, n) + '\n…[truncated]';
+  return s.length <= n ? s : s.slice(0, n) + '\n…[truncated]'
 }
 
 /**
@@ -359,21 +359,21 @@ function clamp(s: string, n: number): string {
  * brief's own language.
  */
 export function briefPromptSections(brief: LessonBrief): string[] {
-  const p = AUDIENCE_PROFILES[brief.audience.stage];
-  const s = strategyFor(brief.subject.domain);
-  const sections: string[] = [];
+  const p = AUDIENCE_PROFILES[brief.audience.stage]
+  const s = strategyFor(brief.subject.domain)
+  const sections: string[] = []
 
   sections.push(
     `AUDIENCE — write for ${p.learner}${brief.audience.grade ? ` (grade: ${brief.audience.grade})` : ''}.\n` +
       `Language: ${p.language}\nVoice: ${p.voice}\nFeedback style: ${p.feedback}\n` +
       `Pacing: aim for ~${p.paceSecPerBeat}s of narration per beat (one idea per beat).\n` +
       `Interactions: ${p.interaction}`,
-  );
+  )
 
   sections.push(
     `SUBJECT (${brief.subject.domain}) — teaching moves: ${s.moves}\nVisuals: ${s.kits}\nAssessment: ${s.gates}` +
       (brief.subject.notes ? `\nUpstream notes: ${brief.subject.notes}` : ''),
-  );
+  )
 
   sections.push(
     'LEARNING OBJECTIVES — the lesson exists to achieve exactly these; do not add or drop any:\n' +
@@ -387,30 +387,30 @@ export function briefPromptSections(brief: LessonBrief): string[] {
       (brief.priorKnowledge.length
         ? `\nAssume already known (do not re-teach): ${brief.priorKnowledge.join('; ')}`
         : ''),
-  );
+  )
 
   if (brief.source.materials.length) {
-    let budget = MATERIALS_TOTAL_CAP;
-    const parts: string[] = [];
+    let budget = MATERIALS_TOTAL_CAP
+    const parts: string[] = []
     for (const m of brief.source.materials) {
-      if (budget <= 0) break;
-      const body = clamp(m.content, Math.min(MATERIAL_CHAR_CAP, budget));
-      budget -= body.length;
+      if (budget <= 0) break
+      const body = clamp(m.content, Math.min(MATERIAL_CHAR_CAP, budget))
+      budget -= body.length
       parts.push(
         `<material id="${m.id}" kind="${m.kind}"${m.title ? ` title="${m.title}"` : ''}>\n${body}\n</material>`,
-      );
+      )
     }
     const rule =
       brief.source.grounding === 'strict'
         ? "STRICT GROUNDING: every factual claim, example, term and number in the lesson MUST come from these materials. If the materials don't cover something an objective needs, teach only what they do cover — never fill gaps from general knowledge."
         : brief.source.grounding === 'prefer'
           ? 'Ground the lesson in these materials wherever they cover the point; use general knowledge only for connective explanation, never to contradict them.'
-          : 'These materials are optional inspiration.';
-    sections.push(`SOURCE MATERIAL — ${rule}\n\n${parts.join('\n\n')}`);
+          : 'These materials are optional inspiration.'
+    sections.push(`SOURCE MATERIAL — ${rule}\n\n${parts.join('\n\n')}`)
   } else if (brief.source.grounding !== 'open') {
     sections.push(
       'SOURCE MATERIAL — none provided; keep to uncontroversial, curriculum-standard content for this audience.',
-    );
+    )
   }
 
   if (brief.facts.length) {
@@ -422,7 +422,7 @@ export function briefPromptSections(brief: LessonBrief): string[] {
               `- [${f.id}] ${f.statement}${f.value !== undefined ? ` (value: ${JSON.stringify(f.value)})` : ''}`,
           )
           .join('\n'),
-    );
+    )
   }
 
   if (brief.assets.length) {
@@ -433,14 +433,14 @@ export function briefPromptSections(brief: LessonBrief): string[] {
           : '') +
         ':\n' +
         brief.assets.map((a) => `- ${a.label} [${a.tags.join(', ')}] → ${a.url}`).join('\n'),
-    );
+    )
   }
 
   if (brief.misconceptions.length) {
     sections.push(
       'KNOWN MISCONCEPTIONS — address each one explicitly in the teaching, and use them as the wrong options (distractors) in select/predict-check gates so a learner holding the misconception picks it and gets corrective feedback:\n' +
         brief.misconceptions.map((m) => `- ${m}`).join('\n'),
-    );
+    )
   }
 
   sections.push(
@@ -450,9 +450,9 @@ export function briefPromptSections(brief: LessonBrief): string[] {
         : brief.assessment.difficulty === 'challenge'
           ? 'The learner has practised this — compress exposition, gates require transfer to unseen cases.'
           : 'The learner has seen the idea — balance re-explanation with application; gates check the method, not just the fact.'),
-  );
+  )
 
-  return sections;
+  return sections
 }
 
 /** Scale the doc theme for the audience (font sizes only, deterministic). */
@@ -460,12 +460,12 @@ export function applyAudienceTheme<T extends { fontSizes: Record<string, number>
   theme: T,
   stage: AudienceStage,
 ): T {
-  const k = AUDIENCE_PROFILES[stage].fontScale;
-  if (k === 1) return theme;
+  const k = AUDIENCE_PROFILES[stage].fontScale
+  if (k === 1) return theme
   const fontSizes = Object.fromEntries(
     Object.entries(theme.fontSizes).map(([key, v]) => [key, Math.round(v * k)]),
-  );
-  return { ...theme, fontSizes };
+  )
+  return { ...theme, fontSizes }
 }
 
 /* ----------------------------------------------------------- legacy adapter */
@@ -483,5 +483,5 @@ export function briefFromTopic(topic: string, locales: string[], sceneCount = 6)
     objectives: [{ id: 'obj1', statement: `Learner understands: ${topic}`, assess: true }],
     source: { materials: [], grounding: 'open' },
     constraints: { sceneCount, imagePolicy: 'sparing' },
-  });
+  })
 }

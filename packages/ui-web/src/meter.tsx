@@ -1,13 +1,13 @@
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export interface MeterProps {
-  value: number;
-  max?: number;
-  label?: ReactNode;
-  showValue?: boolean;
-  color?: 'primary' | 'success' | 'warning' | 'danger';
-  className?: string;
+  value: number
+  max?: number
+  label?: ReactNode
+  showValue?: boolean
+  color?: 'primary' | 'success' | 'warning' | 'danger'
+  className?: string
 }
 
 const BAR = {
@@ -15,7 +15,7 @@ const BAR = {
   success: 'bg-success',
   warning: 'bg-warning',
   danger: 'bg-danger',
-} as const;
+} as const
 
 /** A labelled measurement bar (distinct from Progress: a static known ratio). */
 export function Meter({
@@ -26,15 +26,13 @@ export function Meter({
   color = 'primary',
   className,
 }: MeterProps) {
-  const pct = Math.max(0, Math.min(100, (value / max) * 100));
+  const pct = Math.max(0, Math.min(100, (value / max) * 100))
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
       {label || showValue ? (
         <div className="flex items-center justify-between text-sm">
           {label ? <span className="font-medium text-foreground">{label}</span> : <span />}
-          {showValue ? (
-            <span className="tabular-nums text-foreground-muted">{Math.round(pct)}%</span>
-          ) : null}
+          {showValue ? <span className="tabular-nums text-foreground-muted">{Math.round(pct)}%</span> : null}
         </div>
       ) : null}
       <div
@@ -50,5 +48,5 @@ export function Meter({
         />
       </div>
     </div>
-  );
+  )
 }

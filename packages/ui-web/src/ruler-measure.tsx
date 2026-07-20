@@ -1,21 +1,21 @@
-'use client';
+'use client'
 
-import { cn } from './lib/cn';
-import { tile, tileState } from './lib/interactive';
+import { cn } from './lib/cn'
+import { tile, tileState } from './lib/interactive'
 
 export interface RulerMeasureProps {
-  max: number;
+  max: number
   /** Where the object starts on the ruler (0 = flush with the end). */
-  start: number;
+  start: number
   /** The object's length in units. */
-  length: number;
-  unitLabel?: string;
+  length: number
+  unitLabel?: string
   /** Controlled: the tick the learner reads as the object's end. */
-  value: number | null;
-  onChange: (value: number) => void;
-  reveal?: { correct: boolean; answer: number };
-  disabled?: boolean;
-  className?: string;
+  value: number | null
+  onChange: (value: number) => void
+  reveal?: { correct: boolean; answer: number }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -34,17 +34,17 @@ export function RulerMeasure({
   disabled,
   className,
 }: RulerMeasureProps) {
-  const locked = !!reveal || disabled;
-  const units = Array.from({ length: max }, (_, i) => i);
-  const ticks = Array.from({ length: max + 1 }, (_, i) => i);
-  const end = start + length;
+  const locked = !!reveal || disabled
+  const units = Array.from({ length: max }, (_, i) => i)
+  const ticks = Array.from({ length: max + 1 }, (_, i) => i)
+  const end = start + length
 
   return (
     <div className={cn('flex flex-col gap-4', className)}>
       {/* Object above the ruler */}
       <div className="flex w-full">
         {units.map((i) => {
-          const inObject = i >= start && i < end;
+          const inObject = i >= start && i < end
           return (
             <div key={i} className="flex-1 px-px">
               <div
@@ -56,7 +56,7 @@ export function RulerMeasure({
                 )}
               />
             </div>
-          );
+          )
         })}
       </div>
 
@@ -75,8 +75,8 @@ export function RulerMeasure({
       {/* Tick reading buttons 0..max */}
       <div className="flex w-full items-start justify-between">
         {ticks.map((t) => {
-          const active = value === t;
-          const isAnswer = reveal?.answer === t;
+          const active = value === t
+          const isAnswer = reveal?.answer === t
           return (
             <button
               key={t}
@@ -100,12 +100,12 @@ export function RulerMeasure({
             >
               {t}
             </button>
-          );
+          )
         })}
       </div>
       {unitLabel ? (
         <span className="text-center text-xs font-semibold text-foreground-muted">{unitLabel}</span>
       ) : null}
     </div>
-  );
+  )
 }

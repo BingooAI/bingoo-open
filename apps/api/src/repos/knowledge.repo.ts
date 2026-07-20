@@ -3,7 +3,7 @@
  * Repo THUẦN data — logic đo lường ở @bingoo/knowledge-engine (service gọi).
  */
 
-import { db } from '@bingoo/db';
+import { db } from '@bingoo/db'
 import type {
   EvidenceInput,
   GraphData,
@@ -11,7 +11,7 @@ import type {
   SkillMastery,
   SkillNode,
   Slug,
-} from '@bingoo/knowledge-engine';
+} from '@bingoo/knowledge-engine'
 
 /** Đọc toàn bộ Competency + CapabilityRelation → GraphData (slug-keyed). */
 export async function loadGraphData(): Promise<GraphData> {
@@ -34,7 +34,7 @@ export async function loadGraphData(): Promise<GraphData> {
         to: { select: { slug: true } },
       },
     }),
-  ]);
+  ])
 
   const skillNodes: SkillNode[] = nodes.map((n) => ({
     slug: n.slug,
@@ -42,7 +42,7 @@ export async function loadGraphData(): Promise<GraphData> {
     kind: n.kind,
     ...(n.parent ? { parent: n.parent.slug } : {}),
     ...(n.level != null ? { level: n.level } : {}),
-  }));
+  }))
 
   const skillEdges: SkillEdge[] = edges.map((e) => ({
     from: e.from.slug,
@@ -50,20 +50,17 @@ export async function loadGraphData(): Promise<GraphData> {
     mode: e.mode,
     relType: e.relType,
     ...(e.weight != null ? { weight: e.weight } : {}),
-  }));
+  }))
 
-  return { nodes: skillNodes, edges: skillEdges };
+  return { nodes: skillNodes, edges: skillEdges }
 }
 
 /** SkillState của một học viên trên một KC → SkillMastery (hoặc undefined nếu chưa có). */
-export async function getSkillState(
-  userId: string,
-  skillSlug: Slug,
-): Promise<SkillMastery | undefined> {
+export async function getSkillState(userId: string, skillSlug: Slug): Promise<SkillMastery | undefined> {
   const row = await db.skillState.findUnique({
     where: { userId_skillSlug: { userId, skillSlug } },
-  });
-  if (!row) return undefined;
+  })
+  if (!row) return undefined
   return {
     skill: row.skillSlug,
     pKnown: row.pKnown,
@@ -71,7 +68,7 @@ export async function getSkillState(
     attempts: row.attempts,
     correct: row.correct,
     lastSeenMs: row.lastSeenAt ? row.lastSeenAt.getTime() : null,
-  };
+  }
 }
 
 /** Mọi SkillState của học viên → Map<slug,{pKnown}> cho rollup/frontier. */
@@ -79,16 +76,16 @@ export async function loadLearnerStates(userId: string): Promise<Map<Slug, { pKn
   const rows = await db.skillState.findMany({
     where: { userId },
     select: { skillSlug: true, pKnown: true },
-  });
-  const out = new Map<Slug, { pKnown: number }>();
-  for (const r of rows) out.set(r.skillSlug, { pKnown: r.pKnown });
-  return out;
+  })
+  const out = new Map<Slug, { pKnown: number }>()
+  for (const r of rows) out.set(r.skillSlug, { pKnown: r.pKnown })
+  return out
 }
 
 /** Mọi SkillState (đầy đủ) → Map<slug, SkillMastery> cho sequencer (buildPriority/selectAdaptiveSession). */
 export async function loadLearnerMastery(userId: string): Promise<Map<Slug, SkillMastery>> {
-  const rows = await db.skillState.findMany({ where: { userId } });
-  const out = new Map<Slug, SkillMastery>();
+  const rows = await db.skillState.findMany({ where: { userId } })
+  const out = new Map<Slug, SkillMastery>()
   for (const r of rows) {
     out.set(r.skillSlug, {
       skill: r.skillSlug,
@@ -97,15 +94,15 @@ export async function loadLearnerMastery(userId: string): Promise<Map<Slug, Skil
       attempts: r.attempts,
       correct: r.correct,
       lastSeenMs: r.lastSeenAt ? r.lastSeenAt.getTime() : null,
-    });
+    })
   }
-  return out;
+  return out
 }
 
 /** Đã có Observation với attemptId này chưa (idempotency §9.1). */
 export async function attemptExists(attemptId: string): Promise<boolean> {
-  const row = await db.observation.findUnique({ where: { attemptId }, select: { id: true } });
-  return row != null;
+  const row = await db.observation.findUnique({ where: { attemptId }, select: { id: true } })
+  return row != null
 }
 
 /**
@@ -118,7 +115,7 @@ export async function saveFold(
   state: SkillMastery,
   snapshot: boolean,
 ): Promise<void> {
-  const lastSeenAt = state.lastSeenMs != null ? new Date(state.lastSeenMs) : null;
+  const lastSeenAt = state.lastSeenMs != null ? new Date(state.lastSeenMs) : null
 
   await db.skillState.upsert({
     where: { userId_skillSlug: { userId, skillSlug: state.skill } },
@@ -138,9 +135,9 @@ export async function saveFold(
       correct: state.correct,
       lastSeenAt,
     },
-  });
+  })
 
-  const outcome = ev.outcome ?? (ev.correct ? 1 : 0);
+  const outcome = ev.outcome ?? (ev.correct ? 1 : 0)
   await db.observation.create({
     data: {
       subjectType: 'LEARNER',
@@ -159,11 +156,11 @@ export async function saveFold(
       knowledgePointId: ev.knowledgePointId ?? null,
       attemptId: ev.attemptId ?? null,
     },
-  });
+  })
 
   if (snapshot) {
     await db.skillSnapshot.create({
       data: { userId, skillSlug: state.skill, pKnown: state.pKnown, ability: state.ability },
-    });
+    })
   }
 }

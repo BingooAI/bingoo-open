@@ -1,44 +1,44 @@
-'use client';
+'use client'
 
-import { Mail } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useState, type FormEvent } from 'react';
-import { AuthHeader } from '@/components/auth/auth-header';
-import { AuthDivider, SocialButtons } from '@/components/auth/social-buttons';
-import { Button, Checkbox, Field, Input, PasswordInput } from '@bingoo/ui-web';
-import { Link, useRouter } from '@/i18n/navigation';
-import { signIn } from '@/lib/auth-client';
-import { authErrorKey } from '@/lib/auth-errors';
-import { isEmail } from '@bingoo/core';
+import { Mail } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useState, type FormEvent } from 'react'
+import { AuthHeader } from '@/components/auth/auth-header'
+import { AuthDivider, SocialButtons } from '@/components/auth/social-buttons'
+import { Button, Checkbox, Field, Input, PasswordInput } from '@bingoo/ui-web'
+import { Link, useRouter } from '@/i18n/navigation'
+import { signIn } from '@/lib/auth-client'
+import { authErrorKey } from '@/lib/auth-errors'
+import { isEmail } from '@bingoo/core'
 
 export default function LoginPage() {
-  const t = useTranslations('auth');
-  const tv = useTranslations('validation');
-  const router = useRouter();
+  const t = useTranslations('auth')
+  const tv = useTranslations('validation')
+  const router = useRouter()
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-  const [formError, setFormError] = useState<string>();
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
+  const [formError, setFormError] = useState<string>()
+  const [loading, setLoading] = useState(false)
 
   async function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    const next: typeof errors = {};
-    if (!isEmail(email)) next.email = tv('email');
-    if (password.length < 8) next.password = tv('passwordWeak');
-    setErrors(next);
-    if (Object.keys(next).length) return;
+    e.preventDefault()
+    const next: typeof errors = {}
+    if (!isEmail(email)) next.email = tv('email')
+    if (password.length < 8) next.password = tv('passwordWeak')
+    setErrors(next)
+    if (Object.keys(next).length) return
 
-    setFormError(undefined);
-    setLoading(true);
-    const res = await signIn.email({ email, password }).catch(() => null);
+    setFormError(undefined)
+    setLoading(true)
+    const res = await signIn.email({ email, password }).catch(() => null)
     if (!res || res.error) {
-      setLoading(false);
-      setFormError(t(`errors.${res ? authErrorKey(res.error?.code) : 'network'}`));
-      return;
+      setLoading(false)
+      setFormError(t(`errors.${res ? authErrorKey(res.error?.code) : 'network'}`))
+      return
     }
-    router.push('/student');
+    router.push('/student')
   }
 
   return (
@@ -84,19 +84,13 @@ export default function LoginPage() {
 
         <div className="flex items-center justify-between">
           <Checkbox label={t('shared.rememberMe')} name="remember" defaultChecked />
-          <Link
-            href="/forgot-password"
-            className="text-sm font-semibold text-primary hover:underline"
-          >
+          <Link href="/forgot-password" className="text-sm font-semibold text-primary hover:underline">
             {t('login.forgot')}
           </Link>
         </div>
 
         {formError && (
-          <p
-            role="alert"
-            className="rounded-xl bg-danger-soft px-4 py-3 text-sm font-medium text-danger"
-          >
+          <p role="alert" className="rounded-xl bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
             {formError}
           </p>
         )}
@@ -113,5 +107,5 @@ export default function LoginPage() {
         </Link>
       </p>
     </div>
-  );
+  )
 }

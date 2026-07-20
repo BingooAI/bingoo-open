@@ -1,5 +1,5 @@
-import { forwardRef, type HTMLAttributes } from 'react';
-import { cn } from './lib/cn';
+import { forwardRef, type HTMLAttributes } from 'react'
+import { cn } from './lib/cn'
 
 const SIZES = {
   xs: 'size-7 text-2xs',
@@ -7,26 +7,26 @@ const SIZES = {
   md: 'size-11 text-sm',
   lg: 'size-14 text-base',
   xl: 'size-20 text-xl',
-} as const;
+} as const
 
 const STATUS = {
   online: 'bg-success',
   busy: 'bg-danger',
   away: 'bg-warning',
-} as const;
+} as const
 
 export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
-  src?: string | null;
-  name: string;
-  size?: keyof typeof SIZES;
-  ring?: boolean;
-  status?: keyof typeof STATUS;
+  src?: string | null
+  name: string
+  size?: keyof typeof SIZES
+  ring?: boolean
+  status?: keyof typeof STATUS
 }
 
 function initials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return (parts[0]?.slice(0, 2) ?? '').toUpperCase();
-  return `${parts[0]?.[0] ?? ''}${parts[parts.length - 1]?.[0] ?? ''}`.toUpperCase();
+  const parts = name.trim().split(/\s+/)
+  if (parts.length === 1) return (parts[0]?.slice(0, 2) ?? '').toUpperCase()
+  return `${parts[0]?.[0] ?? ''}${parts[parts.length - 1]?.[0] ?? ''}`.toUpperCase()
 }
 
 export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
@@ -67,5 +67,5 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
         />
       )}
     </span>
-  );
-});
+  )
+})

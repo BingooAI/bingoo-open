@@ -1,30 +1,30 @@
-'use client';
+'use client'
 
-import { Check, X } from 'lucide-react';
-import { SoundButton } from './sound-button';
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
-import { tile } from './lib/interactive';
+import { Check, X } from 'lucide-react'
+import { SoundButton } from './sound-button'
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
+import { tile } from './lib/interactive'
 
-export type AnswerState = 'default' | 'selected' | 'correct' | 'incorrect';
+export type AnswerState = 'default' | 'selected' | 'correct' | 'incorrect'
 
 export interface AnswerOptionProps {
-  label?: ReactNode;
+  label?: ReactNode
   /** Play this choice's audio (listen-and-choose). */
-  audioSrc?: string;
+  audioSrc?: string
   /** A11y label for the audio button (data). */
-  audioLabel?: string;
-  letter?: string;
+  audioLabel?: string
+  letter?: string
   /** Large emoji visual — picture choices without assets (preschool). */
-  emoji?: string;
+  emoji?: string
   /** Resolved image URL — picture choices. */
-  image?: string;
-  state?: AnswerState;
+  image?: string
+  state?: AnswerState
   /** Show a checkbox-style indicator for multi-select choices. */
-  multi?: boolean;
-  onClick?: () => void;
-  disabled?: boolean;
-  className?: string;
+  multi?: boolean
+  onClick?: () => void
+  disabled?: boolean
+  className?: string
 }
 
 /** The four answer states, spoken in the shared `tile` language (motion included). */
@@ -33,7 +33,7 @@ const STATE: Record<AnswerState, string> = {
   selected: tile({ state: 'selected', size: 'none' }),
   correct: tile({ state: 'correct', size: 'none' }),
   incorrect: tile({ state: 'wrong', size: 'none' }),
-};
+}
 
 /** Quiz answer choice with default / selected / correct / incorrect states. */
 export function AnswerOption({
@@ -49,8 +49,8 @@ export function AnswerOption({
   disabled,
   className,
 }: AnswerOptionProps) {
-  const locked = state === 'correct' || state === 'incorrect';
-  const picture = emoji || image;
+  const locked = state === 'correct' || state === 'incorrect'
+  const picture = emoji || image
   return (
     <button
       type="button"
@@ -102,5 +102,5 @@ export function AnswerOption({
       {state === 'correct' ? <Check className="size-5 shrink-0" /> : null}
       {state === 'incorrect' ? <X className="size-5 shrink-0" /> : null}
     </button>
-  );
+  )
 }

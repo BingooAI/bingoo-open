@@ -9,12 +9,12 @@
  */
 
 /** anchor: where the placement point sits on the prop's box. */
-export type PropAnchor = 'bottom' | 'center';
+export type PropAnchor = 'bottom' | 'center'
 
 export type PropMeta = {
-  aspect: number; // width / height of the prop's natural box
-  anchor: PropAnchor; // "bottom" → stands on the ground; "center" → floats
-};
+  aspect: number // width / height of the prop's natural box
+  anchor: PropAnchor // "bottom" → stands on the ground; "center" → floats
+}
 
 export const PROP_META: Record<string, PropMeta> = {
   // sky / floating
@@ -45,18 +45,18 @@ export const PROP_META: Record<string, PropMeta> = {
   arrow: { aspect: 1.6, anchor: 'center' },
   arrowUp: { aspect: 0.8, anchor: 'center' },
   wave: { aspect: 2.4, anchor: 'center' },
-};
+}
 
 /** stick figure is not a prop but participates in ground placement. */
-export const STICK_META: PropMeta = { aspect: 0.55, anchor: 'bottom' };
+export const STICK_META: PropMeta = { aspect: 0.55, anchor: 'bottom' }
 
 /**
  * Merge in metadata for imported SVG assets (auto-generated from /assets).
  * Kept separate so hand-authored props and imported art share one lookup.
  */
-import { SVG_ASSET_META } from './svgAssetMeta';
-export const ALL_PROP_META: Record<string, PropMeta> = { ...PROP_META, ...SVG_ASSET_META };
+import { SVG_ASSET_META } from './svgAssetMeta'
+export const ALL_PROP_META: Record<string, PropMeta> = { ...PROP_META, ...SVG_ASSET_META }
 
 export function propMeta(shape: string | undefined): PropMeta {
-  return (shape && ALL_PROP_META[shape]) || { aspect: 1, anchor: 'center' };
+  return (shape && ALL_PROP_META[shape]) || { aspect: 1, anchor: 'center' }
 }

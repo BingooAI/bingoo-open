@@ -1,4 +1,4 @@
-import type { Locale } from '@bingoo/i18n';
+import type { Locale } from '@bingoo/i18n'
 
 /**
  * Machine-translation capability for *dynamic* content (AI output, lessons,
@@ -9,26 +9,26 @@ import type { Locale } from '@bingoo/i18n';
  */
 export interface TranslateInput {
   /** Batch of source strings — translated together to save round-trips. */
-  texts: string[];
+  texts: string[]
   /** Target locale. */
-  to: Locale;
+  to: Locale
   /** Source locale; omit to let the engine infer it. */
-  from?: Locale;
+  from?: Locale
   /** Domain hint that steers tone/terminology, e.g. 'lesson' | 'community'. */
-  context?: string;
+  context?: string
   /** Term → preferred translation overrides applied verbatim by the engine. */
-  glossary?: Record<string, string>;
+  glossary?: Record<string, string>
 }
 
 export interface TranslateResult {
   /** One translation per input text, in the same order. */
-  translations: string[];
+  translations: string[]
   /** The source locale the engine used (echoes `from` when it was provided). */
-  detectedFrom?: Locale;
+  detectedFrom?: Locale
   /** Which engine produced these translations. */
-  provider: string;
+  provider: string
 }
 
 export interface TranslationPort {
-  translate(input: TranslateInput): Promise<TranslateResult>;
+  translate(input: TranslateInput): Promise<TranslateResult>
 }

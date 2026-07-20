@@ -1,31 +1,31 @@
-'use client';
+'use client'
 
-import type { DrawStroke, RubricCriterion } from '@bingoo/core';
-import { Eraser, Undo2 } from 'lucide-react';
-import { cn } from './lib/cn';
-import { POP, tile } from './lib/interactive';
-import { DrawingCanvas } from './drawing-canvas';
-import { RubricList } from './rubric-list';
+import type { DrawStroke, RubricCriterion } from '@bingoo/core'
+import { Eraser, Undo2 } from 'lucide-react'
+import { cn } from './lib/cn'
+import { POP, tile } from './lib/interactive'
+import { DrawingCanvas } from './drawing-canvas'
+import { RubricList } from './rubric-list'
 
 export interface DrawingLabels {
-  criteria: string;
-  undo: string;
-  clear: string;
-  exemplar?: string;
+  criteria: string
+  undo: string
+  clear: string
+  exemplar?: string
 }
 
 export interface DrawingPadProps {
-  strokes: DrawStroke[];
-  met: string[];
-  onChange: (next: { strokes: DrawStroke[]; met: string[] }) => void;
-  criteria: RubricCriterion[];
+  strokes: DrawStroke[]
+  met: string[]
+  onChange: (next: { strokes: DrawStroke[]; met: string[] }) => void
+  criteria: RubricCriterion[]
   /** A picture to draw FROM (shown beside the canvas). */
-  referenceImage?: string;
-  color?: string;
-  labels: DrawingLabels;
-  reveal?: { correct: boolean; need: number; exemplarImage?: string };
-  disabled?: boolean;
-  className?: string;
+  referenceImage?: string
+  color?: string
+  labels: DrawingLabels
+  reveal?: { correct: boolean; need: number; exemplarImage?: string }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -45,7 +45,7 @@ export function DrawingPad({
   disabled,
   className,
 }: DrawingPadProps) {
-  const locked = !!reveal || disabled;
+  const locked = !!reveal || disabled
 
   return (
     <div className={cn('flex w-full flex-col gap-3', className)}>
@@ -118,9 +118,7 @@ export function DrawingPad({
         {reveal?.exemplarImage ? (
           <div className="flex flex-col items-center gap-1">
             {labels.exemplar ? (
-              <p className="text-xs font-bold uppercase tracking-wide text-success">
-                {labels.exemplar}
-              </p>
+              <p className="text-xs font-bold uppercase tracking-wide text-success">{labels.exemplar}</p>
             ) : null}
             <img
               src={reveal.exemplarImage}
@@ -131,5 +129,5 @@ export function DrawingPad({
         ) : null}
       </div>
     </div>
-  );
+  )
 }

@@ -10,24 +10,19 @@
  *   const res  = safeParseAuthorable('quiz', x); // → res.success ? render : repair
  */
 
-import { Content, contentJsonSchema, Lesson, lessonJsonSchema } from './content';
-import { Course, courseJsonSchema } from './course';
-import {
-  ColoringPicture,
-  coloringPictureJsonSchema,
-  TracingGlyph,
-  tracingGlyphJsonSchema,
-} from './draw';
-import { FlashcardDeck, flashcardDeckJsonSchema } from './flashcard';
-import { Quiz, quizJsonSchema } from './quiz';
+import { Content, contentJsonSchema, Lesson, lessonJsonSchema } from './content'
+import { Course, courseJsonSchema } from './course'
+import { ColoringPicture, coloringPictureJsonSchema, TracingGlyph, tracingGlyphJsonSchema } from './draw'
+import { FlashcardDeck, flashcardDeckJsonSchema } from './flashcard'
+import { Quiz, quizJsonSchema } from './quiz'
 
 export interface AuthorableEntry {
   /** Human/LLM-readable description of what this content kind is. */
-  description: string;
+  description: string
   /** JSON Schema for structured output / tool definitions. */
-  jsonSchema: () => unknown;
+  jsonSchema: () => unknown
   /** Validate unknown data; returns a Zod SafeParse result. */
-  safeParse: (data: unknown) => { success: boolean };
+  safeParse: (data: unknown) => { success: boolean }
 }
 
 export const AUTHORABLE_SCHEMAS = {
@@ -49,8 +44,7 @@ export const AUTHORABLE_SCHEMAS = {
     safeParse: (d: unknown) => Lesson.safeParse(d),
   },
   flashcardDeck: {
-    description:
-      'A deck of flashcards (front/back, optional hint/example) for spaced-repetition study.',
+    description: 'A deck of flashcards (front/back, optional hint/example) for spaced-repetition study.',
     jsonSchema: flashcardDeckJsonSchema,
     safeParse: (d: unknown) => FlashcardDeck.safeParse(d),
   },
@@ -71,19 +65,19 @@ export const AUTHORABLE_SCHEMAS = {
     jsonSchema: coloringPictureJsonSchema,
     safeParse: (d: unknown) => ColoringPicture.safeParse(d),
   },
-} satisfies Record<string, AuthorableEntry>;
+} satisfies Record<string, AuthorableEntry>
 
-export type AuthorableKind = keyof typeof AUTHORABLE_SCHEMAS;
+export type AuthorableKind = keyof typeof AUTHORABLE_SCHEMAS
 
 /** All authorable kinds (e.g. to enumerate tools for the model). */
-export const AUTHORABLE_KINDS = Object.keys(AUTHORABLE_SCHEMAS) as AuthorableKind[];
+export const AUTHORABLE_KINDS = Object.keys(AUTHORABLE_SCHEMAS) as AuthorableKind[]
 
 /** JSON Schema for a given content kind. */
 export function jsonSchemaFor(kind: AuthorableKind): unknown {
-  return AUTHORABLE_SCHEMAS[kind].jsonSchema();
+  return AUTHORABLE_SCHEMAS[kind].jsonSchema()
 }
 
 /** Validate unknown data against a content kind's schema. */
 export function safeParseAuthorable(kind: AuthorableKind, data: unknown) {
-  return AUTHORABLE_SCHEMAS[kind].safeParse(data);
+  return AUTHORABLE_SCHEMAS[kind].safeParse(data)
 }

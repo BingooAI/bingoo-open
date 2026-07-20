@@ -1,26 +1,26 @@
-'use client';
+'use client'
 
-import { ArrowLeft, CheckCircle2 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useSearchParams } from 'next/navigation';
-import { Suspense, useState, type FormEvent } from 'react';
-import { AuthHeader } from '@/components/auth/auth-header';
-import { Button, Field, PasswordInput, IconChip } from '@bingoo/ui-web';
-import { Link } from '@/i18n/navigation';
-import { resetPassword } from '@/lib/auth-client';
-import { authErrorKey } from '@/lib/auth-errors';
+import { ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useSearchParams } from 'next/navigation'
+import { Suspense, useState, type FormEvent } from 'react'
+import { AuthHeader } from '@/components/auth/auth-header'
+import { Button, Field, PasswordInput, IconChip } from '@bingoo/ui-web'
+import { Link } from '@/i18n/navigation'
+import { resetPassword } from '@/lib/auth-client'
+import { authErrorKey } from '@/lib/auth-errors'
 
 function ResetForm() {
-  const t = useTranslations('auth');
-  const tv = useTranslations('validation');
-  const token = useSearchParams().get('token') ?? '';
+  const t = useTranslations('auth')
+  const tv = useTranslations('validation')
+  const token = useSearchParams().get('token') ?? ''
 
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-  const [errors, setErrors] = useState<{ password?: string; confirm?: string }>({});
-  const [formError, setFormError] = useState<string>();
-  const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [errors, setErrors] = useState<{ password?: string; confirm?: string }>({})
+  const [formError, setFormError] = useState<string>()
+  const [loading, setLoading] = useState(false)
+  const [done, setDone] = useState(false)
 
   // No token → the link is malformed/expired.
   if (!token) {
@@ -37,7 +37,7 @@ function ResetForm() {
           {t('reset.requestNew')}
         </Link>
       </div>
-    );
+    )
   }
 
   if (done) {
@@ -58,26 +58,26 @@ function ResetForm() {
           {t('reset.goToLogin')}
         </Link>
       </div>
-    );
+    )
   }
 
   async function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    const next: typeof errors = {};
-    if (password.length < 8) next.password = tv('passwordWeak');
-    if (confirm !== password) next.confirm = tv('passwordMismatch');
-    setErrors(next);
-    if (Object.keys(next).length) return;
+    e.preventDefault()
+    const next: typeof errors = {}
+    if (password.length < 8) next.password = tv('passwordWeak')
+    if (confirm !== password) next.confirm = tv('passwordMismatch')
+    setErrors(next)
+    if (Object.keys(next).length) return
 
-    setFormError(undefined);
-    setLoading(true);
-    const res = await resetPassword({ newPassword: password, token }).catch(() => null);
+    setFormError(undefined)
+    setLoading(true)
+    const res = await resetPassword({ newPassword: password, token }).catch(() => null)
     if (!res || res.error) {
-      setLoading(false);
-      setFormError(t(`errors.${res ? authErrorKey(res.error?.code) : 'network'}`));
-      return;
+      setLoading(false)
+      setFormError(t(`errors.${res ? authErrorKey(res.error?.code) : 'network'}`))
+      return
     }
-    setDone(true);
+    setDone(true)
   }
 
   return (
@@ -117,10 +117,7 @@ function ResetForm() {
         </Field>
 
         {formError && (
-          <p
-            role="alert"
-            className="rounded-xl bg-danger-soft px-4 py-3 text-sm font-medium text-danger"
-          >
+          <p role="alert" className="rounded-xl bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
             {formError}
           </p>
         )}
@@ -130,7 +127,7 @@ function ResetForm() {
         </Button>
       </form>
     </div>
-  );
+  )
 }
 
 export default function ResetPasswordPage() {
@@ -138,5 +135,5 @@ export default function ResetPasswordPage() {
     <Suspense fallback={null}>
       <ResetForm />
     </Suspense>
-  );
+  )
 }

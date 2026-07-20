@@ -3,23 +3,23 @@
  * is any URL/path (Cloudflare R2, local project asset, or data-URI), raster or
  * SVG. Drawn into the element's laid-out box with the shared pose transform.
  */
-import * as React from 'react';
-import type { RenderItem, ImageContent } from '@bingoo/explainer';
-import type { ThemeTokens } from '@bingoo/explainer';
-import { itemTransform } from './util';
+import * as React from 'react'
+import type { RenderItem, ImageContent } from '@bingoo/explainer'
+import type { ThemeTokens } from '@bingoo/explainer'
+import { itemTransform } from './util'
 
 export function ImageEl({ item, theme }: { item: RenderItem; theme: ThemeTokens }) {
-  const c = item.content as ImageContent;
-  const { transform, opacity } = itemTransform(item);
-  const w = Math.max(0, item.rect.w);
-  const h = Math.max(0, item.rect.h);
+  const c = item.content as ImageContent
+  const { transform, opacity } = itemTransform(item)
+  const w = Math.max(0, item.rect.w)
+  const h = Math.max(0, item.rect.h)
 
   // No src yet, but the lesson asked for a picture (content.prompt): show a
   // labelled placeholder so there's no empty hole — image provider not
   // configured, or generation still pending/failed.
   if (!c.src) {
-    const label = c.alt || c.query || c.prompt;
-    if (!label) return null;
+    const label = c.alt || c.query || c.prompt
+    if (!label) return null
     return (
       <g transform={transform} opacity={opacity}>
         <rect
@@ -45,7 +45,7 @@ export function ImageEl({ item, theme }: { item: RenderItem; theme: ThemeTokens 
           {'🖼 ' + (label.length > 22 ? label.slice(0, 22) + '…' : label)}
         </text>
       </g>
-    );
+    )
   }
   return (
     <g transform={transform} opacity={opacity}>
@@ -59,5 +59,5 @@ export function ImageEl({ item, theme }: { item: RenderItem; theme: ThemeTokens 
         aria-label={c.alt}
       />
     </g>
-  );
+  )
 }

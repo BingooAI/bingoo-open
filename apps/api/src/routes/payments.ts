@@ -1,9 +1,9 @@
-import { Hono } from 'hono';
-import { z } from 'zod';
-import type { AppEnv } from '../lib/context';
-import { ok } from '../lib/response';
-import { validate } from '../lib/validate';
-import { getPayment } from '../providers';
+import { Hono } from 'hono'
+import { z } from 'zod'
+import type { AppEnv } from '../lib/context'
+import { ok } from '../lib/response'
+import { validate } from '../lib/validate'
+import { getPayment } from '../providers'
 
 /**
  * Create a payment charge → returns a VietQR (string + image URL) with a unique
@@ -22,7 +22,7 @@ export const payments = new Hono<AppEnv>().post(
     }),
   ),
   async (c) => {
-    const charge = await getPayment().createCharge(c.req.valid('json'));
-    return ok(c, charge, 201);
+    const charge = await getPayment().createCharge(c.req.valid('json'))
+    return ok(c, charge, 201)
   },
-);
+)

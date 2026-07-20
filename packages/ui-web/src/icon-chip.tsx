@@ -1,7 +1,7 @@
-import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { forwardRef, type HTMLAttributes, type ReactNode } from 'react'
+import { cn } from './lib/cn'
 
-export type IconChipColor = 'primary' | 'teal' | 'sunbeam' | 'coral' | 'success' | 'neutral';
+export type IconChipColor = 'primary' | 'teal' | 'sunbeam' | 'coral' | 'success' | 'neutral'
 
 const SOFT: Record<IconChipColor, string> = {
   primary: 'bg-primary-soft text-primary',
@@ -10,7 +10,7 @@ const SOFT: Record<IconChipColor, string> = {
   coral: 'bg-accent-coral-soft text-accent-coral',
   success: 'bg-success-soft text-success',
   neutral: 'bg-surface-muted text-foreground-muted',
-};
+}
 
 const SOLID: Record<IconChipColor, string> = {
   primary: 'bg-primary text-primary-foreground',
@@ -19,7 +19,7 @@ const SOLID: Record<IconChipColor, string> = {
   coral: 'bg-accent-coral text-accent-coral-foreground',
   success: 'bg-success text-success-foreground',
   neutral: 'bg-foreground text-background',
-};
+}
 
 // Per-color gradient (lighter top-left → base). Vibrant, on-brand, theme-aware.
 const GRADIENT: Record<IconChipColor, string> = {
@@ -34,19 +34,19 @@ const GRADIENT: Record<IconChipColor, string> = {
     'text-success-foreground bg-[linear-gradient(145deg,color-mix(in_srgb,var(--color-success),#fff_22%),var(--color-success))]',
   neutral:
     'text-background bg-[linear-gradient(145deg,color-mix(in_srgb,var(--color-foreground),#fff_22%),var(--color-foreground))]',
-};
+}
 
 const SIZES = {
   sm: 'size-8 rounded-lg [&_svg]:size-4',
   md: 'size-11 rounded-xl [&_svg]:size-5',
   lg: 'size-14 rounded-2xl [&_svg]:size-7',
-} as const;
+} as const
 
 export interface IconChipProps extends HTMLAttributes<HTMLSpanElement> {
-  color?: IconChipColor;
-  tone?: 'soft' | 'solid' | 'gradient';
-  size?: keyof typeof SIZES;
-  children: ReactNode;
+  color?: IconChipColor
+  tone?: 'soft' | 'solid' | 'gradient'
+  size?: keyof typeof SIZES
+  children: ReactNode
 }
 
 /** A colored, rounded container for an icon — the brand's signature accent shape. */
@@ -54,8 +54,7 @@ export const IconChip = forwardRef<HTMLSpanElement, IconChipProps>(function Icon
   { className, color = 'primary', tone = 'soft', size = 'md', children, ...props },
   ref,
 ) {
-  const tint =
-    tone === 'gradient' ? GRADIENT[color] : tone === 'solid' ? SOLID[color] : SOFT[color];
+  const tint = tone === 'gradient' ? GRADIENT[color] : tone === 'solid' ? SOLID[color] : SOFT[color]
   return (
     <span
       ref={ref}
@@ -70,5 +69,5 @@ export const IconChip = forwardRef<HTMLSpanElement, IconChipProps>(function Icon
     >
       {children}
     </span>
-  );
-});
+  )
+})

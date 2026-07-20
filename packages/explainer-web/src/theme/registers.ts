@@ -5,18 +5,18 @@
  * professional doodle.
  */
 export type Register = {
-  id: string;
-  label: string;
+  id: string
+  label: string
   /** stroke jitter amplitude (logical units) — 0 = ruler-clean */
-  roughness: number;
+  roughness: number
   /** width variation along a stroke (0..1) */
-  widthVary: number;
+  widthVary: number
   /** hand-drawn wobble on straight edges (0..1) */
-  handDrawn: number;
+  handDrawn: number
   /** corner rounding for boxes (logical units) */
-  corner: number;
-  fontToken: string;
-};
+  corner: number
+  fontToken: string
+}
 
 export const registers: Record<string, Register> = {
   warm: {
@@ -37,10 +37,10 @@ export const registers: Record<string, Register> = {
     corner: 10,
     fontToken: 'sans',
   },
-};
+}
 
 export function getRegister(id: string | undefined): Register {
-  return registers[id ?? 'warm'] ?? registers.warm!;
+  return registers[id ?? 'warm'] ?? registers.warm!
 }
 
 /**
@@ -56,19 +56,19 @@ export function wobbleLine(
   amount: number,
   seed: number,
 ): string {
-  if (amount <= 0.01) return `M ${x1} ${y1} L ${x2} ${y2}`;
-  const mx = (x1 + x2) / 2;
-  const my = (y1 + y2) / 2;
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const len = Math.hypot(dx, dy) || 1;
-  const nx = -dy / len;
-  const ny = dx / len;
-  const dev = (seededUnit(seed) - 0.5) * 2 * amount * 8;
-  return `M ${x1} ${y1} Q ${mx + nx * dev} ${my + ny * dev} ${x2} ${y2}`;
+  if (amount <= 0.01) return `M ${x1} ${y1} L ${x2} ${y2}`
+  const mx = (x1 + x2) / 2
+  const my = (y1 + y2) / 2
+  const dx = x2 - x1
+  const dy = y2 - y1
+  const len = Math.hypot(dx, dy) || 1
+  const nx = -dy / len
+  const ny = dx / len
+  const dev = (seededUnit(seed) - 0.5) * 2 * amount * 8
+  return `M ${x1} ${y1} Q ${mx + nx * dev} ${my + ny * dev} ${x2} ${y2}`
 }
 
 function seededUnit(seed: number): number {
-  const h = Math.sin(seed * 91.17) * 43758.5453;
-  return h - Math.floor(h);
+  const h = Math.sin(seed * 91.17) * 43758.5453
+  return h - Math.floor(h)
 }

@@ -3,48 +3,46 @@
  * chảy xuống cấp con để LLM hiểu tổng thể (chống bịa). CỔNG: chưa duyệt cha thì KHÔNG sinh con.
  */
 
-import type { CoursePlanDoc, UnitPlanDoc } from '@bingoo/plans';
-import { coursePlanQuality, unitPlanQuality } from '@bingoo/plans';
-import { getAi } from '../providers';
-import { readEnv } from '../providers/core/config';
-import { renderPrompt } from '../prompts';
-import { getCourse } from '../repos/course.repo';
-import { getPlan, isApproved, savePlan, type StoredPlan } from '../repos/plan-hierarchy.repo';
-import { AppError } from '../lib/errors';
+import type { CoursePlanDoc, UnitPlanDoc } from '@bingoo/plans'
+import { coursePlanQuality, unitPlanQuality } from '@bingoo/plans'
+import { getAi } from '../providers'
+import { readEnv } from '../providers/core/config'
+import { renderPrompt } from '../prompts'
+import { getCourse } from '../repos/course.repo'
+import { getPlan, isApproved, savePlan, type StoredPlan } from '../repos/plan-hierarchy.repo'
+import { AppError } from '../lib/errors'
 
-const CONTENT_MODEL = readEnv('CONTENT_MODEL') ?? 'claude-sonnet-5';
+const CONTENT_MODEL = readEnv('CONTENT_MODEL') ?? 'claude-sonnet-5'
 
 // ── coerce helpers (plans là TS interface, không Zod) ────────────────────────
 const rec = (v: unknown): Record<string, unknown> =>
-  v && typeof v === 'object' ? (v as Record<string, unknown>) : {};
-const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
-const str = (v: unknown): string | undefined =>
-  typeof v === 'string' && v.trim() ? v.trim() : undefined;
+  v && typeof v === 'object' ? (v as Record<string, unknown>) : {}
+const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : [])
+const str = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() ? v.trim() : undefined)
 const strArr = (v: unknown): string[] =>
   arr(v)
     .map(str)
-    .filter((s): s is string => s !== undefined);
+    .filter((s): s is string => s !== undefined)
 
-type Loc = Record<string, string>;
+type Loc = Record<string, string>
 function loc(v: unknown, fallback = ''): Loc {
-  const o = rec(v);
-  const out: Loc = {};
-  for (const [k, val] of Object.entries(o))
-    if (typeof val === 'string' && val.trim()) out[k] = val.trim();
-  return Object.keys(out).length ? out : { en: fallback, vi: fallback };
+  const o = rec(v)
+  const out: Loc = {}
+  for (const [k, val] of Object.entries(o)) if (typeof val === 'string' && val.trim()) out[k] = val.trim()
+  return Object.keys(out).length ? out : { en: fallback, vi: fallback }
 }
 const locArr = (v: unknown): Loc[] =>
   arr(v)
     .map((x) => loc(x))
-    .filter((l) => (l.en ?? '').length > 0 || (l.vi ?? '').length > 0);
+    .filter((l) => (l.en ?? '').length > 0 || (l.vi ?? '').length > 0)
 
 function firstJson(text: string): Record<string, unknown> {
-  const m = text.match(/\{[\s\S]*\}/);
-  if (!m) return {};
+  const m = text.match(/\{[\s\S]*\}/)
+  if (!m) return {}
   try {
-    return rec(JSON.parse(m[0]));
+    return rec(JSON.parse(m[0]))
   } catch {
-    return {};
+    return {}
   }
 }
 
@@ -56,8 +54,8 @@ const throwIfTruncated = (finishReason: string | undefined): void => {
         message: 'Sinh kế hoạch bị CẮT vì hết token — thu hẹp phạm vi.',
         code: 'truncated',
       },
-    ]);
-};
+    ])
+}
 
 // ── KHOÁ ─────────────────────────────────────────────────────────────────────
 
@@ -66,30 +64,30 @@ function sanitizeCoursePlan(
   courseSlug: string,
   shellUnits: readonly string[],
 ): CoursePlanDoc {
-  const allow = new Set(shellUnits);
+  const allow = new Set(shellUnits)
   const units = arr(o.units)
     .map((u, i) => {
-      const uo = rec(u);
-      const slug = str(uo.slug);
-      if (!slug || !allow.has(slug)) return undefined; // chỉ unit có thật, không bịa
+      const uo = rec(u)
+      const slug = str(uo.slug)
+      if (!slug || !allow.has(slug)) return undefined // chỉ unit có thật, không bịa
       return {
         slug,
         title: loc(uo.title, slug),
         focus: loc(uo.focus),
         objectives: strArr(uo.objectives),
         order: typeof uo.order === 'number' ? uo.order : i,
-      };
+      }
     })
     .filter((u): u is NonNullable<typeof u> => u !== undefined)
-    .sort((a, b) => a.order - b.order);
+    .sort((a, b) => a.order - b.order)
 
   // Chỉ giữ loc có nội dung (rỗng → bỏ field, để quality cảnh báo thay vì lưu {en:''}).
   const optLoc = (v: unknown): Loc | undefined => {
-    const l = loc(v);
-    return (l.en ?? '').trim() || (l.vi ?? '').trim() ? l : undefined;
-  };
-  const bigIdea = optLoc(o.bigIdea);
-  const transferGoal = optLoc(o.transferGoal);
+    const l = loc(v)
+    return (l.en ?? '').trim() || (l.vi ?? '').trim() ? l : undefined
+  }
+  const bigIdea = optLoc(o.bigIdea)
+  const transferGoal = optLoc(o.transferGoal)
 
   return {
     courseSlug,
@@ -103,26 +101,26 @@ function sanitizeCoursePlan(
     assessmentStrategy: loc(o.assessmentStrategy),
     ...(o.audience ? { audience: loc(o.audience) } : {}),
     units,
-  };
+  }
 }
 
 export interface PlanResult {
-  readonly plan: StoredPlan;
-  readonly quality: ReturnType<typeof coursePlanQuality>;
+  readonly plan: StoredPlan
+  readonly quality: ReturnType<typeof coursePlanQuality>
 }
 
 export async function generateCoursePlan(input: {
-  courseSlug: string;
-  language: string;
-  userId: string;
-  aiKey?: string;
+  courseSlug: string
+  language: string
+  userId: string
+  aiKey?: string
   /** Cho phép HỦY job nền — luồn xuống LLM call. */
-  signal?: AbortSignal;
+  signal?: AbortSignal
 }): Promise<PlanResult> {
-  const course = await getCourse(input.courseSlug);
-  if (!course) throw AppError.notFound('Không có khoá này.');
+  const course = await getCourse(input.courseSlug)
+  if (!course) throw AppError.notFound('Không có khoá này.')
 
-  const shellUnits = course.plan.units.map((u) => u.slug);
+  const shellUnits = course.plan.units.map((u) => u.slug)
   const shell = JSON.stringify({
     slug: course.plan.slug,
     title: course.plan.title,
@@ -132,7 +130,7 @@ export async function generateCoursePlan(input: {
       title: u.title,
       lessons: u.lessons.map((l) => ({ slug: l.slug, title: l.title, teaches: l.teaches })),
     })),
-  });
+  })
 
   const res = await getAi(input.aiKey).generateText({
     ...(input.signal ? { signal: input.signal } : {}),
@@ -140,11 +138,11 @@ export async function generateCoursePlan(input: {
     messages: [{ role: 'user', content: `Course=${input.courseSlug}` }],
     model: CONTENT_MODEL,
     maxTokens: 4000,
-  });
-  throwIfTruncated(res.finishReason);
+  })
+  throwIfTruncated(res.finishReason)
 
-  const doc = sanitizeCoursePlan(firstJson(res.text), input.courseSlug, shellUnits);
-  const quality = coursePlanQuality(doc, shellUnits);
+  const doc = sanitizeCoursePlan(firstJson(res.text), input.courseSlug, shellUnits)
+  const quality = coursePlanQuality(doc, shellUnits)
   const plan = await savePlan({
     courseSlug: input.courseSlug,
     level: 'course',
@@ -152,8 +150,8 @@ export async function generateCoursePlan(input: {
     doc,
     quality,
     createdBy: input.userId,
-  });
-  return { plan, quality };
+  })
+  return { plan, quality }
 }
 
 // ── UNIT ─────────────────────────────────────────────────────────────────────
@@ -164,12 +162,12 @@ function sanitizeUnitPlan(
   unitSlug: string,
   shellLessons: readonly string[],
 ): UnitPlanDoc {
-  const allow = new Set(shellLessons);
+  const allow = new Set(shellLessons)
   const lessons = arr(o.lessons)
     .map((l, i) => {
-      const lo = rec(l);
-      const slug = str(lo.slug);
-      if (!slug || !allow.has(slug)) return undefined;
+      const lo = rec(l)
+      const slug = str(lo.slug)
+      if (!slug || !allow.has(slug)) return undefined
       return {
         slug,
         title: loc(lo.title, slug),
@@ -179,19 +177,19 @@ function sanitizeUnitPlan(
           ? { durationMin: Math.round(lo.durationMin) }
           : {}),
         order: typeof lo.order === 'number' ? lo.order : i,
-      };
+      }
     })
     .filter((l): l is NonNullable<typeof l> => l !== undefined)
-    .sort((a, b) => a.order - b.order);
+    .sort((a, b) => a.order - b.order)
 
   // Chỉ giữ loc có nội dung (rỗng → bỏ field, để quality cảnh báo thay vì lưu {en:''}).
   const optLoc = (v: unknown): Loc | undefined => {
-    const l = loc(v);
-    return (l.en ?? '').trim() || (l.vi ?? '').trim() ? l : undefined;
-  };
-  const bigIdea = optLoc(o.bigIdea);
-  const essentialQuestion = optLoc(o.essentialQuestion);
-  const transferGoal = optLoc(o.transferGoal);
+    const l = loc(v)
+    return (l.en ?? '').trim() || (l.vi ?? '').trim() ? l : undefined
+  }
+  const bigIdea = optLoc(o.bigIdea)
+  const essentialQuestion = optLoc(o.essentialQuestion)
+  const transferGoal = optLoc(o.transferGoal)
 
   return {
     unitSlug,
@@ -206,42 +204,41 @@ function sanitizeUnitPlan(
     assessmentStrategy: loc(o.assessmentStrategy),
     successCriteria: locArr(o.successCriteria),
     // prerequisites: KHÔNG lấy từ LLM — derive từ graph (plan-insights).
-  };
+  }
 }
 
 export async function generateUnitPlan(input: {
-  courseSlug: string;
-  unitSlug: string;
-  language: string;
-  userId: string;
-  aiKey?: string;
+  courseSlug: string
+  unitSlug: string
+  language: string
+  userId: string
+  aiKey?: string
   /** Cho phép HỦY job nền — luồn xuống LLM call. */
-  signal?: AbortSignal;
+  signal?: AbortSignal
 }): Promise<{ plan: StoredPlan; quality: ReturnType<typeof unitPlanQuality> }> {
   // CỔNG: kế hoạch KHOÁ phải DUYỆT trước.
   if (!(await isApproved(input.courseSlug, 'course', input.courseSlug)))
     throw AppError.validation([
       {
         path: 'course',
-        message:
-          'Chưa DUYỆT kế hoạch KHOÁ — duyệt nó trước khi sinh kế hoạch unit (để có context tổng thể).',
+        message: 'Chưa DUYỆT kế hoạch KHOÁ — duyệt nó trước khi sinh kế hoạch unit (để có context tổng thể).',
         code: 'parent_not_approved',
       },
-    ]);
+    ])
 
-  const course = await getCourse(input.courseSlug);
-  if (!course) throw AppError.notFound('Không có khoá này.');
-  const unit = course.plan.units.find((u) => u.slug === input.unitSlug);
-  if (!unit) throw AppError.notFound('Không có unit này trong khoá.');
+  const course = await getCourse(input.courseSlug)
+  if (!course) throw AppError.notFound('Không có khoá này.')
+  const unit = course.plan.units.find((u) => u.slug === input.unitSlug)
+  if (!unit) throw AppError.notFound('Không có unit này trong khoá.')
 
-  const coursePlan = await getPlan(input.courseSlug, 'course', input.courseSlug);
-  const courseContext = JSON.stringify(coursePlan?.doc ?? {});
-  const shellLessons = unit.lessons.map((l) => l.slug);
+  const coursePlan = await getPlan(input.courseSlug, 'course', input.courseSlug)
+  const courseContext = JSON.stringify(coursePlan?.doc ?? {})
+  const shellLessons = unit.lessons.map((l) => l.slug)
   const unitJson = JSON.stringify({
     slug: unit.slug,
     title: unit.title,
     lessons: unit.lessons.map((l) => ({ slug: l.slug, title: l.title, teaches: l.teaches })),
-  });
+  })
 
   const res = await getAi(input.aiKey).generateText({
     ...(input.signal ? { signal: input.signal } : {}),
@@ -253,11 +250,11 @@ export async function generateUnitPlan(input: {
     messages: [{ role: 'user', content: `Unit=${input.unitSlug}` }],
     model: CONTENT_MODEL,
     maxTokens: 4000,
-  });
-  throwIfTruncated(res.finishReason);
+  })
+  throwIfTruncated(res.finishReason)
 
-  const doc = sanitizeUnitPlan(firstJson(res.text), input.courseSlug, input.unitSlug, shellLessons);
-  const quality = unitPlanQuality(doc, shellLessons);
+  const doc = sanitizeUnitPlan(firstJson(res.text), input.courseSlug, input.unitSlug, shellLessons)
+  const quality = unitPlanQuality(doc, shellLessons)
   const plan = await savePlan({
     courseSlug: input.courseSlug,
     level: 'unit',
@@ -265,8 +262,8 @@ export async function generateUnitPlan(input: {
     doc,
     quality,
     createdBy: input.userId,
-  });
-  return { plan, quality };
+  })
+  return { plan, quality }
 }
 
-export { sanitizeCoursePlan, sanitizeUnitPlan };
+export { sanitizeCoursePlan, sanitizeUnitPlan }

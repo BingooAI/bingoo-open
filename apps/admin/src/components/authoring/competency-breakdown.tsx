@@ -1,9 +1,9 @@
-'use client';
+'use client'
 
-import { useTranslations } from 'next-intl';
-import { Target, Lock, AlertTriangle, ClipboardCheck } from 'lucide-react';
-import { useLevelInsights, type PlanLevel } from '@/lib/authoring-queries';
-import { cn } from '@/lib/cn';
+import { useTranslations } from 'next-intl'
+import { Target, Lock, AlertTriangle, ClipboardCheck } from 'lucide-react'
+import { useLevelInsights, type PlanLevel } from '@/lib/authoring-queries'
+import { cn } from '@/lib/cn'
 
 /**
  * BẢN ĐỒ NĂNG LỰC của một cấp (khoá/unit/bài) — TÍNH từ graph, KHÔNG author:
@@ -21,16 +21,16 @@ const KIND_DOT: Record<string, string> = {
   DISPOSITION: 'bg-warning',
   ATTITUDE: 'bg-warning',
   BEHAVIOR: 'bg-foreground-subtle',
-};
+}
 
-const loc = (t: Record<string, string>): string => t.vi ?? t.en ?? '';
+const loc = (t: Record<string, string>): string => t.vi ?? t.en ?? ''
 
 function Head({ children }: { children: React.ReactNode }) {
   return (
     <h5 className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-foreground-subtle">
       {children}
     </h5>
-  );
+  )
 }
 
 export function CompetencyBreakdown({
@@ -39,17 +39,17 @@ export function CompetencyBreakdown({
   refSlug,
   className,
 }: {
-  courseSlug: string;
-  level: PlanLevel;
-  refSlug: string;
-  className?: string;
+  courseSlug: string
+  level: PlanLevel
+  refSlug: string
+  className?: string
 }) {
-  const t = useTranslations('admin.authoring');
+  const t = useTranslations('admin.authoring')
   // Enum → nhãn qua catalog; value lạ chưa có key thì hiện raw (tín hiệu để bổ sung), không nổ.
-  const enumLabel = (ns: string, k: string): string => (t.has(`${ns}.${k}`) ? t(`${ns}.${k}`) : k);
+  const enumLabel = (ns: string, k: string): string => (t.has(`${ns}.${k}`) ? t(`${ns}.${k}`) : k)
 
-  const { data } = useLevelInsights(courseSlug, level, refSlug);
-  if (!data || data.kcCount === 0) return null;
+  const { data } = useLevelInsights(courseSlug, level, refSlug)
+  if (!data || data.kcCount === 0) return null
 
   return (
     <div className={cn('space-y-3', className)}>
@@ -58,9 +58,7 @@ export function CompetencyBreakdown({
         <div key={g.kind}>
           <Head>
             <span className="inline-flex items-center gap-1.5">
-              <span
-                className={cn('size-1.5 rounded-full', KIND_DOT[g.kind] ?? 'bg-foreground-subtle')}
-              />
+              <span className={cn('size-1.5 rounded-full', KIND_DOT[g.kind] ?? 'bg-foreground-subtle')} />
               {enumLabel('bdKind', g.kind)} · {g.items.length}
             </span>
           </Head>
@@ -83,16 +81,12 @@ export function CompetencyBreakdown({
         <div>
           <Head>
             <span className="inline-flex items-center gap-1.5">
-              <Target className="size-3 text-primary" /> {t('bdObjectivesServed')} ·{' '}
-              {data.objectives.length}
+              <Target className="size-3 text-primary" /> {t('bdObjectivesServed')} · {data.objectives.length}
             </span>
           </Head>
           <ul className="space-y-1">
             {data.objectives.map((o) => (
-              <li
-                key={o.slug}
-                className="flex gap-2 text-[12px] leading-snug text-foreground-muted"
-              >
+              <li key={o.slug} className="flex gap-2 text-[12px] leading-snug text-foreground-muted">
                 <span className="mt-[6px] size-1 shrink-0 rounded-full bg-primary/50" />
                 <span title={o.slug}>{loc(o.title) || o.slug}</span>
               </li>
@@ -135,15 +129,10 @@ export function CompetencyBreakdown({
           </Head>
           <ul className="space-y-1">
             {data.misconceptions.map((m, i) => (
-              <li
-                key={`${m.kc}-${i}`}
-                className="flex gap-2 text-[12px] leading-snug text-foreground-muted"
-              >
+              <li key={`${m.kc}-${i}`} className="flex gap-2 text-[12px] leading-snug text-foreground-muted">
                 <span className="mt-[6px] size-1 shrink-0 rounded-full bg-danger/50" />
                 <span>
-                  <span className="text-foreground-subtle">
-                    [{enumLabel('bdMiscType', m.type)}]
-                  </span>{' '}
+                  <span className="text-foreground-subtle">[{enumLabel('bdMiscType', m.type)}]</span>{' '}
                   {loc(m.wrong)}
                 </span>
               </li>
@@ -168,8 +157,7 @@ export function CompetencyBreakdown({
                   {loc(e.title) || e.concept}
                 </span>
                 <span className="ml-auto shrink-0 text-[11px] text-foreground-subtle">
-                  {e.itemCount} {t('bdItemsUnit')} ·{' '}
-                  {e.modes.map((md) => enumLabel('bdMode', md)).join('/')}
+                  {e.itemCount} {t('bdItemsUnit')} · {e.modes.map((md) => enumLabel('bdMode', md)).join('/')}
                 </span>
               </li>
             ))}
@@ -177,5 +165,5 @@ export function CompetencyBreakdown({
         </div>
       ) : null}
     </div>
-  );
+  )
 }

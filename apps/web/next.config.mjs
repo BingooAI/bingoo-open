@@ -1,8 +1,8 @@
-import createNextIntlPlugin from 'next-intl/plugin';
+import createNextIntlPlugin from 'next-intl/plugin'
 
-const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
-const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
+const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -28,8 +28,8 @@ const nextConfig = {
   // (bingoo.ai, not api.bingoo.ai) — letting the Next server read + validate the
   // session for server-side route gating. The API stays the real AAA boundary.
   async rewrites() {
-    return [{ source: '/api/auth/:path*', destination: `${API_URL}/api/auth/:path*` }];
+    return [{ source: '/api/auth/:path*', destination: `${API_URL}/api/auth/:path*` }]
   },
-};
+}
 
-export default withNextIntl(nextConfig);
+export default withNextIntl(nextConfig)

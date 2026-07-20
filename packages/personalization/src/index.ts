@@ -9,5 +9,5 @@ export type {
   TeacherPersona,
   EngineSnapshot,
   GenerationSpec,
-} from './model';
-export { contentPlan } from './plan';
+} from './model'
+export { contentPlan } from './plan'

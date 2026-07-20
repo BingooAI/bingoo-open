@@ -23,7 +23,7 @@ export {
   type Time,
   type Axis,
   type AxisValue,
-} from './axes';
+} from './axes'
 
 export {
   experienceDescriptorSchema,
@@ -32,7 +32,7 @@ export {
   descriptorsEqual,
   type ExperienceDescriptor,
   type PartialDescriptor,
-} from './descriptor';
+} from './descriptor'
 
 export {
   checkCompatibility,
@@ -41,15 +41,10 @@ export {
   type CompatibilityVerdict,
   type CompatibilityViolation,
   type CompatibilityResult,
-} from './compatibility';
+} from './compatibility'
 
-export { CAPABILITY, deriveCapabilities, type Capability } from './capabilities';
+export { CAPABILITY, deriveCapabilities, type Capability } from './capabilities'
 
-export { BLUEPRINTS, getBlueprint, type Blueprint, type ExperienceAccent } from './blueprints';
+export { BLUEPRINTS, getBlueprint, type Blueprint, type ExperienceAccent } from './blueprints'
 
-export {
-  DEFAULT_DESCRIPTOR,
-  matchBlueprint,
-  resolveDescriptor,
-  type ResolveResult,
-} from './resolve';
+export { DEFAULT_DESCRIPTOR, matchBlueprint, resolveDescriptor, type ResolveResult } from './resolve'

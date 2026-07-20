@@ -1,8 +1,8 @@
-import createNextIntlPlugin from 'next-intl/plugin';
+import createNextIntlPlugin from 'next-intl/plugin'
 
-const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
-const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
+const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -40,8 +40,8 @@ const nextConfig = {
       // reported per-image, so it LOOKED like "the media library has nothing".
       // It had never reached the library at all.
       { source: '/api/explainer/:path*', destination: `${API_URL}/explainer/:path*` },
-    ];
+    ]
   },
-};
+}
 
-export default withNextIntl(nextConfig);
+export default withNextIntl(nextConfig)

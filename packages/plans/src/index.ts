@@ -22,27 +22,21 @@ export type {
   LessonInstructionPlan,
   UnitPlan,
   CoursePlan,
-} from './model';
+} from './model'
 export {
   planQuality,
   hasBlockingIssue,
   type PlanIssue,
   type PlanIssueCode,
   type PlanQuality,
-} from './quality';
-export { courseLessonTeaches, collectAssessments, assessmentObjectives } from './compile';
-export {
-  lessonStepWork,
-  stepEmitsBankItems,
-  stepServesState,
-  stepsForState,
-  type StepWork,
-} from './worklist';
-export type { CoursePlanDoc, CourseUnitBrief, UnitPlanDoc, UnitLessonBrief } from './hierarchy';
+} from './quality'
+export { courseLessonTeaches, collectAssessments, assessmentObjectives } from './compile'
+export { lessonStepWork, stepEmitsBankItems, stepServesState, stepsForState, type StepWork } from './worklist'
+export type { CoursePlanDoc, CourseUnitBrief, UnitPlanDoc, UnitLessonBrief } from './hierarchy'
 export {
   coursePlanQuality,
   unitPlanQuality,
   type HierIssue,
   type HierIssueCode,
   type HierQuality,
-} from './hierarchy-quality';
+} from './hierarchy-quality'

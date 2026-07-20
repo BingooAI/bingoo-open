@@ -1,5 +1,5 @@
-import { mintPublicId, type LocalizedText } from '@bingoo/core';
-import { db } from '@bingoo/db';
+import { mintPublicId, type LocalizedText } from '@bingoo/core'
+import { db } from '@bingoo/db'
 import type {
   AssetRelType,
   MediaKind,
@@ -9,7 +9,7 @@ import type {
   ModerationStatus,
   Prisma,
   RenditionKind,
-} from '@bingoo/db';
+} from '@bingoo/db'
 
 /**
  * Media assets (docs/media-library-design.md §3.3) — the logical search+authz
@@ -19,40 +19,40 @@ import type {
  */
 
 export interface CreateAssetInput {
-  kind: MediaKind;
-  title: LocalizedText;
-  description?: LocalizedText;
-  folderId?: string | null;
-  scope?: MediaScope;
-  scopeId?: string | null;
-  visibility?: MediaVisibility;
-  locale?: string | null;
-  license?: string | null;
-  ageRating?: string | null;
-  source?: string | null;
-  mimeType?: string | null;
-  createdById?: string | null;
-  ownerId?: string | null;
+  kind: MediaKind
+  title: LocalizedText
+  description?: LocalizedText
+  folderId?: string | null
+  scope?: MediaScope
+  scopeId?: string | null
+  visibility?: MediaVisibility
+  locale?: string | null
+  license?: string | null
+  ageRating?: string | null
+  source?: string | null
+  mimeType?: string | null
+  createdById?: string | null
+  ownerId?: string | null
   /** Defaults to PENDING (R5). Callers pass `initialModeration(role)` — see lib/media-moderation. */
-  moderation?: ModerationStatus;
+  moderation?: ModerationStatus
 }
 
 export async function createAsset(input: CreateAssetInput) {
   // Inherit scope from the folder when one is given and no explicit scope.
-  let scope: MediaScope = input.scope ?? 'GLOBAL';
-  let scopeId = input.scopeId ?? null;
+  let scope: MediaScope = input.scope ?? 'GLOBAL'
+  let scopeId = input.scopeId ?? null
   if (input.folderId && input.scope === undefined) {
     const folder = await db.mediaFolder.findUnique({
       where: { id: input.folderId },
       select: { scope: true, scopeId: true },
-    });
+    })
     if (folder) {
-      scope = folder.scope;
-      scopeId = folder.scopeId;
+      scope = folder.scope
+      scopeId = folder.scopeId
     }
   }
 
-  const moderation = input.moderation ?? 'PENDING';
+  const moderation = input.moderation ?? 'PENDING'
 
   return db.mediaAsset.create({
     data: {
@@ -77,34 +77,34 @@ export async function createAsset(input: CreateAssetInput) {
       ownerId: input.ownerId ?? input.createdById ?? null,
       keywords: [],
     },
-  });
+  })
 }
 
 const ASSET_INCLUDE = {
   renditions: true,
   tags: { include: { tag: { select: { slug: true, kind: true, label: true } } } },
-} satisfies Prisma.MediaAssetInclude;
+} satisfies Prisma.MediaAssetInclude
 
 export function getAssetById(id: string) {
-  return db.mediaAsset.findUnique({ where: { id }, include: ASSET_INCLUDE });
+  return db.mediaAsset.findUnique({ where: { id }, include: ASSET_INCLUDE })
 }
 
 export function getAssetByPublicId(publicId: string) {
-  return db.mediaAsset.findUnique({ where: { publicId }, include: ASSET_INCLUDE });
+  return db.mediaAsset.findUnique({ where: { publicId }, include: ASSET_INCLUDE })
 }
 
 export interface RenditionInput {
-  kind: RenditionKind;
-  provider?: string | null;
-  storageKey?: string | null;
-  videoId?: string | null;
-  url?: string | null;
-  checksum?: string | null;
-  mimeType?: string | null;
-  byteSize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  bitrate?: number | null;
+  kind: RenditionKind
+  provider?: string | null
+  storageKey?: string | null
+  videoId?: string | null
+  url?: string | null
+  checksum?: string | null
+  mimeType?: string | null
+  byteSize?: number | null
+  width?: number | null
+  height?: number | null
+  bitrate?: number | null
 }
 
 /** Upsert a rendition (one per kind per asset). */
@@ -137,16 +137,16 @@ export function putRendition(assetId: string, r: RenditionInput) {
       height: r.height ?? null,
       bitrate: r.bitrate ?? null,
     },
-  });
+  })
 }
 
 export interface CompleteAssetInput {
-  byteSize?: number | null;
-  checksum?: string | null;
-  width?: number | null;
-  height?: number | null;
-  durationMs?: number | null;
-  pageCount?: number | null;
+  byteSize?: number | null
+  checksum?: string | null
+  width?: number | null
+  height?: number | null
+  durationMs?: number | null
+  pageCount?: number | null
 }
 
 /** Mark an uploaded asset ready for enrichment/moderation. */
@@ -162,18 +162,18 @@ export function completeAsset(id: string, meta: CompleteAssetInput) {
       durationMs: meta.durationMs ?? undefined,
       pageCount: meta.pageCount ?? undefined,
     },
-  });
+  })
 }
 
 export interface UpdateAssetInput {
-  title?: LocalizedText;
-  description?: LocalizedText;
-  altText?: LocalizedText;
-  folderId?: string | null;
-  visibility?: MediaVisibility;
-  license?: string | null;
-  ageRating?: string | null;
-  locale?: string | null;
+  title?: LocalizedText
+  description?: LocalizedText
+  altText?: LocalizedText
+  folderId?: string | null
+  visibility?: MediaVisibility
+  license?: string | null
+  ageRating?: string | null
+  locale?: string | null
 }
 
 export function updateAsset(id: string, input: UpdateAssetInput) {
@@ -189,18 +189,14 @@ export function updateAsset(id: string, input: UpdateAssetInput) {
       ageRating: input.ageRating === undefined ? undefined : input.ageRating,
       locale: input.locale === undefined ? undefined : input.locale,
     },
-  });
+  })
 }
 
 export function setAssetStatus(id: string, status: MediaStatus) {
-  return db.mediaAsset.update({ where: { id }, data: { status } });
+  return db.mediaAsset.update({ where: { id }, data: { status } })
 }
 
-export function setAssetModeration(
-  id: string,
-  moderation: ModerationStatus,
-  reason?: string | null,
-) {
+export function setAssetModeration(id: string, moderation: ModerationStatus, reason?: string | null) {
   return db.mediaAsset.update({
     where: { id },
     data: {
@@ -209,7 +205,7 @@ export function setAssetModeration(
       // Publish only when moderation approves a ready asset.
       ...(moderation === 'APPROVED' ? { publishedAt: new Date() } : {}),
     },
-  });
+  })
 }
 
 export function listAssetsByFolder(folderId: string, skip: number, take: number) {
@@ -222,11 +218,11 @@ export function listAssetsByFolder(folderId: string, skip: number, take: number)
       include: ASSET_INCLUDE,
     }),
     db.mediaAsset.count({ where: { folderId } }),
-  ]);
+  ])
 }
 
 export function getAssetsByIds(ids: string[]) {
-  return db.mediaAsset.findMany({ where: { id: { in: ids } }, include: ASSET_INCLUDE });
+  return db.mediaAsset.findMany({ where: { id: { in: ids } }, include: ASSET_INCLUDE })
 }
 
 export function relateAssets(fromAssetId: string, toAssetId: string, relType: AssetRelType) {
@@ -234,14 +230,14 @@ export function relateAssets(fromAssetId: string, toAssetId: string, relType: As
     where: { fromAssetId_toAssetId_relType: { fromAssetId, toAssetId, relType } },
     create: { fromAssetId, toAssetId, relType },
     update: {},
-  });
+  })
 }
 
 /** Renditions with their physical location — used to delete/move bytes. */
 export function listRenditions(assetId: string) {
-  return db.mediaRendition.findMany({ where: { assetId } });
+  return db.mediaRendition.findMany({ where: { assetId } })
 }
 
 export function deleteAsset(id: string) {
-  return db.mediaAsset.delete({ where: { id } });
+  return db.mediaAsset.delete({ where: { id } })
 }

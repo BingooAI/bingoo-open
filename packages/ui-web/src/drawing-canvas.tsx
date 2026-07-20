@@ -1,21 +1,21 @@
-'use client';
+'use client'
 
-import { appendPoint, pointsToSvgPath, type DrawPoint, type DrawStroke } from '@bingoo/core';
-import { useRef, useState, type PointerEvent } from 'react';
-import { cn } from './lib/cn';
+import { appendPoint, pointsToSvgPath, type DrawPoint, type DrawStroke } from '@bingoo/core'
+import { useRef, useState, type PointerEvent } from 'react'
+import { cn } from './lib/cn'
 
 export interface DrawingCanvasProps {
   /** Committed strokes (controlled — undo/clear by slicing this array). */
-  strokes: DrawStroke[];
-  onStrokesChange: (strokes: DrawStroke[]) => void;
+  strokes: DrawStroke[]
+  onStrokesChange: (strokes: DrawStroke[]) => void
   /** Paint for the next stroke. */
-  color: string;
+  color: string
   /** Brush width in viewBox units (0–100 space). */
-  brushWidth?: number;
-  disabled?: boolean;
+  brushWidth?: number
+  disabled?: boolean
   /** A11y label (data). */
-  label?: string;
-  className?: string;
+  label?: string
+  className?: string
 }
 
 /**
@@ -32,33 +32,29 @@ export function DrawingCanvas({
   label,
   className,
 }: DrawingCanvasProps) {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const [draft, setDraft] = useState<DrawPoint[] | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null)
+  const [draft, setDraft] = useState<DrawPoint[] | null>(null)
 
   function toCanvas(e: PointerEvent): DrawPoint {
-    const rect = svgRef.current!.getBoundingClientRect();
-    return [
-      ((e.clientX - rect.left) / rect.width) * 100,
-      ((e.clientY - rect.top) / rect.height) * 100,
-    ];
+    const rect = svgRef.current!.getBoundingClientRect()
+    return [((e.clientX - rect.left) / rect.width) * 100, ((e.clientY - rect.top) / rect.height) * 100]
   }
 
   function down(e: PointerEvent<SVGSVGElement>) {
-    if (disabled) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
-    setDraft([toCanvas(e)]);
+    if (disabled) return
+    e.currentTarget.setPointerCapture(e.pointerId)
+    setDraft([toCanvas(e)])
   }
 
   function move(e: PointerEvent<SVGSVGElement>) {
-    if (disabled || !draft) return;
-    setDraft(appendPoint(draft, toCanvas(e)));
+    if (disabled || !draft) return
+    setDraft(appendPoint(draft, toCanvas(e)))
   }
 
   function up() {
-    if (!draft) return;
-    if (draft.length > 0)
-      onStrokesChange([...strokes, { points: draft, color, width: brushWidth }]);
-    setDraft(null);
+    if (!draft) return
+    if (draft.length > 0) onStrokesChange([...strokes, { points: draft, color, width: brushWidth }])
+    setDraft(null)
   }
 
   return (
@@ -99,5 +95,5 @@ export function DrawingCanvas({
         />
       ) : null}
     </svg>
-  );
+  )
 }

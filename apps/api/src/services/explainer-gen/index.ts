@@ -5,12 +5,12 @@
  * kit catalogue comes from the live @bingoo/manipulatives registry, and a
  * concise authoring ruleset grounds the writer.
  */
-import { MANIPULATIVES } from '@bingoo/manipulatives';
-import type { LessonBrief } from '@bingoo/explainer';
-import { promptMarkdown, planForScenes } from '@bingoo/explainer';
-import { db } from '@bingoo/db';
-import { generateLesson, type GenDeps, type GenResult, type BankItem } from './pipeline';
-import { explainerComplete } from '../explainer.service';
+import { MANIPULATIVES } from '@bingoo/manipulatives'
+import type { LessonBrief } from '@bingoo/explainer'
+import { promptMarkdown, planForScenes } from '@bingoo/explainer'
+import { db } from '@bingoo/db'
+import { generateLesson, type GenDeps, type GenResult, type BankItem } from './pipeline'
+import { explainerComplete } from '../explainer.service'
 
 /** Reuse from the content bank: APPROVED/PUBLISHED, difficulty-calibrated,
  *  measurable questions whose skills overlap the objective's. Mirrors the
@@ -18,7 +18,7 @@ import { explainerComplete } from '../explainer.service';
  *  first so the writer sees an easy→hard spread. Empty on any failure so
  *  generation degrades to authoring-from-scratch, never breaks. */
 async function bankItems(skills: string[]): Promise<BankItem[]> {
-  if (!skills.length) return [];
+  if (!skills.length) return []
   try {
     const rows = await db.contentItem.findMany({
       where: {
@@ -28,19 +28,19 @@ async function bankItems(skills: string[]): Promise<BankItem[]> {
       },
       orderBy: { difficulty: 'asc' },
       take: 12,
-    });
+    })
     return rows.map((r) => ({
       skills: r.skills,
       primitiveKind: r.primitiveKind,
       difficulty: r.difficulty,
       payload: r.payload,
-    }));
+    }))
   } catch {
-    return [];
+    return []
   }
 }
 
-const LANG: Record<string, string> = { vi: 'Vietnamese', en: 'English' };
+const LANG: Record<string, string> = { vi: 'Vietnamese', en: 'English' }
 
 /**
  * The kit catalogue the writer grounds on. It carries `defaultParams`, not just
@@ -55,10 +55,10 @@ function kitManifest(): string {
       defaultParams: m.defaultParams ?? {},
       verbs: Object.keys(m.verbs),
     })),
-  );
+  )
 }
 
-export type { GenResult } from './pipeline';
+export type { GenResult } from './pipeline'
 
 /** Generate a lesson from a validated LessonBrief using bingoo's AiPort. */
 export function runGenerate(
@@ -80,6 +80,6 @@ export function runGenerate(
     // Reuse APPROVED questions from the content bank for objectives that carry
     // skill slugs — moderated, calibrated, consistent with the rest of bingoo.
     bank: bankItems,
-  };
-  return generateLesson(brief, deps, () => {});
+  }
+  return generateLesson(brief, deps, () => {})
 }

@@ -1,5 +1,5 @@
-import type { ModerationStatus } from '@bingoo/db';
-import { hasAnyRole, type PlatformRole } from '../auth/roles';
+import type { ModerationStatus } from '@bingoo/db'
+import { hasAnyRole, type PlatformRole } from '../auth/roles'
 
 /**
  * The R5 gate: nothing reaches a child until a moderator approves it. This module
@@ -8,7 +8,7 @@ import { hasAnyRole, type PlatformRole } from '../auth/roles';
  */
 
 /** Platform roles that may approve / reject / flag an asset. */
-export const MODERATION_ROLES: readonly PlatformRole[] = ['MODERATOR', 'ADMIN'];
+export const MODERATION_ROLES: readonly PlatformRole[] = ['MODERATOR', 'ADMIN']
 
 /**
  * Moderation an asset starts life with, from its creator's role.
@@ -22,5 +22,5 @@ export const MODERATION_ROLES: readonly PlatformRole[] = ['MODERATOR', 'ADMIN'];
  * No role (scripts, background jobs, anonymous) → PENDING. Fail closed.
  */
 export function initialModeration(role: string | null | undefined): ModerationStatus {
-  return hasAnyRole(role, MODERATION_ROLES) ? 'APPROVED' : 'PENDING';
+  return hasAnyRole(role, MODERATION_ROLES) ? 'APPROVED' : 'PENDING'
 }

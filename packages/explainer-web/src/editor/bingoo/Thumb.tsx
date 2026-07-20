@@ -3,12 +3,12 @@
  * clips SHOW what they are (a real shape/prop/asset drawing, a text glyph, a
  * stick figure, a diagram, or a subject icon for manipulatives).
  */
-'use client';
-import * as React from 'react';
-import { getProp } from '../../kit/props';
-import { manipInfo } from '../manipCatalog';
+'use client'
+import * as React from 'react'
+import { getProp } from '../../kit/props'
+import { manipInfo } from '../manipCatalog'
 
-const SUBJECT_ICON: Record<string, string> = { math: '🔢', english: '🔤', science: '🔬' };
+const SUBJECT_ICON: Record<string, string> = { math: '🔢', english: '🔤', science: '🔬' }
 
 export function Thumb({
   type,
@@ -16,10 +16,10 @@ export function Thumb({
   stroke = '#e8eaed',
   box = 26,
 }: {
-  type: string;
-  name: string;
-  stroke?: string;
-  box?: number;
+  type: string
+  name: string
+  stroke?: string
+  box?: number
 }) {
   const svg = (children: React.ReactNode) => (
     <svg
@@ -30,7 +30,7 @@ export function Thumb({
     >
       {children}
     </svg>
-  );
+  )
   const ctx = {
     w: box,
     h: box,
@@ -41,11 +41,11 @@ export function Thumb({
     seed: 3,
     fillOpacity: 0,
     draw: undefined as number | undefined,
-  };
+  }
 
   switch (type) {
     case 'shape':
-      return svg(<g style={{ color: stroke }}>{getProp(name)(ctx)}</g>);
+      return svg(<g style={{ color: stroke }}>{getProp(name)(ctx)}</g>)
     case 'text':
       return svg(
         <text
@@ -58,7 +58,7 @@ export function Thumb({
         >
           Aa
         </text>,
-      );
+      )
     case 'stick':
       return svg(
         <g stroke={stroke} strokeWidth={1.8} fill="none" strokeLinecap="round">
@@ -69,7 +69,7 @@ export function Thumb({
           <line x1={box / 2} y1={box * 0.66} x2={box * 0.34} y2={box * 0.86} />
           <line x1={box / 2} y1={box * 0.66} x2={box * 0.66} y2={box * 0.86} />
         </g>,
-      );
+      )
     case 'diagram':
       return svg(
         <g stroke={stroke} strokeWidth={1.6} fill="none">
@@ -77,7 +77,7 @@ export function Thumb({
           <rect x={box * 0.6} y={box * 0.35} width={box * 0.3} height={box * 0.3} rx={3} />
           <line x1={box * 0.4} y1={box * 0.5} x2={box * 0.6} y2={box * 0.5} />
         </g>,
-      );
+      )
     case 'stroke':
       return svg(
         <path
@@ -87,13 +87,13 @@ export function Thumb({
           fill="none"
           strokeLinecap="round"
         />,
-      );
+      )
     case 'manipulative':
       return svg(
         <text x={box / 2} y={box * 0.72} fontSize={box * 0.7} textAnchor="middle">
           {SUBJECT_ICON[manipInfo(name)?.subject ?? 'math']}
         </text>,
-      );
+      )
     default:
       return svg(
         <rect
@@ -106,6 +106,6 @@ export function Thumb({
           strokeWidth={1.6}
           fill="none"
         />,
-      );
+      )
   }
 }

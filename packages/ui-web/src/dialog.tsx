@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import { X } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { X } from 'lucide-react'
+import type { ReactNode } from 'react'
 import {
   Button as AriaButton,
   Dialog as AriaDialog,
@@ -9,24 +9,24 @@ import {
   Heading,
   Modal,
   ModalOverlay,
-} from 'react-aria-components';
-import { buttonVariants, type ButtonProps } from './button';
+} from 'react-aria-components'
+import { buttonVariants, type ButtonProps } from './button'
 
 export interface DialogProps {
   /** Content of the trigger button. */
-  trigger: ReactNode;
-  triggerVariant?: ButtonProps['variant'];
-  title: ReactNode;
-  description?: ReactNode;
-  children?: ReactNode;
+  trigger: ReactNode
+  triggerVariant?: ButtonProps['variant']
+  title: ReactNode
+  description?: ReactNode
+  children?: ReactNode
   /** Footer render — receives `close` to dismiss the dialog. */
-  footer?: (close: () => void) => ReactNode;
+  footer?: (close: () => void) => ReactNode
   /** Accessible label for the close (X) button — pass a localized string. */
-  closeAriaLabel?: string;
+  closeAriaLabel?: string
   /** `alertdialog` = requires an explicit decision (no dismiss on click-outside). */
-  role?: 'dialog' | 'alertdialog';
+  role?: 'dialog' | 'alertdialog'
   /** Allow dismiss via click-outside / ESC. Forced off for alertdialog. */
-  dismissable?: boolean;
+  dismissable?: boolean
 }
 
 /**
@@ -45,7 +45,7 @@ export function Dialog({
   role = 'dialog',
   dismissable = true,
 }: DialogProps) {
-  const canDismiss = role === 'alertdialog' ? false : dismissable;
+  const canDismiss = role === 'alertdialog' ? false : dismissable
   return (
     <DialogTrigger>
       <AriaButton className={buttonVariants({ variant: triggerVariant })}>{trigger}</AriaButton>
@@ -69,9 +69,7 @@ export function Dialog({
                   <Heading slot="title" className="font-display text-lg font-bold text-foreground">
                     {title}
                   </Heading>
-                  {description ? (
-                    <p className="text-sm text-foreground-muted">{description}</p>
-                  ) : null}
+                  {description ? <p className="text-sm text-foreground-muted">{description}</p> : null}
                 </div>
                 {children}
                 {footer ? <div className="flex justify-end gap-2">{footer(close)}</div> : null}
@@ -81,10 +79,10 @@ export function Dialog({
         </Modal>
       </ModalOverlay>
     </DialogTrigger>
-  );
+  )
 }
 
 /** Confirmation dialog — requires an explicit choice (no click-outside dismiss). */
 export function AlertDialog(props: Omit<DialogProps, 'role'>) {
-  return <Dialog {...props} role="alertdialog" />;
+  return <Dialog {...props} role="alertdialog" />
 }

@@ -20,15 +20,15 @@
  * preserved by construction: a title always reads bigger than a body, which
  * always reads bigger than a label, in every scene and every aspect.
  */
-import * as React from 'react';
-import type { RenderItem, TextContent } from '@bingoo/explainer';
-import type { ThemeTokens } from '@bingoo/explainer';
-import { resolveStyle } from '../theme/tokens';
-import { itemTransform, wrapText } from './util';
-import { rungSize, MIN_SHRINK } from '@bingoo/explainer';
+import * as React from 'react'
+import type { RenderItem, TextContent } from '@bingoo/explainer'
+import type { ThemeTokens } from '@bingoo/explainer'
+import { resolveStyle } from '../theme/tokens'
+import { itemTransform, wrapText } from './util'
+import { rungSize, MIN_SHRINK } from '@bingoo/explainer'
 
-const BOX_W = 0.96;
-const BOX_H = 0.96;
+const BOX_W = 0.96
+const BOX_H = 0.96
 
 /* The type scale lives in the ENGINE (@bingoo/explainer type.ts), not here —
  * the authoring contract quotes character budgets computed from the SAME numbers
@@ -37,12 +37,12 @@ const BOX_H = 0.96;
 
 /** Start at the rung's size and step DOWN only until the wrapped text fits. */
 function fitText(text: string, rect: { w: number; h: number }, ideal: number) {
-  const floor = Math.max(12, ideal * MIN_SHRINK);
+  const floor = Math.max(12, ideal * MIN_SHRINK)
   for (let size = ideal; size >= floor; size -= 1) {
-    const lines = wrapText(text, size, rect.w * BOX_W);
-    if (lines.length * size * 1.22 <= rect.h * BOX_H) return { size, lines };
+    const lines = wrapText(text, size, rect.w * BOX_W)
+    if (lines.length * size * 1.22 <= rect.h * BOX_H) return { size, lines }
   }
-  return { size: floor, lines: wrapText(text, floor, rect.w * BOX_W) };
+  return { size: floor, lines: wrapText(text, floor, rect.w * BOX_W) }
 }
 
 export function TextEl({
@@ -50,23 +50,23 @@ export function TextEl({
   theme,
   canvas,
 }: {
-  item: RenderItem;
-  theme: ThemeTokens;
-  canvas: { w: number; h: number };
+  item: RenderItem
+  theme: ThemeTokens
+  canvas: { w: number; h: number }
 }) {
-  const c = item.content as TextContent;
-  const { transform, opacity } = itemTransform(item);
-  const s = resolveStyle(theme, item.style);
-  const rung = item.style?.fontSize;
-  const { size: fontSize, lines } = fitText(c.text, item.rect, rungSize(rung, canvas));
+  const c = item.content as TextContent
+  const { transform, opacity } = itemTransform(item)
+  const s = resolveStyle(theme, item.style)
+  const rung = item.style?.fontSize
+  const { size: fontSize, lines } = fitText(c.text, item.rect, rungSize(rung, canvas))
 
-  const lineH = fontSize * 1.22;
-  const totalH = lines.length * lineH;
-  const startY = item.rect.h / 2 - totalH / 2 + fontSize * 0.8;
-  const anchor = s.align === 'left' ? 'start' : s.align === 'right' ? 'end' : 'middle';
-  const x = anchor === 'start' ? 0 : anchor === 'end' ? item.rect.w : item.rect.w / 2;
-  const isTitle = rung === 'title' || rung === 'huge';
-  const fontWeight = isTitle ? 800 : rung === 'label' ? 700 : 600;
+  const lineH = fontSize * 1.22
+  const totalH = lines.length * lineH
+  const startY = item.rect.h / 2 - totalH / 2 + fontSize * 0.8
+  const anchor = s.align === 'left' ? 'start' : s.align === 'right' ? 'end' : 'middle'
+  const x = anchor === 'start' ? 0 : anchor === 'end' ? item.rect.w : item.rect.w / 2
+  const isTitle = rung === 'title' || rung === 'huge'
+  const fontWeight = isTitle ? 800 : rung === 'label' ? 700 : 600
 
   return (
     <g transform={transform} opacity={opacity}>
@@ -90,5 +90,5 @@ export function TextEl({
         ))}
       </text>
     </g>
-  );
+  )
 }

@@ -3,11 +3,11 @@
  * đầu ra/đánh giá. Chạy offline.
  */
 
-import { describe, expect, it } from 'vitest';
-import { coursePlanQuality, unitPlanQuality } from '../src/hierarchy-quality';
-import type { CoursePlanDoc, UnitPlanDoc } from '../src/hierarchy';
+import { describe, expect, it } from 'vitest'
+import { coursePlanQuality, unitPlanQuality } from '../src/hierarchy-quality'
+import type { CoursePlanDoc, UnitPlanDoc } from '../src/hierarchy'
 
-const L = (en: string) => ({ en, vi: en });
+const L = (en: string) => ({ en, vi: en })
 
 const courseDoc = (over: Partial<CoursePlanDoc> = {}): CoursePlanDoc => ({
   courseSlug: 'c',
@@ -22,33 +22,33 @@ const courseDoc = (over: Partial<CoursePlanDoc> = {}): CoursePlanDoc => ({
     { slug: 'u2', title: L('U2'), focus: L('f2'), objectives: ['kc2'], order: 1 },
   ],
   ...over,
-});
+})
 
 describe('coursePlanQuality', () => {
   it('đủ + phủ đúng unit → approvable', () => {
-    const q = coursePlanQuality(courseDoc(), ['u1', 'u2']);
-    expect(q.approvable).toBe(true);
-  });
+    const q = coursePlanQuality(courseDoc(), ['u1', 'u2'])
+    expect(q.approvable).toBe(true)
+  })
 
   it('thiếu unit của vỏ khoá → UNIT_NOT_COVERED, chặn duyệt', () => {
-    const q = coursePlanQuality(courseDoc(), ['u1', 'u2', 'u3']);
-    expect(q.issues.map((i) => i.code)).toContain('UNIT_NOT_COVERED');
-    expect(q.approvable).toBe(false);
-  });
+    const q = coursePlanQuality(courseDoc(), ['u1', 'u2', 'u3'])
+    expect(q.issues.map((i) => i.code)).toContain('UNIT_NOT_COVERED')
+    expect(q.approvable).toBe(false)
+  })
 
   it('bịa unit không có trong khoá → EXTRA_UNIT', () => {
-    const q = coursePlanQuality(courseDoc(), ['u1']); // u2 không có trong vỏ
-    expect(q.issues.map((i) => i.code)).toContain('EXTRA_UNIT');
-  });
+    const q = coursePlanQuality(courseDoc(), ['u1']) // u2 không có trong vỏ
+    expect(q.issues.map((i) => i.code)).toContain('EXTRA_UNIT')
+  })
 
   it('thiếu mục tiêu/đầu ra → chặn duyệt', () => {
-    const q = coursePlanQuality(courseDoc({ goals: [], outcomes: [] }), ['u1', 'u2']);
-    const codes = q.issues.map((i) => i.code);
-    expect(codes).toContain('NO_GOALS');
-    expect(codes).toContain('NO_OUTCOMES');
-    expect(q.approvable).toBe(false);
-  });
-});
+    const q = coursePlanQuality(courseDoc({ goals: [], outcomes: [] }), ['u1', 'u2'])
+    const codes = q.issues.map((i) => i.code)
+    expect(codes).toContain('NO_GOALS')
+    expect(codes).toContain('NO_OUTCOMES')
+    expect(q.approvable).toBe(false)
+  })
+})
 
 const unitDoc = (over: Partial<UnitPlanDoc> = {}): UnitPlanDoc => ({
   unitSlug: 'u1',
@@ -63,22 +63,22 @@ const unitDoc = (over: Partial<UnitPlanDoc> = {}): UnitPlanDoc => ({
   assessmentStrategy: L('quiz'),
   successCriteria: [L('can do')],
   ...over,
-});
+})
 
 describe('unitPlanQuality', () => {
   it('đủ + phủ đúng bài → approvable', () => {
-    expect(unitPlanQuality(unitDoc(), ['l1', 'l2']).approvable).toBe(true);
-  });
+    expect(unitPlanQuality(unitDoc(), ['l1', 'l2']).approvable).toBe(true)
+  })
 
   it('thiếu bài của unit → LESSON_NOT_COVERED', () => {
     expect(unitPlanQuality(unitDoc(), ['l1', 'l2', 'l3']).issues.map((i) => i.code)).toContain(
       'LESSON_NOT_COVERED',
-    );
-  });
+    )
+  })
 
   it('thiếu mạch học → chặn duyệt', () => {
-    const q = unitPlanQuality(unitDoc({ arc: { en: '' } }), ['l1', 'l2']);
-    expect(q.issues.map((i) => i.code)).toContain('NO_ARC');
-    expect(q.approvable).toBe(false);
-  });
-});
+    const q = unitPlanQuality(unitDoc({ arc: { en: '' } }), ['l1', 'l2'])
+    expect(q.issues.map((i) => i.code)).toContain('NO_ARC')
+    expect(q.approvable).toBe(false)
+  })
+})

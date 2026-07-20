@@ -1,26 +1,26 @@
 /** Chọn tức thời sau mỗi câu. SPEC §8.4. */
 
-import type { Candidate, Slug } from '../contracts';
-import type { EnginePolicy } from '../policy';
-import type { SkillMastery } from '../mastery/observe';
-import type { SkillGraph } from '../graph/build';
-import { remediationFor } from '../graph/remediation';
-import { abilityFromStates, isEligible, scoreItem } from './score';
+import type { Candidate, Slug } from '../contracts'
+import type { EnginePolicy } from '../policy'
+import type { SkillMastery } from '../mastery/observe'
+import type { SkillGraph } from '../graph/build'
+import { remediationFor } from '../graph/remediation'
+import { abilityFromStates, isEligible, scoreItem } from './score'
 
 export interface NextItemContext {
-  readonly graph: SkillGraph;
-  readonly states: ReadonlyMap<Slug, SkillMastery>;
-  readonly priority: ReadonlyMap<Slug, number>;
-  readonly relevant: ReadonlySet<Slug>;
-  readonly started: ReadonlySet<Slug>;
-  readonly encountered: ReadonlySet<Slug>;
+  readonly graph: SkillGraph
+  readonly states: ReadonlyMap<Slug, SkillMastery>
+  readonly priority: ReadonlyMap<Slug, number>
+  readonly relevant: ReadonlySet<Slug>
+  readonly started: ReadonlySet<Slug>
+  readonly encountered: ReadonlySet<Slug>
 }
 
 export interface NextItemOpts {
   /** Kỹ năng vừa sai → đẩy mạnh ôn bù tiên quyết yếu nhất. */
-  readonly remediate?: Slug;
+  readonly remediate?: Slug
   /** Khoá ứng viên đã gặp trong phiên. */
-  readonly seen?: ReadonlySet<string>;
+  readonly seen?: ReadonlySet<string>
 }
 
 /**
@@ -34,29 +34,29 @@ export function selectNextItem(
   opts: NextItemOpts,
   policy: EnginePolicy,
 ): Candidate | null {
-  let priority: ReadonlyMap<Slug, number> = ctx.priority;
+  let priority: ReadonlyMap<Slug, number> = ctx.priority
 
   if (opts.remediate !== undefined && ctx.graph.has(opts.remediate)) {
-    const rem = remediationFor(ctx.graph, ctx.states, opts.remediate, policy.mastery.threshold);
+    const rem = remediationFor(ctx.graph, ctx.states, opts.remediate, policy.mastery.threshold)
     if (ctx.relevant.has(rem.target) || rem.target === opts.remediate) {
-      const boosted = new Map(ctx.priority);
-      boosted.set(rem.target, (boosted.get(rem.target) ?? 0) + policy.sequencing.remediateBoost);
-      priority = boosted;
+      const boosted = new Map(ctx.priority)
+      boosted.set(rem.target, (boosted.get(rem.target) ?? 0) + policy.sequencing.remediateBoost)
+      priority = boosted
     }
   }
 
-  const abilityOf = abilityFromStates(ctx.states, policy.elo.base);
-  let best: Candidate | null = null;
-  let bestScore = 0;
+  const abilityOf = abilityFromStates(ctx.states, policy.elo.base)
+  let best: Candidate | null = null
+  let bestScore = 0
   for (const cand of candidates) {
-    if (opts.seen?.has(cand.key)) continue;
-    if (!cand.skills.some((s) => priority.has(s))) continue;
-    if (!isEligible(cand, ctx.started, ctx.encountered)) continue;
-    const score = scoreItem(cand, priority, abilityOf, ctx.started, policy.sequencing);
+    if (opts.seen?.has(cand.key)) continue
+    if (!cand.skills.some((s) => priority.has(s))) continue
+    if (!isEligible(cand, ctx.started, ctx.encountered)) continue
+    const score = scoreItem(cand, priority, abilityOf, ctx.started, policy.sequencing)
     if (score > bestScore) {
-      bestScore = score;
-      best = cand;
+      bestScore = score
+      best = cand
     }
   }
-  return best;
+  return best
 }

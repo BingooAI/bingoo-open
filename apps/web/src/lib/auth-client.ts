@@ -1,4 +1,4 @@
-import { createAuthClient } from 'better-auth/react';
+import { createAuthClient } from 'better-auth/react'
 
 /**
  * Better Auth browser client. Calls are SAME-ORIGIN: Next proxies /api/auth/* to
@@ -9,7 +9,7 @@ import { createAuthClient } from 'better-auth/react';
  */
 export const authClient = createAuthClient({
   fetchOptions: { credentials: 'include' },
-});
+})
 
 export const {
   signIn,
@@ -21,4 +21,4 @@ export const {
   listSessions,
   revokeSession,
   revokeOtherSessions,
-} = authClient;
+} = authClient

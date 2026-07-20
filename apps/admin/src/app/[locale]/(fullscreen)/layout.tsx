@@ -1,5 +1,5 @@
-import { setRequestLocale } from 'next-intl/server';
-import { requireStaff } from '@/lib/session';
+import { setRequestLocale } from 'next-intl/server'
+import { requireStaff } from '@/lib/session'
 
 /**
  * Full-screen staff routes — the Studio.
@@ -15,11 +15,11 @@ export default async function FullscreenLayout({
   children,
   params,
 }: {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  await requireStaff(locale);
-  return <>{children}</>;
+  const { locale } = await params
+  setRequestLocale(locale)
+  await requireStaff(locale)
+  return <>{children}</>
 }

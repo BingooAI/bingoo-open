@@ -1,12 +1,12 @@
-import { Baloo_2, Be_Vietnam_Pro } from 'next/font/google';
-import '@/app/globals.css';
+import { Baloo_2, Be_Vietnam_Pro } from 'next/font/google'
+import '@/app/globals.css'
 
-const baloo = Baloo_2({ subsets: ['latin'], weight: ['700'], variable: '--font-baloo' });
+const baloo = Baloo_2({ subsets: ['latin'], weight: ['700'], variable: '--font-baloo' })
 const beVietnam = Be_Vietnam_Pro({
   subsets: ['latin'],
   weight: ['400'],
   variable: '--font-be-vietnam',
-});
+})
 
 /**
  * Global not-found (outside the [locale] tree, so it owns its own <html>). Kept
@@ -28,5 +28,5 @@ export default function NotFound() {
         </div>
       </body>
     </html>
-  );
+  )
 }

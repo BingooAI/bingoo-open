@@ -1,20 +1,20 @@
-import type { ReactNode } from 'react';
-import { IconChip, type IconChipColor } from './icon-chip';
-import { cn } from './lib/cn';
+import type { ReactNode } from 'react'
+import { IconChip, type IconChipColor } from './icon-chip'
+import { cn } from './lib/cn'
 
 export interface ActivityFeedItemProps {
-  icon: ReactNode;
-  color?: IconChipColor;
+  icon: ReactNode
+  color?: IconChipColor
   /** e.g. "An hoàn thành bài Phân số" (pre-localized/composed). */
-  title: ReactNode;
+  title: ReactNode
   /** Pre-formatted relative time, e.g. "2 giờ trước". */
-  time?: ReactNode;
-  description?: ReactNode;
+  time?: ReactNode
+  description?: ReactNode
   /** Trailing slot (reward chip, thumbnail…). */
-  trailing?: ReactNode;
-  onClick?: () => void;
-  onMedia?: boolean;
-  className?: string;
+  trailing?: ReactNode
+  onClick?: () => void
+  onMedia?: boolean
+  className?: string
 }
 
 /** One activity-feed row (lesson done, badge earned, friend joined…). Reused on
@@ -30,16 +30,14 @@ export function ActivityFeedItem({
   onMedia,
   className,
 }: ActivityFeedItemProps) {
-  const Tag = onClick ? 'button' : 'div';
+  const Tag = onClick ? 'button' : 'div'
   return (
     <Tag
       type={onClick ? 'button' : undefined}
       onClick={onClick}
       className={cn(
         'flex w-full items-start gap-3 rounded-2xl border p-3 text-left',
-        onMedia
-          ? 'border-white/15 bg-black/35 text-white backdrop-blur-md'
-          : 'border-border bg-surface',
+        onMedia ? 'border-white/15 bg-black/35 text-white backdrop-blur-md' : 'border-border bg-surface',
         onClick &&
           'transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         className,
@@ -65,5 +63,5 @@ export function ActivityFeedItem({
       </div>
       {trailing}
     </Tag>
-  );
+  )
 }

@@ -6,36 +6,35 @@
  * already MediaAssets with permanent URLs, so re-opening a lesson plays what was
  * made — it never regenerates, and it never pays twice.
  */
-import type { ExplainerDoc, LocaleBundle } from '@bingoo/explainer';
-import { api } from './api-client';
+import type { ExplainerDoc, LocaleBundle } from '@bingoo/explainer'
+import { api } from './api-client'
 
 export type LessonRow = {
-  id: string;
-  publicId: string;
-  slug: string;
-  title: string;
-  status: 'DRAFT' | 'READY' | 'PUBLISHED';
-  imagesDone: number;
-  imagesTotal: number;
-  audioDone: number;
-  audioTotal: number;
-  createdAt: string;
-  updatedAt: string;
-};
+  id: string
+  publicId: string
+  slug: string
+  title: string
+  status: 'DRAFT' | 'READY' | 'PUBLISHED'
+  imagesDone: number
+  imagesTotal: number
+  audioDone: number
+  audioTotal: number
+  createdAt: string
+  updatedAt: string
+}
 
-export type LessonFull = LessonRow & { doc: ExplainerDoc; bundles: Record<string, LocaleBundle> };
+export type LessonFull = LessonRow & { doc: ExplainerDoc; bundles: Record<string, LocaleBundle> }
 
-export const listLessons = () => api.get<LessonRow[]>('/explainer/lessons');
-export const getLesson = (id: string) => api.get<LessonFull>(`/explainer/lessons/${id}`);
-export const deleteLesson = (id: string) =>
-  api.del<{ deleted: boolean }>(`/explainer/lessons/${id}`);
+export const listLessons = () => api.get<LessonRow[]>('/explainer/lessons')
+export const getLesson = (id: string) => api.get<LessonFull>(`/explainer/lessons/${id}`)
+export const deleteLesson = (id: string) => api.del<{ deleted: boolean }>(`/explainer/lessons/${id}`)
 
 export function saveLesson(input: {
-  doc: ExplainerDoc;
-  bundles: Record<string, LocaleBundle>;
-  images: { done: number; total: number };
-  audio: { done: number; total: number };
-  status?: LessonRow['status'];
+  doc: ExplainerDoc
+  bundles: Record<string, LocaleBundle>
+  images: { done: number; total: number }
+  audio: { done: number; total: number }
+  status?: LessonRow['status']
 }) {
   return api.put<LessonRow>('/explainer/lessons', {
     slug: input.doc.meta.id,
@@ -47,5 +46,5 @@ export function saveLesson(input: {
     audioDone: input.audio.done,
     audioTotal: input.audio.total,
     ...(input.status ? { status: input.status } : {}),
-  });
+  })
 }

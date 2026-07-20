@@ -5,7 +5,7 @@
  * ContentBlocks) + máy trận đấu arena thuần (có test) trong package này.
  */
 
-export { LearnExperience } from './learn-experience';
+export { LearnExperience } from './learn-experience'
 
 export type {
   LearnExperienceProps,
@@ -22,7 +22,7 @@ export type {
   TopicAccent,
   FeedTopic,
   ArenaConfig,
-} from './types';
+} from './types'
 
 export {
   initMatch,
@@ -38,4 +38,4 @@ export {
   type MatchStatus,
   type Combatant,
   type RoundOutcome,
-} from './arena/engine';
+} from './arena/engine'

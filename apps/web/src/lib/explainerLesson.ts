@@ -7,7 +7,7 @@
  * authored ExplainerDoc end-to-end. Theme inlined so the lesson validates
  * headlessly (no renderer import).
  */
-import type { ExplainerDoc, LocaleBundle, ThemeTokens } from '@bingoo/explainer';
+import type { ExplainerDoc, LocaleBundle, ThemeTokens } from '@bingoo/explainer'
 
 const theme: ThemeTokens = {
   colors: {
@@ -32,7 +32,7 @@ const theme: ThemeTokens = {
     sans: 'var(--font-bvp), system-ui, sans-serif',
   },
   register: 'warm',
-};
+}
 
 export const ACCEPTANCE_DOC: ExplainerDoc = {
   version: 'explainer/v2',
@@ -153,7 +153,7 @@ export const ACCEPTANCE_DOC: ExplainerDoc = {
       },
     },
   ],
-};
+}
 
 export const ACCEPTANCE_VI: LocaleBundle = {
   locale: 'vi',
@@ -169,7 +169,7 @@ export const ACCEPTANCE_VI: LocaleBundle = {
       ],
     },
   },
-};
+}
 
 export const ACCEPTANCE_EN: LocaleBundle = {
   locale: 'en',
@@ -185,9 +185,9 @@ export const ACCEPTANCE_EN: LocaleBundle = {
       ],
     },
   },
-};
+}
 
 export const ACCEPTANCE_BUNDLES: Record<string, LocaleBundle> = {
   vi: ACCEPTANCE_VI,
   en: ACCEPTANCE_EN,
-};
+}

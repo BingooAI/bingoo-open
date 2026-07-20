@@ -1,9 +1,9 @@
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export interface DescriptionListProps {
-  items: { term: ReactNode; description: ReactNode }[];
-  className?: string;
+  items: { term: ReactNode; description: ReactNode }[]
+  className?: string
 }
 
 /** Key/value description list (term → description). */
@@ -17,5 +17,5 @@ export function DescriptionList({ items, className }: DescriptionListProps) {
         </div>
       ))}
     </dl>
-  );
+  )
 }

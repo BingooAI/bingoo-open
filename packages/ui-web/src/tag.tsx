@@ -1,16 +1,16 @@
-import { X } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { X } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
 
-export type TagColor = 'neutral' | 'primary' | 'teal' | 'sunbeam' | 'coral' | 'success';
+export type TagColor = 'neutral' | 'primary' | 'teal' | 'sunbeam' | 'coral' | 'success'
 
 export interface TagProps {
-  children: ReactNode;
-  color?: TagColor;
+  children: ReactNode
+  color?: TagColor
   /** When set, renders a remove (×) button. */
-  onRemove?: () => void;
-  removeAriaLabel?: string;
-  className?: string;
+  onRemove?: () => void
+  removeAriaLabel?: string
+  className?: string
 }
 
 const TAG: Record<TagColor, string> = {
@@ -20,7 +20,7 @@ const TAG: Record<TagColor, string> = {
   sunbeam: 'bg-accent-sunbeam-soft text-accent-sunbeam',
   coral: 'bg-accent-coral-soft text-accent-coral',
   success: 'bg-success-soft text-success',
-};
+}
 
 /** Compact, optionally-removable chip/tag. */
 export function Tag({
@@ -50,5 +50,5 @@ export function Tag({
         </button>
       ) : null}
     </span>
-  );
+  )
 }

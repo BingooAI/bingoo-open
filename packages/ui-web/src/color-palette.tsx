@@ -1,35 +1,24 @@
-'use client';
+'use client'
 
-import { cn } from './lib/cn';
+import { cn } from './lib/cn'
 
 export interface ColorPaletteProps {
-  colors: string[];
-  value: string;
-  onChange: (color: string) => void;
+  colors: string[]
+  value: string
+  onChange: (color: string) => void
   /** A11y label for the group (data). */
-  label?: string;
-  size?: 'md' | 'lg';
-  className?: string;
+  label?: string
+  size?: 'md' | 'lg'
+  className?: string
 }
 
 /** A tappable swatch row for drawing/coloring — big targets for small hands. */
-export function ColorPalette({
-  colors,
-  value,
-  onChange,
-  label,
-  size = 'lg',
-  className,
-}: ColorPaletteProps) {
-  const dot = size === 'lg' ? 'size-10' : 'size-8';
+export function ColorPalette({ colors, value, onChange, label, size = 'lg', className }: ColorPaletteProps) {
+  const dot = size === 'lg' ? 'size-10' : 'size-8'
   return (
-    <div
-      role="radiogroup"
-      aria-label={label}
-      className={cn('flex flex-wrap items-center gap-2', className)}
-    >
+    <div role="radiogroup" aria-label={label} className={cn('flex flex-wrap items-center gap-2', className)}>
       {colors.map((color) => {
-        const active = color.toLowerCase() === value.toLowerCase();
+        const active = color.toLowerCase() === value.toLowerCase()
         return (
           <button
             key={color}
@@ -45,8 +34,8 @@ export function ColorPalette({
               active && 'scale-110 ring-2 ring-foreground ring-offset-2 ring-offset-background',
             )}
           />
-        );
+        )
       })}
     </div>
-  );
+  )
 }

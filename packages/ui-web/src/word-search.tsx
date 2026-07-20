@@ -1,38 +1,38 @@
-'use client';
+'use client'
 
-import { solveWordSearch } from '@bingoo/core';
-import { useState } from 'react';
-import { cn } from './lib/cn';
-import { tile } from './lib/interactive';
+import { solveWordSearch } from '@bingoo/core'
+import { useState } from 'react'
+import { cn } from './lib/cn'
+import { tile } from './lib/interactive'
 
 export interface WordSearchProps {
   /** Grid rows; each a string of letters, all the same length. */
-  rows: string[];
+  rows: string[]
   /** Words to find (any straight line, forward or backward). */
-  words: string[];
+  words: string[]
   /** Controlled answer: the words found so far (uppercased). */
-  found: string[];
-  onChange: (found: string[]) => void;
+  found: string[]
+  onChange: (found: string[]) => void
   /** After checking: the target words + which were found. */
-  reveal?: { words: string[]; found: string[] };
-  disabled?: boolean;
-  className?: string;
+  reveal?: { words: string[]; found: string[] }
+  disabled?: boolean
+  className?: string
 }
 
-type Cell = { r: number; c: number };
-const key = (c: Cell) => `${c.r},${c.c}`;
+type Cell = { r: number; c: number }
+const key = (c: Cell) => `${c.r},${c.c}`
 
 /** The straight line of cells from a→b (row, column or 45° diagonal), else null. */
 function lineCells(a: Cell, b: Cell): Cell[] | null {
-  const dr = b.r - a.r;
-  const dc = b.c - a.c;
-  const adr = Math.abs(dr);
-  const adc = Math.abs(dc);
-  if (!(dr === 0 || dc === 0 || adr === adc)) return null;
-  const steps = Math.max(adr, adc);
-  const sr = Math.sign(dr);
-  const sc = Math.sign(dc);
-  return Array.from({ length: steps + 1 }, (_, k) => ({ r: a.r + sr * k, c: a.c + sc * k }));
+  const dr = b.r - a.r
+  const dc = b.c - a.c
+  const adr = Math.abs(dr)
+  const adc = Math.abs(dc)
+  if (!(dr === 0 || dc === 0 || adr === adc)) return null
+  const steps = Math.max(adr, adc)
+  const sr = Math.sign(dr)
+  const sc = Math.sign(dc)
+  return Array.from({ length: steps + 1 }, (_, k) => ({ r: a.r + sr * k, c: a.c + sc * k }))
 }
 
 /**
@@ -40,44 +40,36 @@ function lineCells(a: Cell, b: Cell): Cell[] | null {
  * line between them is read and, if it spells a target word (either direction),
  * it's marked found. Tap (not drag) → no scroll conflict on mobile. i18n-free.
  */
-export function WordSearch({
-  rows,
-  words,
-  found,
-  onChange,
-  reveal,
-  disabled,
-  className,
-}: WordSearchProps) {
-  const [anchor, setAnchor] = useState<Cell | null>(null);
-  const locked = !!reveal || disabled;
-  const grid = rows.map((row) => row.toUpperCase());
-  const cols = grid[0]?.length ?? 0;
-  const targets = words.map((w) => w.toUpperCase());
-  const foundSet = new Set(found.map((w) => w.toUpperCase()));
+export function WordSearch({ rows, words, found, onChange, reveal, disabled, className }: WordSearchProps) {
+  const [anchor, setAnchor] = useState<Cell | null>(null)
+  const locked = !!reveal || disabled
+  const grid = rows.map((row) => row.toUpperCase())
+  const cols = grid[0]?.length ?? 0
+  const targets = words.map((w) => w.toUpperCase())
+  const foundSet = new Set(found.map((w) => w.toUpperCase()))
 
   // Cells occupied by each found word (green) and — when revealed — missing (amber).
-  const foundCells = new Set<string>();
+  const foundCells = new Set<string>()
   for (const w of targets)
-    if (foundSet.has(w)) solveWordSearch(rows, w)?.forEach((c) => foundCells.add(key(c)));
-  const missCells = new Set<string>();
+    if (foundSet.has(w)) solveWordSearch(rows, w)?.forEach((c) => foundCells.add(key(c)))
+  const missCells = new Set<string>()
   if (reveal)
     for (const w of targets)
-      if (!foundSet.has(w)) solveWordSearch(rows, w)?.forEach((c) => missCells.add(key(c)));
+      if (!foundSet.has(w)) solveWordSearch(rows, w)?.forEach((c) => missCells.add(key(c)))
 
   function tap(cell: Cell) {
-    if (locked) return;
+    if (locked) return
     if (!anchor) {
-      setAnchor(cell);
-      return;
+      setAnchor(cell)
+      return
     }
-    const cells = lineCells(anchor, cell);
-    setAnchor(null);
-    if (!cells) return;
-    const word = cells.map((c) => grid[c.r]?.[c.c] ?? '').join('');
-    const rev = [...word].reverse().join('');
-    const hit = targets.find((t) => (t === word || t === rev) && !foundSet.has(t));
-    if (hit) onChange([...found, hit]);
+    const cells = lineCells(anchor, cell)
+    setAnchor(null)
+    if (!cells) return
+    const word = cells.map((c) => grid[c.r]?.[c.c] ?? '').join('')
+    const rev = [...word].reverse().join('')
+    const hit = targets.find((t) => (t === word || t === rev) && !foundSet.has(t))
+    if (hit) onChange([...found, hit])
   }
 
   return (
@@ -88,10 +80,10 @@ export function WordSearch({
       >
         {grid.map((row, r) =>
           [...row].map((ch, c) => {
-            const k = `${r},${c}`;
-            const isAnchor = anchor?.r === r && anchor?.c === c;
-            const inFound = foundCells.has(k);
-            const inMiss = missCells.has(k);
+            const k = `${r},${c}`
+            const isAnchor = anchor?.r === r && anchor?.c === c
+            const inFound = foundCells.has(k)
+            const inMiss = missCells.has(k)
             return (
               <button
                 key={k}
@@ -111,14 +103,14 @@ export function WordSearch({
               >
                 {ch}
               </button>
-            );
+            )
           }),
         )}
       </div>
       {/* Word list — struck through as each is found. */}
       <div className="flex flex-wrap justify-center gap-2">
         {targets.map((w) => {
-          const got = foundSet.has(w);
+          const got = foundSet.has(w)
           return (
             <span
               key={w}
@@ -131,9 +123,9 @@ export function WordSearch({
             >
               {w}
             </span>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }

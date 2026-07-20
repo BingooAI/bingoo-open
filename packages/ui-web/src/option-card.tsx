@@ -1,20 +1,17 @@
-import { Check } from 'lucide-react';
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
-import { cn } from './lib/cn';
-import { tile } from './lib/interactive';
+import { Check } from 'lucide-react'
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
+import { cn } from './lib/cn'
+import { tile } from './lib/interactive'
 
-export interface OptionCardProps extends Omit<
-  ButtonHTMLAttributes<HTMLButtonElement>,
-  'onSelect' | 'title'
-> {
-  selected?: boolean;
+export interface OptionCardProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect' | 'title'> {
+  selected?: boolean
   /** `single` => radio semantics, `multiple` => checkbox semantics. */
-  mode?: 'single' | 'multiple';
-  media?: ReactNode;
-  title: ReactNode;
-  description?: ReactNode;
+  mode?: 'single' | 'multiple'
+  media?: ReactNode
+  title: ReactNode
+  description?: ReactNode
   /** Layout: stacked (media on top) or inline (media on the left). */
-  layout?: 'stacked' | 'inline';
+  layout?: 'stacked' | 'inline'
 }
 
 /**
@@ -28,7 +25,7 @@ export const OptionCard = forwardRef<HTMLButtonElement, OptionCardProps>(functio
   const a11y =
     mode === 'single'
       ? ({ role: 'radio', 'aria-checked': selected } as const)
-      : ({ role: 'checkbox', 'aria-checked': selected } as const);
+      : ({ role: 'checkbox', 'aria-checked': selected } as const)
 
   return (
     <button
@@ -45,10 +42,7 @@ export const OptionCard = forwardRef<HTMLButtonElement, OptionCardProps>(functio
     >
       {media && (
         <span
-          className={cn(
-            'grid shrink-0 place-items-center',
-            layout === 'stacked' ? 'size-14' : 'size-11',
-          )}
+          className={cn('grid shrink-0 place-items-center', layout === 'stacked' ? 'size-14' : 'size-11')}
         >
           {media}
         </span>
@@ -72,5 +66,5 @@ export const OptionCard = forwardRef<HTMLButtonElement, OptionCardProps>(functio
         />
       </span>
     </button>
-  );
-});
+  )
+})

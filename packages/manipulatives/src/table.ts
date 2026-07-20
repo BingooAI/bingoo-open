@@ -3,18 +3,18 @@
  * with headers and optional totals; highlight a row/column while reading it.
  * verbs: highlightRow(i) · highlightCol(i) · showTotal · setData.
  */
-import type { Manipulative, ManipModel, ManipState, Prim, RenderCtx, VerbClip } from './types';
-import { tween, activeSegment } from './bake';
-import { TOK } from './util';
+import type { Manipulative, ManipModel, ManipState, Prim, RenderCtx, VerbClip } from './types'
+import { tween, activeSegment } from './bake'
+import { TOK } from './util'
 
-export type TableRow = { label: string; values: number[] };
+export type TableRow = { label: string; values: number[] }
 export type TableP = {
-  columns: string[];
-  rows: TableRow[];
-  highlight: { kind: 'row' | 'col'; i: number } | null;
-  showTotal: boolean;
-  totalLabel: string;
-};
+  columns: string[]
+  rows: TableRow[]
+  highlight: { kind: 'row' | 'col'; i: number } | null
+  showTotal: boolean
+  totalLabel: string
+}
 
 const DEFAULT: TableP = {
   columns: ['Mon', 'Wed', 'Fri'],
@@ -26,10 +26,10 @@ const DEFAULT: TableP = {
   highlight: null,
   showTotal: false,
   totalLabel: 'Total',
-};
+}
 
 function normalize(raw: unknown): TableP {
-  const r = (raw ?? {}) as Partial<TableP>;
+  const r = (raw ?? {}) as Partial<TableP>
   return {
     columns: [...(r.columns ?? DEFAULT.columns)],
     rows: (r.rows ?? DEFAULT.rows).map((x) => ({
@@ -39,11 +39,11 @@ function normalize(raw: unknown): TableP {
     highlight: r.highlight ?? null,
     showTotal: !!r.showTotal,
     totalLabel: r.totalLabel ?? DEFAULT.totalLabel,
-  };
+  }
 }
 function num(v: unknown): number {
-  const n = typeof v === 'number' ? v : Number(v);
-  return Number.isFinite(n) ? n : 0;
+  const n = typeof v === 'number' ? v : Number(v)
+  return Number.isFinite(n) ? n : 0
 }
 
 const verbs: Manipulative<TableP>['verbs'] = {
@@ -53,7 +53,7 @@ const verbs: Manipulative<TableP>['verbs'] = {
       { ...p, highlight: { kind: 'row', i: Math.floor(num(args?.i ?? args ?? 0)) } },
       0.35,
       'easeOutCubic',
-    );
+    )
   },
   highlightCol(p, args): VerbClip<TableP> {
     return tween(
@@ -61,51 +61,50 @@ const verbs: Manipulative<TableP>['verbs'] = {
       { ...p, highlight: { kind: 'col', i: Math.floor(num(args?.i ?? args ?? 0)) } },
       0.35,
       'easeOutCubic',
-    );
+    )
   },
   showTotal(p): VerbClip<TableP> {
-    return tween(p, { ...p, showTotal: true }, 0.45, 'easeOutBack');
+    return tween(p, { ...p, showTotal: true }, 0.45, 'easeOutBack')
   },
   clear(p): VerbClip<TableP> {
-    return tween(p, { ...p, highlight: null }, 0.3, 'easeOutCubic');
+    return tween(p, { ...p, highlight: null }, 0.3, 'easeOutCubic')
   },
-};
+}
 
 function render(_params: TableP, state: ManipState<TableP>, t: number, ctx: RenderCtx): ManipModel {
-  const { box } = ctx;
-  const seg = activeSegment(state, t);
-  const P = seg.to;
-  const prims: Prim[] = [];
-  const nCols = 1 + P.columns.length + (P.showTotal ? 1 : 0); // label col + data + total
-  const nRows = 1 + P.rows.length + (P.showTotal ? 1 : 0); // header + data + total row
-  const pad = box.w * 0.05;
+  const { box } = ctx
+  const seg = activeSegment(state, t)
+  const P = seg.to
+  const prims: Prim[] = []
+  const nCols = 1 + P.columns.length + (P.showTotal ? 1 : 0) // label col + data + total
+  const nRows = 1 + P.rows.length + (P.showTotal ? 1 : 0) // header + data + total row
+  const pad = box.w * 0.05
   const gw = box.w - 2 * pad,
-    gh = box.h * 0.86;
+    gh = box.h * 0.86
   const cw = gw / nCols,
-    ch = gh / nRows;
+    ch = gh / nRows
   const ox = pad,
-    oy = box.h * 0.06;
-  const fs = Math.min(ch * 0.42, cw * 0.34);
+    oy = box.h * 0.06
+  const fs = Math.min(ch * 0.42, cw * 0.34)
 
   const cellText = (c: number, r: number): string => {
-    if (r === 0) return c === 0 ? '' : c <= P.columns.length ? P.columns[c - 1]! : P.totalLabel;
-    const isTotalRow = P.showTotal && r === P.rows.length + 1;
+    if (r === 0) return c === 0 ? '' : c <= P.columns.length ? P.columns[c - 1]! : P.totalLabel
+    const isTotalRow = P.showTotal && r === P.rows.length + 1
     if (isTotalRow) {
-      if (c === 0) return P.totalLabel;
-      if (c <= P.columns.length)
-        return String(P.rows.reduce((s, row) => s + (row.values[c - 1] ?? 0), 0));
-      return String(P.rows.reduce((s, row) => s + row.values.reduce((a, b) => a + b, 0), 0));
+      if (c === 0) return P.totalLabel
+      if (c <= P.columns.length) return String(P.rows.reduce((s, row) => s + (row.values[c - 1] ?? 0), 0))
+      return String(P.rows.reduce((s, row) => s + row.values.reduce((a, b) => a + b, 0), 0))
     }
-    const row = P.rows[r - 1]!;
-    if (c === 0) return row.label;
-    if (c <= P.columns.length) return String(row.values[c - 1] ?? 0);
-    return String(row.values.reduce((a, b) => a + b, 0)); // total col
-  };
+    const row = P.rows[r - 1]!
+    if (c === 0) return row.label
+    if (c <= P.columns.length) return String(row.values[c - 1] ?? 0)
+    return String(row.values.reduce((a, b) => a + b, 0)) // total col
+  }
 
   // highlight band
   if (P.highlight) {
     if (P.highlight.kind === 'row') {
-      const r = P.highlight.i + 1;
+      const r = P.highlight.i + 1
       prims.push({
         k: 'rect',
         x: ox,
@@ -115,9 +114,9 @@ function render(_params: TableP, state: ManipState<TableP>, t: number, ctx: Rend
         fill: TOK.warn,
         opacity: 0.18,
         z: 0,
-      });
+      })
     } else {
-      const c = P.highlight.i + 1;
+      const c = P.highlight.i + 1
       prims.push({
         k: 'rect',
         x: ox + c * cw,
@@ -127,7 +126,7 @@ function render(_params: TableP, state: ManipState<TableP>, t: number, ctx: Rend
         fill: TOK.warn,
         opacity: 0.18,
         z: 0,
-      });
+      })
     }
   }
 
@@ -142,7 +141,7 @@ function render(_params: TableP, state: ManipState<TableP>, t: number, ctx: Rend
       color: TOK.faint,
       weight: 'sm',
       z: 1,
-    });
+    })
   for (let c = 0; c <= nCols; c++)
     prims.push({
       k: 'line',
@@ -153,14 +152,14 @@ function render(_params: TableP, state: ManipState<TableP>, t: number, ctx: Rend
       color: TOK.faint,
       weight: 'sm',
       z: 1,
-    });
+    })
   // header + label emphasis
-  prims.push({ k: 'rect', x: ox, y: oy, w: gw, h: ch, fill: TOK.accent2, opacity: 0.12, z: 0 });
+  prims.push({ k: 'rect', x: ox, y: oy, w: gw, h: ch, fill: TOK.accent2, opacity: 0.12, z: 0 })
   for (let r = 0; r < nRows; r++) {
     for (let c = 0; c < nCols; c++) {
-      const txt = cellText(c, r);
-      if (!txt) continue;
-      const header = r === 0 || c === 0 || (P.showTotal && (r === nRows - 1 || c === nCols - 1));
+      const txt = cellText(c, r)
+      if (!txt) continue
+      const header = r === 0 || c === 0 || (P.showTotal && (r === nRows - 1 || c === nCols - 1))
       prims.push({
         k: 'label',
         x: ox + c * cw + cw / 2,
@@ -171,10 +170,10 @@ function render(_params: TableP, state: ManipState<TableP>, t: number, ctx: Rend
         align: 'middle',
         baseline: 'middle',
         z: 3,
-      });
+      })
     }
   }
-  return { prims, view: box };
+  return { prims, view: box }
 }
 
 export const DataTable: Manipulative<TableP> = {
@@ -183,4 +182,4 @@ export const DataTable: Manipulative<TableP> = {
   normalize,
   render,
   verbs,
-};
+}

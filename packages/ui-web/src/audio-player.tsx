@@ -1,28 +1,28 @@
-'use client';
+'use client'
 
-import { Pause, Play } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { Pause, Play } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 function mmss(s: number): string {
-  if (!Number.isFinite(s) || s < 0) s = 0;
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return `${m}:${String(sec).padStart(2, '0')}`;
+  if (!Number.isFinite(s) || s < 0) s = 0
+  const m = Math.floor(s / 60)
+  const sec = Math.floor(s % 60)
+  return `${m}:${String(sec).padStart(2, '0')}`
 }
 
 export interface AudioPlayerProps {
-  playing: boolean;
-  currentTime: number;
-  duration: number;
-  onPlayPause: () => void;
-  onSeek: (time: number) => void;
-  title?: ReactNode;
-  leading?: ReactNode;
-  playLabel?: string;
-  pauseLabel?: string;
-  onMedia?: boolean;
-  className?: string;
+  playing: boolean
+  currentTime: number
+  duration: number
+  onPlayPause: () => void
+  onSeek: (time: number) => void
+  title?: ReactNode
+  leading?: ReactNode
+  playLabel?: string
+  pauseLabel?: string
+  onMedia?: boolean
+  className?: string
 }
 
 /** Audio player chrome — controlled (playback state + callbacks); the caller owns
@@ -40,11 +40,9 @@ export function AudioPlayer({
   onMedia,
   className,
 }: AudioPlayerProps) {
-  const surface = onMedia
-    ? 'bg-black/40 backdrop-blur-md border-white/15'
-    : 'bg-surface border-border';
-  const ink = onMedia ? 'text-white' : 'text-foreground';
-  const muted = onMedia ? 'text-white/70' : 'text-foreground-muted';
+  const surface = onMedia ? 'bg-black/40 backdrop-blur-md border-white/15' : 'bg-surface border-border'
+  const ink = onMedia ? 'text-white' : 'text-foreground'
+  const muted = onMedia ? 'text-white/70' : 'text-foreground-muted'
   return (
     <div className={cn('flex items-center gap-3 rounded-full border p-2 pr-4', surface, className)}>
       <button
@@ -75,5 +73,5 @@ export function AudioPlayer({
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -1,19 +1,19 @@
-'use client';
+'use client'
 
-import { Check, Minus, Plus, X } from 'lucide-react';
-import { cn } from './lib/cn';
-import { POP, SHAKE, tile } from './lib/interactive';
+import { Check, Minus, Plus, X } from 'lucide-react'
+import { cn } from './lib/cn'
+import { POP, SHAKE, tile } from './lib/interactive'
 
 export interface PlaceValueInputProps {
-  tens: number;
-  ones: number;
-  onChange: (tens: number, ones: number) => void;
-  reveal?: { correct: boolean; answer: number };
+  tens: number
+  ones: number
+  onChange: (tens: number, ones: number) => void
+  reveal?: { correct: boolean; answer: number }
   /** Column labels, e.g. { tens: "Chục", ones: "Đơn vị" }. */
-  columnLabels?: { tens: string; ones: string };
-  disabled?: boolean;
-  label?: string;
-  className?: string;
+  columnLabels?: { tens: string; ones: string }
+  disabled?: boolean
+  label?: string
+  className?: string
 }
 
 /** Build a two-digit number from base-ten blocks (tens rods + ones cubes). */
@@ -27,20 +27,18 @@ export function PlaceValueInput({
   label,
   className,
 }: PlaceValueInputProps) {
-  const locked = !!reveal || disabled;
-  const value = tens * 10 + ones;
+  const locked = !!reveal || disabled
+  const value = tens * 10 + ones
 
   const column = (kind: 'tens' | 'ones') => {
-    const n = kind === 'tens' ? tens : ones;
+    const n = kind === 'tens' ? tens : ones
     const set = (next: number) => {
-      const clamped = Math.max(0, Math.min(9, next));
-      onChange(kind === 'tens' ? clamped : tens, kind === 'ones' ? clamped : ones);
-    };
+      const clamped = Math.max(0, Math.min(9, next))
+      onChange(kind === 'tens' ? clamped : tens, kind === 'ones' ? clamped : ones)
+    }
     return (
       <div className="flex flex-1 flex-col items-center gap-2">
-        <span className="text-xs font-semibold uppercase text-foreground-muted">
-          {columnLabels?.[kind]}
-        </span>
+        <span className="text-xs font-semibold uppercase text-foreground-muted">{columnLabels?.[kind]}</span>
         <div
           className={cn(
             tile({ state: 'quiet', size: 'none' }),
@@ -51,11 +49,7 @@ export function PlaceValueInput({
             // Each block POPs as it lands, so adding one reads as placing a thing.
             <span
               key={i}
-              className={cn(
-                'rounded-sm bg-primary',
-                POP,
-                kind === 'tens' ? 'h-16 w-2.5' : 'size-3.5',
-              )}
+              className={cn('rounded-sm bg-primary', POP, kind === 'tens' ? 'h-16 w-2.5' : 'size-3.5')}
             />
           ))}
         </div>
@@ -85,8 +79,8 @@ export function PlaceValueInput({
           </button>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <div className={cn('flex flex-col items-center gap-3', className)} aria-label={label}>
@@ -115,5 +109,5 @@ export function PlaceValueInput({
         ) : null}
       </div>
     </div>
-  );
+  )
 }

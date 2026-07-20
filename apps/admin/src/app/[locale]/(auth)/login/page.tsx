@@ -1,49 +1,49 @@
-'use client';
+'use client'
 
-import { Mail, ShieldAlert } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useSearchParams } from 'next/navigation';
-import { Suspense, useState, type FormEvent } from 'react';
-import { isEmail } from '@bingoo/core';
-import { Button, Field, Input, PasswordInput } from '@bingoo/ui-web';
-import { useRouter } from '@/i18n/navigation';
-import { signIn } from '@/lib/auth-client';
-import { authErrorKey } from '@/lib/auth-errors';
+import { Mail, ShieldAlert } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useSearchParams } from 'next/navigation'
+import { Suspense, useState, type FormEvent } from 'react'
+import { isEmail } from '@bingoo/core'
+import { Button, Field, Input, PasswordInput } from '@bingoo/ui-web'
+import { useRouter } from '@/i18n/navigation'
+import { signIn } from '@/lib/auth-client'
+import { authErrorKey } from '@/lib/auth-errors'
 
 function LoginForm() {
-  const t = useTranslations('admin.login');
-  const te = useTranslations('auth.errors');
-  const tv = useTranslations('validation');
-  const ts = useTranslations('auth.shared');
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const denied = searchParams.get('denied') === '1';
+  const t = useTranslations('admin.login')
+  const te = useTranslations('auth.errors')
+  const tv = useTranslations('validation')
+  const ts = useTranslations('auth.shared')
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const denied = searchParams.get('denied') === '1'
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-  const [formError, setFormError] = useState<string>();
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
+  const [formError, setFormError] = useState<string>()
+  const [loading, setLoading] = useState(false)
 
   async function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    const next: typeof errors = {};
-    if (!isEmail(email)) next.email = tv('email');
-    if (password.length < 8) next.password = tv('passwordWeak');
-    setErrors(next);
-    if (Object.keys(next).length) return;
+    e.preventDefault()
+    const next: typeof errors = {}
+    if (!isEmail(email)) next.email = tv('email')
+    if (password.length < 8) next.password = tv('passwordWeak')
+    setErrors(next)
+    if (Object.keys(next).length) return
 
-    setFormError(undefined);
-    setLoading(true);
-    const res = await signIn.email({ email, password }).catch(() => null);
+    setFormError(undefined)
+    setLoading(true)
+    const res = await signIn.email({ email, password }).catch(() => null)
     if (!res || res.error) {
-      setLoading(false);
-      setFormError(te(res ? authErrorKey(res.error?.code) : 'network'));
-      return;
+      setLoading(false)
+      setFormError(te(res ? authErrorKey(res.error?.code) : 'network'))
+      return
     }
     // Staff gating is enforced server-side on /media (requireStaff); a non-staff
     // account is bounced back here with ?denied=1.
-    router.push('/media');
+    router.push('/media')
   }
 
   return (
@@ -91,10 +91,7 @@ function LoginForm() {
         </Field>
 
         {formError && (
-          <p
-            role="alert"
-            className="rounded-xl bg-danger-soft px-4 py-3 text-sm font-medium text-danger"
-          >
+          <p role="alert" className="rounded-xl bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
             {formError}
           </p>
         )}
@@ -104,7 +101,7 @@ function LoginForm() {
         </Button>
       </form>
     </div>
-  );
+  )
 }
 
 export default function LoginPage() {
@@ -113,5 +110,5 @@ export default function LoginPage() {
     <Suspense>
       <LoginForm />
     </Suspense>
-  );
+  )
 }

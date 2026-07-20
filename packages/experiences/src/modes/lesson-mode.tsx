@@ -10,11 +10,11 @@ import {
   StreakBadge,
   XPBar,
   type InteractiveBlock,
-} from '@bingoo/ui-web';
-import { Sparkles, X } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
-import { CompletedCard, EmptyState, ScrollArea } from '../shared';
-import type { ExperienceLabels, LearnCourseData, LearnFormat, LearnHud, LearnStep } from '../types';
+} from '@bingoo/ui-web'
+import { Sparkles, X } from 'lucide-react'
+import { useState, type ReactNode } from 'react'
+import { CompletedCard, EmptyState, ScrollArea } from '../shared'
+import type { ExperienceLabels, LearnCourseData, LearnFormat, LearnHud, LearnStep } from '../types'
 
 export function LessonMode({
   format,
@@ -26,36 +26,30 @@ export function LessonMode({
   renderActivity,
   onSelectLesson,
 }: {
-  format: LearnFormat;
-  steps: LearnStep[];
-  course?: LearnCourseData;
-  labels: ExperienceLabels;
-  hud?: LearnHud;
-  onExit?: () => void;
-  renderActivity?: (b: InteractiveBlock) => ReactNode;
-  onSelectLesson?: (id: string) => void;
+  format: LearnFormat
+  steps: LearnStep[]
+  course?: LearnCourseData
+  labels: ExperienceLabels
+  hud?: LearnHud
+  onExit?: () => void
+  renderActivity?: (b: InteractiveBlock) => ReactNode
+  onSelectLesson?: (id: string) => void
 }) {
   if (format === 'course')
     return (
       <ScrollArea>
         <CourseView course={course} labels={labels} onSelectLesson={onSelectLesson} />
       </ScrollArea>
-    );
+    )
   if (format === 'infinite')
     return (
       <ScrollArea>
         <InfiniteView steps={steps} labels={labels} renderActivity={renderActivity} />
       </ScrollArea>
-    );
+    )
   return (
-    <LessonView
-      steps={steps}
-      labels={labels}
-      hud={hud}
-      onExit={onExit}
-      renderActivity={renderActivity}
-    />
-  );
+    <LessonView steps={steps} labels={labels} hud={hud} onExit={onExit} renderActivity={renderActivity} />
+  )
 }
 
 function LessonView({
@@ -65,17 +59,17 @@ function LessonView({
   onExit,
   renderActivity,
 }: {
-  steps: LearnStep[];
-  labels: ExperienceLabels;
-  hud?: LearnHud;
-  onExit?: () => void;
-  renderActivity?: (b: InteractiveBlock) => ReactNode;
+  steps: LearnStep[]
+  labels: ExperienceLabels
+  hud?: LearnHud
+  onExit?: () => void
+  renderActivity?: (b: InteractiveBlock) => ReactNode
 }) {
-  const [current, setCurrent] = useState(0);
-  const [done, setDone] = useState(false);
-  if (steps.length === 0) return <EmptyState>{labels.empty}</EmptyState>;
-  const isLast = current >= steps.length - 1;
-  const step = steps[current];
+  const [current, setCurrent] = useState(0)
+  const [done, setDone] = useState(false)
+  if (steps.length === 0) return <EmptyState>{labels.empty}</EmptyState>
+  const isLast = current >= steps.length - 1
+  const step = steps[current]
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -113,8 +107,8 @@ function LessonView({
               title={labels.completed}
               restart={labels.restart}
               onRestart={() => {
-                setCurrent(0);
-                setDone(false);
+                setCurrent(0)
+                setDone(false)
               }}
             />
           ) : (
@@ -139,24 +133,17 @@ function LessonView({
       {!done ? (
         <footer className="shrink-0 border-t border-border bg-surface px-4 py-4">
           <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-3">
-            <Button
-              variant="ghost"
-              onClick={() => setCurrent((c) => c - 1)}
-              disabled={current === 0}
-            >
+            <Button variant="ghost" onClick={() => setCurrent((c) => c - 1)} disabled={current === 0}>
               {labels.prev}
             </Button>
-            <Button
-              className="min-w-32"
-              onClick={() => (isLast ? setDone(true) : setCurrent((c) => c + 1))}
-            >
+            <Button className="min-w-32" onClick={() => (isLast ? setDone(true) : setCurrent((c) => c + 1))}>
               {isLast ? labels.finish : labels.next}
             </Button>
           </div>
         </footer>
       ) : null}
     </div>
-  );
+  )
 }
 
 export function InfiniteView({
@@ -164,16 +151,16 @@ export function InfiniteView({
   labels,
   renderActivity,
 }: {
-  steps: LearnStep[];
-  labels: ExperienceLabels;
-  renderActivity?: (b: InteractiveBlock) => ReactNode;
+  steps: LearnStep[]
+  labels: ExperienceLabels
+  renderActivity?: (b: InteractiveBlock) => ReactNode
 }) {
-  const [count, setCount] = useState(Math.min(3, steps.length));
-  if (steps.length === 0) return <EmptyState>{labels.empty}</EmptyState>;
+  const [count, setCount] = useState(Math.min(3, steps.length))
+  if (steps.length === 0) return <EmptyState>{labels.empty}</EmptyState>
   const shown = Array.from({ length: count }, (_, i) => ({
     key: i,
     step: steps[i % steps.length],
-  }));
+  }))
   return (
     <div className="flex flex-col gap-4">
       {shown.map(({ key, step }) =>
@@ -196,7 +183,7 @@ export function InfiniteView({
         {labels.loadMore}
       </Button>
     </div>
-  );
+  )
 }
 
 function CourseView({
@@ -204,11 +191,11 @@ function CourseView({
   labels,
   onSelectLesson,
 }: {
-  course?: LearnCourseData;
-  labels: ExperienceLabels;
-  onSelectLesson?: (id: string) => void;
+  course?: LearnCourseData
+  labels: ExperienceLabels
+  onSelectLesson?: (id: string) => void
 }) {
-  if (!course) return <EmptyState>{labels.empty}</EmptyState>;
+  if (!course) return <EmptyState>{labels.empty}</EmptyState>
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
@@ -243,5 +230,5 @@ function CourseView({
         ))}
       </div>
     </div>
-  );
+  )
 }

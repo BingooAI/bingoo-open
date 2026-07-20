@@ -11,32 +11,32 @@
  * Thuần, không I/O — route/generator dùng; test offline.
  */
 
-export type Band = 'easy' | 'core' | 'stretch';
-export type Rep = 'concrete' | 'pictorial' | 'abstract';
-export type Richness = 'lean' | 'standard' | 'rich';
+export type Band = 'easy' | 'core' | 'stretch'
+export type Rep = 'concrete' | 'pictorial' | 'abstract'
+export type Richness = 'lean' | 'standard' | 'rich'
 
-const ALL_REPS: readonly Rep[] = ['concrete', 'pictorial', 'abstract'];
-const ALL_BANDS: readonly Band[] = ['easy', 'core', 'stretch'];
+const ALL_REPS: readonly Rep[] = ['concrete', 'pictorial', 'abstract']
+const ALL_BANDS: readonly Band[] = ['easy', 'core', 'stretch']
 /** Số bản MỖI ô (rep×band) theo mức giàu — có chủ đích, không vô tận. */
-const PER_CELL: Record<Richness, number> = { lean: 1, standard: 2, rich: 3 };
+const PER_CELL: Record<Richness, number> = { lean: 1, standard: 2, rich: 3 }
 
 /** Một ô đích: hoặc ô LƯỚI (rep×band), hoặc ô CHẨN ĐOÁN (nhắm 1 misconception). */
 export interface BankSlot {
-  readonly representation: Rep;
-  readonly band: Band;
+  readonly representation: Rep
+  readonly band: Band
   /** Nếu có → ô chẩn đoán nhắm misconception này (không thuộc lưới rep×band). */
-  readonly misconceptionId?: string;
-  readonly count: number;
+  readonly misconceptionId?: string
+  readonly count: number
 }
 
 export interface DensityInput {
   /** Biểu diễn KP dạy (từ plan); mặc định cả 3 giai đoạn CPA. */
-  readonly representations?: readonly Rep[];
+  readonly representations?: readonly Rep[]
   /** Dải độ khó cần phủ; mặc định cả 3. */
-  readonly bands?: readonly Band[];
+  readonly bands?: readonly Band[]
   /** Misconceptions của KC — mỗi cái 1 ô chẩn đoán. */
-  readonly misconceptions?: readonly { readonly id: string }[];
-  readonly richness?: Richness;
+  readonly misconceptions?: readonly { readonly id: string }[]
+  readonly richness?: Richness
 }
 
 /**
@@ -44,41 +44,41 @@ export interface DensityInput {
  * chẩn đoán (pictorial/core). Đây là mức "đủ dày để chèn không trùng", chốt bởi `richness`.
  */
 export function bankDensityPolicy(input: DensityInput): BankSlot[] {
-  const reps = input.representations?.length ? input.representations : ALL_REPS;
-  const bands = input.bands?.length ? input.bands : ALL_BANDS;
-  const per = PER_CELL[input.richness ?? 'standard'];
-  const slots: BankSlot[] = [];
+  const reps = input.representations?.length ? input.representations : ALL_REPS
+  const bands = input.bands?.length ? input.bands : ALL_BANDS
+  const per = PER_CELL[input.richness ?? 'standard']
+  const slots: BankSlot[] = []
   for (const representation of reps)
-    for (const band of bands) slots.push({ representation, band, count: per });
+    for (const band of bands) slots.push({ representation, band, count: per })
   for (const m of input.misconceptions ?? [])
-    slots.push({ representation: 'pictorial', band: 'core', misconceptionId: m.id, count: 1 });
-  return slots;
+    slots.push({ representation: 'pictorial', band: 'core', misconceptionId: m.id, count: 1 })
+  return slots
 }
 
 /** Tổng số item đích của một ma trận. */
 export function bankTargetTotal(slots: readonly BankSlot[]): number {
-  return slots.reduce((s, x) => s + x.count, 0);
+  return slots.reduce((s, x) => s + x.count, 0)
 }
 
 /** Suy BAND từ Elo item (đảo BAND_ELO: 1300/1500/1700, biên giữa). */
 export function bandOfElo(elo: number): Band {
-  if (elo <= 1400) return 'easy';
-  if (elo >= 1600) return 'stretch';
-  return 'core';
+  if (elo <= 1400) return 'easy'
+  if (elo >= 1600) return 'stretch'
+  return 'core'
 }
 
 /** Facets đóng dấu trên item (payload.facets) để coverage phân loại. */
 export interface BankItemFacets {
-  readonly representation?: Rep;
-  readonly band?: Band;
-  readonly misconceptionId?: string;
+  readonly representation?: Rep
+  readonly band?: Band
+  readonly misconceptionId?: string
 }
 
 export interface CoverageRow {
-  readonly slot: BankSlot;
-  readonly have: number;
+  readonly slot: BankSlot
+  readonly have: number
   /** max(0, count - have) — số cần sinh thêm cho ô này. */
-  readonly need: number;
+  readonly need: number
 }
 
 /**
@@ -94,12 +94,12 @@ export function bankCoverage(
       slot.misconceptionId
         ? it.misconceptionId === slot.misconceptionId
         : it.representation === slot.representation && it.band === slot.band,
-    ).length;
-    return { slot, have, need: Math.max(0, slot.count - have) };
-  });
+    ).length
+    return { slot, have, need: Math.max(0, slot.count - have) }
+  })
 }
 
 /** Tổng gap (số item còn thiếu để đạt đích) — để UI hiện "còn thiếu N". */
 export function coverageGapTotal(rows: readonly CoverageRow[]): number {
-  return rows.reduce((s, r) => s + r.need, 0);
+  return rows.reduce((s, r) => s + r.need, 0)
 }

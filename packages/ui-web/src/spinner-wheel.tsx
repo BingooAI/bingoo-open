@@ -1,51 +1,42 @@
-'use client';
+'use client'
 
-import { useRef, useState } from 'react';
-import { cn } from './lib/cn';
-import { POP } from './lib/interactive';
+import { useRef, useState } from 'react'
+import { cn } from './lib/cn'
+import { POP } from './lib/interactive'
 
 export interface SpinnerSegment {
-  id: string;
-  label: string;
+  id: string
+  label: string
   /** Any CSS colour. Falls back to a palette by index. */
-  color?: string;
+  color?: string
 }
 
 export interface SpinnerWheelProps {
-  segments: SpinnerSegment[];
+  segments: SpinnerSegment[]
   /** Fired with the landed segment id after the wheel stops. */
-  onResult?: (id: string) => void;
-  spinLabel?: string;
-  disabled?: boolean;
-  className?: string;
+  onResult?: (id: string) => void
+  spinLabel?: string
+  disabled?: boolean
+  className?: string
 }
 
-const PALETTE = [
-  '#2e62ec',
-  '#00b9b4',
-  '#ffaf0c',
-  '#f74c6c',
-  '#7c5cff',
-  '#18b862',
-  '#ff7a45',
-  '#22c1c3',
-];
+const PALETTE = ['#2e62ec', '#00b9b4', '#ffaf0c', '#f74c6c', '#7c5cff', '#18b862', '#ff7a45', '#22c1c3']
 
 /** Pie-slice path for segment i of n, in a 0–100 viewBox. */
 function slice(i: number, n: number, r = 46) {
-  const a0 = (i / n) * 2 * Math.PI - Math.PI / 2;
-  const a1 = ((i + 1) / n) * 2 * Math.PI - Math.PI / 2;
-  const x0 = 50 + r * Math.cos(a0);
-  const y0 = 50 + r * Math.sin(a0);
-  const x1 = 50 + r * Math.cos(a1);
-  const y1 = 50 + r * Math.sin(a1);
-  const large = a1 - a0 > Math.PI ? 1 : 0;
-  return `M50,50 L${x0.toFixed(2)},${y0.toFixed(2)} A${r},${r} 0 ${large} 1 ${x1.toFixed(2)},${y1.toFixed(2)} Z`;
+  const a0 = (i / n) * 2 * Math.PI - Math.PI / 2
+  const a1 = ((i + 1) / n) * 2 * Math.PI - Math.PI / 2
+  const x0 = 50 + r * Math.cos(a0)
+  const y0 = 50 + r * Math.sin(a0)
+  const x1 = 50 + r * Math.cos(a1)
+  const y1 = 50 + r * Math.sin(a1)
+  const large = a1 - a0 > Math.PI ? 1 : 0
+  return `M50,50 L${x0.toFixed(2)},${y0.toFixed(2)} A${r},${r} 0 ${large} 1 ${x1.toFixed(2)},${y1.toFixed(2)} Z`
 }
 /** Mid-angle label position for segment i of n. */
 function labelAt(i: number, n: number, r = 30) {
-  const a = ((i + 0.5) / n) * 2 * Math.PI - Math.PI / 2;
-  return { x: 50 + r * Math.cos(a), y: 50 + r * Math.sin(a) };
+  const a = ((i + 0.5) / n) * 2 * Math.PI - Math.PI / 2
+  return { x: 50 + r * Math.cos(a), y: 50 + r * Math.sin(a) }
 }
 
 /**
@@ -53,35 +44,29 @@ function labelAt(i: number, n: number, r = 30) {
  * experiment (Stage 3 "Chance"). It's a MANIPULATIVE, not a graded question:
  * it reports the landed segment so the caller can tally results. i18n-free.
  */
-export function SpinnerWheel({
-  segments,
-  onResult,
-  spinLabel,
-  disabled,
-  className,
-}: SpinnerWheelProps) {
-  const n = segments.length;
-  const [angle, setAngle] = useState(0);
-  const [spinning, setSpinning] = useState(false);
-  const [landed, setLanded] = useState<string | null>(null);
-  const timer = useRef<number | null>(null);
+export function SpinnerWheel({ segments, onResult, spinLabel, disabled, className }: SpinnerWheelProps) {
+  const n = segments.length
+  const [angle, setAngle] = useState(0)
+  const [spinning, setSpinning] = useState(false)
+  const [landed, setLanded] = useState<string | null>(null)
+  const timer = useRef<number | null>(null)
 
   function spin() {
-    if (disabled || spinning || n === 0) return;
-    setSpinning(true);
-    setLanded(null);
-    const pick = Math.floor(Math.random() * n);
+    if (disabled || spinning || n === 0) return
+    setSpinning(true)
+    setLanded(null)
+    const pick = Math.floor(Math.random() * n)
     // Land the pointer (at top) in the middle of the picked segment.
-    const segMid = ((pick + 0.5) / n) * 360;
-    const turns = 4 + Math.floor(Math.random() * 3);
-    const next = angle + turns * 360 + ((360 - segMid - (angle % 360) + 360) % 360);
-    setAngle(next);
-    if (timer.current) window.clearTimeout(timer.current);
+    const segMid = ((pick + 0.5) / n) * 360
+    const turns = 4 + Math.floor(Math.random() * 3)
+    const next = angle + turns * 360 + ((360 - segMid - (angle % 360) + 360) % 360)
+    setAngle(next)
+    if (timer.current) window.clearTimeout(timer.current)
     timer.current = window.setTimeout(() => {
-      setSpinning(false);
-      setLanded(segments[pick]!.id);
-      onResult?.(segments[pick]!.id);
-    }, 2600);
+      setSpinning(false)
+      setLanded(segments[pick]!.id)
+      onResult?.(segments[pick]!.id)
+    }, 2600)
   }
 
   return (
@@ -104,7 +89,7 @@ export function SpinnerWheel({
             />
           ))}
           {segments.map((s, i) => {
-            const p = labelAt(i, n);
+            const p = labelAt(i, n)
             return (
               <text
                 key={s.id}
@@ -116,15 +101,9 @@ export function SpinnerWheel({
               >
                 {s.label}
               </text>
-            );
+            )
           })}
-          <circle
-            cx={50}
-            cy={50}
-            r={5}
-            className="fill-surface stroke-border-strong"
-            strokeWidth={1}
-          />
+          <circle cx={50} cy={50} r={5} className="fill-surface stroke-border-strong" strokeWidth={1} />
         </svg>
       </div>
 
@@ -143,5 +122,5 @@ export function SpinnerWheel({
         </span>
       ) : null}
     </div>
-  );
+  )
 }

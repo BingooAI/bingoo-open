@@ -3,21 +3,21 @@
  * learner Player over the current (unpublished) document → instant make-test-fix
  * loop. Same runtime as publish, so WYSIWYG is guaranteed.
  */
-'use client';
-import * as React from 'react';
-import { useState } from 'react';
-import { ExplainerPlayer, type AspectMode } from '../../player/ExplainerPlayer';
-import { useSnap } from '../store/ctx';
+'use client'
+import * as React from 'react'
+import { useState } from 'react'
+import { ExplainerPlayer, type AspectMode } from '../../player/ExplainerPlayer'
+import { useSnap } from '../store/ctx'
 
 const ASPECTS: { m: AspectMode; label: string }[] = [
   { m: '16:9', label: '16:9' },
   { m: '9:16', label: '9:16' },
   { m: 'dual', label: 'Cả hai' },
-];
+]
 
 export function Preview({ onClose }: { onClose: () => void }) {
-  const { doc, bundles } = useSnap();
-  const [mode, setMode] = useState<AspectMode>('16:9');
+  const { doc, bundles } = useSnap()
+  const [mode, setMode] = useState<AspectMode>('16:9')
   return (
     <div className="ed-preview">
       <div className="ed-preview-bar">
@@ -42,5 +42,5 @@ export function Preview({ onClose }: { onClose: () => void }) {
         <ExplainerPlayer doc={doc} bundles={bundles} mode={mode} onModeChange={setMode} />
       </div>
     </div>
-  );
+  )
 }

@@ -6,8 +6,8 @@
  * DERIVED from gender + age, never stored.
  */
 
-export const RELATIONSHIP_CATEGORIES = ['FAMILY', 'SOCIAL'] as const;
-export type RelationshipCategory = (typeof RELATIONSHIP_CATEGORIES)[number];
+export const RELATIONSHIP_CATEGORIES = ['FAMILY', 'SOCIAL'] as const
+export type RelationshipCategory = (typeof RELATIONSHIP_CATEGORIES)[number]
 
 export const RELATIONSHIP_TYPES = [
   'SIBLING',
@@ -19,8 +19,8 @@ export const RELATIONSHIP_TYPES = [
   'RELATIVE',
   'SPOUSE',
   'FRIEND',
-] as const;
-export type RelationshipType = (typeof RELATIONSHIP_TYPES)[number];
+] as const
+export type RelationshipType = (typeof RELATIONSHIP_TYPES)[number]
 
 const CATEGORY_OF: Record<RelationshipType, RelationshipCategory> = {
   SIBLING: 'FAMILY',
@@ -32,36 +32,36 @@ const CATEGORY_OF: Record<RelationshipType, RelationshipCategory> = {
   RELATIVE: 'FAMILY',
   SPOUSE: 'FAMILY',
   FRIEND: 'SOCIAL',
-};
+}
 
 export function categoryOf(type: RelationshipType): RelationshipCategory {
-  return CATEGORY_OF[type];
+  return CATEGORY_OF[type]
 }
 
 /** Types that read the same from both sides (store one row, query both ways). */
-const SYMMETRIC = new Set<RelationshipType>(['SIBLING', 'COUSIN', 'SPOUSE', 'RELATIVE', 'FRIEND']);
+const SYMMETRIC = new Set<RelationshipType>(['SIBLING', 'COUSIN', 'SPOUSE', 'RELATIVE', 'FRIEND'])
 /** Directional types → their reverse label. */
 const REVERSE: Partial<Record<RelationshipType, RelationshipType>> = {
   GRANDPARENT: 'GRANDCHILD',
   GRANDCHILD: 'GRANDPARENT',
   AUNT_UNCLE: 'NIECE_NEPHEW',
   NIECE_NEPHEW: 'AUNT_UNCLE',
-};
+}
 
 export function isSymmetric(type: RelationshipType): boolean {
-  return SYMMETRIC.has(type);
+  return SYMMETRIC.has(type)
 }
 
 /** The relationship AS SEEN FROM THE OTHER SIDE (`to`'s perspective). */
 export function reverseType(type: RelationshipType): RelationshipType {
-  return REVERSE[type] ?? type;
+  return REVERSE[type] ?? type
 }
 
 function isMale(gender: string | null | undefined): boolean {
-  return (gender ?? '').toLowerCase().startsWith('m');
+  return (gender ?? '').toLowerCase().startsWith('m')
 }
 function isFemale(gender: string | null | undefined): boolean {
-  return (gender ?? '').toLowerCase().startsWith('f');
+  return (gender ?? '').toLowerCase().startsWith('f')
 }
 
 /**
@@ -77,18 +77,18 @@ export function kinshipHonorific(
   switch (type) {
     case 'SIBLING':
     case 'COUSIN':
-      if (!otherIsOlder) return 'em';
-      return isMale(otherGender) ? 'anh' : isFemale(otherGender) ? 'chị' : 'anh/chị';
+      if (!otherIsOlder) return 'em'
+      return isMale(otherGender) ? 'anh' : isFemale(otherGender) ? 'chị' : 'anh/chị'
     case 'GRANDPARENT':
-      return isMale(otherGender) ? 'ông' : isFemale(otherGender) ? 'bà' : 'ông/bà';
+      return isMale(otherGender) ? 'ông' : isFemale(otherGender) ? 'bà' : 'ông/bà'
     case 'GRANDCHILD':
     case 'NIECE_NEPHEW':
-      return 'cháu';
+      return 'cháu'
     case 'AUNT_UNCLE':
-      return isMale(otherGender) ? 'chú/bác' : isFemale(otherGender) ? 'cô/dì' : null;
+      return isMale(otherGender) ? 'chú/bác' : isFemale(otherGender) ? 'cô/dì' : null
     case 'SPOUSE':
-      return isMale(otherGender) ? 'chồng' : isFemale(otherGender) ? 'vợ' : null;
+      return isMale(otherGender) ? 'chồng' : isFemale(otherGender) ? 'vợ' : null
     default:
-      return null;
+      return null
   }
 }

@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import {
   BarChart3,
@@ -19,25 +19,25 @@ import {
   Users,
   X,
   type LucideIcon,
-} from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useState, type ReactNode } from 'react';
-import { Logo } from '@/components/brand/logo';
-import { LocaleSwitcher } from '@/components/brand/locale-switcher';
-import { ThemeToggle } from '@/components/brand/theme-toggle';
-import { Avatar } from '@bingoo/ui-web';
-import { Link, usePathname, useRouter } from '@/i18n/navigation';
-import { signOut } from '@/lib/auth-client';
-import { cn } from '@/lib/cn';
+} from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useState, type ReactNode } from 'react'
+import { Logo } from '@/components/brand/logo'
+import { LocaleSwitcher } from '@/components/brand/locale-switcher'
+import { ThemeToggle } from '@/components/brand/theme-toggle'
+import { Avatar } from '@bingoo/ui-web'
+import { Link, usePathname, useRouter } from '@/i18n/navigation'
+import { signOut } from '@/lib/auth-client'
+import { cn } from '@/lib/cn'
 
 export interface SessionUser {
-  name: string;
-  email: string | null;
-  role: string | null;
-  image: string | null;
+  name: string
+  email: string | null
+  role: string | null
+  image: string | null
 }
 
-type NavItem = { key: string; Icon: LucideIcon; href?: string };
+type NavItem = { key: string; Icon: LucideIcon; href?: string }
 
 const NAV: Record<'student' | 'parent', NavItem[]> = {
   student: [
@@ -54,32 +54,32 @@ const NAV: Record<'student' | 'parent', NavItem[]> = {
     { key: 'schedule', Icon: CalendarDays },
     { key: 'messages', Icon: MessageCircle },
   ],
-};
+}
 
 const FOOTER_NAV: NavItem[] = [
   { key: 'devices', Icon: MonitorSmartphone, href: '/devices' },
   { key: 'settings', Icon: Settings },
   { key: 'help', Icon: HelpCircle },
-];
+]
 
 export function AppShell({ children, user }: { children: ReactNode; user: SessionUser }) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const navRole: 'student' | 'parent' = pathname.startsWith('/parent') ? 'parent' : 'student';
-  const tr = useTranslations('auth.register');
+  const pathname = usePathname()
+  const router = useRouter()
+  const navRole: 'student' | 'parent' = pathname.startsWith('/parent') ? 'parent' : 'student'
+  const tr = useTranslations('auth.register')
   const display = {
     name: user.name,
     role: navRole === 'parent' ? tr('roleParent') : tr('roleStudent'),
     image: user.image,
-  };
-  const [drawer, setDrawer] = useState(false);
-  const [active, setActive] = useState('home');
-  const [loggingOut, setLoggingOut] = useState(false);
+  }
+  const [drawer, setDrawer] = useState(false)
+  const [active, setActive] = useState('home')
+  const [loggingOut, setLoggingOut] = useState(false)
 
   async function logout() {
-    setLoggingOut(true);
-    await signOut().catch(() => {});
-    router.push('/login');
+    setLoggingOut(true)
+    await signOut().catch(() => {})
+    router.push('/login')
   }
 
   return (
@@ -109,8 +109,8 @@ export function AppShell({ children, user }: { children: ReactNode; user: Sessio
               role={navRole}
               active={active}
               setActive={(k) => {
-                setActive(k);
-                setDrawer(false);
+                setActive(k)
+                setDrawer(false)
               }}
               user={display}
               onLogout={logout}
@@ -129,7 +129,7 @@ export function AppShell({ children, user }: { children: ReactNode; user: Sessio
         </main>
       </div>
     </div>
-  );
+  )
 }
 
 function SidebarContent({
@@ -141,51 +141,41 @@ function SidebarContent({
   loggingOut,
   onClose,
 }: {
-  role: 'student' | 'parent';
-  active: string;
-  setActive: (k: string) => void;
-  user: { name: string; role: string; image: string | null };
-  onLogout: () => void;
-  loggingOut: boolean;
-  onClose?: () => void;
+  role: 'student' | 'parent'
+  active: string
+  setActive: (k: string) => void
+  user: { name: string; role: string; image: string | null }
+  onLogout: () => void
+  loggingOut: boolean
+  onClose?: () => void
 }) {
-  const t = useTranslations();
-  const pathname = usePathname();
+  const t = useTranslations()
+  const pathname = usePathname()
 
   const renderItem = (item: NavItem) => {
-    const isActive = item.href ? pathname === item.href : active === item.key;
+    const isActive = item.href ? pathname === item.href : active === item.key
     const className = cn(
       'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors',
       isActive
         ? 'bg-primary-soft text-primary-soft-foreground'
         : 'text-foreground-muted hover:bg-surface-muted hover:text-foreground',
-    );
+    )
     const inner = (
       <>
         <item.Icon className="size-5 shrink-0" />
         {t(`app.nav.${item.key}`)}
       </>
-    );
+    )
     return item.href ? (
-      <Link
-        key={item.key}
-        href={item.href}
-        onClick={() => setActive(item.key)}
-        className={className}
-      >
+      <Link key={item.key} href={item.href} onClick={() => setActive(item.key)} className={className}>
         {inner}
       </Link>
     ) : (
-      <button
-        key={item.key}
-        type="button"
-        onClick={() => setActive(item.key)}
-        className={className}
-      >
+      <button key={item.key} type="button" onClick={() => setActive(item.key)} className={className}>
         {inner}
       </button>
-    );
-  };
+    )
+  }
 
   return (
     <>
@@ -241,17 +231,11 @@ function SidebarContent({
         </button>
       </div>
     </>
-  );
+  )
 }
 
-function Topbar({
-  onMenu,
-  user,
-}: {
-  onMenu: () => void;
-  user: { name: string; image: string | null };
-}) {
-  const t = useTranslations('app');
+function Topbar({ onMenu, user }: { onMenu: () => void; user: { name: string; image: string | null } }) {
+  const t = useTranslations('app')
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/85 px-4 backdrop-blur sm:px-6 lg:px-8">
       <button
@@ -288,5 +272,5 @@ function Topbar({
         <Avatar name={user.name} src={user.image} size="sm" className="ml-1" />
       </div>
     </header>
-  );
+  )
 }

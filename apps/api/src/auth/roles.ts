@@ -17,38 +17,35 @@ export const PLATFORM_ROLES = [
   'CONTENT_EDITOR',
   'MODERATOR',
   'ADMIN',
-] as const;
+] as const
 
-export type PlatformRole = (typeof PLATFORM_ROLES)[number];
+export type PlatformRole = (typeof PLATFORM_ROLES)[number]
 
-export const DEFAULT_ROLE: PlatformRole = 'USER';
+export const DEFAULT_ROLE: PlatformRole = 'USER'
 
 /** Roles the admin plugin treats as platform administrators. */
-export const ADMIN_ROLES: readonly PlatformRole[] = ['ADMIN'];
+export const ADMIN_ROLES: readonly PlatformRole[] = ['ADMIN']
 
-const KNOWN = new Set<string>(PLATFORM_ROLES);
+const KNOWN = new Set<string>(PLATFORM_ROLES)
 
 /** Split the CSV role string into a normalized, de-duped set of known roles. */
 export function parseRoles(role: string | null | undefined): PlatformRole[] {
-  if (!role) return [];
-  const out: PlatformRole[] = [];
+  if (!role) return []
+  const out: PlatformRole[] = []
   for (const raw of role.split(',')) {
-    const r = raw.trim().toUpperCase();
-    if (KNOWN.has(r) && !out.includes(r as PlatformRole)) out.push(r as PlatformRole);
+    const r = raw.trim().toUpperCase()
+    if (KNOWN.has(r) && !out.includes(r as PlatformRole)) out.push(r as PlatformRole)
   }
-  return out;
+  return out
 }
 
 /** True when the user's role set includes `required`. */
 export function hasRole(role: string | null | undefined, required: PlatformRole): boolean {
-  return parseRoles(role).includes(required);
+  return parseRoles(role).includes(required)
 }
 
 /** True when the user's role set includes ANY of `required`. */
-export function hasAnyRole(
-  role: string | null | undefined,
-  required: readonly PlatformRole[],
-): boolean {
-  const set = parseRoles(role);
-  return required.some((r) => set.includes(r));
+export function hasAnyRole(role: string | null | undefined, required: readonly PlatformRole[]): boolean {
+  const set = parseRoles(role)
+  return required.some((r) => set.includes(r))
 }

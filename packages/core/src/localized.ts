@@ -8,11 +8,11 @@
  *
  * Render/chấm KHÔNG đọc trực tiếp field text nữa — luôn qua `pickText(value, locale)` để lấy đúng chuỗi.
  */
-import { z } from 'zod';
+import { z } from 'zod'
 
 /** Chuỗi một-ngôn-ngữ HOẶC bản đồ locale→text. `en` luôn là gốc. */
-export const LocalizedString = z.union([z.string(), z.record(z.string().min(1), z.string())]);
-export type LocalizedString = z.infer<typeof LocalizedString>;
+export const LocalizedString = z.union([z.string(), z.record(z.string().min(1), z.string())])
+export type LocalizedString = z.infer<typeof LocalizedString>
 
 /**
  * Rút chuỗi hiển thị cho MỘT locale từ một `LocalizedString`:
@@ -22,14 +22,12 @@ export type LocalizedString = z.infer<typeof LocalizedString>;
  * Thuần, không I/O — dùng được cả ở core (grade), web/native (render), server.
  */
 export function pickText(value: LocalizedString | undefined | null, locale = 'en'): string {
-  if (value == null) return '';
-  if (typeof value === 'string') return value;
-  return value[locale] ?? value.en ?? Object.values(value)[0] ?? '';
+  if (value == null) return ''
+  if (typeof value === 'string') return value
+  return value[locale] ?? value.en ?? Object.values(value)[0] ?? ''
 }
 
 /** true nếu value là bản đồ locale (đa ngôn ngữ) chứ không phải chuỗi thường. */
-export function isLocalizedMap(
-  value: LocalizedString | undefined | null,
-): value is Record<string, string> {
-  return value != null && typeof value === 'object';
+export function isLocalizedMap(value: LocalizedString | undefined | null): value is Record<string, string> {
+  return value != null && typeof value === 'object'
 }

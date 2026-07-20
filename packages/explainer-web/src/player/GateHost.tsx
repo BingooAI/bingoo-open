@@ -4,14 +4,14 @@
  * the gate widget by kind and overlays it. v1 wires select/predict-check,
  * sequence, and hotspot — all auto-graded (spec §12).
  */
-'use client';
-import * as React from 'react';
-import type { GateSpec, ThemeTokens, Aspect } from '@bingoo/explainer';
-import { SelectGate } from './gates/SelectGate';
-import { SequenceGate } from './gates/SequenceGate';
-import { HotspotGate } from './gates/HotspotGate';
-import { ManipulateGate } from './gates/ManipulateGate';
-import { ActivityGate } from './gates/ActivityGate';
+'use client'
+import * as React from 'react'
+import type { GateSpec, ThemeTokens, Aspect } from '@bingoo/explainer'
+import { SelectGate } from './gates/SelectGate'
+import { SequenceGate } from './gates/SequenceGate'
+import { HotspotGate } from './gates/HotspotGate'
+import { ManipulateGate } from './gates/ManipulateGate'
+import { ActivityGate } from './gates/ActivityGate'
 
 /** Pick the widget for a gate. Shared by the LIVE host and the lead-in PREVIEW,
  *  so the preview shows the SAME question/options/board the learner will answer —
@@ -26,21 +26,17 @@ function renderGate(
 ) {
   switch (gate.kind) {
     case 'activity':
-      return (
-        <ActivityGate gate={gate} theme={theme} aspect={aspect} onPass={onPass} onSkip={onSkip} />
-      );
+      return <ActivityGate gate={gate} theme={theme} aspect={aspect} onPass={onPass} onSkip={onSkip} />
     case 'manipulate':
-      return (
-        <ManipulateGate gate={gate} theme={theme} aspect={aspect} onPass={onPass} onSkip={onSkip} />
-      );
+      return <ManipulateGate gate={gate} theme={theme} aspect={aspect} onPass={onPass} onSkip={onSkip} />
     case 'sequence':
-      return <SequenceGate gate={gate} onPass={onPass} onSkip={onSkip} />;
+      return <SequenceGate gate={gate} onPass={onPass} onSkip={onSkip} />
     case 'hotspot':
-      return <HotspotGate gate={gate} onPass={onPass} onSkip={onSkip} />;
+      return <HotspotGate gate={gate} onPass={onPass} onSkip={onSkip} />
     case 'select':
     case 'predict-check':
     default:
-      return <SelectGate gate={gate} onPass={onPass} onSkip={onSkip} />;
+      return <SelectGate gate={gate} onPass={onPass} onSkip={onSkip} />
   }
 }
 
@@ -52,21 +48,13 @@ function renderGate(
  * no-ops). Without it a gate scene is a lonely title over an empty box; with it
  * the learner sees exactly what's coming, and it grades only at the live pause.
  */
-function GatePreview({
-  gate,
-  theme,
-  aspect,
-}: {
-  gate: GateSpec;
-  theme: ThemeTokens;
-  aspect: Aspect;
-}) {
+function GatePreview({ gate, theme, aspect }: { gate: GateSpec; theme: ThemeTokens; aspect: Aspect }) {
   return (
     <div className="gate-preview" aria-hidden="true">
       <div className="gate-preview-tag">Câu hỏi sắp tới</div>
       {renderGate(gate, theme, aspect, () => {}, undefined)}
     </div>
-  );
+  )
 }
 
 export function GateHost({
@@ -77,14 +65,14 @@ export function GateHost({
   onPass,
   onSkip,
 }: {
-  gate: GateSpec;
-  theme: ThemeTokens;
-  aspect?: Aspect;
+  gate: GateSpec
+  theme: ThemeTokens
+  aspect?: Aspect
   /** lead-in preview (dimmed, non-interactive) instead of the live gate */
-  preview?: boolean;
-  onPass: () => void;
-  onSkip?: () => void;
+  preview?: boolean
+  onPass: () => void
+  onSkip?: () => void
 }) {
-  if (preview) return <GatePreview gate={gate} theme={theme} aspect={aspect} />;
-  return renderGate(gate, theme, aspect, onPass, onSkip);
+  if (preview) return <GatePreview gate={gate} theme={theme} aspect={aspect} />
+  return renderGate(gate, theme, aspect, onPass, onSkip)
 }

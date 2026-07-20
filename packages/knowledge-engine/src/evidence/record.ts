@@ -5,11 +5,11 @@
  * KHÔNG export `foldEvidence` trần khỏi barrel công khai: mọi ghi LEARNER phải qua đây.
  */
 
-import type { EvidenceInput } from '../contracts';
-import type { EnginePolicy } from '../policy';
-import { freshMastery, type SkillMastery } from '../mastery/observe';
-import { foldEvidence, shouldSnapshot } from './fold';
-import { validateEvidenceWrite, type EvidenceViolation } from './write-matrix';
+import type { EvidenceInput } from '../contracts'
+import type { EnginePolicy } from '../policy'
+import { freshMastery, type SkillMastery } from '../mastery/observe'
+import { foldEvidence, shouldSnapshot } from './fold'
+import { validateEvidenceWrite, type EvidenceViolation } from './write-matrix'
 
 export type RecordResult =
   /** LEARNER lane: đã fold; `snapshot` = có nên lấy mẫu SkillSnapshot không (§2). */
@@ -19,13 +19,13 @@ export type RecordResult =
   /** Trùng attemptId: no-op, trả state hiện tại (§9.1). */
   | { readonly status: 'duplicate'; readonly state: SkillMastery }
   /** Vi phạm ma trận quyền ghi (§3.1). */
-  | { readonly status: 'rejected'; readonly violation: EvidenceViolation };
+  | { readonly status: 'rejected'; readonly violation: EvidenceViolation }
 
 /** SPEC §9.1 — true nếu attemptId mới (và ghi nhận vào sổ); false nếu đã thấy. */
 export function dedupeAttempt(attemptId: string, seen: Set<string>): boolean {
-  if (seen.has(attemptId)) return false;
-  seen.add(attemptId);
-  return true;
+  if (seen.has(attemptId)) return false
+  seen.add(attemptId)
+  return true
 }
 
 /**
@@ -38,25 +38,25 @@ export function recordEvidence(
   policy: EnginePolicy,
   seen?: Set<string>,
 ): RecordResult {
-  const check = validateEvidenceWrite(ev, policy);
-  if (!check.ok) return { status: 'rejected', violation: check.violation };
+  const check = validateEvidenceWrite(ev, policy)
+  if (!check.ok) return { status: 'rejected', violation: check.violation }
 
-  const lane = ev.subjectType ?? 'LEARNER';
-  if (lane !== 'LEARNER') return { status: 'log-only' }; // B2
+  const lane = ev.subjectType ?? 'LEARNER'
+  if (lane !== 'LEARNER') return { status: 'log-only' } // B2
 
-  const current = prior ?? freshMastery(ev.skill, policy.bkt.pInit);
+  const current = prior ?? freshMastery(ev.skill, policy.bkt.pInit)
   if (seen && ev.attemptId !== undefined && !dedupeAttempt(ev.attemptId, seen)) {
-    return { status: 'duplicate', state: current };
+    return { status: 'duplicate', state: current }
   }
 
   const folded = foldEvidence(prior, ev, {
     bkt: policy.bkt,
     elo: policy.elo,
     beta: policy.beta,
-  });
+  })
   return {
     status: 'folded',
     state: folded,
     snapshot: shouldSnapshot(folded.attempts, policy.evidence.snapshotSampleEvery),
-  };
+  }
 }

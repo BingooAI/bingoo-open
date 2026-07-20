@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import { useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl'
 import {
   Badge,
   Button,
@@ -17,42 +17,37 @@ import {
   THead,
   TR,
   useToast,
-} from '@bingoo/ui-web';
-import { GraphCanvas, type GEdge, type GNode } from './graph-canvas';
-import {
-  useCreateVersion,
-  useFramework,
-  useFrameworkGraph,
-  usePublishVersion,
-} from '@/lib/authoring-queries';
+} from '@bingoo/ui-web'
+import { GraphCanvas, type GEdge, type GNode } from './graph-canvas'
+import { useCreateVersion, useFramework, useFrameworkGraph, usePublishVersion } from '@/lib/authoring-queries'
 
 /** Chi tiết khung: bản phát hành (tạo/publish), mục tiêu, và ĐỒ THỊ năng lực. */
 export function FrameworkDetail({ slug }: { slug: string }) {
-  const t = useTranslations('admin.authoring');
-  const { toast } = useToast();
+  const t = useTranslations('admin.authoring')
+  const { toast } = useToast()
 
-  const detail = useFramework(slug);
-  const graph = useFrameworkGraph(slug);
-  const createVersion = useCreateVersion(slug);
-  const publish = usePublishVersion(slug);
+  const detail = useFramework(slug)
+  const graph = useFrameworkGraph(slug)
+  const createVersion = useCreateVersion(slug)
+  const publish = usePublishVersion(slug)
 
   const onErr = (e: unknown) =>
     toast({
       variant: 'danger',
       title: t('failed'),
       description: e instanceof Error ? e.message : String(e),
-    });
+    })
 
   if (detail.isLoading) {
     return (
       <div className="flex justify-center py-12">
         <Spinner />
       </div>
-    );
+    )
   }
-  if (detail.isError || !detail.data) return <EmptyState title={t('failed')} />;
+  if (detail.isError || !detail.data) return <EmptyState title={t('failed')} />
 
-  const f = detail.data;
+  const f = detail.data
 
   return (
     <div className="space-y-6">
@@ -69,8 +64,7 @@ export function FrameworkDetail({ slug }: { slug: string }) {
                 loading={createVersion.isPending && createVersion.variables === r}
                 onClick={() =>
                   createVersion.mutate(r, {
-                    onSuccess: (v) =>
-                      toast({ variant: 'success', title: `${t('newVersion')} ${v.semver}` }),
+                    onSuccess: (v) => toast({ variant: 'success', title: `${t('newVersion')} ${v.semver}` }),
                     onError: onErr,
                   })
                 }
@@ -153,9 +147,7 @@ export function FrameworkDetail({ slug }: { slug: string }) {
               {f.objectives.map((o) => (
                 <li key={o.slug} className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   {o.code ? <Badge tone="soft">{o.code}</Badge> : null}
-                  <span className="text-sm text-foreground">
-                    {o.title.vi ?? o.title.en ?? o.slug}
-                  </span>
+                  <span className="text-sm text-foreground">{o.title.vi ?? o.title.en ?? o.slug}</span>
                   <span className="font-mono text-xs text-foreground-muted">{o.slug}</span>
                 </li>
               ))}
@@ -203,5 +195,5 @@ export function FrameworkDetail({ slug }: { slug: string }) {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

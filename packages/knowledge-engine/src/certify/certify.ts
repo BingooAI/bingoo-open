@@ -1,32 +1,32 @@
 /** certifyFramework — đạt chuẩn theo objective. SPEC §12. */
 
-import type { Slug } from '../contracts';
-import type { EnginePolicy } from '../policy';
-import { REPORTING_UNSEEN_PRIOR } from '../policy';
-import type { SkillGraph } from '../graph/build';
-import { nodeMastery, type MasteryStates } from '../graph/composite';
+import type { Slug } from '../contracts'
+import type { EnginePolicy } from '../policy'
+import { REPORTING_UNSEEN_PRIOR } from '../policy'
+import type { SkillGraph } from '../graph/build'
+import { nodeMastery, type MasteryStates } from '../graph/composite'
 
 export interface CertifyObjective {
-  readonly slug: Slug;
+  readonly slug: Slug
 }
 
 export interface ObjectiveResult {
-  readonly slug: Slug;
-  readonly mastery: number;
-  readonly passed: boolean;
+  readonly slug: Slug
+  readonly mastery: number
+  readonly passed: boolean
 }
 
 export interface CertifyReport {
-  readonly objectives: readonly ObjectiveResult[];
-  readonly total: number;
-  readonly passedCount: number;
-  readonly percent: number;
-  readonly passed: boolean;
+  readonly objectives: readonly ObjectiveResult[]
+  readonly total: number
+  readonly passedCount: number
+  readonly percent: number
+  readonly passed: boolean
 }
 
 export interface CertifyOpts {
-  readonly cut?: number;
-  readonly passRatio?: number;
+  readonly cut?: number
+  readonly passRatio?: number
 }
 
 /**
@@ -41,21 +41,21 @@ export function certifyFramework(
   policy: EnginePolicy,
   opts: CertifyOpts = {},
 ): CertifyReport {
-  const cut = opts.cut ?? policy.certify.cut;
-  const passRatio = opts.passRatio ?? policy.certify.passRatio;
+  const cut = opts.cut ?? policy.certify.cut
+  const passRatio = opts.passRatio ?? policy.certify.passRatio
 
   const results: ObjectiveResult[] = objectives.map((obj) => {
-    const r = nodeMastery(graph, measured, obj.slug, cut, { unseenPrior: REPORTING_UNSEEN_PRIOR });
-    return { slug: obj.slug, mastery: r.pKnown, passed: r.achieved };
-  });
+    const r = nodeMastery(graph, measured, obj.slug, cut, { unseenPrior: REPORTING_UNSEEN_PRIOR })
+    return { slug: obj.slug, mastery: r.pKnown, passed: r.achieved }
+  })
 
-  const total = results.length;
-  const passedCount = results.filter((r) => r.passed).length;
+  const total = results.length
+  const passedCount = results.filter((r) => r.passed).length
   return {
     objectives: results,
     total,
     passedCount,
     percent: total > 0 ? Math.round((passedCount / total) * 100) : 0,
     passed: total > 0 && passedCount / total >= passRatio,
-  };
+  }
 }

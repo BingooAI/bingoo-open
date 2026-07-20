@@ -1,6 +1,6 @@
-import type { MediaKind, MediaSearchQuery } from '@bingoo/core';
-import { getAi, ProviderNotConfiguredError } from '../providers';
-import { renderPrompt } from '../prompts';
+import type { MediaKind, MediaSearchQuery } from '@bingoo/core'
+import { getAi, ProviderNotConfiguredError } from '../providers'
+import { renderPrompt } from '../prompts'
 
 /**
  * Natural-language → structured query (docs/media-library-design.md §4/§7). Turns
@@ -11,28 +11,17 @@ import { renderPrompt } from '../prompts';
  * provider/parse failure falls back to using the raw sentence as `text`.
  */
 
-const KINDS: MediaKind[] = [
-  'IMAGE',
-  'VIDEO',
-  'AUDIO',
-  'DOCUMENT',
-  'ANIMATION',
-  'FONT',
-  'ARCHIVE',
-  'OTHER',
-];
+const KINDS: MediaKind[] = ['IMAGE', 'VIDEO', 'AUDIO', 'DOCUMENT', 'ANIMATION', 'FONT', 'ARCHIVE', 'OTHER']
 
 /** Keep only known fields — never trust the model to shape the query object. */
 function sanitize(raw: unknown, sentence: string): MediaSearchQuery {
-  const obj = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
-  const text = typeof obj.text === 'string' && obj.text.trim() ? obj.text.trim() : sentence;
+  const obj = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>
+  const text = typeof obj.text === 'string' && obj.text.trim() ? obj.text.trim() : sentence
   const kind = Array.isArray(obj.kind)
-    ? obj.kind.filter(
-        (k): k is MediaKind => typeof k === 'string' && KINDS.includes(k as MediaKind),
-      )
-    : undefined;
-  const locale = obj.locale === 'vi' || obj.locale === 'en' ? obj.locale : undefined;
-  return { text, ...(kind && kind.length ? { kind } : {}), ...(locale ? { locale } : {}) };
+    ? obj.kind.filter((k): k is MediaKind => typeof k === 'string' && KINDS.includes(k as MediaKind))
+    : undefined
+  const locale = obj.locale === 'vi' || obj.locale === 'en' ? obj.locale : undefined
+  return { text, ...(kind && kind.length ? { kind } : {}), ...(locale ? { locale } : {}) }
 }
 
 export async function parseNlQuery(sentence: string): Promise<MediaSearchQuery> {
@@ -41,17 +30,14 @@ export async function parseNlQuery(sentence: string): Promise<MediaSearchQuery> 
       system: await renderPrompt('media.nl.parse'),
       messages: [{ role: 'user', content: sentence }],
       maxTokens: 200,
-    });
-    const match = res.text.match(/\{[\s\S]*\}/);
-    if (!match) return { text: sentence };
-    return sanitize(JSON.parse(match[0]), sentence);
+    })
+    const match = res.text.match(/\{[\s\S]*\}/)
+    if (!match) return { text: sentence }
+    return sanitize(JSON.parse(match[0]), sentence)
   } catch (err) {
     if (!(err instanceof ProviderNotConfiguredError)) {
-      console.error(
-        '[media.nl] parse failed, using raw text',
-        err instanceof Error ? err.message : err,
-      );
+      console.error('[media.nl] parse failed, using raw text', err instanceof Error ? err.message : err)
     }
-    return { text: sentence };
+    return { text: sentence }
   }
 }

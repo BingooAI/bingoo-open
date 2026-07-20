@@ -1,21 +1,21 @@
-'use client';
+'use client'
 
-import { cn } from './lib/cn';
-import { ENTER, stagger } from './lib/interactive';
+import { cn } from './lib/cn'
+import { ENTER, stagger } from './lib/interactive'
 
 export interface DialogueTurn {
-  speaker: string;
-  text: string;
-  emoji?: string;
-  avatarSrc?: string;
-  side?: 'left' | 'right';
+  speaker: string
+  text: string
+  emoji?: string
+  avatarSrc?: string
+  side?: 'left' | 'right'
 }
 
 export interface DialogueBubblesProps {
-  turns: DialogueTurn[];
+  turns: DialogueTurn[]
   /** What the learner must decide, e.g. "Who is right?". */
-  question?: string;
-  className?: string;
+  question?: string
+  className?: string
 }
 
 /**
@@ -27,7 +27,7 @@ export function DialogueBubbles({ turns, question, className }: DialogueBubblesP
   return (
     <div className={cn('flex flex-col gap-3', className)}>
       {turns.map((t, i) => {
-        const right = t.side === 'right';
+        const right = t.side === 'right'
         return (
           <div
             key={`${t.speaker}-${i}`}
@@ -57,7 +57,7 @@ export function DialogueBubbles({ turns, question, className }: DialogueBubblesP
               </div>
             </div>
           </div>
-        );
+        )
       })}
       {question ? (
         <p className="rounded-xl border-2 border-dashed border-border-strong px-3 py-2 text-center text-sm font-bold text-foreground">
@@ -65,5 +65,5 @@ export function DialogueBubbles({ turns, question, className }: DialogueBubblesP
         </p>
       ) : null}
     </div>
-  );
+  )
 }

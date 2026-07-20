@@ -1,22 +1,22 @@
-'use client';
+'use client'
 
-import { solidPartIds, makeSolid, type Solid3DName, type SolidPartKind } from '@bingoo/core';
-import { useMemo } from 'react';
-import { GeoShape, type GeoShapePart } from './geo-shape';
-import { cn } from './lib/cn';
-import { POP, SHAKE } from './lib/interactive';
+import { solidPartIds, makeSolid, type Solid3DName, type SolidPartKind } from '@bingoo/core'
+import { useMemo } from 'react'
+import { GeoShape, type GeoShapePart } from './geo-shape'
+import { cn } from './lib/cn'
+import { POP, SHAKE } from './lib/interactive'
 
 export interface SolidInspectorProps {
-  shape: Solid3DName;
-  task: SolidPartKind;
+  shape: Solid3DName
+  task: SolidPartKind
   /** Controlled: ids of the parts tapped so far. */
-  selected: string[];
-  onChange: (selected: string[]) => void;
+  selected: string[]
+  onChange: (selected: string[]) => void
   /** Localized: "Found {n} of {total}" is built by the caller from these. */
-  labels?: { found: string; hint?: string };
-  reveal?: { correct: boolean; expected: string[]; count: number };
-  disabled?: boolean;
-  className?: string;
+  labels?: { found: string; hint?: string }
+  reveal?: { correct: boolean; expected: string[]; count: number }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -35,14 +35,14 @@ export function SolidInspector({
   disabled,
   className,
 }: SolidInspectorProps) {
-  const locked = !!reveal || disabled;
-  const total = useMemo(() => solidPartIds(makeSolid(shape), task).length, [shape, task]);
-  const found = selected.length;
+  const locked = !!reveal || disabled
+  const total = useMemo(() => solidPartIds(makeSolid(shape), task).length, [shape, task])
+  const found = selected.length
 
   const pick = (p: GeoShapePart) => {
-    if (locked || p.kind !== task) return;
-    onChange(selected.includes(p.id) ? selected.filter((x) => x !== p.id) : [...selected, p.id]);
-  };
+    if (locked || p.kind !== task) return
+    onChange(selected.includes(p.id) ? selected.filter((x) => x !== p.id) : [...selected, p.id])
+  }
 
   return (
     <div className={cn('flex flex-col items-center gap-3', className)}>
@@ -67,5 +67,5 @@ export function SolidInspector({
         <span className="text-center text-xs text-foreground-muted">{labels.hint}</span>
       ) : null}
     </div>
-  );
+  )
 }

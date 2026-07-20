@@ -1,14 +1,14 @@
-'use client';
+'use client'
 
-import type { QuizMedia } from '@bingoo/core';
-import { cn } from './lib/cn';
-import { SoundButton } from './sound-button';
+import type { QuizMedia } from '@bingoo/core'
+import { cn } from './lib/cn'
+import { SoundButton } from './sound-button'
 
 export interface QuestionMediaProps {
-  media: QuizMedia;
+  media: QuizMedia
   /** A11y label for the audio play button (data). */
-  playLabel?: string;
-  className?: string;
+  playLabel?: string
+  className?: string
 }
 
 /**
@@ -17,7 +17,7 @@ export interface QuestionMediaProps {
  * resolved (the server resolves library `assetId`s to URLs before delivery).
  */
 export function QuestionMedia({ media, playLabel, className }: QuestionMediaProps) {
-  if (!media.src) return null;
+  if (!media.src) return null
   if (media.kind === 'image') {
     return (
       <img
@@ -25,7 +25,7 @@ export function QuestionMedia({ media, playLabel, className }: QuestionMediaProp
         alt={media.alt ?? ''}
         className={cn('max-h-56 w-full rounded-2xl object-contain', className)}
       />
-    );
+    )
   }
   if (media.kind === 'video') {
     return (
@@ -34,7 +34,7 @@ export function QuestionMedia({ media, playLabel, className }: QuestionMediaProp
         controls
         className={cn('max-h-64 w-full rounded-2xl bg-black object-contain', className)}
       />
-    );
+    )
   }
   return (
     <div
@@ -46,5 +46,5 @@ export function QuestionMedia({ media, playLabel, className }: QuestionMediaProp
       <SoundButton src={media.src} label={playLabel ?? ''} tone="solid" size="lg" />
       {media.alt ? <span className="text-sm text-foreground-muted">{media.alt}</span> : null}
     </div>
-  );
+  )
 }

@@ -1,20 +1,20 @@
-'use client';
+'use client'
 
-import { useEffect, type ReactNode } from 'react';
-import { IconChip, type IconChipColor } from './icon-chip';
-import { cn } from './lib/cn';
+import { useEffect, type ReactNode } from 'react'
+import { IconChip, type IconChipColor } from './icon-chip'
+import { cn } from './lib/cn'
 
 export interface AchievementToastProps {
-  open: boolean;
-  onClose: () => void;
-  icon: ReactNode;
-  title: ReactNode;
-  description?: ReactNode;
-  color?: IconChipColor;
+  open: boolean
+  onClose: () => void
+  icon: ReactNode
+  title: ReactNode
+  description?: ReactNode
+  color?: IconChipColor
   /** Auto-dismiss delay in ms (default 4000; 0 = stay open). */
-  duration?: number;
-  onMedia?: boolean;
-  className?: string;
+  duration?: number
+  onMedia?: boolean
+  className?: string
 }
 
 /**
@@ -34,17 +34,17 @@ export function AchievementToast({
   className,
 }: AchievementToastProps) {
   useEffect(() => {
-    if (!open || !duration) return;
-    const id = setTimeout(onClose, duration);
-    return () => clearTimeout(id);
-  }, [open, duration, onClose]);
+    if (!open || !duration) return
+    const id = setTimeout(onClose, duration)
+    return () => clearTimeout(id)
+  }, [open, duration, onClose])
 
-  if (!open) return null;
+  if (!open) return null
 
   const surface = onMedia
     ? 'bg-black/45 text-white backdrop-blur-md border border-white/15'
-    : 'bg-surface text-foreground border border-border';
-  const muted = onMedia ? 'text-white/70' : 'text-foreground-muted';
+    : 'bg-surface text-foreground border border-border'
+  const muted = onMedia ? 'text-white/70' : 'text-foreground-muted'
 
   return (
     <div
@@ -64,5 +64,5 @@ export function AchievementToast({
         {description ? <p className={cn('truncate text-xs', muted)}>{description}</p> : null}
       </div>
     </div>
-  );
+  )
 }

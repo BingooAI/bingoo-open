@@ -14,7 +14,7 @@ export {
   type Facets,
   type FacetAxis,
   type DomainProfile,
-} from './model';
+} from './model'
 export {
   compareIdentity,
   normalizeFacets,
@@ -22,4 +22,4 @@ export {
   DEFAULT_IDENTITY_AXES,
   type IdentityVerdict,
   type IdentityResult,
-} from './identity';
+} from './identity'

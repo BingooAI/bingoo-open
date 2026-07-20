@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import {
   Award,
@@ -12,10 +12,10 @@ import {
   Timer,
   TrendingDown,
   TrendingUp,
-} from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useState, type ComponentType } from 'react';
-import { Mascot } from '@/components/brand/mascot';
+} from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useState, type ComponentType } from 'react'
+import { Mascot } from '@/components/brand/mascot'
 import {
   Badge,
   Button,
@@ -26,38 +26,38 @@ import {
   Progress,
   ProgressRing,
   StatCard,
-} from '@bingoo/ui-web';
-import { cn } from '@/lib/cn';
-import { activities, children, parent, recommendations, weeklySubjects } from '@/lib/demo-data';
+} from '@bingoo/ui-web'
+import { cn } from '@/lib/cn'
+import { activities, children, parent, recommendations, weeklySubjects } from '@/lib/demo-data'
 
-type Icon = ComponentType<{ className?: string }>;
+type Icon = ComponentType<{ className?: string }>
 const ACTIVITY_ICON: Record<string, Icon> = {
   completed: CheckCircle2,
   badge: Award,
   quiz: ClipboardCheck,
   practice: Target,
-};
+}
 
 export default function ParentDashboard() {
-  const t = useTranslations('parent');
-  const tSub = useTranslations('landing.subjects.items');
+  const t = useTranslations('parent')
+  const tSub = useTranslations('landing.subjects.items')
 
-  const [childId, setChildId] = useState(children[0]!.id);
-  const child = children.find((c) => c.id === childId) ?? children[0]!;
-  const { stats, screentime } = parent;
+  const [childId, setChildId] = useState(children[0]!.id)
+  const child = children.find((c) => c.id === childId) ?? children[0]!
+  const { stats, screentime } = parent
 
   const activityText = (a: (typeof activities)[number]) => {
     switch (a.type) {
       case 'completed':
-        return t('activity.completed', { lesson: a.arg });
+        return t('activity.completed', { lesson: a.arg })
       case 'badge':
-        return t('activity.badge', { badge: a.arg });
+        return t('activity.badge', { badge: a.arg })
       case 'quiz':
-        return t('activity.quiz', { subject: tSub(a.arg) });
+        return t('activity.quiz', { subject: tSub(a.arg) })
       case 'practice':
-        return t('activity.practice', { subject: tSub(a.arg) });
+        return t('activity.practice', { subject: tSub(a.arg) })
     }
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -82,7 +82,7 @@ export default function ParentDashboard() {
       {/* Child switcher */}
       <div className="flex flex-wrap gap-3">
         {children.map((c) => {
-          const selected = c.id === childId;
+          const selected = c.id === childId
           return (
             <button
               key={c.id}
@@ -105,13 +105,11 @@ export default function ParentDashboard() {
                 </span>
                 <span className="block text-xs text-foreground-muted">
                   {t('children.grade', { grade: c.grade })} ·{' '}
-                  {c.active
-                    ? t('children.activeNow')
-                    : t('children.lastActive', { time: c.lastActive })}
+                  {c.active ? t('children.activeNow') : t('children.lastActive', { time: c.lastActive })}
                 </span>
               </span>
             </button>
-          );
+          )
         })}
       </div>
 
@@ -124,12 +122,7 @@ export default function ParentDashboard() {
           label={t('stats.time')}
           trend={{ value: '+8%', direction: 'up' }}
         />
-        <StatCard
-          icon={<BookOpen />}
-          color="teal"
-          value={stats.lessons}
-          label={t('stats.lessons')}
-        />
+        <StatCard icon={<BookOpen />} color="teal" value={stats.lessons} label={t('stats.lessons')} />
         <StatCard
           icon={<Target />}
           color="success"
@@ -197,7 +190,7 @@ export default function ParentDashboard() {
             </CardHeader>
             <ul className="flex flex-col gap-1 px-4 pb-4">
               {activities.map((a) => {
-                const ActIcon = ACTIVITY_ICON[a.type]!;
+                const ActIcon = ACTIVITY_ICON[a.type]!
                 return (
                   <li
                     key={a.id}
@@ -209,7 +202,7 @@ export default function ParentDashboard() {
                     <span className="flex-1 text-sm text-foreground">{activityText(a)}</span>
                     <span className="text-xs text-foreground-subtle">{a.time}</span>
                   </li>
-                );
+                )
               })}
             </ul>
           </Card>
@@ -261,10 +254,7 @@ export default function ParentDashboard() {
             </CardHeader>
             <ul className="flex flex-col gap-3 px-6 pb-6">
               {recommendations.map((r) => (
-                <li
-                  key={r.lesson}
-                  className="flex items-center gap-3 rounded-2xl border border-border p-3"
-                >
+                <li key={r.lesson} className="flex items-center gap-3 rounded-2xl border border-border p-3">
                   <IconChip color={r.color} size="md">
                     <BookOpen />
                   </IconChip>
@@ -284,5 +274,5 @@ export default function ParentDashboard() {
         </div>
       </div>
     </div>
-  );
+  )
 }

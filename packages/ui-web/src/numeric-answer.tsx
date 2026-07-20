@@ -1,20 +1,20 @@
-'use client';
+'use client'
 
-import { Check, X } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { Input } from './input';
-import { cn } from './lib/cn';
-import { POP, SHAKE } from './lib/interactive';
+import { Check, X } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { Input } from './input'
+import { cn } from './lib/cn'
+import { POP, SHAKE } from './lib/interactive'
 
 export interface NumericAnswerProps {
-  value: string;
-  onChange: (value: string) => void;
+  value: string
+  onChange: (value: string) => void
   /** After checking: whether correct + the expected answer to show. */
-  reveal?: { correct: boolean; answer: number };
-  unitLabel?: ReactNode;
-  placeholder?: string;
-  disabled?: boolean;
-  className?: string;
+  reveal?: { correct: boolean; answer: number }
+  unitLabel?: ReactNode
+  placeholder?: string
+  disabled?: boolean
+  className?: string
 }
 
 /** Numeric input for math questions (comma or dot decimals). Controlled +
@@ -28,7 +28,7 @@ export function NumericAnswer({
   disabled,
   className,
 }: NumericAnswerProps) {
-  const locked = !!reveal || disabled;
+  const locked = !!reveal || disabled
   return (
     <div className={cn('flex items-center gap-3', className)}>
       <div className={cn('w-40', reveal && !reveal.correct && SHAKE)}>
@@ -40,10 +40,7 @@ export function NumericAnswer({
           inputMode="decimal"
           autoComplete="off"
           invalid={reveal ? !reveal.correct : undefined}
-          className={cn(
-            'text-center font-display text-lg font-bold',
-            reveal?.correct && 'text-success',
-          )}
+          className={cn('text-center font-display text-lg font-bold', reveal?.correct && 'text-success')}
         />
       </div>
       {unitLabel ? <span className="font-semibold text-foreground-muted">{unitLabel}</span> : null}
@@ -58,5 +55,5 @@ export function NumericAnswer({
         )
       ) : null}
     </div>
-  );
+  )
 }

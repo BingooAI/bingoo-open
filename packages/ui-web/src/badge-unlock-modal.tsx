@@ -1,22 +1,22 @@
-'use client';
+'use client'
 
-import type { ReactNode } from 'react';
-import { Button } from './button';
-import { CelebrationOverlay } from './celebration';
-import { IconChip, type IconChipColor } from './icon-chip';
+import type { ReactNode } from 'react'
+import { Button } from './button'
+import { CelebrationOverlay } from './celebration'
+import { IconChip, type IconChipColor } from './icon-chip'
 
 export interface BadgeUnlockModalProps {
-  open: boolean;
-  onClose: () => void;
-  icon: ReactNode;
-  badgeTitle: ReactNode;
-  color?: IconChipColor;
+  open: boolean
+  onClose: () => void
+  icon: ReactNode
+  badgeTitle: ReactNode
+  color?: IconChipColor
   /** Headline, e.g. "Huy hiệu mới!". */
-  title: ReactNode;
-  message?: ReactNode;
-  cta?: ReactNode;
-  onCta?: () => void;
-  className?: string;
+  title: ReactNode
+  message?: ReactNode
+  cta?: ReactNode
+  onCta?: () => void
+  className?: string
 }
 
 /** Badge-unlock celebration — the badge pops in over confetti. i18n-free. */
@@ -52,5 +52,5 @@ export function BadgeUnlockModal({
         ) : null}
       </div>
     </CelebrationOverlay>
-  );
+  )
 }

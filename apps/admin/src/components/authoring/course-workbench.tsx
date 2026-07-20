@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import { useMemo, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useMemo, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   Badge,
   Button,
@@ -12,8 +12,8 @@ import {
   Select,
   Spinner,
   useToast,
-} from '@bingoo/ui-web';
-import { AlertTriangle, Check, ClipboardCheck, RefreshCw } from 'lucide-react';
+} from '@bingoo/ui-web'
+import { AlertTriangle, Check, ClipboardCheck, RefreshCw } from 'lucide-react'
 import {
   useApproveItems,
   useApprovePlan,
@@ -27,18 +27,18 @@ import {
   type LessonContentDto,
   type LessonPlanDto,
   type LessonPlanResultDto,
-} from '@/lib/authoring-queries';
-import { PlanHierarchyPanel } from './plan-hierarchy-panel';
-import { PlanJobProgress } from './plan-job-progress';
-import { CompetencyBreakdown } from './competency-breakdown';
-import { ContentStepsPanel } from './content-steps-panel';
-import { GenerateSection } from './generate-section';
-import { cn } from '@/lib/cn';
+} from '@/lib/authoring-queries'
+import { PlanHierarchyPanel } from './plan-hierarchy-panel'
+import { PlanJobProgress } from './plan-job-progress'
+import { CompetencyBreakdown } from './competency-breakdown'
+import { ContentStepsPanel } from './content-steps-panel'
+import { GenerateSection } from './generate-section'
+import { cn } from '@/lib/cn'
 
-type Lesson = CoursePlanDto['units'][number]['lessons'][number];
+type Lesson = CoursePlanDto['units'][number]['lessons'][number]
 
 /** Chặng của một bài trong dây chuyền soạn — trạng thái này lái cả điều hướng lẫn tiến độ. */
-type Stage = 'unmapped' | 'todo' | 'plan' | 'content' | 'approved';
+type Stage = 'unmapped' | 'todo' | 'plan' | 'content' | 'approved'
 
 const STAGE: Record<
   Stage,
@@ -49,9 +49,9 @@ const STAGE: Record<
   plan: { label: 'Có giáo án', badge: 'teal', dot: 'bg-accent-teal' },
   content: { label: 'Có nội dung', badge: 'primary', dot: 'bg-primary' },
   approved: { label: 'Đã duyệt', badge: 'success', dot: 'bg-success' },
-};
+}
 
-const localized = (t: Record<string, string>, fallback: string): string => t.vi ?? t.en ?? fallback;
+const localized = (t: Record<string, string>, fallback: string): string => t.vi ?? t.en ?? fallback
 
 // Màu cho delivery kind (không phải i18n) — nhãn chữ lấy từ catalog `delivery.*`.
 const DELIVERY_COLOR: Record<string, 'primary' | 'teal' | 'sunbeam' | 'coral' | 'neutral'> = {
@@ -60,93 +60,92 @@ const DELIVERY_COLOR: Record<string, 'primary' | 'teal' | 'sunbeam' | 'coral' | 
   practice: 'sunbeam',
   assessment: 'coral',
   reflection: 'neutral',
-};
+}
 
 /** Bảng soạn khoá — điều hướng bài (trái) + khu biên tập bài đang chọn (phải). */
 export function CourseWorkbench({ slug }: { slug: string }) {
-  const t = useTranslations('admin.authoring');
-  const { toast } = useToast();
-  const { data, isLoading, isError } = useCourse(slug);
+  const t = useTranslations('admin.authoring')
+  const { toast } = useToast()
+  const { data, isLoading, isError } = useCourse(slug)
 
   // Kết quả sinh giữ theo TỪNG bài (đổi bài không mất việc đang làm trong phiên).
-  const [bundles, setBundles] = useState<Record<string, LessonContentDto>>({});
-  const [levels, setLevels] = useState<Record<string, string>>({});
-  const [approved, setApproved] = useState<Set<string>>(new Set());
-  const [selected, setSelected] = useState<string | null>(null);
+  const [bundles, setBundles] = useState<Record<string, LessonContentDto>>({})
+  const [levels, setLevels] = useState<Record<string, string>>({})
+  const [approved, setApproved] = useState<Set<string>>(new Set())
+  const [selected, setSelected] = useState<string | null>(null)
 
-  const genPlan = useGenLessonPlanInCourse(slug);
-  const genContent = useGenerateContent();
-  const approve = useApproveItems();
-  const approvePlan = useApprovePlan(slug);
-  const coursePlans = useCoursePlans(slug);
+  const genPlan = useGenLessonPlanInCourse(slug)
+  const genContent = useGenerateContent()
+  const approve = useApproveItems()
+  const approvePlan = useApprovePlan(slug)
+  const coursePlans = useCoursePlans(slug)
 
   // Kế hoạch BÀI = SỰ THẬT SERVER (cây kế hoạch). Sinh giờ CHẠY NỀN (job) nên plan về qua danh sách
   // kế hoạch, không qua response mutation → đọc từ đây cho nhất quán + reload-safe. `doc` chính là
   // plan; `quality` trùng shape {issues,score,approvable}.
   const lessonPlans = useMemo<Record<string, LessonPlanResultDto>>(() => {
-    const out: Record<string, LessonPlanResultDto> = {};
+    const out: Record<string, LessonPlanResultDto> = {}
     for (const p of coursePlans.data ?? []) {
-      if (p.level !== 'lesson' || !p.doc) continue;
+      if (p.level !== 'lesson' || !p.doc) continue
       // quality LUÔN là object hợp lệ để UI không bao giờ đọc trúng undefined (plan cũ/khuyết vẫn hiện).
       out[p.refSlug] = {
         plan: p.doc as unknown as LessonPlanDto,
         quality: p.quality ?? { issues: [], score: 0, approvable: false },
-      };
+      }
     }
-    return out;
-  }, [coursePlans.data]);
+    return out
+  }, [coursePlans.data])
 
   const onErr = (e: unknown) =>
     toast({
       variant: 'danger',
       title: t('failed'),
       description: e instanceof Error ? e.message : String(e),
-    });
+    })
 
   /** Kế hoạch BÀI đã DUYỆT chưa (từ cây kế hoạch server) — cổng để sinh nội dung. */
   const planApproved = (lessonSlug: string): boolean =>
     (coursePlans.data ?? []).some(
       (p) => p.level === 'lesson' && p.refSlug === lessonSlug && p.status === 'APPROVED',
-    );
+    )
 
-  const allLessons = useMemo(() => data?.plan.units.flatMap((u) => u.lessons) ?? [], [data]);
+  const allLessons = useMemo(() => data?.plan.units.flatMap((u) => u.lessons) ?? [], [data])
 
   const stageOf = (l: Lesson): Stage => {
-    if (l.teaches.length === 0) return 'unmapped';
-    if (approved.has(l.slug)) return 'approved';
-    if (bundles[l.slug]) return 'content';
-    if (lessonPlans[l.slug]) return 'plan';
-    return 'todo';
-  };
+    if (l.teaches.length === 0) return 'unmapped'
+    if (approved.has(l.slug)) return 'approved'
+    if (bundles[l.slug]) return 'content'
+    if (lessonPlans[l.slug]) return 'plan'
+    return 'todo'
+  }
 
   // Bài đầu tiên map được KC làm mặc định chọn.
-  const active =
-    selected ?? allLessons.find((l) => l.teaches.length > 0)?.slug ?? allLessons[0]?.slug ?? null;
-  const activeLesson = allLessons.find((l) => l.slug === active) ?? null;
+  const active = selected ?? allLessons.find((l) => l.teaches.length > 0)?.slug ?? allLessons[0]?.slug ?? null
+  const activeLesson = allLessons.find((l) => l.slug === active) ?? null
 
   if (isLoading)
     return (
       <div className="flex justify-center py-16">
         <Spinner />
       </div>
-    );
-  if (isError || !data) return <EmptyState title={t('failed')} />;
+    )
+  if (isError || !data) return <EmptyState title={t('failed')} />
 
-  const mapped = allLessons.filter((l) => l.teaches.length > 0);
-  const doneCount = allLessons.filter((l) => approved.has(l.slug)).length;
+  const mapped = allLessons.filter((l) => l.teaches.length > 0)
+  const doneCount = allLessons.filter((l) => approved.has(l.slug)).length
   const counts = allLessons.reduce<Record<Stage, number>>(
     (acc, l) => {
-      acc[stageOf(l)]++;
-      return acc;
+      acc[stageOf(l)]++
+      return acc
     },
     { unmapped: 0, todo: 0, plan: 0, content: 0, approved: 0 },
-  );
+  )
 
   // ── hành động của bài đang chọn ────────────────────────────────────────────
   // Sinh kế hoạch bài qua đường IN-COURSE: gate unit đã duyệt + grounding context khoá+unit + LƯU.
   const doPlan = (l: Lesson) =>
     // Trả job ngay (202); plan về qua cây kế hoạch khi job xong (poll trong LessonEditor).
-    genPlan.mutate({ lessonSlug: l.slug, level: levels[l.slug] ?? 'L2' }, { onError: onErr });
+    genPlan.mutate({ lessonSlug: l.slug, level: levels[l.slug] ?? 'L2' }, { onError: onErr })
 
   const doApprovePlan = (l: Lesson) =>
     approvePlan.mutate(
@@ -155,35 +154,33 @@ export function CourseWorkbench({ slug }: { slug: string }) {
         onError: onErr,
         onSuccess: () => toast({ variant: 'success', title: 'Đã duyệt kế hoạch bài' }),
       },
-    );
+    )
 
   const doContent = (l: Lesson) => {
-    const plan = lessonPlans[l.slug];
-    if (!plan) return; // nội dung phải bám giáo án (chặn ở nút)
+    const plan = lessonPlans[l.slug]
+    if (!plan) return // nội dung phải bám giáo án (chặn ở nút)
     genContent.mutate(
       {
         lesson: { teaches: plan.plan.teaches, knowledgePoints: plan.plan.knowledgePoints },
         level: levels[l.slug] ?? 'L2',
       },
       { onSuccess: (r) => setBundles((b) => ({ ...b, [l.slug]: r })), onError: onErr },
-    );
-  };
+    )
+  }
 
   const doApprove = (l: Lesson) => {
-    const bundle = bundles[l.slug];
-    if (!bundle) return;
-    const keys = [...bundle.teaching, ...bundle.review, ...bundle.assessment.items].map(
-      (i) => i.itemKey,
-    );
-    if (!keys.length) return;
+    const bundle = bundles[l.slug]
+    if (!bundle) return
+    const keys = [...bundle.teaching, ...bundle.review, ...bundle.assessment.items].map((i) => i.itemKey)
+    if (!keys.length) return
     approve.mutate(keys, {
       onSuccess: (r) => {
-        setApproved((s) => new Set(s).add(l.slug));
-        toast({ variant: 'success', title: t('approvedN', { n: r.approved }) });
+        setApproved((s) => new Set(s).add(l.slug))
+        toast({ variant: 'success', title: t('approvedN', { n: r.approved }) })
       },
       onError: onErr,
-    });
-  };
+    })
+  }
 
   return (
     <div className="space-y-4">
@@ -196,9 +193,7 @@ export function CourseWorkbench({ slug }: { slug: string }) {
                 {localized(data.plan.title, data.slug)}
               </h1>
               <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                <Badge color={data.status === 'PUBLISHED' ? 'success' : 'warning'}>
-                  {data.status}
-                </Badge>
+                <Badge color={data.status === 'PUBLISHED' ? 'success' : 'warning'}>{data.status}</Badge>
                 <span className="text-sm text-foreground-muted">
                   {data.plan.units.length} {t('units')} · {allLessons.length} {t('lessons')} ·{' '}
                   {data.plan.objectives.length} {t('objectives')}
@@ -237,8 +232,7 @@ export function CourseWorkbench({ slug }: { slug: string }) {
           </div>
 
           <p className="text-sm text-foreground-muted">
-            Chọn một bài bên trái để soạn: <b>giáo án</b> → <b>nội dung</b> → <b>duyệt</b>. Làm dần
-            từng bài.
+            Chọn một bài bên trái để soạn: <b>giáo án</b> → <b>nội dung</b> → <b>duyệt</b>. Làm dần từng bài.
           </p>
         </CardContent>
       </Card>
@@ -269,8 +263,8 @@ export function CourseWorkbench({ slug }: { slug: string }) {
                   </div>
                   <ul className="space-y-0.5">
                     {u.lessons.map((l) => {
-                      const st = stageOf(l);
-                      const on = l.slug === active;
+                      const st = stageOf(l)
+                      const on = l.slug === active
                       return (
                         <li key={l.slug}>
                           <button
@@ -287,12 +281,10 @@ export function CourseWorkbench({ slug }: { slug: string }) {
                             <span className={cn('flex-1 truncate', on && 'font-semibold')}>
                               {localized(l.title, l.slug)}
                             </span>
-                            {st === 'approved' ? (
-                              <Check className="size-3.5 shrink-0 text-success" />
-                            ) : null}
+                            {st === 'approved' ? <Check className="size-3.5 shrink-0 text-success" /> : null}
                           </button>
                         </li>
-                      );
+                      )
                     })}
                   </ul>
                 </div>
@@ -328,7 +320,7 @@ export function CourseWorkbench({ slug }: { slug: string }) {
         </div>
       )}
     </div>
-  );
+  )
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -340,11 +332,11 @@ function StepCard({
   done,
   children,
 }: {
-  n: number;
-  title: string;
-  active: boolean;
-  done: boolean;
-  children: React.ReactNode;
+  n: number
+  title: string
+  active: boolean
+  done: boolean
+  children: React.ReactNode
 }) {
   return (
     <div
@@ -374,21 +366,21 @@ function StepCard({
       </div>
       <div className={cn(!active && !done && 'opacity-55')}>{children}</div>
     </div>
-  );
+  )
 }
 
 function Chip({
   children,
   color = 'neutral',
 }: {
-  children: React.ReactNode;
-  color?: 'neutral' | 'primary' | 'teal' | 'coral';
+  children: React.ReactNode
+  color?: 'neutral' | 'primary' | 'teal' | 'coral'
 }) {
   return (
     <Badge color={color} tone="soft">
       {children}
     </Badge>
-  );
+  )
 }
 
 function LessonEditor({
@@ -409,32 +401,32 @@ function LessonEditor({
   onContent,
   onApprove,
 }: {
-  lesson: Lesson;
-  stage: Stage;
-  plan: LessonPlanResultDto | null;
-  bundle: LessonContentDto | null;
-  level: string;
-  courseSlug: string;
-  onLevel: (v: string) => void;
-  planning: boolean;
-  generating: boolean;
-  approving: boolean;
-  planApproved: boolean;
-  approvingPlan: boolean;
-  onPlan: () => void;
-  onApprovePlan: () => void;
-  onContent: () => void;
-  onApprove: () => void;
+  lesson: Lesson
+  stage: Stage
+  plan: LessonPlanResultDto | null
+  bundle: LessonContentDto | null
+  level: string
+  courseSlug: string
+  onLevel: (v: string) => void
+  planning: boolean
+  generating: boolean
+  approving: boolean
+  planApproved: boolean
+  approvingPlan: boolean
+  onPlan: () => void
+  onApprovePlan: () => void
+  onContent: () => void
+  onApprove: () => void
 }) {
-  const t = useTranslations('admin.authoring');
+  const t = useTranslations('admin.authoring')
   // Enum → nhãn qua catalog; value lạ chưa có key thì hiện raw (không nổ).
-  const enumLabel = (key: string, raw: string): string => (t.has(key) ? t(key) : raw);
-  const unmapped = lesson.teaches.length === 0;
+  const enumLabel = (key: string, raw: string): string => (t.has(key) ? t(key) : raw)
+  const unmapped = lesson.teaches.length === 0
 
   // Job SINH GIÁO ÁN chạy nền: poll on-mount (bắt job đang chạy sau reload), cho HỦY.
-  const planJob = usePlanJob(courseSlug, 'lesson', lesson.slug).data;
-  const cancelPlan = useCancelPlanJob(courseSlug);
-  const planRunning = planJob?.state === 'running';
+  const planJob = usePlanJob(courseSlug, 'lesson', lesson.slug).data
+  const cancelPlan = useCancelPlanJob(courseSlug)
+  const planRunning = planJob?.state === 'running'
 
   return (
     <Card>
@@ -442,9 +434,7 @@ function LessonEditor({
         {/* tiêu đề bài + KC */}
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-foreground">
-              {localized(lesson.title, lesson.slug)}
-            </h2>
+            <h2 className="text-lg font-semibold text-foreground">{localized(lesson.title, lesson.slug)}</h2>
             <Badge color={STAGE[stage].badge} tone="soft">
               {STAGE[stage].label}
             </Badge>
@@ -477,9 +467,8 @@ function LessonEditor({
             <div className="text-sm">
               <div className="font-semibold text-foreground">Bài này chưa neo vào KC nào</div>
               <p className="mt-1 text-foreground-muted">
-                Giữ đúng vị trí trong sách (thường là ôn tập/kiểm tra, hoặc kiến thức ngoài stage).
-                Muốn soạn được giáo án, hãy <b>đối chiếu bổ sung KC</b> hoặc <b>chọn lại stage</b>{' '}
-                khi sinh vỏ khoá.
+                Giữ đúng vị trí trong sách (thường là ôn tập/kiểm tra, hoặc kiến thức ngoài stage). Muốn soạn
+                được giáo án, hãy <b>đối chiếu bổ sung KC</b> hoặc <b>chọn lại stage</b> khi sinh vỏ khoá.
               </p>
             </div>
           </div>
@@ -525,11 +514,7 @@ function LessonEditor({
                         onClick={onApprovePlan}
                         loading={approvingPlan}
                         disabled={!plan.quality.approvable}
-                        title={
-                          !plan.quality.approvable
-                            ? 'Chất lượng chưa đạt — sửa/sinh lại'
-                            : undefined
-                        }
+                        title={!plan.quality.approvable ? 'Chất lượng chưa đạt — sửa/sinh lại' : undefined}
                       >
                         Duyệt kế hoạch
                       </Button>
@@ -549,10 +534,7 @@ function LessonEditor({
                 <div className="mt-3 space-y-3">
                   <div className="text-xs font-semibold text-foreground-subtle">
                     Cấu trúc bài · {plan.plan.kcArcs.length} KC ·{' '}
-                    {plan.plan.kcArcs.reduce(
-                      (n, a) => n + a.steps.reduce((m, s) => m + s.durationMin, 0),
-                      0,
-                    )}{' '}
+                    {plan.plan.kcArcs.reduce((n, a) => n + a.steps.reduce((m, s) => m + s.durationMin, 0), 0)}{' '}
                     phút
                   </div>
                   {plan.plan.kcArcs.map((arc, ai) => (
@@ -736,5 +718,5 @@ function LessonEditor({
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

@@ -7,9 +7,9 @@
  *
  * Run: pnpm --filter @bingoo/api-server exec tsx scripts/smoke-gen.ts
  */
-import { briefFromTopic, lintDoc } from '@bingoo/explainer';
-import { generateLesson, type GenDeps } from '../src/services/explainer-gen/pipeline';
-import { ACCEPTANCE_DOC, ACCEPTANCE_VI } from '../../web/src/lib/explainerLesson';
+import { briefFromTopic, lintDoc } from '@bingoo/explainer'
+import { generateLesson, type GenDeps } from '../src/services/explainer-gen/pipeline'
+import { ACCEPTANCE_DOC, ACCEPTANCE_VI } from '../../web/src/lib/explainerLesson'
 
 const mockLlm = {
   complete() {
@@ -18,11 +18,11 @@ const mockLlm = {
         doc: ACCEPTANCE_DOC,
         bundle: { strings: ACCEPTANCE_VI.strings, narration: ACCEPTANCE_VI.narration },
       }),
-    );
+    )
   },
-};
+}
 
-const brief = briefFromTopic('Số chẵn và số lẻ', ['vi']);
+const brief = briefFromTopic('Số chẵn và số lẻ', ['vi'])
 const deps: GenDeps = {
   llm: mockLlm,
   rules: 'rules',
@@ -30,14 +30,14 @@ const deps: GenDeps = {
   wantImages: false,
   assetsPresent: false,
   langName: 'Vietnamese',
-};
+}
 
-const res = await generateLesson(brief, deps, () => {});
-const errs = lintDoc(res.doc, [res.bundle]).filter((i) => i.level === 'error');
-const okDoc = !!res.doc?.scenes?.length && errs.length === 0;
+const res = await generateLesson(brief, deps, () => {})
+const errs = lintDoc(res.doc, [res.bundle]).filter((i) => i.level === 'error')
+const okDoc = !!res.doc?.scenes?.length && errs.length === 0
 console.log(
   okDoc
     ? `✓ pipeline ran on mock AiPort → ${res.doc.scenes.length}-scene doc, lint 0 errors`
     : `✗ failed: scenes=${res.doc?.scenes?.length ?? 0} lintErrors=${errs.length}`,
-);
-process.exit(okDoc ? 0 : 1);
+)
+process.exit(okDoc ? 0 : 1)

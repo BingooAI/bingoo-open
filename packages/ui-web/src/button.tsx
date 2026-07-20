@@ -1,7 +1,7 @@
-import { cva, type VariantProps } from 'class-variance-authority';
-import { Loader2 } from 'lucide-react';
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { cva, type VariantProps } from 'class-variance-authority'
+import { Loader2 } from 'lucide-react'
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export const buttonVariants = cva(
   [
@@ -37,8 +37,7 @@ export const buttonVariants = cva(
         // Light buttons for placing on colored / brand-gradient surfaces.
         inverse:
           'bg-white text-primary [--btn-edge:color-mix(in_srgb,#fff,#000_14%)] shadow-[0_var(--btn-depth,0px)_0_var(--btn-edge),0_2px_10px_-2px_rgb(0_0_0/0.2)] hover:brightness-95 active:shadow-none',
-        'inverse-outline':
-          'border border-white/45 text-white hover:bg-white/10 hover:border-white/70',
+        'inverse-outline': 'border border-white/45 text-white hover:bg-white/10 hover:border-white/70',
         link: 'h-auto rounded-none p-0 text-primary underline-offset-4 hover:underline',
       },
       size: {
@@ -53,29 +52,18 @@ export const buttonVariants = cva(
     },
     defaultVariants: { variant: 'primary', size: 'md' },
   },
-);
+)
 
 export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   /** Show a spinner and block interaction. */
-  loading?: boolean;
-  leftIcon?: ReactNode;
-  rightIcon?: ReactNode;
+  loading?: boolean
+  leftIcon?: ReactNode
+  rightIcon?: ReactNode
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  {
-    className,
-    variant,
-    size,
-    fullWidth,
-    loading,
-    leftIcon,
-    rightIcon,
-    children,
-    disabled,
-    ...props
-  },
+  { className, variant, size, fullWidth, loading, leftIcon, rightIcon, children, disabled, ...props },
   ref,
 ) {
   return (
@@ -91,5 +79,5 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       {children}
       {!loading && rightIcon}
     </button>
-  );
-});
+  )
+})

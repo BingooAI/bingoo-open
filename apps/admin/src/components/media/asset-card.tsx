@@ -1,15 +1,15 @@
-'use client';
+'use client'
 
-import { Check } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { cn } from '@/lib/cn';
-import { pickText } from '@/lib/i18n-text';
-import type { MediaAssetDto } from '@/lib/api-types';
-import { KindIcon } from './kind-icon';
-import { ModerationBadge } from './media-badges';
+import { Check } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
+import { cn } from '@/lib/cn'
+import { pickText } from '@/lib/i18n-text'
+import type { MediaAssetDto } from '@/lib/api-types'
+import { KindIcon } from './kind-icon'
+import { ModerationBadge } from './media-badges'
 
 /** Rendition kinds that are an image BY DEFINITION, whatever the asset's kind is. */
-const IMAGE_RENDITIONS = new Set(['THUMBNAIL', 'POSTER']);
+const IMAGE_RENDITIONS = new Set(['THUMBNAIL', 'POSTER'])
 
 /**
  * Best <img>-able url for a list-serialized asset, or null to fall back to the kind
@@ -22,11 +22,11 @@ const IMAGE_RENDITIONS = new Set(['THUMBNAIL', 'POSTER']);
  * asset whose bytes really ARE an image may use its ORIGINAL as the thumbnail.
  */
 function thumbUrl(asset: MediaAssetDto): string | null {
-  const derived = asset.renditions.find((r) => IMAGE_RENDITIONS.has(r.kind) && r.url);
-  if (derived?.url) return derived.url;
-  const isImage = asset.mimeType ? asset.mimeType.startsWith('image/') : asset.kind === 'IMAGE';
-  if (!isImage) return null;
-  return asset.renditions.find((r) => r.url)?.url ?? null;
+  const derived = asset.renditions.find((r) => IMAGE_RENDITIONS.has(r.kind) && r.url)
+  if (derived?.url) return derived.url
+  const isImage = asset.mimeType ? asset.mimeType.startsWith('image/') : asset.kind === 'IMAGE'
+  if (!isImage) return null
+  return asset.renditions.find((r) => r.url)?.url ?? null
 }
 
 export function AssetCard({
@@ -36,17 +36,17 @@ export function AssetCard({
   checked,
   onToggleCheck,
 }: {
-  asset: MediaAssetDto;
-  selected: boolean;
-  onSelect: (asset: MediaAssetDto) => void;
+  asset: MediaAssetDto
+  selected: boolean
+  onSelect: (asset: MediaAssetDto) => void
   /** Multi-select (moderators only) — omit `onToggleCheck` to hide the checkbox. */
-  checked?: boolean;
-  onToggleCheck?: (asset: MediaAssetDto) => void;
+  checked?: boolean
+  onToggleCheck?: (asset: MediaAssetDto) => void
 }) {
-  const t = useTranslations('admin.library');
-  const locale = useLocale();
-  const title = pickText(asset.title, locale, asset.publicId);
-  const url = thumbUrl(asset);
+  const t = useTranslations('admin.library')
+  const locale = useLocale()
+  const title = pickText(asset.title, locale, asset.publicId)
+  const url = thumbUrl(asset)
 
   return (
     <div
@@ -116,5 +116,5 @@ export function AssetCard({
         </button>
       )}
     </div>
-  );
+  )
 }

@@ -1,19 +1,19 @@
-import type { ReactNode } from 'react';
-import { IconChip, type IconChipColor } from './icon-chip';
-import { cn } from './lib/cn';
+import type { ReactNode } from 'react'
+import { IconChip, type IconChipColor } from './icon-chip'
+import { cn } from './lib/cn'
 
 export interface NotificationItemProps {
-  icon: ReactNode;
-  color?: IconChipColor;
-  title: ReactNode;
-  description?: ReactNode;
+  icon: ReactNode
+  color?: IconChipColor
+  title: ReactNode
+  description?: ReactNode
   /** Pre-formatted relative time. */
-  time?: ReactNode;
-  unread?: boolean;
+  time?: ReactNode
+  unread?: boolean
   /** Action slot (e.g. an accept button). */
-  action?: ReactNode;
-  onClick?: () => void;
-  className?: string;
+  action?: ReactNode
+  onClick?: () => void
+  className?: string
 }
 
 /** A notification row with an unread indicator. i18n-free (text via props). */
@@ -28,7 +28,7 @@ export function NotificationItem({
   onClick,
   className,
 }: NotificationItemProps) {
-  const Tag = onClick ? 'button' : 'div';
+  const Tag = onClick ? 'button' : 'div'
   return (
     <Tag
       type={onClick ? 'button' : undefined}
@@ -59,5 +59,5 @@ export function NotificationItem({
         <span aria-hidden className="absolute right-3 top-3.5 size-2 rounded-full bg-primary" />
       ) : null}
     </Tag>
-  );
+  )
 }

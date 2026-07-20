@@ -1,13 +1,13 @@
 /** Ôn bù — chẩn đoán tiên quyết yếu nhất chưa đạt. SPEC §7.4. */
 
-import type { Slug } from '../contracts';
-import type { PrereqMode, RelType } from '../domain';
-import type { SkillGraph } from './build';
-import { compositeMastery, type MasteryStates } from './composite';
+import type { Slug } from '../contracts'
+import type { PrereqMode, RelType } from '../domain'
+import type { SkillGraph } from './build'
+import { compositeMastery, type MasteryStates } from './composite'
 
 export interface Remediation {
-  readonly target: Slug;
-  readonly reason: 'prereq' | 'self';
+  readonly target: Slug
+  readonly reason: 'prereq' | 'self'
 }
 
 /**
@@ -23,17 +23,17 @@ function weakestUnmet(
   mode?: PrereqMode,
   relType?: RelType,
 ): Slug | null {
-  const candidates: Array<{ slug: Slug; mastery: number }> = [];
+  const candidates: Array<{ slug: Slug; mastery: number }> = []
   for (const e of graph.prereqsOf(failedSkill)) {
-    if (mode && e.mode !== mode) continue;
-    if (relType && (e.relType ?? 'PREREQUISITE') !== relType) continue;
-    const mastery = compositeMastery(graph, states, e.from, { memo });
-    if (mastery >= threshold) continue; // đã đạt → bỏ
-    candidates.push({ slug: e.from, mastery });
+    if (mode && e.mode !== mode) continue
+    if (relType && (e.relType ?? 'PREREQUISITE') !== relType) continue
+    const mastery = compositeMastery(graph, states, e.from, { memo })
+    if (mastery >= threshold) continue // đã đạt → bỏ
+    candidates.push({ slug: e.from, mastery })
   }
-  if (candidates.length === 0) return null;
-  candidates.sort((a, b) => a.mastery - b.mastery);
-  return (candidates[0] as { slug: Slug }).slug;
+  if (candidates.length === 0) return null
+  candidates.sort((a, b) => a.mastery - b.mastery)
+  return (candidates[0] as { slug: Slug }).slug
 }
 
 /**
@@ -48,12 +48,12 @@ export function remediationFor(
   failedSkill: Slug,
   threshold: number,
 ): Remediation {
-  const memo = new Map<Slug, number>();
-  const required = weakestUnmet(graph, states, failedSkill, threshold, memo, 'REQUIRED');
-  if (required) return { target: required, reason: 'prereq' };
+  const memo = new Map<Slug, number>()
+  const required = weakestUnmet(graph, states, failedSkill, threshold, memo, 'REQUIRED')
+  if (required) return { target: required, reason: 'prereq' }
 
-  const enables = weakestUnmet(graph, states, failedSkill, threshold, memo, undefined, 'ENABLES');
-  if (enables) return { target: enables, reason: 'prereq' };
+  const enables = weakestUnmet(graph, states, failedSkill, threshold, memo, undefined, 'ENABLES')
+  if (enables) return { target: enables, reason: 'prereq' }
 
-  return { target: failedSkill, reason: 'self' };
+  return { target: failedSkill, reason: 'self' }
 }

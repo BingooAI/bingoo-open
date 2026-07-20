@@ -4,10 +4,10 @@
  *   ② Bài không map được KC nào VẪN giữ đúng chỗ, được ghi nhận — bỏ đi là nói dối về sách.
  */
 
-import { describe, expect, it } from 'vitest';
-import { firstJson, sanitizeCourse } from '../src/services/course-shell.sanitize';
+import { describe, expect, it } from 'vitest'
+import { firstJson, sanitizeCourse } from '../src/services/course-shell.sanitize'
 
-const allowed = new Set(['count-to-10', 'add-within-20', 'parity']);
+const allowed = new Set(['count-to-10', 'add-within-20', 'parity'])
 
 // Output kiểu LLM: thứ tự SÁCH (cố ý không theo tiên quyết), có chương ôn tập + bài ngoài stage + slug bịa.
 const bookLike = {
@@ -50,10 +50,10 @@ const bookLike = {
       ],
     },
   ],
-};
+}
 
 describe('nguồn SÁCH — preserveStructure', () => {
-  const { plan, unmappedLessons } = sanitizeCourse(bookLike, allowed, { preserveStructure: true });
+  const { plan, unmappedLessons } = sanitizeCourse(bookLike, allowed, { preserveStructure: true })
 
   it('GIỮ ĐÚNG thứ tự chương theo sách, không sắp lại', () => {
     expect(plan.units.map((u) => u.title.en)).toEqual([
@@ -62,41 +62,41 @@ describe('nguồn SÁCH — preserveStructure', () => {
       'Addition',
       'Check your progress',
       'Times tables (preview)',
-    ]);
-  });
+    ])
+  })
 
   it('GIỮ ĐỦ mọi bài — kể cả bài không map được KC nào (bỏ = nói dối về sách)', () => {
-    expect(plan.units.reduce((n, u) => n + u.lessons.length, 0)).toBe(6);
-  });
+    expect(plan.units.reduce((n, u) => n + u.lessons.length, 0)).toBe(6)
+  })
 
   it('bài chưa map được ghi nhận đúng (theo sourceRef của sách)', () => {
-    expect([...unmappedLessons]).toEqual(['2.1', '4.1', '6.1']);
-  });
+    expect([...unmappedLessons]).toEqual(['2.1', '4.1', '6.1'])
+  })
 
   it('slug model BỊA ("the-2-times-table", không có trong đồ thị) bị loại khỏi teaches', () => {
-    const all = plan.units.flatMap((u) => u.lessons).flatMap((l) => l.teaches);
-    expect(all).not.toContain('the-2-times-table');
-    expect(all).toEqual(['count-to-10', 'add-within-20', 'parity']); // chỉ KC có thật
-  });
+    const all = plan.units.flatMap((u) => u.lessons).flatMap((l) => l.teaches)
+    expect(all).not.toContain('the-2-times-table')
+    expect(all).toEqual(['count-to-10', 'add-within-20', 'parity']) // chỉ KC có thật
+  })
 
   it('bài giữ đúng THỨ TỰ trong từng chương', () => {
-    const addition = plan.units.find((u) => u.title.en === 'Addition');
-    expect(addition?.lessons.map((l) => l.title.en)).toEqual(['Adding within 20', 'Odd and even']);
-  });
-});
+    const addition = plan.units.find((u) => u.title.en === 'Addition')
+    expect(addition?.lessons.map((l) => l.title.en)).toEqual(['Adding within 20', 'Odd and even'])
+  })
+})
 
 describe('nguồn PROMPT — không có "cấu trúc gốc" để trung thành → bỏ bài rỗng', () => {
   it('chỉ giữ bài có teaches', () => {
-    const { plan } = sanitizeCourse(bookLike, allowed, {});
-    expect(plan.units.reduce((n, u) => n + u.lessons.length, 0)).toBe(3);
-  });
-});
+    const { plan } = sanitizeCourse(bookLike, allowed, {})
+    expect(plan.units.reduce((n, u) => n + u.lessons.length, 0)).toBe(3)
+  })
+})
 
 describe('firstJson — cắt JSON là hỏng TO, không nuốt', () => {
   it('không có JSON → {} (lớp gọi phải tự ném lỗi rỗng)', () => {
-    expect(firstJson('xin lỗi tôi không thể')).toEqual({});
-  });
+    expect(firstJson('xin lỗi tôi không thể')).toEqual({})
+  })
   it('JSON cắt dở → {} (KHÔNG được coi là vỏ khoá hợp lệ)', () => {
-    expect(firstJson('{"units":[{"title":{"en":"A"}')).toEqual({});
-  });
-});
+    expect(firstJson('{"units":[{"title":{"en":"A"}')).toEqual({})
+  })
+})

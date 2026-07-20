@@ -1,44 +1,44 @@
-'use client';
+'use client'
 
-import type { AngleKind } from '@bingoo/core';
-import { Minus, Plus } from 'lucide-react';
-import { useRef, type PointerEvent } from 'react';
-import { cn } from './lib/cn';
-import { POP, SHAKE, stagger, tile, tileState } from './lib/interactive';
+import type { AngleKind } from '@bingoo/core'
+import { Minus, Plus } from 'lucide-react'
+import { useRef, type PointerEvent } from 'react'
+import { cn } from './lib/cn'
+import { POP, SHAKE, stagger, tile, tileState } from './lib/interactive'
 
 export interface AngleLabels {
-  acute: string;
-  right: string;
-  obtuse: string;
-  reflex?: string;
-  straight?: string;
+  acute: string
+  right: string
+  obtuse: string
+  reflex?: string
+  straight?: string
   /** e.g. "degrees" */
-  unit?: string;
+  unit?: string
 }
 
 export interface AngleToolProps {
-  task: 'set' | 'estimate' | 'classify';
+  task: 'set' | 'estimate' | 'classify'
   /** The angle to MAKE (set) or the angle SHOWN (estimate / classify). */
-  angle: number;
+  angle: number
   /** Controlled response. */
-  degrees: number | null;
-  kind: AngleKind | null;
-  onChange: (next: { degrees: number | null; kind: AngleKind | null }) => void;
-  showProtractor?: boolean;
-  labels: AngleLabels;
-  reveal?: { correct: boolean; answer: number; kind: AngleKind };
-  disabled?: boolean;
-  className?: string;
+  degrees: number | null
+  kind: AngleKind | null
+  onChange: (next: { degrees: number | null; kind: AngleKind | null }) => void
+  showProtractor?: boolean
+  labels: AngleLabels
+  reveal?: { correct: boolean; answer: number; kind: AngleKind }
+  disabled?: boolean
+  className?: string
 }
 
-const VX = 50; // vertex
-const VY = 78;
-const R = 46;
+const VX = 50 // vertex
+const VY = 78
+const R = 46
 
 const pt = (deg: number, r = R) => ({
   x: VX + r * Math.cos((deg * Math.PI) / 180),
   y: VY - r * Math.sin((deg * Math.PI) / 180),
-});
+})
 
 /**
  * The "angle maker" / protractor — drag the arm to MAKE an angle, ESTIMATE the
@@ -57,35 +57,35 @@ export function AngleTool({
   disabled,
   className,
 }: AngleToolProps) {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const locked = !!reveal || disabled;
-  const draggable = task === 'set' && !locked;
+  const svgRef = useRef<SVGSVGElement>(null)
+  const locked = !!reveal || disabled
+  const draggable = task === 'set' && !locked
 
   // Which angle the arm draws: the learner's for 'set', the given one otherwise.
-  const armDeg = task === 'set' ? (degrees ?? 0) : angle;
-  const shown = task === 'set' ? (degrees ?? 0) : task === 'estimate' ? (degrees ?? 0) : angle;
+  const armDeg = task === 'set' ? (degrees ?? 0) : angle
+  const shown = task === 'set' ? (degrees ?? 0) : task === 'estimate' ? (degrees ?? 0) : angle
 
-  const arm = pt(armDeg);
-  const base = pt(0);
-  const tone = reveal ? (reveal.correct ? 'stroke-success' : 'stroke-danger') : 'stroke-primary';
+  const arm = pt(armDeg)
+  const base = pt(0)
+  const tone = reveal ? (reveal.correct ? 'stroke-success' : 'stroke-danger') : 'stroke-primary'
 
   function fromPointer(e: PointerEvent<SVGSVGElement>) {
-    const svg = svgRef.current!;
-    const rect = svg.getBoundingClientRect();
-    const px = ((e.clientX - rect.left) / rect.width) * 100;
-    const py = ((e.clientY - rect.top) / rect.height) * 100;
-    const d = (Math.atan2(VY - py, px - VX) * 180) / Math.PI;
-    return Math.max(0, Math.min(180, Math.round(d)));
+    const svg = svgRef.current!
+    const rect = svg.getBoundingClientRect()
+    const px = ((e.clientX - rect.left) / rect.width) * 100
+    const py = ((e.clientY - rect.top) / rect.height) * 100
+    const d = (Math.atan2(VY - py, px - VX) * 180) / Math.PI
+    return Math.max(0, Math.min(180, Math.round(d)))
   }
   const drag = (e: PointerEvent<SVGSVGElement>) => {
-    if (!draggable || e.buttons === 0) return;
-    onChange({ degrees: fromPointer(e), kind: null });
-  };
+    if (!draggable || e.buttons === 0) return
+    onChange({ degrees: fromPointer(e), kind: null })
+  }
 
   const bump = (d: number) =>
-    !locked && onChange({ degrees: Math.max(0, Math.min(359, (degrees ?? 0) + d)), kind: null });
+    !locked && onChange({ degrees: Math.max(0, Math.min(359, (degrees ?? 0) + d)), kind: null })
 
-  const KINDS: AngleKind[] = ['acute', 'right', 'obtuse', 'reflex'];
+  const KINDS: AngleKind[] = ['acute', 'right', 'obtuse', 'reflex']
   const kindLabel = (k: AngleKind) =>
     k === 'acute'
       ? labels.acute
@@ -93,21 +93,18 @@ export function AngleTool({
         ? labels.right
         : k === 'obtuse'
           ? labels.obtuse
-          : (labels.reflex ?? k);
+          : (labels.reflex ?? k)
 
   return (
     <div className={cn('flex flex-col items-center gap-3', className)}>
       <svg
         ref={svgRef}
         viewBox="0 0 100 100"
-        className={cn(
-          'w-full max-w-xs',
-          draggable && 'cursor-grab touch-none active:cursor-grabbing',
-        )}
+        className={cn('w-full max-w-xs', draggable && 'cursor-grab touch-none active:cursor-grabbing')}
         onPointerDown={(e) => {
-          if (!draggable) return;
-          e.currentTarget.setPointerCapture(e.pointerId);
-          onChange({ degrees: fromPointer(e), kind: null });
+          if (!draggable) return
+          e.currentTarget.setPointerCapture(e.pointerId)
+          onChange({ degrees: fromPointer(e), kind: null })
         }}
         onPointerMove={drag}
       >
@@ -121,8 +118,8 @@ export function AngleTool({
               strokeWidth={0.6}
             />
             {Array.from({ length: 19 }, (_, i) => i * 10).map((d) => {
-              const a = pt(d, R);
-              const b = pt(d, d % 30 === 0 ? R - 5 : R - 2.5);
+              const a = pt(d, R)
+              const b = pt(d, d % 30 === 0 ? R - 5 : R - 2.5)
               return (
                 <line
                   key={d}
@@ -133,10 +130,10 @@ export function AngleTool({
                   className="stroke-border-strong"
                   strokeWidth={0.4}
                 />
-              );
+              )
             })}
             {[0, 30, 60, 90, 120, 150, 180].map((d) => {
-              const p = pt(d, R - 9);
+              const p = pt(d, R - 9)
               return (
                 <text
                   key={d}
@@ -148,7 +145,7 @@ export function AngleTool({
                 >
                   {d}
                 </text>
-              );
+              )
             })}
           </>
         ) : null}
@@ -241,9 +238,7 @@ export function AngleTool({
           >
             {shown}°
             {labels.unit ? (
-              <span className="ml-1 text-sm font-semibold text-foreground-muted">
-                {labels.unit}
-              </span>
+              <span className="ml-1 text-sm font-semibold text-foreground-muted">{labels.unit}</span>
             ) : null}
           </span>
           {task === 'estimate' && !locked ? (
@@ -264,5 +259,5 @@ export function AngleTool({
         </span>
       ) : null}
     </div>
-  );
+  )
 }

@@ -4,21 +4,21 @@
  * play/scrub, freezes at gates, switches aspect & locale, and shows captions.
  * No drawing/animation logic lives here (player-spec §11 invariant).
  */
-'use client';
-import * as React from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import type { ExplainerDoc, LocaleBundle, Aspect, Rect } from '@bingoo/explainer';
-import { buildProgram, resolveNarrations } from '@bingoo/explainer';
-import { frame } from '@bingoo/explainer';
-import { Button } from '@bingoo/ui-web';
-import { Stage } from '../elements/Stage';
-import { usePlayer } from './usePlayer';
-import { useSpeech, speechLang } from './useSpeech';
-import { GateHost } from './GateHost';
-import { InteractiveManipulative } from './InteractiveManipulative';
-import { useSfx } from './useSfx';
+'use client'
+import * as React from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import type { ExplainerDoc, LocaleBundle, Aspect, Rect } from '@bingoo/explainer'
+import { buildProgram, resolveNarrations } from '@bingoo/explainer'
+import { frame } from '@bingoo/explainer'
+import { Button } from '@bingoo/ui-web'
+import { Stage } from '../elements/Stage'
+import { usePlayer } from './usePlayer'
+import { useSpeech, speechLang } from './useSpeech'
+import { GateHost } from './GateHost'
+import { InteractiveManipulative } from './InteractiveManipulative'
+import { useSfx } from './useSfx'
 
-export type AspectMode = '16:9' | '9:16' | 'dual';
+export type AspectMode = '16:9' | '9:16' | 'dual'
 
 export function ExplainerPlayer({
   doc,
@@ -28,115 +28,110 @@ export function ExplainerPlayer({
   variant = 'full',
   active,
 }: {
-  doc: ExplainerDoc;
-  bundles: Record<string, LocaleBundle>;
+  doc: ExplainerDoc
+  bundles: Record<string, LocaleBundle>
   /** Optional controlled aspect mode — lets a host (e.g. the studio "Học thử"
    *  bar) drive it with a visible toggle instead of the in-player ⚙ popover. */
-  mode?: AspectMode;
-  onModeChange?: (m: AspectMode) => void;
+  mode?: AspectMode
+  onModeChange?: (m: AspectMode) => void
   /** 'feed' = bản tối giản cho dòng khám phá: bỏ hết chrome, chỉ 1 thanh tua, chạm để phát/dừng. */
-  variant?: 'full' | 'feed';
+  variant?: 'full' | 'feed'
   /** Khi variant='feed': tự PHÁT lúc active, tự DỪNG khi rời khung (cuộn qua bài khác). */
-  active?: boolean;
+  active?: boolean
 }) {
-  const [locale, setLocale] = useState(doc.meta.defaultLocale);
-  const [modeState, setModeState] = useState<AspectMode>('16:9');
-  const mode = modeProp ?? modeState;
+  const [locale, setLocale] = useState(doc.meta.defaultLocale)
+  const [modeState, setModeState] = useState<AspectMode>('16:9')
+  const mode = modeProp ?? modeState
   const setMode = (m: AspectMode) => {
-    setModeState(m);
-    onModeChange?.(m);
-  };
-  const [register] = useState<string>(doc.theme.register);
-  const [captionOn, setCaptionOn] = useState(true);
-  const [settingsOpen, setSettingsOpen] = useState(false);
+    setModeState(m)
+    onModeChange?.(m)
+  }
+  const [register] = useState<string>(doc.theme.register)
+  const [captionOn, setCaptionOn] = useState(true)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   // R5 — bài là nội dung ĐỘNG (LLM sinh/import): locale bundle ghi lệch ("vi-VN" thay vì "vi") KHÔNG
   // được phép làm trắng cả trang. Lùi dần: locale đang chọn → mặc định của doc → bundle bất kỳ còn có.
   // Hết sạch bundle mới nổ (bài rỗng thì thật sự không dựng được gì).
-  const bundle = bundles[locale] ?? bundles[doc.meta.defaultLocale] ?? Object.values(bundles)[0];
+  const bundle = bundles[locale] ?? bundles[doc.meta.defaultLocale] ?? Object.values(bundles)[0]
   if (!bundle)
-    throw new Error(
-      `explainer: no locale bundle for "${locale}" or default "${doc.meta.defaultLocale}"`,
-    );
-  const primary: Aspect = mode === '9:16' ? '9:16' : '16:9';
+    throw new Error(`explainer: no locale bundle for "${locale}" or default "${doc.meta.defaultLocale}"`)
+  const primary: Aspect = mode === '9:16' ? '9:16' : '16:9'
   // one document, many registers (spec §8): swap look without touching content
-  const theme = useMemo(() => ({ ...doc.theme, register }), [doc.theme, register]);
+  const theme = useMemo(() => ({ ...doc.theme, register }), [doc.theme, register])
 
-  const audioClock = useRef<(() => number | null) | null>(null);
-  const api = usePlayer(doc, bundle, primary, audioClock);
-  const model = frame(api.program, api.t);
+  const audioClock = useRef<(() => number | null) | null>(null)
+  const api = usePlayer(doc, bundle, primary, audioClock)
+  const model = frame(api.program, api.t)
 
   // Feed: tự PHÁT khi active (bài đang xem), tự DỪNG khi cuộn qua bài khác.
   useEffect(() => {
-    if (variant !== 'feed') return;
-    if (active) api.play();
-    else api.pause();
-  }, [variant, active]);
+    if (variant !== 'feed') return
+    if (active) api.play()
+    else api.pause()
+  }, [variant, active])
 
   // secondary aspect program for the side-by-side preview (spec FR-C-02)
-  const otherAspect: Aspect = primary === '16:9' ? '9:16' : '16:9';
-  const otherProgram = useMemo(
-    () => buildProgram(doc, bundle, otherAspect),
-    [doc, bundle, otherAspect],
-  );
-  const otherModel = frame(otherProgram, api.t);
+  const otherAspect: Aspect = primary === '16:9' ? '9:16' : '16:9'
+  const otherProgram = useMemo(() => buildProgram(doc, bundle, otherAspect), [doc, bundle, otherAspect])
+  const otherModel = frame(otherProgram, api.t)
 
-  const pct = api.program.duration > 0 ? (api.t / api.program.duration) * 100 : 0;
-  const lockPct = api.program.duration > 0 ? (api.maxSeek / api.program.duration) * 100 : 100;
+  const pct = api.program.duration > 0 ? (api.t / api.program.duration) * 100 : 0
+  const lockPct = api.program.duration > 0 ? (api.maxSeek / api.program.duration) * 100 : 100
 
   // interactive manipulatives in the current scene → drawn by an overlay the
   // learner can drive (combines visual + interaction, spec §12). We omit them
   // from the static Stage so there's no double-draw.
-  const curScene = doc.scenes.find((s) => s.id === model.sceneId);
-  const interManips: { id: string; kind: string; params: unknown; rect: Rect }[] = [];
+  const curScene = doc.scenes.find((s) => s.id === model.sceneId)
+  const interManips: { id: string; kind: string; params: unknown; rect: Rect }[] = []
   for (const e of curScene?.elements ?? []) {
-    if (e.type !== 'manipulative') continue;
-    const c = e.content as { kind: string; params?: unknown; interactive?: boolean };
-    if (!c?.interactive) continue;
-    const rect = model.items.find((it) => it.id === e.id)?.rect;
-    if (rect) interManips.push({ id: e.id, kind: c.kind, params: c.params, rect });
+    if (e.type !== 'manipulative') continue
+    const c = e.content as { kind: string; params?: unknown; interactive?: boolean }
+    if (!c?.interactive) continue
+    const rect = model.items.find((it) => it.id === e.id)?.rect
+    if (rect) interManips.push({ id: e.id, kind: c.kind, params: c.params, rect })
   }
-  const skipIds = new Set(interManips.map((m) => m.id));
+  const skipIds = new Set(interManips.map((m) => m.id))
 
   // TTS voice-over: a scene can hold several voice lines. Play whichever segment
   // covers the current scene-time, position-driven by t, and highlight its words.
-  const segs = curScene ? resolveNarrations(curScene, bundle) : [];
-  const activeSeg = [...segs].reverse().find((s) => model.tScene >= s.at - 0.01);
-  const segAudio = activeSeg?.narration.audioUrl;
-  const segLocalT = activeSeg ? model.tScene - activeSeg.at : 0;
-  const segWords = activeSeg?.narration.words;
-  const segCaption = activeSeg ? stripCues(activeSeg.narration.script) : model.caption;
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const segs = curScene ? resolveNarrations(curScene, bundle) : []
+  const activeSeg = [...segs].reverse().find((s) => model.tScene >= s.at - 0.01)
+  const segAudio = activeSeg?.narration.audioUrl
+  const segLocalT = activeSeg ? model.tScene - activeSeg.at : 0
+  const segWords = activeSeg?.narration.words
+  const segCaption = activeSeg ? stripCues(activeSeg.narration.script) : model.caption
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   useEffect(() => {
-    const a = audioRef.current;
-    if (a) a.src = segAudio ?? '';
-  }, [segAudio]);
+    const a = audioRef.current
+    if (a) a.src = segAudio ?? ''
+  }, [segAudio])
   useEffect(() => {
-    const a = audioRef.current;
-    if (!a || !segAudio) return;
-    a.muted = api.muted;
-    if (Math.abs(a.currentTime - segLocalT) > 0.3) a.currentTime = Math.max(0, segLocalT);
+    const a = audioRef.current
+    if (!a || !segAudio) return
+    a.muted = api.muted
+    if (Math.abs(a.currentTime - segLocalT) > 0.3) a.currentTime = Math.max(0, segLocalT)
     // Only (re)start the audio while the playhead is still WITHIN this line. Once
     // it has played through, do NOT replay it: replaying an ended segment pinned
     // the master clock back inside scene 1's audio, so the lesson looped the first
     // line forever and never advanced to scene 2. Past the audio's end, the rAF
     // clock takes over and t moves on to the next segment/scene.
-    const dur = Number.isFinite(a.duration) ? a.duration : Infinity;
-    const within = segLocalT < dur - 0.1;
-    if (api.playing && a.paused && within) a.play().catch(() => {});
-    if ((!api.playing || !within) && !a.paused) a.pause();
-  }, [api.t, api.playing, api.muted, segLocalT, segAudio]);
+    const dur = Number.isFinite(a.duration) ? a.duration : Infinity
+    const within = segLocalT < dur - 0.1
+    if (api.playing && a.paused && within) a.play().catch(() => {})
+    if ((!api.playing || !within) && !a.paused) a.pause()
+  }, [api.t, api.playing, api.muted, segLocalT, segAudio])
 
   // when a voice line is actually playing, make its audio the master clock so
   // the caption highlight + visuals track speech EXACTLY (no rAF-vs-audio drift).
   audioClock.current = () => {
-    const a = audioRef.current;
-    if (!api.playing || !segAudio || !a || a.paused || a.readyState < 2) return null;
+    const a = audioRef.current
+    if (!api.playing || !segAudio || !a || a.paused || a.readyState < 2) return null
     // Once this line has finished, stop driving the clock from it — otherwise the
     // clock is capped at the audio's end (scene 1) and can never reach scene 2.
-    const dur = Number.isFinite(a.duration) ? a.duration : Infinity;
-    if (a.ended || a.currentTime >= dur - 0.05) return null;
-    return model.sceneStart + (activeSeg?.at ?? 0) + a.currentTime;
-  };
+    const dur = Number.isFinite(a.duration) ? a.duration : Infinity
+    if (a.ended || a.currentTime >= dur - 0.05) return null
+    return model.sceneStart + (activeSeg?.at ?? 0) + a.currentTime
+  }
 
   // keyless voice fallback: speak the active line via the browser when it has no
   // pre-generated audio, so every lesson has a voice with no API key.
@@ -145,50 +140,50 @@ export function ExplainerPlayer({
     muted: api.muted,
     enabled: !segAudio,
     lang: speechLang(bundle.locale),
-  });
+  })
 
   // sound effects: fire the scene's audio elements as the playhead crosses them
   const sfxItems = (curScene?.elements ?? [])
     .filter((e) => e.type === 'audio')
     .map((e) => {
-      const c = e.content as { src?: string; at?: number };
-      return { id: e.id, at: c?.at ?? 0, src: c?.src };
-    });
-  useSfx(sfxItems, model.tScene, api.playing, api.muted);
+      const c = e.content as { src?: string; at?: number }
+      return { id: e.id, at: c?.at ?? 0, src: c?.src }
+    })
+  useSfx(sfxItems, model.tScene, api.playing, api.muted)
 
   // looping background music
-  const musicRef = useRef<HTMLAudioElement | null>(null);
+  const musicRef = useRef<HTMLAudioElement | null>(null)
   useEffect(() => {
-    const a = musicRef.current;
+    const a = musicRef.current
     if (a) {
-      a.src = doc.music?.src ?? '';
-      a.volume = doc.music?.volume ?? 0.3;
+      a.src = doc.music?.src ?? ''
+      a.volume = doc.music?.volume ?? 0.3
     }
-  }, [doc.music?.src, doc.music?.volume]);
+  }, [doc.music?.src, doc.music?.volume])
   useEffect(() => {
-    const a = musicRef.current;
-    if (!a || !doc.music?.src) return;
-    a.muted = api.muted;
-    if (api.playing && a.paused) a.play().catch(() => {});
-    if ((!api.playing || api.state === 'ended') && !a.paused) a.pause();
-  }, [api.playing, api.muted, api.state, doc.music?.src]);
+    const a = musicRef.current
+    if (!a || !doc.music?.src) return
+    a.muted = api.muted
+    if (api.playing && a.paused) a.play().catch(() => {})
+    if ((!api.playing || api.state === 'ended') && !a.paused) a.pause()
+  }, [api.playing, api.muted, api.state, doc.music?.src])
 
   // checkpoint markers on the timeline: label = the gate's prompt, so hovering
   // tells you what it is, and clicking jumps there (which opens the gate).
-  const [hoverGate, setHoverGate] = useState<number | null>(null);
+  const [hoverGate, setHoverGate] = useState<number | null>(null)
   const gateInfos = useMemo(
     () =>
       api.program.slots
         .filter((s) => s.scene.kind === 'gate' && s.scene.gate)
         .map((s) => ({ t: s.start, prompt: s.scene.gate!.prompt, kind: s.scene.gate!.kind })),
     [api.program],
-  );
+  )
 
   const fmt = (s: number) => {
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60);
-    return `${m}:${String(sec).padStart(2, '0')}`;
-  };
+    const m = Math.floor(s / 60)
+    const sec = Math.floor(s % 60)
+    return `${m}:${String(sec).padStart(2, '0')}`
+  }
 
   // ── Bản FEED tối giản: stage full + 1 thanh tua + chạm để phát/dừng ──
   if (variant === 'feed') {
@@ -339,7 +334,7 @@ export function ExplainerPlayer({
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -405,9 +400,7 @@ export function ExplainerPlayer({
           <div className="stage-wrap portrait">
             <div className="stage-inner">
               <Stage model={otherModel} theme={theme} caption={false} />
-              {captionOn && otherModel.caption && (
-                <div className="caption small">{otherModel.caption}</div>
-              )}
+              {captionOn && otherModel.caption && <div className="caption small">{otherModel.caption}</div>}
             </div>
           </div>
         )}
@@ -439,7 +432,7 @@ export function ExplainerPlayer({
             <div className="scrub-lock" style={{ left: `${lockPct}%` }} />
             <div className="scrub-fill" style={{ width: `${pct}%` }} />
             {gateInfos.map((info, i) => {
-              const leftPct = (info.t / api.program.duration) * 100;
+              const leftPct = (info.t / api.program.duration) * 100
               return (
                 <button
                   key={info.t}
@@ -461,7 +454,7 @@ export function ExplainerPlayer({
                     </span>
                   )}
                 </button>
-              );
+              )
             })}
             <input
               className="scrub-range"
@@ -533,11 +526,7 @@ export function ExplainerPlayer({
                     <span>Khổ hình</span>
                     <div className="pl-seg">
                       {(['16:9', '9:16', 'dual'] as AspectMode[]).map((m) => (
-                        <button
-                          key={m}
-                          className={mode === m ? 'on' : ''}
-                          onClick={() => setMode(m)}
-                        >
+                        <button key={m} className={mode === m ? 'on' : ''} onClick={() => setMode(m)}>
                           {m === 'dual' ? '⧉' : m}
                         </button>
                       ))}
@@ -548,11 +537,7 @@ export function ExplainerPlayer({
                       <span>Ngôn ngữ</span>
                       <div className="pl-seg">
                         {doc.locales.map((l) => (
-                          <button
-                            key={l}
-                            className={locale === l ? 'on' : ''}
-                            onClick={() => setLocale(l)}
-                          >
+                          <button key={l} className={locale === l ? 'on' : ''} onClick={() => setLocale(l)}>
                             {l.toUpperCase()}
                           </button>
                         ))}
@@ -566,14 +551,14 @@ export function ExplainerPlayer({
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 const stripCues = (s: string) =>
   s
     .replace(/\[\[cue:[^\]]+\]\]/g, '')
     .replace(/\s+/g, ' ')
-    .trim();
+    .trim()
 
 /** Caption that highlights the word being spoken (from TTS word timings). */
 function WordCaption({
@@ -581,18 +566,18 @@ function WordCaption({
   tScene,
   fallback,
 }: {
-  words?: { word: string; start: number; end: number }[];
-  tScene: number;
-  fallback: string | null;
+  words?: { word: string; start: number; end: number }[]
+  tScene: number
+  fallback: string | null
 }) {
   if (!words || words.length === 0) {
     return fallback ? (
       <div className="caption" aria-live="polite">
         {fallback}
       </div>
-    ) : null;
+    ) : null
   }
-  const idx = words.findIndex((w) => tScene >= w.start && tScene < w.end);
+  const idx = words.findIndex((w) => tScene >= w.start && tScene < w.end)
   return (
     <div className="caption" aria-live="polite">
       {words.map((w, i) => (
@@ -601,7 +586,7 @@ function WordCaption({
         </span>
       ))}
     </div>
-  );
+  )
 }
 
 function Complete({ doc, onReplay }: { doc: ExplainerDoc; onReplay: () => void }) {
@@ -616,5 +601,5 @@ function Complete({ doc, onReplay }: { doc: ExplainerDoc; onReplay: () => void }
         </button>
       </div>
     </div>
-  );
+  )
 }

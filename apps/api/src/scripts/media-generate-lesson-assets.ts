@@ -11,16 +11,16 @@
  * Run (inside apps/api, costs real image + embedding + LLM credit):
  *   node --env-file=.env --import tsx src/scripts/media-generate-lesson-assets.ts
  */
-import type { LocalizedText } from '@bingoo/core';
-import { db } from '@bingoo/db';
-import type { TagKind } from '@bingoo/db';
-import { createFolder } from '../repos/media-folder.repo';
-import { addAssetTags, upsertTag } from '../repos/media-tag.repo';
-import { getAssetById, updateAsset } from '../repos/media-asset.repo';
-import { generateImageAssets } from '../services/media-generate.service';
-import { enrichAsset } from '../services/media-enrich.service';
+import type { LocalizedText } from '@bingoo/core'
+import { db } from '@bingoo/db'
+import type { TagKind } from '@bingoo/db'
+import { createFolder } from '../repos/media-folder.repo'
+import { addAssetTags, upsertTag } from '../repos/media-tag.repo'
+import { getAssetById, updateAsset } from '../repos/media-asset.repo'
+import { generateImageAssets } from '../services/media-generate.service'
+import { enrichAsset } from '../services/media-enrich.service'
 
-const ACTOR = 'system:media-gen'; // provenance marker (no user FK on these columns)
+const ACTOR = 'system:media-gen' // provenance marker (no user FK on these columns)
 
 // ── Controlled-vocabulary tag catalog (slug → {kind,label}) ──────────────────
 const TAGS: Record<string, { kind: TagKind; label: LocalizedText }> = {
@@ -67,30 +67,23 @@ const TAGS: Record<string, { kind: TagKind; label: LocalizedText }> = {
   celebration: { kind: 'KEYWORD', label: { vi: 'Ăn mừng', en: 'Celebration' } },
   sky: { kind: 'KEYWORD', label: { vi: 'Bầu trời', en: 'Sky' } },
   vietnamese: { kind: 'KEYWORD', label: { vi: 'Người Việt', en: 'Vietnamese' } },
-};
+}
 
 // Only true, asset-level classification. Lesson/subject context (math, counting)
 // lives on the FOLDER, not stamped on every image — keeps per-image tags about the
 // picture's actual content so search stays precise. Visual content tags are added
 // automatically by the AI enrichment step (source=AI).
-const COMMON = [
-  'flat-vector',
-  'kid-friendly',
-  'bold-outline',
-  'warm-palette',
-  'everyone',
-  'ai-generated',
-];
+const COMMON = ['flat-vector', 'kid-friendly', 'bold-outline', 'warm-palette', 'everyone', 'ai-generated']
 
 interface Spec {
-  key: string;
-  prompt: string;
-  size: string;
-  background: 'transparent' | 'opaque';
-  title: LocalizedText;
-  description: LocalizedText;
-  altText: LocalizedText;
-  tags: string[]; // in addition to COMMON
+  key: string
+  prompt: string
+  size: string
+  background: 'transparent' | 'opaque'
+  title: LocalizedText
+  description: LocalizedText
+  altText: LocalizedText
+  tags: string[] // in addition to COMMON
 }
 
 const SPECS: Spec[] = [
@@ -268,18 +261,18 @@ const SPECS: Spec[] = [
     altText: { vi: 'Màn pháo giấy nhiều màu', en: 'A colorful confetti burst' },
     tags: ['reward', 'confetti', 'transparent-png', 'celebration'],
   },
-];
+]
 
 async function main() {
-  console.log(`Generating ${SPECS.length} lesson assets → R2 (PENDING moderation)…\n`);
+  console.log(`Generating ${SPECS.length} lesson assets → R2 (PENDING moderation)…\n`)
 
   // 1. Upsert the whole tag vocabulary once, map slug → id.
-  const tagId: Record<string, string> = {};
+  const tagId: Record<string, string> = {}
   for (const [slug, def] of Object.entries(TAGS)) {
-    const t = await upsertTag({ slug, kind: def.kind, label: def.label });
-    tagId[slug] = t.id;
+    const t = await upsertTag({ slug, kind: def.kind, label: def.label })
+    tagId[slug] = t.id
   }
-  console.log(`✔ ${Object.keys(tagId).length} tags upserted`);
+  console.log(`✔ ${Object.keys(tagId).length} tags upserted`)
 
   // 2. One GLOBAL folder to hold the set.
   const folder = await createFolder({
@@ -291,14 +284,14 @@ async function main() {
     scope: 'GLOBAL',
     visibility: 'SCOPE',
     createdById: ACTOR,
-  });
-  console.log(`✔ folder ${folder.id}\n`);
+  })
+  console.log(`✔ folder ${folder.id}\n`)
 
-  let ok = 0;
-  const rows: string[] = [];
+  let ok = 0
+  const rows: string[] = []
   for (const spec of SPECS) {
     try {
-      process.stdout.write(`… ${spec.key} (${spec.size}, ${spec.background}) `);
+      process.stdout.write(`… ${spec.key} (${spec.size}, ${spec.background}) `)
       const [asset] = await generateImageAssets({
         prompt: spec.prompt,
         size: spec.size,
@@ -309,11 +302,11 @@ async function main() {
         visibility: 'SCOPE',
         title: spec.title,
         createdById: ACTOR,
-      });
-      if (!asset) throw new Error('no asset returned');
+      })
+      if (!asset) throw new Error('no asset returned')
 
       // Full localized metadata (R4) + record the semantic key for later lookup.
-      await updateAsset(asset.id, { description: spec.description, altText: spec.altText });
+      await updateAsset(asset.id, { description: spec.description, altText: spec.altText })
       await db.mediaAsset.update({
         where: { id: asset.id },
         data: {
@@ -322,42 +315,42 @@ async function main() {
             assetKey: spec.key,
           },
         },
-      });
+      })
 
       // Controlled-vocabulary tags → refreshes the keyword GIN projection.
-      const slugs = [...new Set([...COMMON, ...spec.tags])];
+      const slugs = [...new Set([...COMMON, ...spec.tags])]
       const keywords = await addAssetTags({
         assetId: asset.id,
         tagIds: slugs.map((s) => tagId[s]).filter((id): id is string => Boolean(id)),
         source: 'AI',
         addedById: ACTOR,
-      });
+      })
 
       // Embedding index (NLP/semantic) + AI suggestions (LLM), now over the rich text.
-      const enrich = await enrichAsset(asset.id, { force: true });
+      const enrich = await enrichAsset(asset.id, { force: true })
 
-      ok++;
+      ok++
       rows.push(
         `  ${spec.key.padEnd(14)} ${asset.publicId}  tags=${slugs.length} kw=${keywords.length} ` +
           `emb=${enrich.embedded ? 'y' : 'n'} sug=${enrich.suggested ? 'y' : 'n'}`,
-      );
-      console.log('✅');
+      )
+      console.log('✅')
     } catch (err) {
-      console.log('❌');
-      rows.push(`  ${spec.key.padEnd(14)} FAILED — ${err instanceof Error ? err.message : err}`);
+      console.log('❌')
+      rows.push(`  ${spec.key.padEnd(14)} FAILED — ${err instanceof Error ? err.message : err}`)
     }
   }
 
-  console.log(`\n${ok}/${SPECS.length} generated. Folder: ${folder.id}\n`);
-  console.log(rows.join('\n'));
-  console.log('\nAll assets are PENDING moderation (R5) — approve them before child delivery.');
+  console.log(`\n${ok}/${SPECS.length} generated. Folder: ${folder.id}\n`)
+  console.log(rows.join('\n'))
+  console.log('\nAll assets are PENDING moderation (R5) — approve them before child delivery.')
 
-  await db.$disconnect();
-  process.exit(ok === SPECS.length ? 0 : 1);
+  await db.$disconnect()
+  process.exit(ok === SPECS.length ? 0 : 1)
 }
 
 main().catch(async (err) => {
-  console.error('lesson-asset generation crashed:', err);
-  await db.$disconnect();
-  process.exit(1);
-});
+  console.error('lesson-asset generation crashed:', err)
+  await db.$disconnect()
+  process.exit(1)
+})

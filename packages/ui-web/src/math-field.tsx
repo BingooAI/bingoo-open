@@ -1,23 +1,23 @@
-'use client';
+'use client'
 
-import { Delete } from 'lucide-react';
-import { Fragment, type ReactNode } from 'react';
-import { cn } from './lib/cn';
-import { stagger, tile } from './lib/interactive';
+import { Delete } from 'lucide-react'
+import { Fragment, type ReactNode } from 'react'
+import { cn } from './lib/cn'
+import { stagger, tile } from './lib/interactive'
 
-export type MathLevel = 'preschool' | 'primary' | 'secondary' | 'advanced';
+export type MathLevel = 'preschool' | 'primary' | 'secondary' | 'advanced'
 
 export interface MathFieldProps {
   /** Controlled linear maths string ("3/4", "x^2", "pi*r^2"). */
-  value: string;
-  onChange: (value: string) => void;
-  level?: MathLevel;
+  value: string
+  onChange: (value: string) => void
+  level?: MathLevel
   /** Override the keyboard keys (display labels). */
-  keys?: string[];
-  placeholder?: string;
-  reveal?: { correct: boolean; answer: string };
-  disabled?: boolean;
-  className?: string;
+  keys?: string[]
+  placeholder?: string
+  reveal?: { correct: boolean; answer: string }
+  disabled?: boolean
+  className?: string
 }
 
 /** Display label → string inserted into the value. */
@@ -33,9 +33,9 @@ const INSERT: Record<string, string> = {
   tan: 'tan(',
   log: 'log(',
   ln: 'ln(',
-};
+}
 
-const DIGITS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+const DIGITS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 const PRESETS: Record<MathLevel, string[]> = {
   preschool: [...DIGITS, '+', '−', '⌫', 'C'],
   primary: [...DIGITS, '+', '−', '×', '÷', '.', '(', ')', '⌫', 'C'],
@@ -63,55 +63,55 @@ const PRESETS: Record<MathLevel, string[]> = {
     '⌫',
     'C',
   ],
-};
+}
 
 /** Prettify a linear maths string for display: superscripts, √, ×, π. */
 function pretty(s: string, keyBase = ''): ReactNode[] {
-  const out: ReactNode[] = [];
-  let i = 0;
-  let n = 0;
-  const push = (node: ReactNode) => out.push(<Fragment key={`${keyBase}-${n++}`}>{node}</Fragment>);
+  const out: ReactNode[] = []
+  let i = 0
+  let n = 0
+  const push = (node: ReactNode) => out.push(<Fragment key={`${keyBase}-${n++}`}>{node}</Fragment>)
   while (i < s.length) {
     if (s.startsWith('pi', i) && !/[a-z]/i.test(s[i + 2] ?? '')) {
-      push('π');
-      i += 2;
-      continue;
+      push('π')
+      i += 2
+      continue
     }
     if (s.startsWith('sqrt', i)) {
-      push('√');
-      i += 4;
-      continue;
+      push('√')
+      i += 4
+      continue
     }
-    const c = s[i]!;
+    const c = s[i]!
     if (c === '*') {
-      push('×');
-      i++;
-      continue;
+      push('×')
+      i++
+      continue
     }
     if (c === '^') {
-      const j = i + 1;
+      const j = i + 1
       if (s[j] === '(') {
-        let depth = 1;
-        let k = j + 1;
+        let depth = 1
+        let k = j + 1
         while (k < s.length && depth > 0) {
-          if (s[k] === '(') depth++;
-          if (s[k] === ')') depth--;
-          k++;
+          if (s[k] === '(') depth++
+          if (s[k] === ')') depth--
+          k++
         }
-        push(<sup>{pretty(s.slice(j + 1, k - 1), `${keyBase}s${i}`)}</sup>);
-        i = k;
+        push(<sup>{pretty(s.slice(j + 1, k - 1), `${keyBase}s${i}`)}</sup>)
+        i = k
       } else {
-        let k = j;
-        while (k < s.length && /[0-9a-zA-Z.]/.test(s[k]!)) k++;
-        push(<sup>{pretty(s.slice(j, k), `${keyBase}s${i}`)}</sup>);
-        i = k;
+        let k = j
+        while (k < s.length && /[0-9a-zA-Z.]/.test(s[k]!)) k++
+        push(<sup>{pretty(s.slice(j, k), `${keyBase}s${i}`)}</sup>)
+        i = k
       }
-      continue;
+      continue
     }
-    push(c);
-    i++;
+    push(c)
+    i++
   }
-  return out;
+  return out
 }
 
 /**
@@ -130,15 +130,15 @@ export function MathField({
   disabled,
   className,
 }: MathFieldProps) {
-  const locked = !!reveal || disabled;
-  const layout = keys ?? PRESETS[level];
+  const locked = !!reveal || disabled
+  const layout = keys ?? PRESETS[level]
 
   const tap = (label: string) => {
-    if (locked) return;
-    if (label === '⌫') return onChange(value.slice(0, -1));
-    if (label === 'C') return onChange('');
-    onChange(value + (INSERT[label] ?? label));
-  };
+    if (locked) return
+    if (label === '⌫') return onChange(value.slice(0, -1))
+    if (label === 'C') return onChange('')
+    onChange(value + (INSERT[label] ?? label))
+  }
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>
@@ -167,8 +167,8 @@ export function MathField({
       {!locked ? (
         <div className="grid grid-cols-5 gap-1.5 sm:grid-cols-6">
           {layout.map((k, i) => {
-            const isDel = k === '⌫';
-            const isClear = k === 'C';
+            const isDel = k === '⌫'
+            const isClear = k === 'C'
             return (
               <button
                 key={k}
@@ -185,10 +185,10 @@ export function MathField({
               >
                 {isDel ? <Delete className="size-5" /> : k}
               </button>
-            );
+            )
           })}
         </div>
       ) : null}
     </div>
-  );
+  )
 }

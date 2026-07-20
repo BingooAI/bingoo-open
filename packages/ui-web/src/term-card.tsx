@@ -1,17 +1,17 @@
-'use client';
+'use client'
 
-import { ChevronDown } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { ChevronDown } from 'lucide-react'
+import { useState, type ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export interface TermCardProps {
-  term: ReactNode;
-  definition: ReactNode;
-  example?: ReactNode;
-  defaultRevealed?: boolean;
+  term: ReactNode
+  definition: ReactNode
+  example?: ReactNode
+  defaultRevealed?: boolean
   /** A11y label for the reveal toggle. */
-  revealLabel?: string;
-  className?: string;
+  revealLabel?: string
+  className?: string
 }
 
 /** A glossary term card — tap to reveal the definition. Reusable in lessons,
@@ -24,7 +24,7 @@ export function TermCard({
   revealLabel,
   className,
 }: TermCardProps) {
-  const [open, setOpen] = useState(!!defaultRevealed);
+  const [open, setOpen] = useState(!!defaultRevealed)
   return (
     <div className={cn('rounded-2xl border border-border bg-surface', className)}>
       <button
@@ -36,10 +36,7 @@ export function TermCard({
       >
         <span className="font-display text-lg font-bold text-foreground">{term}</span>
         <ChevronDown
-          className={cn(
-            'size-5 shrink-0 text-foreground-muted transition-transform',
-            open && 'rotate-180',
-          )}
+          className={cn('size-5 shrink-0 text-foreground-muted transition-transform', open && 'rotate-180')}
         />
       </button>
       {open ? (
@@ -49,5 +46,5 @@ export function TermCard({
         </div>
       ) : null}
     </div>
-  );
+  )
 }

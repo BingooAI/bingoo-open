@@ -3,9 +3,9 @@
  * Colour swatches, a size slider, an animation gallery, per-type extras (text
  * content, manipulative params + interactivity). No coordinates/z/cues exposed.
  */
-'use client';
-import * as React from 'react';
-import { useState } from 'react';
+'use client'
+import * as React from 'react'
+import { useState } from 'react'
 import type {
   Element,
   StyleTokens,
@@ -14,29 +14,23 @@ import type {
   Scene,
   GateSpec,
   Background,
-} from '@bingoo/explainer';
-import {
-  resolveNarrations,
-  contractOf,
-  templateCatalog,
-  SFX_NAMES,
-  sfxUrl,
-} from '@bingoo/explainer';
-import { EXPLAINER_API, apiPost } from './endpoints';
-import { useSnap, useStore } from '../store/ctx';
-import type { EditOp } from '../store/ops';
-import { getEl } from '../store/ops';
-import { EffectGallery } from '../panels/EffectGallery';
-import { effectsOn, effectLabel } from '../effects';
-import { manipCatalog, manipInfo, SUBJECTS } from '../manipCatalog';
-import type { CapCtx } from './ExplainerStudio';
+} from '@bingoo/explainer'
+import { resolveNarrations, contractOf, templateCatalog, SFX_NAMES, sfxUrl } from '@bingoo/explainer'
+import { EXPLAINER_API, apiPost } from './endpoints'
+import { useSnap, useStore } from '../store/ctx'
+import type { EditOp } from '../store/ops'
+import { getEl } from '../store/ops'
+import { EffectGallery } from '../panels/EffectGallery'
+import { effectsOn, effectLabel } from '../effects'
+import { manipCatalog, manipInfo, SUBJECTS } from '../manipCatalog'
+import type { CapCtx } from './ExplainerStudio'
 
 export function Properties({ cap }: { cap: CapCtx }) {
-  const store = useStore();
-  const { doc, ui } = useSnap();
-  const [addFx, setAddFx] = useState(false);
-  const el = ui.selection ? getEl(doc, ui.activeSceneId, ui.selection) : undefined;
-  const activeScene = doc.scenes.find((s) => s.id === ui.activeSceneId);
+  const store = useStore()
+  const { doc, ui } = useSnap()
+  const [addFx, setAddFx] = useState(false)
+  const el = ui.selection ? getEl(doc, ui.activeSceneId, ui.selection) : undefined
+  const activeScene = doc.scenes.find((s) => s.id === ui.activeSceneId)
 
   if (!el && activeScene?.kind === 'gate' && activeScene.gate) {
     return (
@@ -46,7 +40,7 @@ export function Properties({ cap }: { cap: CapCtx }) {
           <GateProps scene={activeScene} />
         </div>
       </div>
-    );
+    )
   }
   if (!el)
     return (
@@ -59,7 +53,7 @@ export function Properties({ cap }: { cap: CapCtx }) {
           </div>
         </div>
       </div>
-    );
+    )
   if (el.type === 'audio')
     return (
       <div className="cc-props">
@@ -68,7 +62,7 @@ export function Properties({ cap }: { cap: CapCtx }) {
           <AudioProps el={el} sceneId={ui.activeSceneId} />
         </div>
       </div>
-    );
+    )
   if (el.type === 'connector')
     return (
       <div className="cc-props">
@@ -77,22 +71,22 @@ export function Properties({ cap }: { cap: CapCtx }) {
           <ConnectorProps el={el} sceneId={ui.activeSceneId} />
         </div>
       </div>
-    );
+    )
 
-  const sceneId = ui.activeSceneId;
+  const sceneId = ui.activeSceneId
   const setStyle = (p: Partial<StyleTokens>) =>
     store.dispatch({
       t: 'el.setStyle',
       sceneId,
       elId: el.id,
       style: { ...(el.style ?? {}), ...p },
-    });
+    })
   const setPlace = (p: Partial<Place>) => {
-    const base: Place = el.place ?? { at: 'free', x: 0.5, y: 0.5, size: 0.2 };
-    store.dispatch({ t: 'el.setPlace', sceneId, elId: el.id, place: { ...base, ...p } });
-  };
-  const scene = doc.scenes.find((s) => s.id === sceneId)!;
-  const fx = effectsOn(scene, el.id);
+    const base: Place = el.place ?? { at: 'free', x: 0.5, y: 0.5, size: 0.2 }
+    store.dispatch({ t: 'el.setPlace', sceneId, elId: el.id, place: { ...base, ...p } })
+  }
+  const scene = doc.scenes.find((s) => s.id === sceneId)!
+  const fx = effectsOn(scene, el.id)
 
   return (
     <div className="cc-props">
@@ -135,13 +129,7 @@ export function Properties({ cap }: { cap: CapCtx }) {
               on={(size) => setPlace({ size })}
             />
             {(el.type === 'text' || el.type === 'diagram' || el.type === 'manipulative') && (
-              <Slider
-                label="Rộng"
-                v={el.place?.w ?? 0.6}
-                min={0.1}
-                max={1}
-                on={(w) => setPlace({ w })}
-              />
+              <Slider label="Rộng" v={el.place?.w ?? 0.6} min={0.1} max={1} on={(w) => setPlace({ w })} />
             )}
             <Slider
               label="Xoay"
@@ -163,8 +151,8 @@ export function Properties({ cap }: { cap: CapCtx }) {
               (() => {
                 const keys = Object.entries(doc.theme.fontSizes)
                   .sort((a, b) => a[1] - b[1])
-                  .map(([k]) => k);
-                const labels = ['Nhỏ', 'Vừa', 'Lớn', 'Rất lớn', 'Khổng lồ'];
+                  .map(([k]) => k)
+                const labels = ['Nhỏ', 'Vừa', 'Lớn', 'Rất lớn', 'Khổng lồ']
                 return (
                   <div className="cc-prow">
                     <label>Cỡ chữ</label>
@@ -181,14 +169,12 @@ export function Properties({ cap }: { cap: CapCtx }) {
                       ))}
                     </select>
                   </div>
-                );
+                )
               })()}
             <div className="cc-align">
               <button onClick={() => setPlace({ x: 0.5 })}>Canh giữa</button>
               <button
-                onClick={() =>
-                  store.dispatch({ t: 'el.setZ', sceneId, elId: el.id, z: (el.z ?? 0) + 1 })
-                }
+                onClick={() => store.dispatch({ t: 'el.setZ', sceneId, elId: el.id, z: (el.z ?? 0) + 1 })}
               >
                 Lên lớp
               </button>
@@ -216,14 +202,14 @@ export function Properties({ cap }: { cap: CapCtx }) {
                 {effectLabel(f.action)}
                 <button
                   onClick={() => {
-                    const b = scene.beats?.find((x) => x.id === f.beatId);
+                    const b = scene.beats?.find((x) => x.id === f.beatId)
                     if (b)
                       store.dispatch({
                         t: 'beat.setActions',
                         sceneId,
                         beatId: f.beatId,
                         actions: b.actions.filter((_, i) => i !== f.idx),
-                      });
+                      })
                   }}
                 >
                   ✕
@@ -231,9 +217,7 @@ export function Properties({ cap }: { cap: CapCtx }) {
               </span>
             ))}
             {fx.length === 0 && (
-              <span className="cc-muted">
-                Chưa có. Thêm để đối tượng xuất hiện / nhấn / biến mất.
-              </span>
+              <span className="cc-muted">Chưa có. Thêm để đối tượng xuất hiện / nhấn / biến mất.</span>
             )}
           </div>
           {addFx ? (
@@ -258,13 +242,13 @@ export function Properties({ cap }: { cap: CapCtx }) {
         </button>
       </div>
     </div>
-  );
+  )
 }
 
 function TextEditor({ elId }: { elId: string }) {
-  const store = useStore();
-  const { bundles, ui } = useSnap();
-  const val = bundles[ui.activeLocale]?.strings[elId] ?? '';
+  const store = useStore()
+  const { bundles, ui } = useSnap()
+  const val = bundles[ui.activeLocale]?.strings[elId] ?? ''
   return (
     <div className="cc-card">
       <h5>Nội dung chữ</h5>
@@ -277,18 +261,18 @@ function TextEditor({ elId }: { elId: string }) {
         }
       />
     </div>
-  );
+  )
 }
 
 function ManipProps({ el }: { el: Element }) {
-  const store = useStore();
-  const { ui } = useSnap();
-  const sceneId = ui.activeSceneId;
-  const content = (el.content ?? {}) as ManipulativeContent & { interactive?: boolean };
-  const info = manipInfo(content.kind);
-  const params = (content.params ?? info?.defaultParams ?? {}) as Record<string, unknown>;
+  const store = useStore()
+  const { ui } = useSnap()
+  const sceneId = ui.activeSceneId
+  const content = (el.content ?? {}) as ManipulativeContent & { interactive?: boolean }
+  const info = manipInfo(content.kind)
+  const params = (content.params ?? info?.defaultParams ?? {}) as Record<string, unknown>
   const set = (p: Partial<ManipulativeContent & { interactive?: boolean }>) =>
-    store.dispatch({ t: 'el.setContent', sceneId, elId: el.id, content: { ...content, ...p } });
+    store.dispatch({ t: 'el.setContent', sceneId, elId: el.id, content: { ...content, ...p } })
 
   return (
     <>
@@ -298,12 +282,12 @@ function ManipProps({ el }: { el: Element }) {
           className="cc-select"
           value={content.kind}
           onChange={(e) => {
-            const ni = manipInfo(e.target.value);
+            const ni = manipInfo(e.target.value)
             set({
               kind: e.target.value,
               params: JSON.parse(JSON.stringify(ni?.defaultParams ?? {})),
               actions: [],
-            });
+            })
           }}
         >
           {SUBJECTS.map((s) => (
@@ -330,9 +314,7 @@ function ManipProps({ el }: { el: Element }) {
       <div className="cc-card">
         <h5>Thiết lập</h5>
         {Object.entries(params)
-          .filter(
-            ([, v]) => typeof v === 'number' || typeof v === 'boolean' || typeof v === 'string',
-          )
+          .filter(([, v]) => typeof v === 'number' || typeof v === 'boolean' || typeof v === 'string')
           .map(([k, v]) => (
             <div key={k} className="cc-prow">
               <label>{paramLabel(k)}</label>
@@ -372,7 +354,7 @@ function ManipProps({ el }: { el: Element }) {
                     defaultValue={JSON.stringify(v)}
                     onBlur={(e) => {
                       try {
-                        set({ params: { ...params, [k]: JSON.parse(e.target.value) } });
+                        set({ params: { ...params, [k]: JSON.parse(e.target.value) } })
                       } catch {
                         /* keep */
                       }
@@ -384,7 +366,7 @@ function ManipProps({ el }: { el: Element }) {
         ) : null}
       </div>
     </>
-  );
+  )
 }
 
 /* ---- interactive checkpoint (gate) editor ---- */
@@ -393,16 +375,15 @@ const KINDS: { id: GateSpec['kind']; label: string }[] = [
   { id: 'predict-check', label: 'Dự đoán' },
   { id: 'sequence', label: 'Sắp thứ tự' },
   { id: 'hotspot', label: 'Chạm đúng vùng' },
-];
+]
 function GateProps({ scene }: { scene: Scene }) {
-  const store = useStore();
-  const gate = scene.gate!;
+  const store = useStore()
+  const gate = scene.gate!
   const set = (patch: Partial<GateSpec>) =>
-    store.dispatch({ t: 'gate.set', sceneId: scene.id, gate: { ...gate, ...patch } as GateSpec });
-  const options = gate.options ?? [];
-  const answers = Array.isArray(gate.answer) ? gate.answer : [gate.answer];
-  const hasOptions =
-    gate.kind === 'select' || gate.kind === 'predict-check' || gate.kind === 'sequence';
+    store.dispatch({ t: 'gate.set', sceneId: scene.id, gate: { ...gate, ...patch } as GateSpec })
+  const options = gate.options ?? []
+  const answers = Array.isArray(gate.answer) ? gate.answer : [gate.answer]
+  const hasOptions = gate.kind === 'select' || gate.kind === 'predict-check' || gate.kind === 'sequence'
 
   return (
     <>
@@ -410,11 +391,7 @@ function GateProps({ scene }: { scene: Scene }) {
         <h5>Kiểu tương tác</h5>
         <div className="cc-motionchips">
           {KINDS.map((k) => (
-            <button
-              key={k.id}
-              className={gate.kind === k.id ? 'on' : ''}
-              onClick={() => set({ kind: k.id })}
-            >
+            <button key={k.id} className={gate.kind === k.id ? 'on' : ''} onClick={() => set({ kind: k.id })}>
               {k.label}
             </button>
           ))}
@@ -464,10 +441,7 @@ function GateProps({ scene }: { scene: Scene }) {
                   })
                 }
               />
-              <button
-                className="cc-xbtn"
-                onClick={() => set({ options: options.filter((_, j) => j !== i) })}
-              >
+              <button className="cc-xbtn" onClick={() => set({ options: options.filter((_, j) => j !== i) })}>
                 ✕
               </button>
             </div>
@@ -562,9 +536,7 @@ function GateProps({ scene }: { scene: Scene }) {
           className="cc-inp"
           placeholder="Khi đúng…"
           value={gate.feedback?.correct ?? ''}
-          onChange={(e) =>
-            set({ feedback: { correct: e.target.value, wrong: gate.feedback?.wrong ?? '' } })
-          }
+          onChange={(e) => set({ feedback: { correct: e.target.value, wrong: gate.feedback?.wrong ?? '' } })}
         />
         <input
           className="cc-inp"
@@ -587,32 +559,32 @@ function GateProps({ scene }: { scene: Scene }) {
         🗑 Xoá câu hỏi này
       </button>
     </>
-  );
+  )
 }
 
 /** Properties for a flow connector: line shape, dash, arrow, colour, delete. */
 function ConnectorProps({ el, sceneId }: { el: Element; sceneId: string }) {
-  const store = useStore();
-  const { doc } = useSnap();
+  const store = useStore()
+  const { doc } = useSnap()
   const c = (el.content ?? {}) as {
-    arrow?: boolean;
-    dash?: boolean;
-    bendX?: number;
-    bendY?: number;
-    from?: string;
-    to?: string;
-    label?: string;
-  };
-  const bent = !!(c.bendX || c.bendY);
+    arrow?: boolean
+    dash?: boolean
+    bendX?: number
+    bendY?: number
+    from?: string
+    to?: string
+    label?: string
+  }
+  const bent = !!(c.bendX || c.bendY)
   const set = (patch: Partial<typeof c>) =>
-    store.dispatch({ t: 'el.setContent', sceneId, elId: el.id, content: { ...c, ...patch } });
+    store.dispatch({ t: 'el.setContent', sceneId, elId: el.id, content: { ...c, ...patch } })
   const setColor = (color: string) =>
     store.dispatch({
       t: 'el.setStyle',
       sceneId,
       elId: el.id,
       style: { ...(el.style ?? {}), color },
-    });
+    })
   return (
     <>
       <div className="cc-card">
@@ -669,25 +641,25 @@ function ConnectorProps({ el, sceneId }: { el: Element; sceneId: string }) {
         🗑 Xoá mũi tên
       </button>
     </>
-  );
+  )
 }
 
 /** Properties for a sound-effect (audio element): listen, retime, delete. */
 function AudioProps({ el, sceneId }: { el: Element; sceneId: string }) {
-  const store = useStore();
+  const store = useStore()
   const c = (el.content ?? {}) as {
-    label?: string;
-    src?: string;
-    at?: number;
-    prompt?: string;
-    duration?: number;
-  };
-  const [pickerOpen, setPickerOpen] = useState(false);
+    label?: string
+    src?: string
+    at?: number
+    prompt?: string
+    duration?: number
+  }
+  const [pickerOpen, setPickerOpen] = useState(false)
   const setAt = (at: number) =>
     store.dispatch(
       { t: 'el.setContent', sceneId, elId: el.id, content: { ...c, at: +at.toFixed(2) } },
       `sfxat:${el.id}`,
-    );
+    )
   return (
     <>
       <div className="cc-card">
@@ -704,8 +676,8 @@ function AudioProps({ el, sceneId }: { el: Element; sceneId: string }) {
                 sceneId,
                 elId: el.id,
                 content: { ...c, src: url, label: name },
-              });
-              setPickerOpen(false);
+              })
+              setPickerOpen(false)
             }}
           />
         )}
@@ -716,7 +688,7 @@ function AudioProps({ el, sceneId }: { el: Element; sceneId: string }) {
             onClick={() => {
               if (c.src) {
                 try {
-                  new Audio(c.src).play().catch(() => {});
+                  new Audio(c.src).play().catch(() => {})
                 } catch {
                   /* ignore */
                 }
@@ -751,17 +723,17 @@ function AudioProps({ el, sceneId }: { el: Element; sceneId: string }) {
         🗑 Xoá âm thanh
       </button>
     </>
-  );
+  )
 }
 
 /** Scene-level controls shown when nothing is selected: narration + duration. */
 function SceneProps({ scene, cap }: { scene: Scene; cap: CapCtx }) {
-  const store = useStore();
-  const { doc, bundles, ui } = useSnap();
-  const bundle = bundles[ui.activeLocale] ?? bundles[doc.meta.defaultLocale];
-  if (!bundle) throw new Error(`locale bundle not found: ${ui.activeLocale}`);
-  const segs = resolveNarrations(scene, bundle);
-  const dur = cap.project.duration;
+  const store = useStore()
+  const { doc, bundles, ui } = useSnap()
+  const bundle = bundles[ui.activeLocale] ?? bundles[doc.meta.defaultLocale]
+  if (!bundle) throw new Error(`locale bundle not found: ${ui.activeLocale}`)
+  const segs = resolveNarrations(scene, bundle)
+  const dur = cap.project.duration
   const removeSeg = (ref: string) => {
     const ops: EditOp[] = [
       {
@@ -769,12 +741,12 @@ function SceneProps({ scene, cap }: { scene: Scene; cap: CapCtx }) {
         sceneId: scene.id,
         narrations: (scene.narrations ?? []).filter((s) => s.ref !== ref),
       },
-    ];
+    ]
     if (scene.narrationRef === ref)
-      ops.push({ t: 'scene.setNarrationRef', sceneId: scene.id, narrationRef: undefined });
-    store.batch(ops);
-  };
-  const sceneRegions = contractOf(scene.layout.template)?.slots.map((s) => s.name) ?? [];
+      ops.push({ t: 'scene.setNarrationRef', sceneId: scene.id, narrationRef: undefined })
+    store.batch(ops)
+  }
+  const sceneRegions = contractOf(scene.layout.template)?.slots.map((s) => s.name) ?? []
   return (
     <>
       <div className="cc-card">
@@ -800,16 +772,14 @@ function SceneProps({ scene, cap }: { scene: Scene; cap: CapCtx }) {
           ))}
         </select>
         <p className="cc-muted" style={{ marginTop: 6 }}>
-          Vùng của bố cục này: <b>{sceneRegions.join(', ') || '—'}</b>. Đổi bố cục có thể làm phần
-          tử nằm ở vùng không còn — mở từng phần tử để chọn lại vùng.
+          Vùng của bố cục này: <b>{sceneRegions.join(', ') || '—'}</b>. Đổi bố cục có thể làm phần tử nằm ở
+          vùng không còn — mở từng phần tử để chọn lại vùng.
         </p>
       </div>
       <div className="cc-card">
         <h5>Lời giảng ({segs.length})</h5>
         {segs.map((s, i) => {
-          const txt = (bundle.narration[s.ref]?.script ?? '')
-            .replace(/\[\[cue:[^\]]+\]\]/g, '')
-            .trim();
+          const txt = (bundle.narration[s.ref]?.script ?? '').replace(/\[\[cue:[^\]]+\]\]/g, '').trim()
           return (
             <div key={s.ref} className="cc-nrow">
               <button
@@ -819,14 +789,13 @@ function SceneProps({ scene, cap }: { scene: Scene; cap: CapCtx }) {
                 title="Sửa lời & tạo giọng"
               >
                 {bundle.narration[s.ref]?.audioUrl ? '🔊' : '🎙'} {i + 1}.{' '}
-                {txt ? txt.slice(0, 26) + (txt.length > 26 ? '…' : '') : '(trống)'} ·{' '}
-                {s.at.toFixed(1)}s
+                {txt ? txt.slice(0, 26) + (txt.length > 26 ? '…' : '') : '(trống)'} · {s.at.toFixed(1)}s
               </button>
               <button className="cc-xbtn" onClick={() => removeSeg(s.ref)} title="Xoá câu này">
                 ✕
               </button>
             </div>
-          );
+          )
         })}
         <button className="cc-add" onClick={() => cap.addNarr(scene.id, cap.gt)}>
           🎙 ＋ Thêm lời giảng
@@ -845,18 +814,13 @@ function SceneProps({ scene, cap }: { scene: Scene; cap: CapCtx }) {
           step={0.5}
           unit="s"
           on={(x) =>
-            store.dispatch(
-              { t: 'scene.setHold', sceneId: scene.id, hold: +x.toFixed(2) },
-              `hold:${scene.id}`,
-            )
+            store.dispatch({ t: 'scene.setHold', sceneId: scene.id, hold: +x.toFixed(2) }, `hold:${scene.id}`)
           }
         />
-        <p className="cc-muted">
-          Kéo dài để cảnh hiển thị lâu hơn. Không thể ngắn hơn lời giảng/animation.
-        </p>
+        <p className="cc-muted">Kéo dài để cảnh hiển thị lâu hơn. Không thể ngắn hơn lời giảng/animation.</p>
       </div>
     </>
-  );
+  )
 }
 
 /** Background picker — kind + panel + (for gradient) from/to swatches + angle.
@@ -869,17 +833,17 @@ const BG_KINDS: [Background['kind'], string][] = [
   ['gradient', 'Chuyển màu'],
   ['grid', 'Kẻ ô'],
   ['none', 'Không nền'],
-];
+]
 function BgEditor({
   bg,
   colors,
   onChange,
 }: {
-  bg?: Background;
-  colors: Record<string, string>;
-  onChange: (bg: Background) => void;
+  bg?: Background
+  colors: Record<string, string>
+  onChange: (bg: Background) => void
 }) {
-  const b: Background = bg ?? { kind: 'paper' };
+  const b: Background = bg ?? { kind: 'paper' }
   return (
     <>
       <select
@@ -943,7 +907,7 @@ function BgEditor({
         </>
       )}
     </>
-  );
+  )
 }
 
 /**
@@ -954,14 +918,13 @@ function BgEditor({
  * (Backdrop) paints `src` when present, else the `kind`.
  */
 export function BackgroundDialog() {
-  const store = useStore();
-  const { doc, ui } = useSnap();
-  const [picking, setPicking] = useState(false);
-  if (!ui.showBackground) return null;
-  const bg: Background = doc.background ?? { kind: 'paper' };
-  const set = (b: Background) =>
-    store.dispatch({ t: 'doc.setBackground', background: b }, 'doc-bg');
-  const close = () => store.setUI({ showBackground: false });
+  const store = useStore()
+  const { doc, ui } = useSnap()
+  const [picking, setPicking] = useState(false)
+  if (!ui.showBackground) return null
+  const bg: Background = doc.background ?? { kind: 'paper' }
+  const set = (b: Background) => store.dispatch({ t: 'doc.setBackground', background: b }, 'doc-bg')
+  const close = () => store.setUI({ showBackground: false })
   return (
     <>
       <div className="cc-modal-backdrop" onClick={close} />
@@ -1009,13 +972,13 @@ export function BackgroundDialog() {
           prompt={`soft abstract background illustration for a lesson about ${doc.meta.title}, gentle colors, no text`}
           onClose={() => setPicking(false)}
           onPick={(url) => {
-            set({ ...bg, src: url });
-            setPicking(false);
+            set({ ...bg, src: url })
+            setPicking(false)
           }}
         />
       )}
     </>
-  );
+  )
 }
 
 function Slider({
@@ -1027,13 +990,13 @@ function Slider({
   unit,
   step = 0.01,
 }: {
-  label: string;
-  v: number;
-  min: number;
-  max: number;
-  on: (v: number) => void;
-  unit?: string;
-  step?: number;
+  label: string
+  v: number
+  min: number
+  max: number
+  on: (v: number) => void
+  unit?: string
+  step?: number
 }) {
   return (
     <div className="cc-slider">
@@ -1054,7 +1017,7 @@ function Slider({
             : `${+v.toFixed(1)}${unit}`}
       </span>
     </div>
-  );
+  )
 }
 
 function typeLabel(el: Element): string {
@@ -1074,8 +1037,8 @@ function typeLabel(el: Element): string {
     chart: 'Biểu đồ',
     stat: 'Số liệu',
     quote: 'Trích dẫn',
-  };
-  return LABELS[el.type] ?? el.type;
+  }
+  return LABELS[el.type] ?? el.type
 }
 
 /** Friendly Vietnamese label for a manipulative param key (hides jargon). */
@@ -1130,10 +1093,10 @@ const PARAM_VI: Record<string, string> = {
   target: 'Mục tiêu',
   mode: 'Chế độ',
   direction: 'Chiều',
-};
+}
 function paramLabel(k: string): string {
-  if (PARAM_VI[k]) return PARAM_VI[k];
-  return k.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (c) => c.toUpperCase());
+  if (PARAM_VI[k]) return PARAM_VI[k]
+  return k.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (c) => c.toUpperCase())
 }
 
 /* ══════════════════════ slide-layer + image + region editors ════════════════
@@ -1146,9 +1109,9 @@ function paramLabel(k: string): string {
  */
 
 function useContentSetter(el: Element) {
-  const store = useStore();
-  const { ui } = useSnap();
-  const c = (el.content ?? {}) as Record<string, unknown>;
+  const store = useStore()
+  const { ui } = useSnap()
+  const c = (el.content ?? {}) as Record<string, unknown>
   return [
     c,
     (patch: Record<string, unknown>) =>
@@ -1158,16 +1121,16 @@ function useContentSetter(el: Element) {
         elId: el.id,
         content: { ...c, ...patch },
       }),
-  ] as const;
+  ] as const
 }
 
 /** Where the element sits, for slot-authored docs — pick a slot the template
  *  actually has, and set the order within a multi-element slot. */
 function RegionProps({ el }: { el: Element }) {
-  const store = useStore();
-  const { doc, ui } = useSnap();
-  const scene = doc.scenes.find((s) => s.id === ui.activeSceneId);
-  const slots = scene ? (contractOf(scene.layout.template)?.slots.map((s) => s.name) ?? []) : [];
+  const store = useStore()
+  const { doc, ui } = useSnap()
+  const scene = doc.scenes.find((s) => s.id === ui.activeSceneId)
+  const slots = scene ? (contractOf(scene.layout.template)?.slots.map((s) => s.name) ?? []) : []
   return (
     <div className="cc-card">
       <h5>Vị trí (slot)</h5>
@@ -1204,35 +1167,31 @@ function RegionProps({ el }: { el: Element }) {
           value={el.flow?.order ?? ''}
           placeholder="—"
           onChange={(e) => {
-            const v = e.target.value === '' ? undefined : Math.max(1, Number(e.target.value));
+            const v = e.target.value === '' ? undefined : Math.max(1, Number(e.target.value))
             store.dispatch({
               t: 'el.setFlow',
               sceneId: ui.activeSceneId,
               elId: el.id,
               flow: { ...el.flow, order: v },
-            });
+            })
           }}
         />
       </div>
     </div>
-  );
+  )
 }
 
 function ListProps({ el }: { el: Element }) {
-  const [c, set] = useContentSetter(el);
-  const items = (c.items as string[]) ?? [];
-  const style = (c.style as string) ?? 'bullet';
-  const setItem = (i: number, v: string) => set({ items: items.map((x, j) => (j === i ? v : x)) });
+  const [c, set] = useContentSetter(el)
+  const items = (c.items as string[]) ?? []
+  const style = (c.style as string) ?? 'bullet'
+  const setItem = (i: number, v: string) => set({ items: items.map((x, j) => (j === i ? v : x)) })
   return (
     <div className="cc-card">
       <h5>Danh sách</h5>
       <div className="cc-prow">
         <label>Kiểu</label>
-        <select
-          className="cc-select"
-          value={style}
-          onChange={(e) => set({ style: e.target.value })}
-        >
+        <select className="cc-select" value={style} onChange={(e) => set({ style: e.target.value })}>
           {['bullet', 'number', 'check', 'dash', 'none'].map((k) => (
             <option key={k} value={k}>
               {k}
@@ -1243,10 +1202,7 @@ function ListProps({ el }: { el: Element }) {
       {items.map((it, i) => (
         <div className="cc-prow" key={i}>
           <input className="cc-text" value={it} onChange={(e) => setItem(i, e.target.value)} />
-          <button
-            className="cc-mini"
-            onClick={() => set({ items: items.filter((_, j) => j !== i) })}
-          >
+          <button className="cc-mini" onClick={() => set({ items: items.filter((_, j) => j !== i) })}>
             ✕
           </button>
         </div>
@@ -1255,14 +1211,14 @@ function ListProps({ el }: { el: Element }) {
         + Thêm dòng
       </button>
     </div>
-  );
+  )
 }
 
 function ChartProps({ el }: { el: Element }) {
-  const [c, set] = useContentSetter(el);
-  const series = (c.series as { label: string; value: number; color?: string }[]) ?? [];
+  const [c, set] = useContentSetter(el)
+  const series = (c.series as { label: string; value: number; color?: string }[]) ?? []
   const setPt = (i: number, patch: Partial<{ label: string; value: number }>) =>
-    set({ series: series.map((s, j) => (j === i ? { ...s, ...patch } : s)) });
+    set({ series: series.map((s, j) => (j === i ? { ...s, ...patch } : s)) })
   return (
     <div className="cc-card">
       <h5>Biểu đồ</h5>
@@ -1294,26 +1250,20 @@ function ChartProps({ el }: { el: Element }) {
             value={s.value}
             onChange={(e) => setPt(i, { value: Number(e.target.value) })}
           />
-          <button
-            className="cc-mini"
-            onClick={() => set({ series: series.filter((_, j) => j !== i) })}
-          >
+          <button className="cc-mini" onClick={() => set({ series: series.filter((_, j) => j !== i) })}>
             ✕
           </button>
         </div>
       ))}
-      <button
-        className="cc-mini"
-        onClick={() => set({ series: [...series, { label: 'Mục', value: 0 }] })}
-      >
+      <button className="cc-mini" onClick={() => set({ series: [...series, { label: 'Mục', value: 0 }] })}>
         + Thêm cột
       </button>
     </div>
-  );
+  )
 }
 
 function StatProps({ el }: { el: Element }) {
-  const [c, set] = useContentSetter(el);
+  const [c, set] = useContentSetter(el)
   return (
     <div className="cc-card">
       <h5>Số liệu</h5>
@@ -1342,14 +1292,14 @@ function StatProps({ el }: { el: Element }) {
         />
       </div>
     </div>
-  );
+  )
 }
 
 function QuoteProps({ el }: { el: Element }) {
-  const store = useStore();
-  const { bundles, ui } = useSnap();
-  const [c, set] = useContentSetter(el);
-  const text = bundles[ui.activeLocale]?.strings[el.id] ?? '';
+  const store = useStore()
+  const { bundles, ui } = useSnap()
+  const [c, set] = useContentSetter(el)
+  const text = bundles[ui.activeLocale]?.strings[el.id] ?? ''
   return (
     <div className="cc-card">
       <h5>Trích dẫn</h5>
@@ -1375,13 +1325,13 @@ function QuoteProps({ el }: { el: Element }) {
         />
       </div>
     </div>
-  );
+  )
 }
 
 function TableProps({ el }: { el: Element }) {
-  const [c] = useContentSetter(el);
-  const header = (c.header as string[]) ?? [];
-  const rows = (c.rows as string[][]) ?? [];
+  const [c] = useContentSetter(el)
+  const header = (c.header as string[]) ?? []
+  const rows = (c.rows as string[][]) ?? []
   // A full grid editor is a lot of surface; for now show the shape and let the
   // header/cells be edited as text. Keeps the element from being a sealed box.
   return (
@@ -1393,21 +1343,21 @@ function TableProps({ el }: { el: Element }) {
         Sửa từng ô sẽ có ở bản sau — hiện chỉnh cấu trúc bảng trong JSON.
       </div>
     </div>
-  );
+  )
 }
 
 function ImageProps({ el }: { el: Element }) {
-  const [c, set] = useContentSetter(el);
-  const [pickerOpen, setPickerOpen] = useState(false);
-  const store = useStore();
-  const { ui } = useSnap();
+  const [c, set] = useContentSetter(el)
+  const [pickerOpen, setPickerOpen] = useState(false)
+  const store = useStore()
+  const { ui } = useSnap()
   // opened by a double-click on the picture (ui.pickImageFor) — consume the flag
   React.useEffect(() => {
     if (ui.pickImageFor === el.id) {
-      setPickerOpen(true);
-      store.setUI({ pickImageFor: null });
+      setPickerOpen(true)
+      store.setUI({ pickImageFor: null })
     }
-  }, [ui.pickImageFor, el.id, store]);
+  }, [ui.pickImageFor, el.id, store])
   return (
     <div className="cc-card">
       <h5>Ảnh</h5>
@@ -1437,16 +1387,16 @@ function ImageProps({ el }: { el: Element }) {
           prompt={(c.prompt as string) || ''}
           onClose={() => setPickerOpen(false)}
           onPick={(url, meta) => {
-            set({ src: url, ...(meta?.query ? { query: meta.query } : {}) });
-            setPickerOpen(false);
+            set({ src: url, ...(meta?.query ? { query: meta.query } : {}) })
+            setPickerOpen(false)
           }}
         />
       )}
     </div>
-  );
+  )
 }
 
-type Hit = { id?: string; url: string; label?: string; score?: number };
+type Hit = { id?: string; url: string; label?: string; score?: number }
 
 /**
  * MediaPicker — a real library picker, not three inline thumbnails.
@@ -1462,46 +1412,46 @@ function MediaPicker({
   onClose,
   onPick,
 }: {
-  query: string;
-  prompt: string;
-  onClose: () => void;
-  onPick: (url: string, meta?: { query?: string }) => void;
+  query: string
+  prompt: string
+  onClose: () => void
+  onPick: (url: string, meta?: { query?: string }) => void
 }) {
-  const [q, setQ] = useState(query);
-  const [hits, setHits] = useState<Hit[] | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [generating, setGenerating] = useState(false);
+  const [q, setQ] = useState(query)
+  const [hits, setHits] = useState<Hit[] | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [generating, setGenerating] = useState(false)
 
   const find = React.useCallback(async (text: string) => {
-    setBusy(true);
+    setBusy(true)
     try {
-      const res = await apiPost<Hit[]>(EXPLAINER_API.imagesFind, { q: text, limit: 30 });
-      setHits(res);
+      const res = await apiPost<Hit[]>(EXPLAINER_API.imagesFind, { q: text, limit: 30 })
+      setHits(res)
     } catch {
-      setHits([]);
+      setHits([])
     }
-    setBusy(false);
-  }, []);
+    setBusy(false)
+  }, [])
 
   // auto-search by the element's description the moment it opens
   React.useEffect(() => {
-    void find(query);
-  }, []);
+    void find(query)
+  }, [])
 
   const generate = async () => {
-    setGenerating(true);
+    setGenerating(true)
     try {
       const res = await apiPost<{ url?: string }>(EXPLAINER_API.image, {
         prompt: prompt || q || query,
         query: q || query,
         allowGenerate: true,
-      });
-      if (res.url) onPick(res.url, { query: q || query });
+      })
+      if (res.url) onPick(res.url, { query: q || query })
     } catch {
       /* ignore — the button re-enables */
     }
-    setGenerating(false);
-  };
+    setGenerating(false)
+  }
 
   return (
     <>
@@ -1565,7 +1515,7 @@ function MediaPicker({
         </div>
       </div>
     </>
-  );
+  )
 }
 
 /**
@@ -1577,21 +1527,21 @@ function SfxPicker({
   onClose,
   onPick,
 }: {
-  onClose: () => void;
-  onPick: (name: string, url: string) => void;
+  onClose: () => void
+  onPick: (name: string, url: string) => void
 }) {
-  const [q, setQ] = useState('');
-  const names = SFX_NAMES.filter((n) => n.includes(q.trim().toLowerCase()));
+  const [q, setQ] = useState('')
+  const names = SFX_NAMES.filter((n) => n.includes(q.trim().toLowerCase()))
   const preview = (name: string) => {
-    const url = sfxUrl(name);
+    const url = sfxUrl(name)
     if (url) {
       try {
-        void new Audio(url).play().catch(() => undefined);
+        void new Audio(url).play().catch(() => undefined)
       } catch {
         /* ignore */
       }
     }
-  };
+  }
   return (
     <>
       <div className="cc-modal-backdrop" onClick={onClose} />
@@ -1627,5 +1577,5 @@ function SfxPicker({
         </div>
       </div>
     </>
-  );
+  )
 }

@@ -1,8 +1,8 @@
-'use client';
+'use client'
 
-import { useCallback, useRef, useState, type DragEvent } from 'react';
-import { FileText, UploadCloud, X } from 'lucide-react';
-import { cn } from '@/lib/cn';
+import { useCallback, useRef, useState, type DragEvent } from 'react'
+import { FileText, UploadCloud, X } from 'lucide-react'
+import { cn } from '@/lib/cn'
 
 /** Vùng kéo-thả file (mặc định PDF). Click cũng mở được hộp chọn file. */
 export function Dropzone({
@@ -13,31 +13,31 @@ export function Dropzone({
   hint,
   disabled,
 }: {
-  file: File | null;
-  onFile: (f: File | null) => void;
-  accept?: string;
-  label: string;
-  hint?: string;
-  disabled?: boolean;
+  file: File | null
+  onFile: (f: File | null) => void
+  accept?: string
+  label: string
+  hint?: string
+  disabled?: boolean
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [over, setOver] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [over, setOver] = useState(false)
 
   const take = useCallback(
     (f: File | undefined) => {
-      if (!f) return;
-      if (accept && !f.type.includes(accept.split('/')[1] ?? '')) return;
-      onFile(f);
+      if (!f) return
+      if (accept && !f.type.includes(accept.split('/')[1] ?? '')) return
+      onFile(f)
     },
     [accept, onFile],
-  );
+  )
 
   const onDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setOver(false);
-    if (disabled) return;
-    take(e.dataTransfer.files?.[0]);
-  };
+    e.preventDefault()
+    setOver(false)
+    if (disabled) return
+    take(e.dataTransfer.files?.[0])
+  }
 
   if (file) {
     return (
@@ -45,9 +45,7 @@ export function Dropzone({
         <FileText className="size-5 shrink-0 text-primary" />
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-medium text-foreground">{file.name}</div>
-          <div className="text-xs text-foreground-muted">
-            {(file.size / 1024 / 1024).toFixed(2)} MB
-          </div>
+          <div className="text-xs text-foreground-muted">{(file.size / 1024 / 1024).toFixed(2)} MB</div>
         </div>
         <button
           type="button"
@@ -59,20 +57,20 @@ export function Dropzone({
           <X className="size-4" />
         </button>
       </div>
-    );
+    )
   }
 
   return (
     <div
       onDragOver={(e) => {
-        e.preventDefault();
-        if (!disabled) setOver(true);
+        e.preventDefault()
+        if (!disabled) setOver(true)
       }}
       onDragLeave={() => setOver(false)}
       onDrop={onDrop}
       onClick={() => !disabled && inputRef.current?.click()}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') inputRef.current?.click();
+        if (e.key === 'Enter' || e.key === ' ') inputRef.current?.click()
       }}
       role="button"
       tabIndex={0}
@@ -96,5 +94,5 @@ export function Dropzone({
         onChange={(e) => take(e.target.files?.[0])}
       />
     </div>
-  );
+  )
 }

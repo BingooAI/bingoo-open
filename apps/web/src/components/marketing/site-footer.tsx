@@ -1,19 +1,19 @@
-import { Heart } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { Logo } from '@/components/brand/logo';
-import { Container } from '@bingoo/ui-web';
-import { Link } from '@/i18n/navigation';
+import { Heart } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { Logo } from '@/components/brand/logo'
+import { Container } from '@bingoo/ui-web'
+import { Link } from '@/i18n/navigation'
 
 const GROUPS = {
   product: ['features', 'subjects', 'pricing', 'forParents'],
   company: ['about', 'careers', 'contact', 'blog'],
   resources: ['help', 'community', 'blog'],
   legal: ['privacy', 'terms', 'cookies'],
-} as const;
+} as const
 
 export function SiteFooter() {
-  const t = useTranslations('landing.footer');
-  const year = new Date().getFullYear();
+  const t = useTranslations('landing.footer')
+  const year = new Date().getFullYear()
 
   return (
     <footer className="border-t border-border bg-surface-muted/40">
@@ -26,9 +26,7 @@ export function SiteFooter() {
 
           {(Object.keys(GROUPS) as (keyof typeof GROUPS)[]).map((group) => (
             <div key={group}>
-              <h4 className="font-display text-sm font-semibold text-foreground">
-                {t(`groups.${group}`)}
-              </h4>
+              <h4 className="font-display text-sm font-semibold text-foreground">{t(`groups.${group}`)}</h4>
               <ul className="mt-4 flex flex-col gap-3">
                 {GROUPS[group].map((link) => (
                   <li key={link}>
@@ -54,5 +52,5 @@ export function SiteFooter() {
         </div>
       </Container>
     </footer>
-  );
+  )
 }

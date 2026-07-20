@@ -1,8 +1,8 @@
-import { AvatarGroup } from '@bingoo/ui-web';
-import { Radio } from 'lucide-react';
-import type { ReactNode } from 'react';
-import type { Capability } from '@bingoo/learning-experience';
-import type { ExperienceLabels, Participant } from './types';
+import { AvatarGroup } from '@bingoo/ui-web'
+import { Radio } from 'lucide-react'
+import type { ReactNode } from 'react'
+import type { Capability } from '@bingoo/learning-experience'
+import type { ExperienceLabels, Participant } from './types'
 
 /** Thanh chrome phản ánh companion/scale/time/delivery qua năng lực suy ra (live/scheduled/roster). */
 export function ChromeBar({
@@ -11,14 +11,14 @@ export function ChromeBar({
   modeLabel,
   participants,
 }: {
-  caps: readonly Capability[];
-  labels: ExperienceLabels;
-  modeLabel?: ReactNode;
-  participants?: Participant[];
+  caps: readonly Capability[]
+  labels: ExperienceLabels
+  modeLabel?: ReactNode
+  participants?: Participant[]
 }) {
-  const live = caps.includes('realtime');
-  const scheduled = caps.includes('scheduling');
-  const roster = caps.includes('social-chat') && participants != null && participants.length > 0;
+  const live = caps.includes('realtime')
+  const scheduled = caps.includes('scheduling')
+  const roster = caps.includes('social-chat') && participants != null && participants.length > 0
   return (
     <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-border bg-surface px-4 py-2">
       {modeLabel ? (
@@ -46,5 +46,5 @@ export function ChromeBar({
         </span>
       ) : null}
     </div>
-  );
+  )
 }

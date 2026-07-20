@@ -1,11 +1,11 @@
-'use client';
+'use client'
 
-import { ImageOff } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import type { ReactNode } from 'react';
-import { EmptyState, Spinner } from '@bingoo/ui-web';
-import type { MediaAssetDto } from '@/lib/api-types';
-import { AssetCard } from './asset-card';
+import { ImageOff } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import type { ReactNode } from 'react'
+import { EmptyState, Spinner } from '@bingoo/ui-web'
+import type { MediaAssetDto } from '@/lib/api-types'
+import { AssetCard } from './asset-card'
 
 /**
  * Responsive asset grid with explicit loading / error / empty states. Pagination
@@ -25,27 +25,27 @@ export function AssetGrid({
   emptyDescription,
   footer,
 }: {
-  assets: MediaAssetDto[] | undefined;
-  isLoading: boolean;
-  isError: boolean;
-  onRetry: () => void;
-  selectedId: string | null;
-  onSelect: (asset: MediaAssetDto) => void;
+  assets: MediaAssetDto[] | undefined
+  isLoading: boolean
+  isError: boolean
+  onRetry: () => void
+  selectedId: string | null
+  onSelect: (asset: MediaAssetDto) => void
   /** Multi-select — omit `onToggleCheck` to hide the checkboxes entirely. */
-  checkedIds?: ReadonlySet<string>;
-  onToggleCheck?: (asset: MediaAssetDto) => void;
-  emptyTitle: string;
-  emptyDescription?: string;
-  footer?: ReactNode;
+  checkedIds?: ReadonlySet<string>
+  onToggleCheck?: (asset: MediaAssetDto) => void
+  emptyTitle: string
+  emptyDescription?: string
+  footer?: ReactNode
 }) {
-  const t = useTranslations('admin.library');
+  const t = useTranslations('admin.library')
 
   if (isLoading && !assets) {
     return (
       <div className="grid place-items-center py-20">
         <Spinner />
       </div>
-    );
+    )
   }
 
   if (isError) {
@@ -63,25 +63,18 @@ export function AssetGrid({
           </button>
         }
       />
-    );
+    )
   }
 
   if (!assets || assets.length === 0) {
     return (
-      <EmptyState
-        icon={<ImageOff className="size-7" />}
-        title={emptyTitle}
-        description={emptyDescription}
-      />
-    );
+      <EmptyState icon={<ImageOff className="size-7" />} title={emptyTitle} description={emptyDescription} />
+    )
   }
 
   return (
     <div className="space-y-4">
-      <div
-        className="grid gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5"
-        aria-busy={isLoading}
-      >
+      <div className="grid gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5" aria-busy={isLoading}>
         {assets.map((asset) => (
           <AssetCard
             key={asset.id}
@@ -95,5 +88,5 @@ export function AssetGrid({
       </div>
       {footer}
     </div>
-  );
+  )
 }

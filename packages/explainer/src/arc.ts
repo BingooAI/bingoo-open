@@ -22,23 +22,23 @@
  * between the rule and the first test" is actionable in a way that "make it more
  * pedagogical" never is.
  */
-import { getManipulative } from '@bingoo/manipulatives';
-import type { ExplainerDoc, LocaleBundle, Scene } from './schema';
-import type { Finding } from './authoring';
+import { getManipulative } from '@bingoo/manipulatives'
+import type { ExplainerDoc, LocaleBundle, Scene } from './schema'
+import type { Finding } from './authoring'
 
 export type Phase =
-  'explore' | 'orient' | 'teach' | 'formalize' | 'guided' | 'practice' | 'recap' | 'checkout';
+  'explore' | 'orient' | 'teach' | 'formalize' | 'guided' | 'practice' | 'recap' | 'checkout'
 
 export const PHASES: {
-  id: Phase;
-  vi: string;
-  why: string;
+  id: Phase
+  vi: string
+  why: string
   /** how many scenes this phase needs at minimum */
-  min: number;
+  min: number
   /** whether the scenes here must be gates (learner DOES something) */
-  gate?: boolean;
+  gate?: boolean
   /** templates that fit this phase */
-  templates: string[];
+  templates: string[]
 }[] = [
   {
     id: 'explore',
@@ -98,12 +98,12 @@ export const PHASES: {
     gate: true,
     templates: ['practice'],
   },
-];
+]
 
-const ORDER = PHASES.map((p) => p.id);
+const ORDER = PHASES.map((p) => p.id)
 
 /** An exposition scene with less narration than this flashes past unread. */
-export const MIN_NARRATION_CHARS = 60;
+export const MIN_NARRATION_CHARS = 60
 
 /* ══════════════════════════════ length ═══════════════════════════════════════
  * A lesson's size is a consequence of how long it should RUN, not a constant.
@@ -114,13 +114,13 @@ export const MIN_NARRATION_CHARS = 60;
  */
 
 /** Vietnamese narration, spoken: ~14 characters per second. */
-export const CHARS_PER_SEC = 14;
+export const CHARS_PER_SEC = 14
 /** A gate holds the timeline while the child thinks and answers. */
-export const GATE_SECONDS = 35;
+export const GATE_SECONDS = 35
 /** Dwell after the last narration line of a scene, before the next. */
-export const SCENE_PAD_SECONDS = 2;
+export const SCENE_PAD_SECONDS = 2
 
-export const DEFAULT_MINUTES = 8;
+export const DEFAULT_MINUTES = 8
 
 /** Relative weight of each phase — the SHAPE stays the same at any length. */
 const WEIGHT: Record<Phase, number> = {
@@ -132,12 +132,12 @@ const WEIGHT: Record<Phase, number> = {
   practice: 2,
   recap: 1,
   checkout: 1,
-};
-const TOTAL_WEIGHT = Object.values(WEIGHT).reduce((a, b) => a + b, 0); // 11
+}
+const TOTAL_WEIGHT = Object.values(WEIGHT).reduce((a, b) => a + b, 0) // 11
 
 /** Average seconds a scene runs (an exposition scene of 3–4 narration lines,
  *  blended with the gates). Derived from the reference lesson, not guessed. */
-export const SEC_PER_SCENE = 32;
+export const SEC_PER_SCENE = 32
 
 /**
  * A lesson does not grow without bound in SCENE COUNT — past a point it grows in
@@ -147,30 +147,27 @@ export const SEC_PER_SCENE = 32;
  * Beyond this cap the scenes simply run longer — more to look at, more to say,
  * more time on each idea.
  */
-export const MAX_SCENES = 34;
-export const MIN_SCENES_FLOOR = 8;
+export const MAX_SCENES = 34
+export const MIN_SCENES_FLOOR = 8
 
 export type Plan = {
-  minutes: number;
-  scenes: number;
+  minutes: number
+  scenes: number
   /** minimum scenes per phase at this length */
-  min: Record<Phase, number>;
-};
+  min: Record<Phase, number>
+}
 
 /** The plan for a target duration. This is what `MIN_SCENES` used to hardcode. */
 export function planFor(minutes = DEFAULT_MINUTES): Plan {
-  const m = Math.max(3, Math.min(45, minutes));
-  const scenes = Math.max(
-    MIN_SCENES_FLOOR,
-    Math.min(MAX_SCENES, Math.round((m * 60) / SEC_PER_SCENE)),
-  );
-  const min = {} as Record<Phase, number>;
+  const m = Math.max(3, Math.min(45, minutes))
+  const scenes = Math.max(MIN_SCENES_FLOOR, Math.min(MAX_SCENES, Math.round((m * 60) / SEC_PER_SCENE)))
+  const min = {} as Record<Phase, number>
   for (const p of PHASES) {
     // never below the floor that makes the phase mean anything — a "teach"
     // phase with one scene has said a thing once, which is not teaching
-    min[p.id] = Math.max(p.min, Math.round((scenes * WEIGHT[p.id]) / TOTAL_WEIGHT));
+    min[p.id] = Math.max(p.min, Math.round((scenes * WEIGHT[p.id]) / TOTAL_WEIGHT))
   }
-  return { minutes: m, scenes, min };
+  return { minutes: m, scenes, min }
 }
 
 /** Bridge the LessonBrief's requested `sceneCount` to the arc's duration model.
@@ -183,40 +180,38 @@ export function planForScenes(sceneCount: number): Plan {
   // lift to the arc floor FIRST, then derive minutes from the resulting scene
   // count — so targetMinutes and the scene count always describe the same
   // lesson (a floored 6→8 lesson claims ~8×scene-length, not the 6 asked for).
-  let plan = planFor((Math.max(MIN_SCENES_FLOOR, sceneCount) * SEC_PER_SCENE) / 60);
+  let plan = planFor((Math.max(MIN_SCENES_FLOOR, sceneCount) * SEC_PER_SCENE) / 60)
   // The per-phase minimums can SUM above plan.scenes for short lessons (teach≥3,
   // practice≥2, six others≥1 = 11 > the 8-scene floor). checkDoc enforces each
   // phase min, so the real minimum is their sum — target at least that, or WRITE
   // can never satisfy the arc gate. Re-plan until the scene count covers it.
-  const need = (p: Plan) => Object.values(p.min).reduce((a, b) => a + b, 0);
+  const need = (p: Plan) => Object.values(p.min).reduce((a, b) => a + b, 0)
   for (let i = 0; i < 4 && plan.scenes < need(plan); i++) {
-    plan = planFor(((need(plan) + 1) * SEC_PER_SCENE) / 60);
+    plan = planFor(((need(plan) + 1) * SEC_PER_SCENE) / 60)
   }
-  return plan;
+  return plan
 }
 
 /** Estimated runtime from the text alone — before any TTS has been spoken. */
 export function estimateSeconds(doc: ExplainerDoc, bundle: LocaleBundle): number {
-  let sec = 0;
+  let sec = 0
   for (const s of doc.scenes) {
     if (s.kind === 'gate') {
-      sec += GATE_SECONDS;
-      continue;
+      sec += GATE_SECONDS
+      continue
     }
-    const n = narrationOf(s, bundle);
-    sec += n.length / CHARS_PER_SEC + SCENE_PAD_SECONDS;
+    const n = narrationOf(s, bundle)
+    sec += n.length / CHARS_PER_SEC + SCENE_PAD_SECONDS
   }
-  return Math.round(sec);
+  return Math.round(sec)
 }
 
 function narrationOf(scene: Scene, bundle: LocaleBundle): string {
-  const refs = [scene.narrationRef, ...(scene.narrations ?? []).map((n) => n.ref)].filter(
-    Boolean,
-  ) as string[];
+  const refs = [scene.narrationRef, ...(scene.narrations ?? []).map((n) => n.ref)].filter(Boolean) as string[]
   return refs
     .map((r) => bundle.narration[r]?.script ?? '')
     .join(' ')
-    .trim();
+    .trim()
 }
 
 /**
@@ -224,8 +219,8 @@ function narrationOf(scene: Scene, bundle: LocaleBundle): string {
  * whether each scene is well-FORMED; this says whether the lesson TEACHES.
  */
 export function checkDoc(doc: ExplainerDoc, bundle: LocaleBundle): Finding[] {
-  const out: Finding[] = [];
-  const plan = planFor(doc.meta.targetMinutes ?? DEFAULT_MINUTES);
+  const out: Finding[] = []
+  const plan = planFor(doc.meta.targetMinutes ?? DEFAULT_MINUTES)
 
   if (doc.scenes.length < plan.scenes) {
     out.push({
@@ -233,33 +228,33 @@ export function checkDoc(doc: ExplainerDoc, bundle: LocaleBundle): Finding[] {
       code: 'too-short',
       message: `bài đặt mục tiêu ${plan.minutes} phút nhưng chỉ có ${doc.scenes.length} scene — cần ~${plan.scenes}. Với chừng này scene thì học sinh không kịp nhìn thứ gì.`,
       fix: `Viết ~${plan.scenes} scene, đi đủ 8 giai đoạn: ${PHASES.map((p) => p.vi).join(' → ')}`,
-    });
+    })
   }
 
   // does the lesson actually RUN as long as it claims? Estimated from the
   // narration text — a model that writes twelve scenes of one sentence each has
   // hit the scene count and missed the point.
-  const est = estimateSeconds(doc, bundle);
-  const target = plan.minutes * 60;
+  const est = estimateSeconds(doc, bundle)
+  const target = plan.minutes * 60
   if (est < target * 0.7) {
     out.push({
       level: 'error',
       code: 'runs-short',
       message: `bài chỉ chạy khoảng ${Math.round(est / 60)} phút, mục tiêu là ${plan.minutes} phút — lời giảng quá ngắn, bài sẽ vụt qua`,
       fix: `Viết lời giảng dài hơn: nói với học sinh, chỉ vào thứ đang hiện, hỏi han, chờ. Cần thêm ~${Math.round((target - est) * CHARS_PER_SEC)} ký tự lời giảng.`,
-    });
+    })
   } else if (est > target * 1.4) {
     out.push({
       level: 'warn',
       code: 'runs-long',
       message: `bài chạy khoảng ${Math.round(est / 60)} phút, dài hơn mục tiêu ${plan.minutes} phút`,
       fix: `Cắt bớt lời giảng hoặc bỏ scene phụ.`,
-    });
+    })
   }
 
   // every scene must declare its phase — otherwise nobody, including the model,
   // knows what job the scene is doing
-  const missing = doc.scenes.filter((s) => !s.phase);
+  const missing = doc.scenes.filter((s) => !s.phase)
   if (missing.length) {
     out.push({
       level: 'error',
@@ -269,76 +264,76 @@ export function checkDoc(doc: ExplainerDoc, bundle: LocaleBundle): Finding[] {
         .map((s) => s.id)
         .join(', ')}…) — không biết chúng đang làm việc gì trong bài`,
       fix: `Mỗi scene đặt phase: ${ORDER.join(' | ')}`,
-    });
-    return out; // the rest of the arc checks need phases
+    })
+    return out // the rest of the arc checks need phases
   }
 
   // counts per phase — SCALED to the target duration
   for (const p of PHASES) {
-    const inPhase = doc.scenes.filter((s) => s.phase === p.id);
-    const need = plan.min[p.id];
+    const inPhase = doc.scenes.filter((s) => s.phase === p.id)
+    const need = plan.min[p.id]
     if (inPhase.length < need) {
       out.push({
         level: 'error',
         code: 'phase-thin',
         message: `giai đoạn "${p.vi}" (${p.id}) cần ≥${need} scene cho bài ${plan.minutes} phút, đang có ${inPhase.length}. ${p.why}`,
         fix: `Thêm ${need - inPhase.length} scene phase="${p.id}", dùng template: ${p.templates.join(' / ')}`,
-      });
+      })
     }
     if (p.gate) {
-      const notGate = inPhase.filter((s) => s.kind !== 'gate');
+      const notGate = inPhase.filter((s) => s.kind !== 'gate')
       for (const s of notGate) {
         out.push({
           level: 'error',
           code: 'phase-not-gate',
           message: `scene "${s.id}" ở giai đoạn "${p.vi}" nhưng kind="exposition" — giai đoạn này học sinh phải LÀM, không phải xem`,
           fix: `Đổi kind="gate" và thêm gate.activity`,
-        });
+        })
       }
     }
   }
 
   // order: phases may repeat, but must never go backwards. A rule BEFORE the
   // teaching is the single most common way a generated lesson stops teaching.
-  let high = -1;
+  let high = -1
   for (const s of doc.scenes) {
-    const i = ORDER.indexOf(s.phase as Phase);
-    if (i < 0) continue;
+    const i = ORDER.indexOf(s.phase as Phase)
+    if (i < 0) continue
     if (i < high) {
-      const back = PHASES[i]!;
+      const back = PHASES[i]!
       out.push({
         level: 'error',
         code: 'phase-out-of-order',
         message: `scene "${s.id}" quay lại giai đoạn "${back.vi}" sau khi bài đã đi qua "${PHASES[high]!.vi}" — bài học đi lùi`,
         fix: `Xếp scene theo đúng thứ tự: ${PHASES.map((p) => p.id).join(' → ')}`,
-      });
-      break;
+      })
+      break
     }
-    high = Math.max(high, i);
+    high = Math.max(high, i)
   }
 
   // pace: an exposition scene with no narration is on screen for a heartbeat
   for (const s of doc.scenes) {
-    if (s.kind !== 'exposition') continue;
-    const n = narrationOf(s, bundle);
+    if (s.kind !== 'exposition') continue
+    const n = narrationOf(s, bundle)
     if (!n) {
       out.push({
         level: 'error',
         code: 'no-narration',
         message: `scene "${s.id}" không có lời giảng — nó sẽ vụt qua trước khi học sinh kịp nhìn`,
         fix: `Thêm narrationRef + narration script (≥${MIN_NARRATION_CHARS} ký tự), có [[cue:...]] để buộc hiệu ứng vào lời`,
-      });
+      })
     } else if (n.length < MIN_NARRATION_CHARS) {
       out.push({
         level: 'warn',
         code: 'narration-thin',
         message: `scene "${s.id}" chỉ có ${n.length} ký tự lời giảng — quá nhanh`,
         fix: `Viết dài hơn: nói với học sinh, chỉ vào thứ đang hiện, hỏi han. ≥${MIN_NARRATION_CHARS} ký tự.`,
-      });
+      })
     }
   }
 
-  return out;
+  return out
 }
 
 /* ══════════════════════════════════ richness ═══════════════════════════════
@@ -363,39 +358,39 @@ export const RICHNESS = {
   quizTypes: 2,
   /** beats per exposition scene — visuals must move WITH the voice, not sit still */
   beatsPerScene: 2,
-} as const;
+} as const
 
 function quizTypeOf(scene: Scene): string | null {
-  const q = scene.gate?.activity?.quiz as { type?: string } | undefined;
-  return q?.type ?? null;
+  const q = scene.gate?.activity?.quiz as { type?: string } | undefined
+  return q?.type ?? null
 }
 
 export function checkRichness(doc: ExplainerDoc, bundle: LocaleBundle): Finding[] {
-  const out: Finding[] = [];
-  const expo = doc.scenes.filter((s) => s.kind === 'exposition');
+  const out: Finding[] = []
+  const expo = doc.scenes.filter((s) => s.kind === 'exposition')
 
-  const templates = new Set(doc.scenes.map((s) => s.layout.template));
+  const templates = new Set(doc.scenes.map((s) => s.layout.template))
   if (templates.size < RICHNESS.templates) {
     out.push({
       level: 'error',
       code: 'few-templates',
       message: `chỉ dùng ${templates.size} template (${[...templates].join(', ')}) — bài đang là một xấp slide giống nhau`,
       fix: `Dùng ≥${RICHNESS.templates} template khác nhau. Mỗi ý cần một CÁCH NHÌN khác: compare để lộ khác biệt, sequence cho các bước, flow cho rẽ nhánh, data cho số liệu, worked-example cho bài mẫu.`,
-    });
+    })
   }
 
   // ── the big one: kits that never move ────────────────────────────────────
   // A manipulative with no `actions` is a static picture. Its verbs are what
   // make it a manipulative: they fire on a narration cue, so the child watches
   // the eight stars pair up WHILE the teacher says "two, four, six, eight".
-  const kits = new Set<string>();
+  const kits = new Set<string>()
   for (const s of expo) {
     for (const el of s.elements) {
-      if (el.type !== 'manipulative') continue;
-      const c = (el.content ?? {}) as { kind?: string; actions?: unknown[] };
-      if (c.kind) kits.add(c.kind);
-      const kit = c.kind ? getManipulative(c.kind) : undefined;
-      const verbs = kit ? Object.keys(kit.verbs) : [];
+      if (el.type !== 'manipulative') continue
+      const c = (el.content ?? {}) as { kind?: string; actions?: unknown[] }
+      if (c.kind) kits.add(c.kind)
+      const kit = c.kind ? getManipulative(c.kind) : undefined
+      const verbs = kit ? Object.keys(kit.verbs) : []
       if (!c.actions?.length && verbs.length) {
         out.push({
           level: 'error',
@@ -403,7 +398,7 @@ export function checkRichness(doc: ExplainerDoc, bundle: LocaleBundle): Finding[
           elementId: el.id,
           message: `"${el.id}" (${c.kind}) đứng im — không có actions. Kit này BIẾT LÀM: ${verbs.join(', ')}. Để im thì nó chỉ là một tấm ảnh, và bài mất đúng thứ khiến explainer khác PowerPoint.`,
           fix: `Thêm actions, mỗi verb buộc vào một cue của lời giảng: "actions":[{"verb":"${verbs[0]}","at":"@c2","args":{…}}] — để học sinh THẤY nó xảy ra trong lúc cô đang nói.`,
-        });
+        })
       }
     }
   }
@@ -413,7 +408,7 @@ export function checkRichness(doc: ExplainerDoc, bundle: LocaleBundle): Finding[
       code: 'few-kits',
       message: `chỉ dùng ${kits.size} loại manipulative (${[...kits].join(', ')}) — cùng một cách nhìn lặp lại`,
       fix: `Dùng ≥${RICHNESS.kits} kit khác nhau, mỗi kit cho một cách biểu diễn khác (đếm · ghép đôi · chia nhóm · trục số · mười khung…).`,
-    });
+    })
   }
 
   // VISUALS MUST TRACK THE VOICE.
@@ -426,26 +421,26 @@ export function checkRichness(doc: ExplainerDoc, bundle: LocaleBundle): Finding[
   // move on almost none of them is a static scene, no matter how many elements it
   // has.
   for (const s of expo) {
-    const script = narrationOf(s, bundle);
-    const cues = new Set([...script.matchAll(/\[\[cue:([^\]]+)\]\]/g)].map((m) => m[1]));
-    if (cues.size < 2) continue; // a one-line scene needs no beat-tracking
+    const script = narrationOf(s, bundle)
+    const cues = new Set([...script.matchAll(/\[\[cue:([^\]]+)\]\]/g)].map((m) => m[1]))
+    if (cues.size < 2) continue // a one-line scene needs no beat-tracking
 
     // every cue a visual event lands on: a beat's cue, or a manip action's @cue
-    const hit = new Set<string>();
-    for (const b of s.beats ?? []) if (cues.has(b.cue)) hit.add(b.cue);
+    const hit = new Set<string>()
+    for (const b of s.beats ?? []) if (cues.has(b.cue)) hit.add(b.cue)
     for (const el of s.elements) {
-      if (el.type !== 'manipulative') continue;
+      if (el.type !== 'manipulative') continue
       for (const a of (el.content as { actions?: { at?: string }[] } | undefined)?.actions ?? []) {
-        const c = a.at?.replace(/^@/, '');
-        if (c && cues.has(c)) hit.add(c);
+        const c = a.at?.replace(/^@/, '')
+        if (c && cues.has(c)) hit.add(c)
       }
     }
     // a slide `revealAll`/`revealItem` also counts as motion
     const hasBuild = (s.beats ?? []).some((b) =>
       b.actions.some((a) => a.verb === 'revealAll' || a.verb === 'revealItem'),
-    );
+    )
 
-    const need = Math.max(2, cues.size - 1); // allow one cue to be pure voice
+    const need = Math.max(2, cues.size - 1) // allow one cue to be pure voice
     if (!hasBuild && hit.size < need) {
       out.push({
         level: 'error',
@@ -455,118 +450,108 @@ export function checkRichness(doc: ExplainerDoc, bundle: LocaleBundle): Finding[
           `Mỗi cue phải mang MỘT thứ lên màn hình: callout text hiện theo cue (reveal), một phần được nhấn (emphasize), ` +
           `một dòng bullet (revealAll trên list), hoặc một verb của kit (at:"@cN"). ` +
           `Nếu lời giảng nói nhiều ý mà template chỉ có 1 ảnh (title-card), hãy DÙNG bullets/teach có callout, hoặc TÁCH thành nhiều scene.`,
-      });
+      })
     }
   }
 
   // gates: variety
-  const qTypes = new Set(doc.scenes.map(quizTypeOf).filter(Boolean) as string[]);
+  const qTypes = new Set(doc.scenes.map(quizTypeOf).filter(Boolean) as string[])
   if (qTypes.size && qTypes.size < RICHNESS.quizTypes) {
     out.push({
       level: 'error',
       code: 'few-quiz-types',
       message: `mọi câu hỏi đều là "${[...qTypes][0]}" — học sinh học thuộc DẠNG BÀI, không phải khái niệm`,
       fix: `Dùng ≥${RICHNESS.quizTypes} loại: single, boolean, order, match, categorize, numberline, tenframe… hoặc activity.manip để học sinh THAO TÁC thay vì chọn.`,
-    });
+    })
   }
 
   // does the lesson ever show structure? (a diagram or a chart)
   const hasStructure = doc.scenes.some((s) =>
     s.elements.some((el) => el.type === 'diagram' || el.type === 'chart' || el.type === 'table'),
-  );
+  )
   if (!hasStructure) {
     out.push({
       level: 'warn',
       code: 'no-structure',
       message: `bài không có sơ đồ / biểu đồ / bảng nào — engine tự vẽ được cả ba, và chúng là cách duy nhất cho học sinh thấy QUAN HỆ`,
       fix: `Thêm ít nhất một: flow (quy trình rẽ nhánh) hoặc table (so sánh nhiều chiều) hoặc chart (số liệu).`,
-    });
+    })
   }
 
   // does the learner ever DO something with their hands?
-  const hasManipGate = doc.scenes.some((s) => s.gate?.activity?.manip);
+  const hasManipGate = doc.scenes.some((s) => s.gate?.activity?.manip)
   if (!hasManipGate) {
     out.push({
       level: 'warn',
       code: 'no-manip-gate',
       message: `không gate nào cho học sinh THAO TÁC — mọi bài tập đều là chọn đáp án`,
       fix: `Ít nhất một gate dùng activity.manip: học sinh kéo/đếm/ghép trên chính kit vừa học.`,
-    });
+    })
   }
 
-  return out;
+  return out
 }
 
 /** Everything: the arc AND whether the lesson uses the engine it is written for. */
 export function checkLesson(doc: ExplainerDoc, bundle: LocaleBundle): Finding[] {
-  return [...checkDoc(doc, bundle), ...checkRichness(doc, bundle)];
+  return [...checkDoc(doc, bundle), ...checkRichness(doc, bundle)]
 }
 
 /** The arc, rendered for the model. Generated — add a phase and it grows. */
 export function arcGuide(minutes = DEFAULT_MINUTES): string {
-  const plan = planFor(minutes);
-  const lines: string[] = [];
-  const perScene = Math.round((plan.minutes * 60) / plan.scenes);
+  const plan = planFor(minutes)
+  const lines: string[] = []
+  const perScene = Math.round((plan.minutes * 60) / plan.scenes)
   lines.push(
     `Bài dài **${plan.minutes} phút** → cần **~${plan.scenes} scene**, trung bình **~${perScene}s mỗi scene**. Số scene suy ra từ thời lượng, không phải con số tuỳ ý.`,
-  );
+  )
   if (plan.scenes >= MAX_SCENES) {
     lines.push(
       `Bài dài thì scene phải SÂU HƠN, không phải nhiều hơn: mỗi scene nói kỹ hơn, cho học sinh nhìn lâu hơn, kit làm nhiều động tác hơn — chứ đừng chẻ ra thành hàng chục scene vụn.`,
-    );
+    )
   }
-  lines.push(
-    `Lời giảng tiếng Việt nói ~${CHARS_PER_SEC} ký tự/giây; mỗi gate chiếm ~${GATE_SECONDS}s.`,
-  );
-  lines.push(
-    `Cổng sẽ ƯỚC LƯỢNG thời lượng từ chính lời giảng bạn viết — viết đủ dài, đừng chỉ đủ số scene.`,
-  );
-  lines.push('');
-  lines.push('Bài phải có ĐỦ 8 giai đoạn, ĐÚNG thứ tự.');
-  lines.push('Mỗi scene khai `phase`. Bài không nên đi lùi (chốt quy tắc trước khi dạy).');
-  lines.push('');
+  lines.push(`Lời giảng tiếng Việt nói ~${CHARS_PER_SEC} ký tự/giây; mỗi gate chiếm ~${GATE_SECONDS}s.`)
+  lines.push(`Cổng sẽ ƯỚC LƯỢNG thời lượng từ chính lời giảng bạn viết — viết đủ dài, đừng chỉ đủ số scene.`)
+  lines.push('')
+  lines.push('Bài phải có ĐỦ 8 giai đoạn, ĐÚNG thứ tự.')
+  lines.push('Mỗi scene khai `phase`. Bài không nên đi lùi (chốt quy tắc trước khi dạy).')
+  lines.push('')
   for (const p of PHASES) {
     lines.push(
       `**${p.id}** — ${p.vi} (≥${plan.min[p.id]} scene${p.gate ? ', PHẢI là gate' : ''}) · template: ${p.templates.join(' / ')}`,
-    );
-    lines.push(`  ${p.why}`);
+    )
+    lines.push(`  ${p.why}`)
   }
-  lines.push('');
+  lines.push('')
   lines.push(
     `Mỗi scene exposition PHẢI có lời giảng ≥${MIN_NARRATION_CHARS} ký tự. Không có lời giảng thì scene vụt qua trước khi học sinh kịp nhìn — đó là lý do bài "nhanh quá".`,
-  );
-  lines.push('');
-  lines.push('## Khai thác đúng sức mạnh của engine');
-  lines.push('');
+  )
+  lines.push('')
+  lines.push('## Khai thác đúng sức mạnh của engine')
+  lines.push('')
   lines.push(
     '**Manipulative KHÔNG được đứng im.** Đây là lỗi nặng nhất. Một kit không có `actions` chỉ là một tấm ảnh — và bài học mất đúng thứ khiến explainer khác PowerPoint. Kit có verb để CHẠY THEO LỜI GIẢNG: học sinh nhìn 8 ngôi sao ghép đôi *trong lúc* cô đang đếm "hai, bốn, sáu, tám".',
-  );
-  lines.push('');
-  lines.push('```json');
-  lines.push('{ "id":"kit", "type":"manipulative", "region":"stage",');
+  )
+  lines.push('')
+  lines.push('```json')
+  lines.push('{ "id":"kit", "type":"manipulative", "region":"stage",')
   lines.push(
     '  "content": { "kind":"evenodd", "params": { "number":8, "labels":{"even":"{n} là số CHẴN","odd":"{n} là số LẺ"} },',
-  );
+  )
   lines.push(
     '    "actions": [ {"verb":"setNumber","at":"@c1","args":{"n":8}}, {"verb":"showResult","at":"@c3"} ] } }',
-  );
-  lines.push('```');
-  lines.push('');
-  lines.push(`- ≥${RICHNESS.templates} template khác nhau (mỗi ý cần một CÁCH NHÌN khác).`);
+  )
+  lines.push('```')
+  lines.push('')
+  lines.push(`- ≥${RICHNESS.templates} template khác nhau (mỗi ý cần một CÁCH NHÌN khác).`)
   lines.push(
     `- ≥${RICHNESS.kits} loại manipulative khác nhau (cùng một kit lặp lại = một cách nhìn duy nhất).`,
-  );
-  lines.push(
-    `- ≥${RICHNESS.quizTypes} loại câu hỏi (hỏi cùng một dạng = học sinh học thuộc DẠNG BÀI).`,
-  );
+  )
+  lines.push(`- ≥${RICHNESS.quizTypes} loại câu hỏi (hỏi cùng một dạng = học sinh học thuộc DẠNG BÀI).`)
   lines.push(
     `- ≥${RICHNESS.beatsPerScene} beat mỗi scene exposition — mỗi câu lời giảng một cue, mỗi cue một hiệu ứng.`,
-  );
-  lines.push(
-    '- Ít nhất một `diagram`/`chart`/`table` — engine tự vẽ, và đó là cách duy nhất thấy QUAN HỆ.',
-  );
-  lines.push(
-    '- Ít nhất một gate dùng `activity.manip` — để học sinh THAO TÁC, không chỉ chọn đáp án.',
-  );
-  return lines.join('\n');
+  )
+  lines.push('- Ít nhất một `diagram`/`chart`/`table` — engine tự vẽ, và đó là cách duy nhất thấy QUAN HỆ.')
+  lines.push('- Ít nhất một gate dùng `activity.manip` — để học sinh THAO TÁC, không chỉ chọn đáp án.')
+  return lines.join('\n')
 }

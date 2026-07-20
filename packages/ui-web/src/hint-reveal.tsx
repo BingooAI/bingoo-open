@@ -1,24 +1,24 @@
-'use client';
+'use client'
 
-import type { Assist } from '@bingoo/core';
-import { Lightbulb } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { Callout } from './callout';
-import { cn } from './lib/cn';
-import { ENTER, stagger, tile } from './lib/interactive';
-import { SoundButton } from './sound-button';
+import type { Assist } from '@bingoo/core'
+import { Lightbulb } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { Callout } from './callout'
+import { cn } from './lib/cn'
+import { ENTER, stagger, tile } from './lib/interactive'
+import { SoundButton } from './sound-button'
 
 export interface HintRevealProps {
   /** Progressive hints — each is text and/or audio (`Assist` from @bingoo/core). */
-  hints: Assist[];
+  hints: Assist[]
   /** How many hints are currently revealed (controlled). */
-  revealed: number;
-  onReveal: () => void;
+  revealed: number
+  onReveal: () => void
   /** Button copy (data), e.g. "Gợi ý". */
-  buttonLabel: ReactNode;
+  buttonLabel: ReactNode
   /** A11y label for a hint's audio play button (data). */
-  playLabel?: string;
-  className?: string;
+  playLabel?: string
+  className?: string
 }
 
 /**
@@ -34,9 +34,9 @@ export function HintReveal({
   playLabel,
   className,
 }: HintRevealProps) {
-  if (hints.length === 0) return null;
-  const shown = hints.slice(0, revealed);
-  const hasMore = revealed < hints.length;
+  if (hints.length === 0) return null
+  const shown = hints.slice(0, revealed)
+  const hasMore = revealed < hints.length
 
   return (
     <div className={cn('flex flex-col gap-2.5', className)}>
@@ -44,9 +44,7 @@ export function HintReveal({
         <div key={i} className={ENTER} style={stagger(i)}>
           <Callout variant="warning">
             <span className="flex items-center gap-2.5">
-              {hint.audioSrc ? (
-                <SoundButton src={hint.audioSrc} label={playLabel ?? ''} size="sm" />
-              ) : null}
+              {hint.audioSrc ? <SoundButton src={hint.audioSrc} label={playLabel ?? ''} size="sm" /> : null}
               {hint.text}
             </span>
           </Callout>
@@ -67,5 +65,5 @@ export function HintReveal({
         </button>
       ) : null}
     </div>
-  );
+  )
 }

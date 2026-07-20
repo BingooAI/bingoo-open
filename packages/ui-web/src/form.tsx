@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod';
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Controller,
   useForm,
@@ -8,11 +8,11 @@ import {
   type Resolver,
   type UseFormProps,
   type UseFormReturn,
-} from 'react-hook-form';
-import type { z } from 'zod';
+} from 'react-hook-form'
+import type { z } from 'zod'
 
 // Re-export the controlled-input bridge for non-native fields (Select, Checkbox…).
-export { Controller };
+export { Controller }
 
 /**
  * react-hook-form wired to a zod schema — typed to the schema's input/output.
@@ -26,5 +26,5 @@ export function useZodForm<TIn extends FieldValues, TOut extends FieldValues = T
   return useForm<TIn, unknown, TOut>({
     ...options,
     resolver: zodResolver(schema) as Resolver<TIn, unknown, TOut>,
-  });
+  })
 }

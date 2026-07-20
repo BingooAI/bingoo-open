@@ -1,9 +1,9 @@
-import { localeMeta } from '@bingoo/i18n';
-import { readEnv } from '../../core/config';
-import type { ProviderAdapter } from '../../core/registry';
-import { ProviderError } from '../../core/errors';
-import { aiRegistry } from '../../ai';
-import type { TranslateInput, TranslationPort } from '../port';
+import { localeMeta } from '@bingoo/i18n'
+import { readEnv } from '../../core/config'
+import type { ProviderAdapter } from '../../core/registry'
+import { ProviderError } from '../../core/errors'
+import { aiRegistry } from '../../ai'
+import type { TranslateInput, TranslationPort } from '../port'
 
 /**
  * LLM-backed translation: delegates to an `ai` provider — the active one by
@@ -17,22 +17,22 @@ import type { TranslateInput, TranslationPort } from '../port';
  */
 
 /** Placeholder-ish tokens that must survive translation untouched. */
-const PLACEHOLDER_RE = /\{\{[^}]+\}\}|\{[^}]+\}|%[sd]|https?:\/\/\S+/g;
+const PLACEHOLDER_RE = /\{\{[^}]+\}\}|\{[^}]+\}|%[sd]|https?:\/\/\S+/g
 
 function placeholders(text: string): string[] {
-  return (text.match(PLACEHOLDER_RE) ?? []).sort();
+  return (text.match(PLACEHOLDER_RE) ?? []).sort()
 }
 
 /** True when source and candidate carry the exact same multiset of placeholders. */
 function placeholdersPreserved(source: string, candidate: string): boolean {
-  const a = placeholders(source);
-  const b = placeholders(candidate);
-  return a.length === b.length && a.every((token, i) => token === b[i]);
+  const a = placeholders(source)
+  const b = placeholders(candidate)
+  return a.length === b.length && a.every((token, i) => token === b[i])
 }
 
 function buildSystem(input: TranslateInput): string {
-  const target = localeMeta[input.to];
-  const source = input.from ? localeMeta[input.from] : undefined;
+  const target = localeMeta[input.to]
+  const source = input.from ? localeMeta[input.from] : undefined
   const lines = [
     `You translate short UI/content strings for Bingoo, a learning app for children aged 6–15.`,
     source
@@ -49,8 +49,8 @@ function buildSystem(input: TranslateInput): string {
       : null,
     `Input is a JSON object {"texts": string[]}. Reply with ONLY a JSON object`,
     `{"translations": string[]} of the same length and order. No prose, no code fences.`,
-  ];
-  return lines.filter(Boolean).join('\n');
+  ]
+  return lines.filter(Boolean).join('\n')
 }
 
 /** Extract the translations array from the model reply, tolerating code fences. */
@@ -58,21 +58,21 @@ function parseTranslations(raw: string, expected: number): string[] {
   const stripped = raw
     .trim()
     .replace(/^```(?:json)?\s*/i, '')
-    .replace(/\s*```$/, '');
-  let parsed: unknown;
+    .replace(/\s*```$/, '')
+  let parsed: unknown
   try {
-    parsed = JSON.parse(stripped);
+    parsed = JSON.parse(stripped)
   } catch {
-    throw new ProviderError('translation', 'llm', 'model returned non-JSON output');
+    throw new ProviderError('translation', 'llm', 'model returned non-JSON output')
   }
   const arr =
     parsed && typeof parsed === 'object' && 'translations' in parsed
       ? (parsed as { translations: unknown }).translations
-      : parsed;
+      : parsed
   if (!Array.isArray(arr) || arr.length !== expected || !arr.every((t) => typeof t === 'string')) {
-    throw new ProviderError('translation', 'llm', 'model output shape mismatch');
+    throw new ProviderError('translation', 'llm', 'model output shape mismatch')
   }
-  return arr as string[];
+  return arr as string[]
 }
 
 export const llmTranslationAdapter: ProviderAdapter<TranslationPort> = {
@@ -83,34 +83,34 @@ export const llmTranslationAdapter: ProviderAdapter<TranslationPort> = {
   create(): TranslationPort {
     // Optional overrides so translation can run on a cheaper engine/model than
     // the active `ai` provider. Undefined → active provider / adapter default.
-    const providerKey = readEnv('TRANSLATION_AI_PROVIDER');
-    const model = readEnv('TRANSLATION_MODEL');
+    const providerKey = readEnv('TRANSLATION_AI_PROVIDER')
+    const model = readEnv('TRANSLATION_MODEL')
     return {
       async translate(input) {
         if (input.texts.length === 0) {
-          return { translations: [], detectedFrom: input.from, provider: 'llm' };
+          return { translations: [], detectedFrom: input.from, provider: 'llm' }
         }
-        const ai = aiRegistry.get(providerKey);
+        const ai = aiRegistry.get(providerKey)
         // A whole-lesson translation can produce more output than the provider's
         // default max_tokens (e.g. OPENAI_MAX_TOKENS=4096) — the reply then gets
         // truncated mid-JSON and parsing fails. Ask for enough headroom: the
         // output is ~the size of the input, so scale by input length (+ JSON
         // overhead) and cap at a sane ceiling.
-        const inChars = input.texts.reduce((n, t) => n + t.length, 0);
-        const maxTokens = Math.min(16000, Math.max(4096, Math.ceil(inChars / 2) + 800));
+        const inChars = input.texts.reduce((n, t) => n + t.length, 0)
+        const maxTokens = Math.min(16000, Math.max(4096, Math.ceil(inChars / 2) + 800))
         const res = await ai.generateText({
           system: buildSystem(input),
           model,
           maxTokens,
           messages: [{ role: 'user', content: JSON.stringify({ texts: input.texts }) }],
-        });
-        const candidates = parseTranslations(res.text, input.texts.length);
+        })
+        const candidates = parseTranslations(res.text, input.texts.length)
         const translations = input.texts.map((src, i) => {
-          const candidate = candidates[i] ?? src;
-          return placeholdersPreserved(src, candidate) ? candidate : src;
-        });
-        return { translations, detectedFrom: input.from, provider: 'llm' };
+          const candidate = candidates[i] ?? src
+          return placeholdersPreserved(src, candidate) ? candidate : src
+        })
+        return { translations, detectedFrom: input.from, provider: 'llm' }
       },
-    };
+    }
   },
-};
+}

@@ -1,33 +1,27 @@
 /** Biên dịch bản nháp → GraphData + objectives (đầu ra engine-ready). */
 
-import type {
-  FrameworkKind,
-  GraphData,
-  SkillEdge,
-  SkillNode,
-  Slug,
-} from '@bingoo/knowledge-engine';
-import type { IngestDraft, LocalizedText } from './model';
-import { dedupeConcepts, type DedupResult } from './dedup';
-import { canonicalTitle, mintSlug, slugify } from './slug';
+import type { FrameworkKind, GraphData, SkillEdge, SkillNode, Slug } from '@bingoo/knowledge-engine'
+import type { IngestDraft, LocalizedText } from './model'
+import { dedupeConcepts, type DedupResult } from './dedup'
+import { canonicalTitle, mintSlug, slugify } from './slug'
 
 export interface CompiledObjective {
-  readonly slug: Slug;
-  readonly title: LocalizedText;
-  readonly code?: string;
-  readonly mapsTo: readonly Slug[];
+  readonly slug: Slug
+  readonly title: LocalizedText
+  readonly code?: string
+  readonly mapsTo: readonly Slug[]
 }
 
 export interface CompiledFramework {
-  readonly graph: GraphData;
-  readonly objectives: readonly CompiledObjective[];
+  readonly graph: GraphData
+  readonly objectives: readonly CompiledObjective[]
   readonly framework?: {
-    readonly slug: string;
-    readonly name: LocalizedText;
-    readonly kind: FrameworkKind;
-    readonly locale: string;
-  };
-  readonly dedup: DedupResult;
+    readonly slug: string
+    readonly name: LocalizedText
+    readonly kind: FrameworkKind
+    readonly locale: string
+  }
+  readonly dedup: DedupResult
 }
 
 /**
@@ -39,12 +33,12 @@ export function compileDraft(
   existing: Parameters<typeof dedupeConcepts>[1] = [],
   threshold?: number,
 ): CompiledFramework {
-  const dedup = dedupeConcepts(draft.concepts, existing, threshold);
-  const alias = dedup.alias;
+  const dedup = dedupeConcepts(draft.concepts, existing, threshold)
+  const alias = dedup.alias
   const taken = new Set<string>([
     ...dedup.concepts.map((c) => c.slug as string),
     ...existing.map((e) => e.slug),
-  ]);
+  ])
 
   const nodes: SkillNode[] = dedup.concepts.map((c) => ({
     slug: c.slug as Slug,
@@ -55,33 +49,33 @@ export function compileDraft(
     ...(c.subject !== undefined ? { subject: c.subject } : {}),
     // engine giữ facets OPAQUE (không đọc) → cast sang record.
     ...(c.facets !== undefined ? { facets: c.facets as Readonly<Record<string, unknown>> } : {}),
-  }));
+  }))
 
-  const edges: SkillEdge[] = [];
+  const edges: SkillEdge[] = []
   for (const e of draft.edges) {
-    const from = alias.get(e.fromTempId);
-    const to = alias.get(e.toTempId);
-    if (from === undefined || to === undefined || from === to) continue;
+    const from = alias.get(e.fromTempId)
+    const to = alias.get(e.toTempId)
+    if (from === undefined || to === undefined || from === to) continue
     edges.push({
       from,
       to,
       mode: e.mode,
       relType: e.relType,
       ...(e.weight !== undefined ? { weight: e.weight } : {}),
-    });
+    })
   }
 
-  const objectives: CompiledObjective[] = [];
+  const objectives: CompiledObjective[] = []
   if (draft.framework) {
     for (const o of draft.framework.objectives) {
       // Slug ƯU TIÊN MÃ chính thức (vd "1Nc.01" → 1nc-01): khoá bền, ngắn, tra ngược được về chuẩn.
       // Không có mã mới rơi về tiêu đề (câu dài → slug dài, dễ vỡ khi biên tập lại).
-      const base = o.code ?? canonicalTitle(o.title) ?? o.tempId;
-      const slug = mintSlug(slugify(base), taken);
-      const mapsTo: Slug[] = [];
+      const base = o.code ?? canonicalTitle(o.title) ?? o.tempId
+      const slug = mintSlug(slugify(base), taken)
+      const mapsTo: Slug[] = []
       for (const t of o.mapsToTempIds) {
-        const target = alias.get(t);
-        if (target !== undefined) mapsTo.push(target);
+        const target = alias.get(t)
+        if (target !== undefined) mapsTo.push(target)
       }
       nodes.push({
         slug,
@@ -89,16 +83,16 @@ export function compileDraft(
         kind: 'OBJECTIVE',
         ...(o.stage !== undefined ? { stage: o.stage } : {}),
         ...(o.strand !== undefined ? { strand: o.strand } : {}),
-      });
+      })
       for (const target of mapsTo) {
-        edges.push({ from: slug, to: target, mode: 'REQUIRED', relType: 'MAPS_TO', weight: 1 });
+        edges.push({ from: slug, to: target, mode: 'REQUIRED', relType: 'MAPS_TO', weight: 1 })
       }
       objectives.push({
         slug,
         title: o.title,
         mapsTo,
         ...(o.code !== undefined ? { code: o.code } : {}),
-      });
+      })
     }
   }
 
@@ -116,5 +110,5 @@ export function compileDraft(
         }
       : {}),
     dedup,
-  };
+  }
 }

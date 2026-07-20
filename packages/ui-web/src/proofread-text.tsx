@@ -1,23 +1,23 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { cn } from './lib/cn';
-import { tile, tileState } from './lib/interactive';
+import { useState } from 'react'
+import { cn } from './lib/cn'
+import { tile, tileState } from './lib/interactive'
 
 export interface ProofreadTextProps {
   /** The text, split into tokens (words/punctuation). */
-  tokens: string[];
+  tokens: string[]
   /** Controlled: token index (as a string) → the learner's correction. */
-  fixes: Record<string, string>;
-  onChange: (fixes: Record<string, string>) => void;
+  fixes: Record<string, string>
+  onChange: (fixes: Record<string, string>) => void
   reveal?: {
-    marks: Record<string, { ok: boolean; expected?: string }>;
-    errors: Record<string, string>;
-  };
-  disabled?: boolean;
+    marks: Record<string, { ok: boolean; expected?: string }>
+    errors: Record<string, string>
+  }
+  disabled?: boolean
   /** A11y/UI copy: the inline editor's placeholder. */
-  placeholder?: string;
-  className?: string;
+  placeholder?: string
+  className?: string
 }
 
 /**
@@ -34,26 +34,26 @@ export function ProofreadText({
   placeholder,
   className,
 }: ProofreadTextProps) {
-  const [editing, setEditing] = useState<number | null>(null);
-  const [draft, setDraft] = useState('');
-  const locked = !!reveal || disabled;
+  const [editing, setEditing] = useState<number | null>(null)
+  const [draft, setDraft] = useState('')
+  const locked = !!reveal || disabled
 
   const open = (i: number) => {
-    if (locked) return;
-    setEditing(i);
-    setDraft(fixes[String(i)] ?? tokens[i] ?? '');
-  };
+    if (locked) return
+    setEditing(i)
+    setDraft(fixes[String(i)] ?? tokens[i] ?? '')
+  }
   const commit = () => {
-    if (editing === null) return;
-    const key = String(editing);
-    const next = { ...fixes };
-    const v = draft.trim();
+    if (editing === null) return
+    const key = String(editing)
+    const next = { ...fixes }
+    const v = draft.trim()
     // Typing the original back (or nothing) clears the edit.
-    if (v === '' || v === tokens[editing]) delete next[key];
-    else next[key] = v;
-    onChange(next);
-    setEditing(null);
-  };
+    if (v === '' || v === tokens[editing]) delete next[key]
+    else next[key] = v
+    onChange(next)
+    setEditing(null)
+  }
 
   return (
     <div
@@ -64,10 +64,10 @@ export function ProofreadText({
       )}
     >
       {tokens.map((tok, i) => {
-        const key = String(i);
-        const fixed = fixes[key];
-        const mark = reveal?.marks[key];
-        const missed = reveal && reveal.errors[key] !== undefined && !fixed;
+        const key = String(i)
+        const fixed = fixes[key]
+        const mark = reveal?.marks[key]
+        const missed = reveal && reveal.errors[key] !== undefined && !fixed
 
         if (editing === i) {
           return (
@@ -79,13 +79,13 @@ export function ProofreadText({
               onChange={(e) => setDraft(e.target.value)}
               onBlur={commit}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') commit();
-                if (e.key === 'Escape') setEditing(null);
+                if (e.key === 'Enter') commit()
+                if (e.key === 'Escape') setEditing(null)
               }}
               size={Math.max(4, draft.length)}
               className="rounded-md border-2 border-primary bg-surface px-1.5 py-0.5 text-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
-          );
+          )
         }
 
         return (
@@ -126,8 +126,8 @@ export function ProofreadText({
               <span className="ml-1 text-sm font-bold text-success">→ {reveal!.errors[key]}</span>
             ) : null}
           </button>
-        );
+        )
       })}
     </div>
-  );
+  )
 }

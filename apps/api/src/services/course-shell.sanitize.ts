@@ -8,48 +8,46 @@
  *   ② Bài không map được KC nào VẪN giữ đúng chỗ (bỏ đi là nói dối về cấu trúc sách).
  */
 
-import type { Slug } from '@bingoo/knowledge-engine';
-import type { CoursePlan, LessonInstructionPlan, LocalizedText, UnitPlan } from '@bingoo/plans';
+import type { Slug } from '@bingoo/knowledge-engine'
+import type { CoursePlan, LessonInstructionPlan, LocalizedText, UnitPlan } from '@bingoo/plans'
 
 export const rec = (v: unknown): Record<string, unknown> =>
-  v && typeof v === 'object' ? (v as Record<string, unknown>) : {};
-const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
-const str = (v: unknown): string | undefined =>
-  typeof v === 'string' && v.trim() ? v.trim() : undefined;
+  v && typeof v === 'object' ? (v as Record<string, unknown>) : {}
+const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : [])
+const str = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() ? v.trim() : undefined)
 const strArr = (v: unknown): string[] =>
   arr(v)
     .map(str)
-    .filter((s): s is string => s !== undefined);
+    .filter((s): s is string => s !== undefined)
 
 function loc(v: unknown, fallback = ''): LocalizedText {
-  const o = rec(v);
-  const out: Record<string, string> = {};
-  for (const [k, val] of Object.entries(o))
-    if (typeof val === 'string' && val.trim()) out[k] = val.trim();
-  return Object.keys(out).length ? out : { en: fallback, vi: fallback };
+  const o = rec(v)
+  const out: Record<string, string> = {}
+  for (const [k, val] of Object.entries(o)) if (typeof val === 'string' && val.trim()) out[k] = val.trim()
+  return Object.keys(out).length ? out : { en: fallback, vi: fallback }
 }
 
 /** Lấy khối JSON đầu tiên trong text LLM; hỏng → {} (lớp gọi phải tự bắt trường hợp rỗng, không nuốt). */
 export function firstJson(text: string): Record<string, unknown> {
-  const m = text.match(/\{[\s\S]*\}/);
-  if (!m) return {};
+  const m = text.match(/\{[\s\S]*\}/)
+  if (!m) return {}
   try {
-    return rec(JSON.parse(m[0]));
+    return rec(JSON.parse(m[0]))
   } catch {
-    return {};
+    return {}
   }
 }
 
 export interface SanitizedCourse {
-  readonly plan: CoursePlan;
+  readonly plan: CoursePlan
   /** Bài GIỮ LẠI đúng vị trí nhưng chưa neo vào KC nào (ôn tập, kiểm tra, kiến thức ngoài stage…). */
-  readonly unmappedLessons: readonly string[];
+  readonly unmappedLessons: readonly string[]
 }
 
 export interface SanitizeOpts {
   /** GIỮ NGUYÊN thứ tự & mọi bài, kể cả bài teaches rỗng (dùng khi nguồn là SÁCH — sách là sự thật). */
-  readonly preserveStructure?: boolean;
-  readonly frameworkVersionId?: string;
+  readonly preserveStructure?: boolean
+  readonly frameworkVersionId?: string
 }
 
 /**
@@ -65,37 +63,35 @@ export function sanitizeCourse(
   allowed: ReadonlySet<Slug>,
   opts: SanitizeOpts = {},
 ): SanitizedCourse {
-  const keep = (v: unknown): Slug[] => strArr(v).filter((s) => allowed.has(s));
-  const unmapped: string[] = [];
+  const keep = (v: unknown): Slug[] => strArr(v).filter((s) => allowed.has(s))
+  const unmapped: string[] = []
 
   const units: UnitPlan[] = arr(o.units).map((u, ui): UnitPlan => {
-    const uo = rec(u);
+    const uo = rec(u)
     const rawLessons = arr(uo.lessons).map((l, li): LessonInstructionPlan => {
-      const lo = rec(l);
-      const teaches = keep(lo.teaches);
-      const title = loc(lo.title);
-      const ref = str(lo.sourceRef);
-      if (teaches.length === 0) unmapped.push(ref ?? title.en ?? `u${ui}-l${li}`);
+      const lo = rec(l)
+      const teaches = keep(lo.teaches)
+      const title = loc(lo.title)
+      const ref = str(lo.sourceRef)
+      if (teaches.length === 0) unmapped.push(ref ?? title.en ?? `u${ui}-l${li}`)
       return {
         slug: str(lo.slug) ?? `u${ui}-l${li}`,
         version: 1,
         title,
         teaches,
         knowledgePoints: [], // vỏ khoá: chi tiết bài sinh sau (/plan/generate)
-      };
-    });
+      }
+    })
     // Nguồn SÁCH giữ hết bài (kể cả rỗng teaches). Nguồn PROMPT bỏ bài rỗng.
-    const lessons = opts.preserveStructure
-      ? rawLessons
-      : rawLessons.filter((l) => l.teaches.length > 0);
+    const lessons = opts.preserveStructure ? rawLessons : rawLessons.filter((l) => l.teaches.length > 0)
     return {
       slug: str(uo.slug) ?? `unit-${ui + 1}`,
       version: 1,
       title: loc(uo.title),
       concepts: keep(uo.concepts),
       lessons,
-    };
-  });
+    }
+  })
 
   return {
     plan: {
@@ -103,10 +99,8 @@ export function sanitizeCourse(
       title: loc(o.title, 'Course'),
       objectives: keep(o.objectives),
       units,
-      ...(opts.frameworkVersionId !== undefined
-        ? { frameworkVersionId: opts.frameworkVersionId }
-        : {}),
+      ...(opts.frameworkVersionId !== undefined ? { frameworkVersionId: opts.frameworkVersionId } : {}),
     },
     unmappedLessons: unmapped,
-  };
+  }
 }

@@ -1,8 +1,8 @@
-import { db } from '@bingoo/db';
-import { parseRoles } from '../auth/roles';
-import { getAllFacets } from './facet.repo';
-import { activitySummary, listRecentEvents } from './events.repo';
-import { userSegmentKeys } from './segment.repo';
+import { db } from '@bingoo/db'
+import { parseRoles } from '../auth/roles'
+import { getAllFacets } from './facet.repo'
+import { activitySummary, listRecentEvents } from './events.repo'
+import { userSegmentKeys } from './segment.repo'
 
 /**
  * The 360° profile (§3.8) — a READ-MODEL / projection assembled at read time from
@@ -28,8 +28,8 @@ export async function build360(userId: string) {
       managedByGuardian: true,
       createdAt: true,
     },
-  });
-  if (!user) return null;
+  })
+  if (!user) return null
 
   const [
     facets,
@@ -62,7 +62,7 @@ export async function build360(userId: string) {
     db.guardianship.count({ where: { childId: userId, status: 'active' } }),
     db.communityMember.count({ where: { userId, status: 'active' } }),
     userSegmentKeys(userId),
-  ]);
+  ])
 
   return {
     core: {
@@ -91,5 +91,5 @@ export async function build360(userId: string) {
     },
     activity: { ...activity, recent },
     segments, // dynamic cohorts the user belongs to (§3.8)
-  };
+  }
 }

@@ -1,15 +1,15 @@
-'use client';
+'use client'
 
-import { deriveCapabilities } from '@bingoo/learning-experience';
-import { cn } from '@bingoo/ui-web';
-import type { ReactNode } from 'react';
-import { ChromeBar } from './chrome-bar';
-import { ArenaMode, PracticeBattle } from './modes/arena-mode';
-import { ClassroomMode } from './modes/classroom-mode';
-import { FeedMode } from './modes/feed-mode';
-import { LessonMode } from './modes/lesson-mode';
-import { ProjectMode } from './modes/project-mode';
-import type { LearnExperienceProps } from './types';
+import { deriveCapabilities } from '@bingoo/learning-experience'
+import { cn } from '@bingoo/ui-web'
+import type { ReactNode } from 'react'
+import { ChromeBar } from './chrome-bar'
+import { ArenaMode, PracticeBattle } from './modes/arena-mode'
+import { ClassroomMode } from './modes/classroom-mode'
+import { FeedMode } from './modes/feed-mode'
+import { LessonMode } from './modes/lesson-mode'
+import { ProjectMode } from './modes/project-mode'
+import type { LearnExperienceProps } from './types'
 
 /**
  * LearnExperience — CỬA DUY NHẤT: cho `input` (descriptor + content + labels) → ra `view`.
@@ -29,19 +29,17 @@ export function LearnExperience({
   onSelectLesson,
   className,
 }: LearnExperienceProps) {
-  const caps = deriveCapabilities(descriptor);
-  const isClassroom = descriptor.delivery === 'classroom';
+  const caps = deriveCapabilities(descriptor)
+  const isClassroom = descriptor.delivery === 'classroom'
   const showCompanion =
     companionSlot != null &&
     !isClassroom &&
     descriptor.experience !== 'feed' &&
-    (caps.includes('ai-tutor') || caps.includes('human-presence'));
+    (caps.includes('ai-tutor') || caps.includes('human-presence'))
 
-  let body: ReactNode;
+  let body: ReactNode
   if (isClassroom) {
-    body = (
-      <ClassroomMode participants={content.participants ?? []} labels={labels} onExit={onExit} />
-    );
+    body = <ClassroomMode participants={content.participants ?? []} labels={labels} onExit={onExit} />
   } else {
     switch (descriptor.experience) {
       case 'learn':
@@ -56,11 +54,11 @@ export function LearnExperience({
             renderActivity={renderActivity}
             onSelectLesson={onSelectLesson}
           />
-        );
-        break;
+        )
+        break
       case 'practice':
-        body = <PracticeBattle quiz={content.quiz} labels={labels} config={content.arena} />;
-        break;
+        body = <PracticeBattle quiz={content.quiz} labels={labels} config={content.arena} />
+        break
       case 'arena':
         body = (
           <ArenaMode
@@ -70,8 +68,8 @@ export function LearnExperience({
             labels={labels}
             config={content.arena}
           />
-        );
-        break;
+        )
+        break
       case 'feed':
         body = (
           <FeedMode
@@ -80,23 +78,18 @@ export function LearnExperience({
             labels={labels}
             renderActivity={renderActivity}
           />
-        );
-        break;
+        )
+        break
       case 'project':
-        body = <ProjectMode project={content.project} labels={labels} />;
-        break;
+        body = <ProjectMode project={content.project} labels={labels} />
+        break
     }
   }
 
   return (
     <div className={cn('relative flex h-full min-h-0 flex-col', className)}>
       {isClassroom ? null : (
-        <ChromeBar
-          caps={caps}
-          labels={labels}
-          modeLabel={modeLabel}
-          participants={content.participants}
-        />
+        <ChromeBar caps={caps} labels={labels} modeLabel={modeLabel} participants={content.participants} />
       )}
       <div className="min-h-0 flex-1">{body}</div>
       {showCompanion ? (
@@ -107,5 +100,5 @@ export function LearnExperience({
         </div>
       ) : null}
     </div>
-  );
+  )
 }

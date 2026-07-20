@@ -1,10 +1,10 @@
-import { defineConfig } from 'prisma/config';
+import { defineConfig } from 'prisma/config'
 
 // Prisma 7 no longer auto-loads .env. Load it here so CLI commands (migrate,
 // studio, db push) can read DATABASE_URL locally; ignore when there is no .env
 // file (e.g. CI/production, where the variable is injected into the environment).
 try {
-  process.loadEnvFile();
+  process.loadEnvFile()
 } catch {
   // no local .env — rely on the ambient environment
 }
@@ -23,4 +23,4 @@ export default defineConfig({
     // thẳng CSDL thật mà không để lại một dòng lịch sử nào.
     shadowDatabaseUrl: process.env.SHADOW_DATABASE_URL,
   },
-});
+})

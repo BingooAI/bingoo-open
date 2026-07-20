@@ -6,18 +6,18 @@
  * this equality, so switching to a model of a different width needs a migration.
  */
 export interface EmbedInput {
-  texts: string[];
-  model?: string;
+  texts: string[]
+  model?: string
 }
 
 export interface EmbedResult {
-  vectors: number[][];
-  model: string;
-  dim: number;
+  vectors: number[][]
+  model: string
+  dim: number
 }
 
 export interface EmbeddingPort {
   /** Native dimension of the active model (equals the DB vector width). */
-  readonly dim: number;
-  embed(input: EmbedInput): Promise<EmbedResult>;
+  readonly dim: number
+  embed(input: EmbedInput): Promise<EmbedResult>
 }

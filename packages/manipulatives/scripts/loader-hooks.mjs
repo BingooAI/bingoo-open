@@ -4,36 +4,36 @@
  * Node 24 strips types from .ts files automatically; this hook just points the
  * resolver at the right file. Zero dependencies.
  */
-import { existsSync, readFileSync } from 'node:fs';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import path from 'node:path';
-import ts from 'typescript';
+import { existsSync, readFileSync } from 'node:fs'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+import path from 'node:path'
+import ts from 'typescript'
 
-const SRC = path.resolve(process.cwd(), 'src');
-const EXTS = ['.ts', '.tsx', '.mts', '.js', '.mjs', '.json'];
+const SRC = path.resolve(process.cwd(), 'src')
+const EXTS = ['.ts', '.tsx', '.mts', '.js', '.mjs', '.json']
 
 function tryResolve(base) {
-  if (path.extname(base) && existsSync(base)) return base;
-  for (const e of EXTS) if (existsSync(base + e)) return base + e;
+  if (path.extname(base) && existsSync(base)) return base
+  for (const e of EXTS) if (existsSync(base + e)) return base + e
   for (const e of EXTS) {
-    const idx = path.join(base, 'index' + e);
-    if (existsSync(idx)) return idx;
+    const idx = path.join(base, 'index' + e)
+    if (existsSync(idx)) return idx
   }
-  return null;
+  return null
 }
 
 export async function resolve(specifier, context, next) {
-  let base = null;
+  let base = null
   if (specifier.startsWith('@/')) {
-    base = path.join(SRC, specifier.slice(2));
+    base = path.join(SRC, specifier.slice(2))
   } else if ((specifier.startsWith('./') || specifier.startsWith('../')) && context.parentURL) {
-    base = path.resolve(path.dirname(fileURLToPath(context.parentURL)), specifier);
+    base = path.resolve(path.dirname(fileURLToPath(context.parentURL)), specifier)
   }
   if (base) {
-    const hit = tryResolve(base);
-    if (hit) return { url: pathToFileURL(hit).href, shortCircuit: true };
+    const hit = tryResolve(base)
+    if (hit) return { url: pathToFileURL(hit).href, shortCircuit: true }
   }
-  return next(specifier, context);
+  return next(specifier, context)
 }
 
 /**
@@ -43,8 +43,8 @@ export async function resolve(specifier, context, next) {
  */
 export async function load(url, context, next) {
   if (url.startsWith('file://') && /\.tsx?$/.test(url)) {
-    const file = fileURLToPath(url);
-    const source = readFileSync(file, 'utf8');
+    const file = fileURLToPath(url)
+    const source = readFileSync(file, 'utf8')
     const out = ts.transpileModule(source, {
       fileName: file,
       compilerOptions: {
@@ -54,8 +54,8 @@ export async function load(url, context, next) {
         esModuleInterop: true,
         verbatimModuleSyntax: false,
       },
-    });
-    return { format: 'module', source: out.outputText, shortCircuit: true };
+    })
+    return { format: 'module', source: out.outputText, shortCircuit: true }
   }
-  return next(url, context);
+  return next(url, context)
 }

@@ -1,49 +1,41 @@
-'use client';
+'use client'
 
-import {
-  BookOpen,
-  Check,
-  FlaskConical,
-  Lock,
-  PlayCircle,
-  PencilLine,
-  HelpCircle,
-} from 'lucide-react';
-import type { ComponentType, ReactNode } from 'react';
-import { Button } from './button';
-import { cn } from './lib/cn';
+import { BookOpen, Check, FlaskConical, Lock, PlayCircle, PencilLine, HelpCircle } from 'lucide-react'
+import type { ComponentType, ReactNode } from 'react'
+import { Button } from './button'
+import { cn } from './lib/cn'
 
-export type LessonSectionKind = 'read' | 'watch' | 'practice' | 'quiz' | 'experiment';
+export type LessonSectionKind = 'read' | 'watch' | 'practice' | 'quiz' | 'experiment'
 
 export interface LessonSection {
-  id: string;
-  title: ReactNode;
-  kind?: LessonSectionKind;
+  id: string
+  title: ReactNode
+  kind?: LessonSectionKind
 }
 
 export interface LessonPlayerProps {
-  sections: LessonSection[];
+  sections: LessonSection[]
   /** Active section index. */
-  current: number;
+  current: number
   /** Ids of completed sections. */
-  completed: string[];
+  completed: string[]
   /** Jump to a section (rail click). Locked sections shouldn't call this. */
-  onSelect: (index: number) => void;
-  onPrev?: () => void;
+  onSelect: (index: number) => void
+  onPrev?: () => void
   /** Advance to the next section (the caller marks current complete). */
-  onNext: () => void;
+  onNext: () => void
   /** Body of the active section (video, reading, quiz…). */
-  children: ReactNode;
+  children: ReactNode
   labels: {
-    prev: string;
-    next: string;
-    finish: string;
+    prev: string
+    next: string
+    finish: string
     /** e.g. (2, 5) => "2 of 5 done". */
-    progress?: (done: number, total: number) => string;
-  };
+    progress?: (done: number, total: number) => string
+  }
   /** Gate later sections until earlier ones are complete. */
-  locked?: boolean;
-  className?: string;
+  locked?: boolean
+  className?: string
 }
 
 const KIND_ICON: Record<LessonSectionKind, ComponentType<{ className?: string }>> = {
@@ -52,7 +44,7 @@ const KIND_ICON: Record<LessonSectionKind, ComponentType<{ className?: string }>
   practice: PencilLine,
   quiz: HelpCircle,
   experiment: FlaskConical,
-};
+}
 
 /**
  * A lesson container: sequences heterogeneous sections (read → watch → practice →
@@ -71,19 +63,14 @@ export function LessonPlayer({
   locked,
   className,
 }: LessonPlayerProps) {
-  const done = new Set(completed);
-  const total = sections.length;
-  const isLast = current >= total - 1;
-  const pct = total > 0 ? Math.round((done.size / total) * 100) : 0;
-  const firstIncomplete = sections.findIndex((s) => !done.has(s.id));
+  const done = new Set(completed)
+  const total = sections.length
+  const isLast = current >= total - 1
+  const pct = total > 0 ? Math.round((done.size / total) * 100) : 0
+  const firstIncomplete = sections.findIndex((s) => !done.has(s.id))
 
   return (
-    <div
-      className={cn(
-        'flex flex-col gap-4 rounded-2xl border border-border bg-surface p-5',
-        className,
-      )}
-    >
+    <div className={cn('flex flex-col gap-4 rounded-2xl border border-border bg-surface p-5', className)}>
       {/* Progress */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between text-sm">
@@ -103,12 +90,11 @@ export function LessonPlayer({
       {/* Section rail */}
       <ol className="flex flex-wrap gap-2">
         {sections.map((s, i) => {
-          const Icon = KIND_ICON[s.kind ?? 'read'];
-          const isDone = done.has(s.id);
-          const isActive = i === current;
+          const Icon = KIND_ICON[s.kind ?? 'read']
+          const isDone = done.has(s.id)
+          const isActive = i === current
           // Locked = a later, not-yet-reached, not-done section (when gating on).
-          const isLocked =
-            !!locked && !isDone && !isActive && firstIncomplete >= 0 && i > firstIncomplete;
+          const isLocked = !!locked && !isDone && !isActive && firstIncomplete >= 0 && i > firstIncomplete
           return (
             <li key={s.id}>
               <button
@@ -124,8 +110,7 @@ export function LessonPlayer({
                     !isDone &&
                     !isLocked &&
                     'border-border bg-surface text-foreground-muted hover:border-primary',
-                  isLocked &&
-                    'cursor-not-allowed border-border bg-surface-muted text-foreground-subtle',
+                  isLocked && 'cursor-not-allowed border-border bg-surface-muted text-foreground-subtle',
                 )}
               >
                 {isDone ? (
@@ -138,7 +123,7 @@ export function LessonPlayer({
                 {s.title}
               </button>
             </li>
-          );
+          )
         })}
       </ol>
 
@@ -155,5 +140,5 @@ export function LessonPlayer({
         <Button onClick={onNext}>{isLast ? labels.finish : labels.next}</Button>
       </div>
     </div>
-  );
+  )
 }

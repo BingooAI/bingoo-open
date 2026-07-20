@@ -4,8 +4,8 @@
  * it, stamps the element at the drop point, and clears it. One shared factory is
  * used for BOTH click-to-add and drag-to-place, so there's no duplicated logic.
  */
-import type { Element } from '@bingoo/explainer';
+import type { Element } from '@bingoo/explainer'
 
-export type ElFactory = (id: string) => { el: Element; text?: string };
+export type ElFactory = (id: string) => { el: Element; text?: string }
 
-export const dragState: { make: ElFactory | null } = { make: null };
+export const dragState: { make: ElFactory | null } = { make: null }

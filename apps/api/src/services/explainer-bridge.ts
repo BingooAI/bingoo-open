@@ -10,53 +10,53 @@
  * viết (feed, không sinh lại). `facts` (đã kiểm) chống bịa số. `durationMin` → `sceneCount` (~32s/cảnh).
  */
 
-import type { LessonBrief } from '@bingoo/explainer';
-import type { KnowledgePoint, LessonStep, LocalizedText } from '@bingoo/plans';
+import type { LessonBrief } from '@bingoo/explainer'
+import type { KnowledgePoint, LessonStep, LocalizedText } from '@bingoo/plans'
 
-export type AudienceStage = 'preschool' | 'primary' | 'middle' | 'high' | 'adult';
+export type AudienceStage = 'preschool' | 'primary' | 'middle' | 'high' | 'adult'
 
 export interface ExplainerBridgeInput {
-  readonly step: LessonStep;
+  readonly step: LessonStep
   /** KC bước phục vụ (arc chứa bước). */
-  readonly kcSlug: string;
-  readonly kcTitle: string;
-  readonly language: string;
-  readonly subject: string;
-  readonly audience: { readonly stage: AudienceStage; readonly grade?: string };
+  readonly kcSlug: string
+  readonly kcTitle: string
+  readonly language: string
+  readonly subject: string
+  readonly audience: { readonly stage: AudienceStage; readonly grade?: string }
   /** Bậc biểu diễn (concrete→pictorial→abstract) — lái imagePolicy. */
-  readonly representationStage?: 'concrete' | 'pictorial' | 'abstract';
-  readonly band?: 'easy' | 'core' | 'stretch';
+  readonly representationStage?: 'concrete' | 'pictorial' | 'abstract'
+  readonly band?: 'easy' | 'core' | 'stretch'
   /** KP của arc — nguồn hiểu-sai + tiêu chí đạt (thành objective statement). */
-  readonly knowledgePoints?: readonly KnowledgePoint[];
+  readonly knowledgePoints?: readonly KnowledgePoint[]
   /** Tiên quyết → priorKnowledge (giả định đã biết). */
-  readonly prerequisites?: readonly string[];
+  readonly prerequisites?: readonly string[]
   /** Dữ kiện ĐÃ KIỂM (số/công thức) — explainer narrate verbatim, không tính lại → chống bịa. */
-  readonly facts?: readonly { id: string; statement: string; value?: string | number }[];
+  readonly facts?: readonly { id: string; statement: string; value?: string | number }[]
   /** Câu chuẩn đầu ra cho objective (nếu có); thiếu thì dùng kcTitle. */
-  readonly successCriteria?: readonly string[];
+  readonly successCriteria?: readonly string[]
 }
 
-const SEC_PER_SCENE = 32; // khớp arc.ts của explainer
+const SEC_PER_SCENE = 32 // khớp arc.ts của explainer
 
 const loc = (t: LocalizedText | undefined): string =>
-  t ? (t['en'] ?? t['vi'] ?? Object.values(t)[0] ?? '') : '';
+  t ? (t['en'] ?? t['vi'] ?? Object.values(t)[0] ?? '') : ''
 
 /** durationMin → sceneCount (3–12) theo ~32s/cảnh. */
 function sceneCountFor(durationMin: number): number {
-  const raw = Math.round((durationMin * 60) / SEC_PER_SCENE);
-  return Math.min(12, Math.max(3, raw));
+  const raw = Math.round((durationMin * 60) / SEC_PER_SCENE)
+  return Math.min(12, Math.max(3, raw))
 }
 
 function imagePolicyFor(stage?: string): 'none' | 'sparing' | 'rich' {
   // Concrete (mầm non/mới) cần nhiều ảnh thật; trừu tượng thì tiết chế.
-  if (stage === 'concrete') return 'rich';
-  return 'sparing';
+  if (stage === 'concrete') return 'rich'
+  return 'sparing'
 }
 
 function difficultyFor(band?: string): 'intro' | 'practice' | 'challenge' {
-  if (band === 'easy') return 'intro';
-  if (band === 'stretch') return 'challenge';
-  return 'practice';
+  if (band === 'easy') return 'intro'
+  if (band === 'stretch') return 'challenge'
+  return 'practice'
 }
 
 /**
@@ -64,16 +64,16 @@ function difficultyFor(band?: string): 'intro' | 'practice' | 'challenge' {
  * Không ném lỗi: caller sẽ parseBrief để chốt, nhưng hàm này cố dựng đúng ngay từ đầu.
  */
 export function lessonStepToBrief(input: ExplainerBridgeInput): LessonBrief {
-  const { step } = input;
+  const { step } = input
 
   // subject.notes = ý đồ CỤ THỂ của bước (chống sinh chung chung).
-  const notes = [loc(step.brief), ...(step.mustCover ?? []).map(loc)].filter(Boolean).join(' · ');
+  const notes = [loc(step.brief), ...(step.mustCover ?? []).map(loc)].filter(Boolean).join(' · ')
 
   const misconceptions = (input.knowledgePoints ?? [])
     .flatMap((kp) => kp.misconceptions.map((m) => loc(m.wrong)))
-    .filter(Boolean);
+    .filter(Boolean)
 
-  const statement = input.successCriteria?.[0]?.trim() || input.kcTitle;
+  const statement = input.successCriteria?.[0]?.trim() || input.kcTitle
 
   const brief: LessonBrief = {
     version: 'brief/v1',
@@ -110,6 +110,6 @@ export function lessonStepToBrief(input: ExplainerBridgeInput): LessonBrief {
       sceneCount: sceneCountFor(step.durationMin),
       imagePolicy: imagePolicyFor(input.representationStage),
     },
-  };
-  return brief;
+  }
+  return brief
 }

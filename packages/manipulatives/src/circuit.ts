@@ -4,37 +4,37 @@
  * current flow (dots travel the loop, bulb lights). verbs: closeSwitch ·
  * openSwitch · setBulbs(n).
  */
-import type { Manipulative, ManipModel, ManipState, Prim, RenderCtx, VerbClip } from './types';
-import { tween, activeSegment } from './bake';
-import { TOK } from './util';
+import type { Manipulative, ManipModel, ManipState, Prim, RenderCtx, VerbClip } from './types'
+import { tween, activeSegment } from './bake'
+import { TOK } from './util'
 
-export type CircuitP = { closed: boolean; bulbs: number; labels: { closed: string; open: string } };
+export type CircuitP = { closed: boolean; bulbs: number; labels: { closed: string; open: string } }
 
 const DEFAULT: CircuitP = {
   closed: false,
   bulbs: 1,
   labels: { closed: 'Circuit closed — lamp on', open: 'Circuit open — lamp off' },
-};
+}
 
 function normalize(raw: unknown): CircuitP {
-  const r = (raw ?? {}) as Partial<CircuitP>;
+  const r = (raw ?? {}) as Partial<CircuitP>
   return {
     closed: !!r.closed,
     bulbs: Math.max(1, Math.min(3, Math.floor(r.bulbs ?? 1))),
     labels: { ...DEFAULT.labels, ...(r.labels ?? {}) },
-  };
+  }
 }
 function num(v: unknown): number {
-  const n = typeof v === 'number' ? v : Number(v);
-  return Number.isFinite(n) ? n : 0;
+  const n = typeof v === 'number' ? v : Number(v)
+  return Number.isFinite(n) ? n : 0
 }
 
 const verbs: Manipulative<CircuitP>['verbs'] = {
   closeSwitch(p): VerbClip<CircuitP> {
-    return tween(p, { ...p, closed: true }, 0.5, 'easeOutBack');
+    return tween(p, { ...p, closed: true }, 0.5, 'easeOutBack')
   },
   openSwitch(p): VerbClip<CircuitP> {
-    return tween(p, { ...p, closed: false }, 0.4, 'easeInCubic');
+    return tween(p, { ...p, closed: false }, 0.4, 'easeInCubic')
   },
   setBulbs(p, args): VerbClip<CircuitP> {
     return tween(
@@ -42,26 +42,21 @@ const verbs: Manipulative<CircuitP>['verbs'] = {
       { ...p, bulbs: Math.max(1, Math.min(3, Math.floor(num(args?.n ?? args ?? 1)))) },
       0.4,
       'easeOutBack',
-    );
+    )
   },
-};
+}
 
-function render(
-  _params: CircuitP,
-  state: ManipState<CircuitP>,
-  t: number,
-  ctx: RenderCtx,
-): ManipModel {
-  const { box } = ctx;
-  const seg = activeSegment(state, t);
-  const P = seg.to;
-  const prims: Prim[] = [];
+function render(_params: CircuitP, state: ManipState<CircuitP>, t: number, ctx: RenderCtx): ManipModel {
+  const { box } = ctx
+  const seg = activeSegment(state, t)
+  const P = seg.to
+  const prims: Prim[] = []
   const x0 = box.w * 0.2,
     x1 = box.w * 0.8,
     y0 = box.h * 0.25,
-    y1 = box.h * 0.8;
+    y1 = box.h * 0.8
   const closing =
-    seg.verb === 'closeSwitch' ? seg.p : seg.verb === 'openSwitch' ? 1 - seg.p : P.closed ? 1 : 0;
+    seg.verb === 'closeSwitch' ? seg.p : seg.verb === 'openSwitch' ? 1 - seg.p : P.closed ? 1 : 0
 
   // wire loop (top has bulb gap, bottom has switch gap)
   const segs: [number, number, number, number][] = [
@@ -71,12 +66,12 @@ function render(
     [x1, y1, box.w * 0.6, y1],
     [box.w * 0.44, y1, x0, y1], // bottom with switch gap
     [x0, y1, x0, y0], // left (cell)
-  ];
+  ]
   for (const [a, b, c, d] of segs)
-    prims.push({ k: 'line', x1: a, y1: b, x2: c, y2: d, color: TOK.ink, weight: 'md', z: 1 });
+    prims.push({ k: 'line', x1: a, y1: b, x2: c, y2: d, color: TOK.ink, weight: 'md', z: 1 })
 
   // cell (battery) on the left wire
-  const cy = (y0 + y1) / 2;
+  const cy = (y0 + y1) / 2
   prims.push({
     k: 'line',
     x1: x0 - box.w * 0.02,
@@ -86,7 +81,7 @@ function render(
     color: TOK.ink,
     weight: 'lg',
     z: 2,
-  });
+  })
   prims.push({
     k: 'line',
     x1: x0 + box.w * 0.02,
@@ -96,12 +91,12 @@ function render(
     color: TOK.ink,
     weight: 'md',
     z: 2,
-  });
+  })
 
   // bulb on top
   const bx = box.w * 0.5,
-    by = y0;
-  const glow = closing;
+    by = y0
+  const glow = closing
   prims.push({
     k: 'circle',
     cx: bx,
@@ -112,17 +107,17 @@ function render(
     weight: 'md',
     opacity: glow > 0.5 ? 0.4 + 0.6 * glow : 1,
     z: 3,
-  });
+  })
   prims.push({
     k: 'path',
     d: `M ${bx - box.h * 0.03} ${by - box.h * 0.03} L ${bx + box.h * 0.03} ${by + box.h * 0.03} M ${bx + box.h * 0.03} ${by - box.h * 0.03} L ${bx - box.h * 0.03} ${by + box.h * 0.03}`,
     color: TOK.ink,
     weight: 'sm',
     z: 4,
-  });
+  })
   if (glow > 0.6)
     for (let k = 0; k < 6; k++) {
-      const a = (k / 6) * Math.PI * 2;
+      const a = (k / 6) * Math.PI * 2
       prims.push({
         k: 'line',
         x1: bx + Math.cos(a) * box.h * 0.08,
@@ -133,12 +128,12 @@ function render(
         weight: 'sm',
         opacity: (glow - 0.6) / 0.4,
         z: 4,
-      });
+      })
     }
 
   // switch on the bottom (arm lifts when open, drops when closed)
   const sx = box.w * 0.52,
-    sy = y1;
+    sy = y1
   prims.push({
     k: 'circle',
     cx: sx,
@@ -148,9 +143,9 @@ function render(
     color: TOK.ink,
     weight: 'sm',
     z: 3,
-  });
-  const openAng = (1 - closing) * -0.6; // radians up
-  const armLen = box.w * 0.09;
+  })
+  const openAng = (1 - closing) * -0.6 // radians up
+  const armLen = box.w * 0.09
   prims.push({
     k: 'line',
     x1: sx,
@@ -161,7 +156,7 @@ function render(
     weight: 'md',
     cap: 'round',
     z: 3,
-  });
+  })
   prims.push({
     k: 'circle',
     cx: box.w * 0.43,
@@ -171,7 +166,7 @@ function render(
     color: TOK.ink,
     weight: 'sm',
     z: 3,
-  });
+  })
 
   // current dots travel the loop when closed (t-based, seekable)
   if (closing > 0.6) {
@@ -180,14 +175,14 @@ function render(
       [x1, y0],
       [x1, y1],
       [x0, y1],
-    ];
-    const nDots = 8;
+    ]
+    const nDots = 8
     for (let k = 0; k < nDots; k++) {
-      const u = (t * 0.25 + k / nDots) % 1;
-      const seg4 = Math.floor(u * 4);
-      const f = u * 4 - seg4;
+      const u = (t * 0.25 + k / nDots) % 1
+      const seg4 = Math.floor(u * 4)
+      const f = u * 4 - seg4
       const A = perim[seg4]!,
-        B = perim[(seg4 + 1) % 4]!;
+        B = perim[(seg4 + 1) % 4]!
       prims.push({
         k: 'circle',
         cx: A[0] + (B[0] - A[0]) * f,
@@ -198,7 +193,7 @@ function render(
         weight: 'sm',
         opacity: (closing - 0.6) / 0.4,
         z: 5,
-      });
+      })
     }
   }
 
@@ -212,8 +207,8 @@ function render(
     align: 'middle',
     baseline: 'middle',
     z: 5,
-  });
-  return { prims, view: box };
+  })
+  return { prims, view: box }
 }
 
 export const Circuit: Manipulative<CircuitP> = {
@@ -222,4 +217,4 @@ export const Circuit: Manipulative<CircuitP> = {
   normalize,
   render,
   verbs,
-};
+}

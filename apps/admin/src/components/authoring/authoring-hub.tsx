@@ -1,9 +1,9 @@
-'use client';
+'use client'
 
-import { BookOpen, GitCompareArrows, LayoutGrid, Network, SquareStack } from 'lucide-react';
-import { Card, CardContent } from '@bingoo/ui-web';
-import { Link } from '@/i18n/navigation';
-import { useCourses, useFrameworks } from '@/lib/authoring-queries';
+import { BookOpen, GitCompareArrows, LayoutGrid, Network, SquareStack } from 'lucide-react'
+import { Card, CardContent } from '@bingoo/ui-web'
+import { Link } from '@/i18n/navigation'
+import { useCourses, useFrameworks } from '@/lib/authoring-queries'
 
 /**
  * TỔNG QUAN pipeline biên soạn — KHÔNG nhét form.
@@ -17,14 +17,14 @@ import { useCourses, useFrameworks } from '@/lib/authoring-queries';
  */
 
 interface Stage {
-  readonly n: number;
-  readonly Icon: typeof Network;
-  readonly title: string;
-  readonly when: string;
-  readonly desc: string;
-  readonly href: string;
-  readonly cta: string;
-  readonly count?: number;
+  readonly n: number
+  readonly Icon: typeof Network
+  readonly title: string
+  readonly when: string
+  readonly desc: string
+  readonly href: string
+  readonly cta: string
+  readonly count?: number
 }
 
 function StageCard({ s }: { s: Stage }) {
@@ -55,12 +55,12 @@ function StageCard({ s }: { s: Stage }) {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 export function AuthoringHub() {
-  const frameworks = useFrameworks();
-  const courses = useCourses();
+  const frameworks = useFrameworks()
+  const courses = useCourses()
 
   const stages: Stage[] = [
     {
@@ -110,7 +110,7 @@ export function AuthoringHub() {
       href: '/authoring/coverage',
       cta: 'Xem độ phủ',
     },
-  ];
+  ]
 
   return (
     <div className="space-y-3">
@@ -118,5 +118,5 @@ export function AuthoringHub() {
         <StageCard key={s.n} s={s} />
       ))}
     </div>
-  );
+  )
 }

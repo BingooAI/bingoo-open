@@ -9,25 +9,25 @@ import {
   type ExperienceDescriptor,
   type Scale,
   type Time,
-} from '@bingoo/learning-experience';
-import type { ReactNode } from 'react';
-import { IconChip, type IconChipColor } from './icon-chip';
-import { cn } from './lib/cn';
-import { Tag, type TagColor } from './tag';
+} from '@bingoo/learning-experience'
+import type { ReactNode } from 'react'
+import { IconChip, type IconChipColor } from './icon-chip'
+import { cn } from './lib/cn'
+import { Tag, type TagColor } from './tag'
 
 /**
  * Nhãn hiển thị cho toàn bộ 5 trục + năng lực + verdict. Package i18n-free (R4): host dựng object này
  * từ `@bingoo/i18n` rồi truyền xuống — giống pattern `QuizLabels`/`discussLabels` trong lib.
  */
 export interface LearningExperienceLabels {
-  axis: Record<Axis, string>;
-  experience: Record<Experience, string>;
-  delivery: Record<Delivery, string>;
-  companion: Record<Companion, string>;
-  scale: Record<Scale, string>;
-  time: Record<Time, string>;
-  capability: Record<Capability, string>;
-  verdict: Record<CompatibilityVerdict, string>;
+  axis: Record<Axis, string>
+  experience: Record<Experience, string>
+  delivery: Record<Delivery, string>
+  companion: Record<Companion, string>
+  scale: Record<Scale, string>
+  time: Record<Time, string>
+  capability: Record<Capability, string>
+  verdict: Record<CompatibilityVerdict, string>
 }
 
 /** Nhãn của giá trị trục theo descriptor. */
@@ -38,15 +38,15 @@ export function axisValueLabel(
 ): string {
   switch (axis) {
     case 'experience':
-      return labels.experience[d.experience];
+      return labels.experience[d.experience]
     case 'delivery':
-      return labels.delivery[d.delivery];
+      return labels.delivery[d.delivery]
     case 'companion':
-      return labels.companion[d.companion];
+      return labels.companion[d.companion]
     case 'scale':
-      return labels.scale[d.scale];
+      return labels.scale[d.scale]
     case 'time':
-      return labels.time[d.time];
+      return labels.time[d.time]
   }
 }
 
@@ -57,20 +57,16 @@ const AXIS_TAG_COLOR: Record<Axis, TagColor> = {
   companion: 'coral',
   scale: 'sunbeam',
   time: 'success',
-};
+}
 
 export interface LearningExperienceBadgeProps {
-  descriptor: ExperienceDescriptor;
-  labels: LearningExperienceLabels;
-  className?: string;
+  descriptor: ExperienceDescriptor
+  labels: LearningExperienceLabels
+  className?: string
 }
 
 /** Hàng 5 chip tóm tắt một descriptor — mỗi trục một tag màu. */
-export function LearningExperienceBadge({
-  descriptor,
-  labels,
-  className,
-}: LearningExperienceBadgeProps) {
+export function LearningExperienceBadge({ descriptor, labels, className }: LearningExperienceBadgeProps) {
   return (
     <div className={cn('flex flex-wrap gap-1.5', className)}>
       {AXES.map((axis) => (
@@ -79,21 +75,21 @@ export function LearningExperienceBadge({
         </Tag>
       ))}
     </div>
-  );
+  )
 }
 
 export interface LearningExperienceCardProps {
-  descriptor: ExperienceDescriptor;
-  labels: LearningExperienceLabels;
+  descriptor: ExperienceDescriptor
+  labels: LearningExperienceLabels
   /** Tên trải nghiệm (vd nhãn blueprint). Không có thì chỉ hiện dải chip. */
-  name?: ReactNode;
-  description?: ReactNode;
-  icon?: ReactNode;
-  accent?: IconChipColor;
-  cta?: ReactNode;
-  selected?: boolean;
-  onClick?: () => void;
-  className?: string;
+  name?: ReactNode
+  description?: ReactNode
+  icon?: ReactNode
+  accent?: IconChipColor
+  cta?: ReactNode
+  selected?: boolean
+  onClick?: () => void
+  className?: string
 }
 
 /** Thẻ một trải nghiệm học — icon + tên + dải 5 trục + CTA. Chọn được (radio-like) hoặc tĩnh. */
@@ -109,8 +105,8 @@ export function LearningExperienceCard({
   onClick,
   className,
 }: LearningExperienceCardProps) {
-  const interactive = onClick != null;
-  const Wrapper = interactive ? 'button' : 'div';
+  const interactive = onClick != null
+  const Wrapper = interactive ? 'button' : 'div'
   return (
     <Wrapper
       {...(interactive ? { type: 'button' as const, onClick, 'aria-pressed': selected } : {})}
@@ -140,5 +136,5 @@ export function LearningExperienceCard({
       <LearningExperienceBadge descriptor={descriptor} labels={labels} />
       {cta != null ? <div className="mt-1">{cta}</div> : null}
     </Wrapper>
-  );
+  )
 }

@@ -1,19 +1,19 @@
-'use client';
+'use client'
 
-import { Target } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { Target } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export interface LearningGoalsProps {
   /** e.g. "We are going to…". */
-  title?: ReactNode;
+  title?: ReactNode
   /** The lesson objectives. */
-  objectives: ReactNode[];
+  objectives: ReactNode[]
   /** Optional key-word chips (the vocabulary box). */
-  keywords?: string[];
+  keywords?: string[]
   /** Heading above the keyword chips, e.g. "Key words". */
-  keywordsTitle?: ReactNode;
-  className?: string;
+  keywordsTitle?: ReactNode
+  className?: string
 }
 
 /**
@@ -21,13 +21,7 @@ export interface LearningGoalsProps {
  * cluster (the Cambridge vocabulary box). Pure presentation; reusable across every
  * unit and stage. i18n-free.
  */
-export function LearningGoals({
-  title,
-  objectives,
-  keywords,
-  keywordsTitle,
-  className,
-}: LearningGoalsProps) {
+export function LearningGoals({ title, objectives, keywords, keywordsTitle, className }: LearningGoalsProps) {
   return (
     <div className={cn('flex flex-col gap-4', className)}>
       <div className="overflow-hidden rounded-2xl border-2 border-accent-teal/40 bg-accent-teal-soft/25">
@@ -66,5 +60,5 @@ export function LearningGoals({
         </div>
       ) : null}
     </div>
-  );
+  )
 }

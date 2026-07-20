@@ -1,20 +1,20 @@
-import { Download, FileText } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { IconChip, type IconChipColor } from './icon-chip';
-import { cn } from './lib/cn';
+import { Download, FileText } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { IconChip, type IconChipColor } from './icon-chip'
+import { cn } from './lib/cn'
 
 export interface ResourceCardProps {
-  title: ReactNode;
+  title: ReactNode
   /** e.g. "PDF · 1.2 MB". */
-  meta?: ReactNode;
-  icon?: ReactNode;
-  color?: IconChipColor;
+  meta?: ReactNode
+  icon?: ReactNode
+  color?: IconChipColor
   /** A download link… */
-  href?: string;
+  href?: string
   /** …or a custom handler. */
-  onDownload?: () => void;
-  downloadLabel?: string;
-  className?: string;
+  onDownload?: () => void
+  downloadLabel?: string
+  className?: string
 }
 
 /** A downloadable resource (PDF, worksheet, file). Link or handler; reusable in
@@ -31,10 +31,7 @@ export function ResourceCard({
 }: ResourceCardProps) {
   return (
     <div
-      className={cn(
-        'flex items-center gap-3 rounded-2xl border border-border bg-surface p-3.5',
-        className,
-      )}
+      className={cn('flex items-center gap-3 rounded-2xl border border-border bg-surface p-3.5', className)}
     >
       <IconChip color={color} tone="soft">
         {icon ?? <FileText className="size-5" />}
@@ -53,5 +50,5 @@ export function ResourceCard({
         <Download className="size-4" />
       </a>
     </div>
-  );
+  )
 }

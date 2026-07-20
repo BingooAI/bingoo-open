@@ -8,19 +8,19 @@
  * ảnh-vật kit lưu URL vào `params.assets[shape]`, đúng khoá `shape` mà count.ts/tenframe… đọc lúc vẽ.
  */
 
-import { kitHasObjectImage } from '@bingoo/manipulatives';
+import { kitHasObjectImage } from '@bingoo/manipulatives'
 
 export interface MediaSlot {
-  path: string;
-  kind: 'image' | 'audio';
-  slot: string;
-  label: { vi: string; en: string };
+  path: string
+  kind: 'image' | 'audio'
+  slot: string
+  label: { vi: string; en: string }
   /** Câu tìm/sinh mặc định cho slot (đề bài / nhãn đáp án / vật). */
-  query: string;
+  query: string
   /** true → lưu URL (kit render ảnh-vật cần URL); false → lưu assetId. */
-  asUrl: boolean;
+  asUrl: boolean
   /** Giá trị đang gắn (assetId hoặc URL) — null nếu trống. */
-  current: string | null;
+  current: string | null
 }
 
 /**
@@ -30,24 +30,23 @@ export interface MediaSlot {
  *  · mỗi đáp án quiz → "Ảnh đáp án A/B/C" + "Đọc đáp án A/B/C"
  */
 export function itemMediaSlots(item: { primitiveKind: string; payload: unknown }): MediaSlot[] {
-  const p = (item.payload ?? {}) as Record<string, unknown>;
-  const pr = p.prompt as Record<string, string> | string | undefined;
-  const promptQ =
-    pr && typeof pr === 'object' ? (pr.vi ?? pr.en ?? '') : typeof pr === 'string' ? pr : '';
-  const isKit = item.primitiveKind.startsWith('manip:');
-  const kitKind = isKit ? item.primitiveKind.slice('manip:'.length) : '';
-  const params = (p.params ?? {}) as Record<string, unknown>;
-  const assets = (params.assets ?? {}) as Record<string, string>;
-  const slots: MediaSlot[] = [];
+  const p = (item.payload ?? {}) as Record<string, unknown>
+  const pr = p.prompt as Record<string, string> | string | undefined
+  const promptQ = pr && typeof pr === 'object' ? (pr.vi ?? pr.en ?? '') : typeof pr === 'string' ? pr : ''
+  const isKit = item.primitiveKind.startsWith('manip:')
+  const kitKind = isKit ? item.primitiveKind.slice('manip:'.length) : ''
+  const params = (p.params ?? {}) as Record<string, unknown>
+  const assets = (params.assets ?? {}) as Record<string, string>
+  const slots: MediaSlot[] = []
 
   if (isKit && kitHasObjectImage(kitKind)) {
-    const shape = typeof params.shape === 'string' ? params.shape : 'apple';
+    const shape = typeof params.shape === 'string' ? params.shape : 'apple'
     // Ảnh-vật phải là 1 VẬT ĐƠN LẺ (kit tự lặp N cái) — KHÔNG phải cả cảnh. Dùng objectLabel + ép nền/không số.
-    const obj = (p.objectLabel ?? {}) as Record<string, string>;
-    const objName = obj.en || obj.vi || '';
+    const obj = (p.objectLabel ?? {}) as Record<string, string>
+    const objName = obj.en || obj.vi || ''
     const objQuery = objName
       ? `A single ${objName}, one object only, centered, plain white background, simple flat illustration icon, no text, no numbers, no counting`
-      : promptQ;
+      : promptQ
     slots.push({
       path: `params.assets.${shape}`,
       kind: 'image',
@@ -56,7 +55,7 @@ export function itemMediaSlots(item: { primitiveKind: string; payload: unknown }
       query: objQuery,
       asUrl: true,
       current: assets[shape] ?? null,
-    });
+    })
   } else if (!isKit && promptQ) {
     slots.push({
       path: 'imageAssetId',
@@ -66,7 +65,7 @@ export function itemMediaSlots(item: { primitiveKind: string; payload: unknown }
       query: promptQ,
       asUrl: false,
       current: (p.imageAssetId as string) || null,
-    });
+    })
   }
   if (promptQ)
     slots.push({
@@ -77,14 +76,14 @@ export function itemMediaSlots(item: { primitiveKind: string; payload: unknown }
       query: promptQ,
       asUrl: false,
       current: (p.promptAudioAssetId as string) || null,
-    });
+    })
 
-  const choices = Array.isArray(p.choices) ? p.choices : [];
+  const choices = Array.isArray(p.choices) ? p.choices : []
   choices.forEach((ch, i) => {
-    const co = (ch ?? {}) as Record<string, unknown>;
-    const letter = String.fromCharCode(65 + i);
-    const q = typeof co.label === 'string' && co.label ? co.label : `${promptQ} ${letter}`;
-    const audio = (co.audio ?? {}) as Record<string, unknown>;
+    const co = (ch ?? {}) as Record<string, unknown>
+    const letter = String.fromCharCode(65 + i)
+    const q = typeof co.label === 'string' && co.label ? co.label : `${promptQ} ${letter}`
+    const audio = (co.audio ?? {}) as Record<string, unknown>
     slots.push({
       path: `choices[${i}].imageAssetId`,
       kind: 'image',
@@ -93,7 +92,7 @@ export function itemMediaSlots(item: { primitiveKind: string; payload: unknown }
       query: q,
       asUrl: false,
       current: (co.imageAssetId as string) || null,
-    });
+    })
     slots.push({
       path: `choices[${i}].audio.assetId`,
       kind: 'audio',
@@ -102,7 +101,7 @@ export function itemMediaSlots(item: { primitiveKind: string; payload: unknown }
       query: q,
       asUrl: false,
       current: (audio.assetId as string) || null,
-    });
-  });
-  return slots;
+    })
+  })
+  return slots
 }

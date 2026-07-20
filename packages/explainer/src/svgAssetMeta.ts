@@ -1,5 +1,5 @@
 // AUTO-GENERATED from /assets by scripts/gen-assets — do not edit by hand.
-import type { PropMeta } from './props';
+import type { PropMeta } from './props'
 export const SVG_ASSET_META: Record<string, PropMeta> = {
   'cloud-big': {
     aspect: 1.628,
@@ -29,4 +29,4 @@ export const SVG_ASSET_META: Record<string, PropMeta> = {
     aspect: 1.109,
     anchor: 'center',
   },
-} as Record<string, PropMeta>;
+} as Record<string, PropMeta>

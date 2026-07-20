@@ -1,6 +1,6 @@
-import type { LocalizedText } from '@bingoo/core';
-import { db } from '@bingoo/db';
-import type { MediaScope, Prisma } from '@bingoo/db';
+import type { LocalizedText } from '@bingoo/core'
+import { db } from '@bingoo/db'
+import type { MediaScope, Prisma } from '@bingoo/db'
 
 /**
  * DocumentTemplate (docs/media-library-design.md §6) — server-controlled (R6)
@@ -9,31 +9,31 @@ import type { MediaScope, Prisma } from '@bingoo/db';
  */
 
 export interface TemplateSection {
-  key: string;
-  title: LocalizedText;
-  instruction: string; // guidance the LLM follows for this section
-  required?: boolean;
-  repeatable?: boolean;
+  key: string
+  title: LocalizedText
+  instruction: string // guidance the LLM follows for this section
+  required?: boolean
+  repeatable?: boolean
 }
 
 export interface TemplateStyle {
-  tone?: string;
-  gradeBand?: string;
-  length?: string;
+  tone?: string
+  gradeBand?: string
+  length?: string
 }
 
 export interface CreateTemplateInput {
-  key: string;
-  name: LocalizedText;
-  description?: LocalizedText;
-  docKind: string;
-  scope?: MediaScope;
-  scopeId?: string | null;
-  locale?: string | null;
-  sections: TemplateSection[];
-  style?: TemplateStyle;
-  rubric?: string[];
-  createdById?: string | null;
+  key: string
+  name: LocalizedText
+  description?: LocalizedText
+  docKind: string
+  scope?: MediaScope
+  scopeId?: string | null
+  locale?: string | null
+  sections: TemplateSection[]
+  style?: TemplateStyle
+  rubric?: string[]
+  createdById?: string | null
 }
 
 export function createTemplate(input: CreateTemplateInput) {
@@ -51,15 +51,15 @@ export function createTemplate(input: CreateTemplateInput) {
       rubric: (input.rubric ?? undefined) as Prisma.InputJsonValue | undefined,
       createdById: input.createdById ?? null,
     },
-  });
+  })
 }
 
 export function getTemplateByKey(key: string) {
-  return db.documentTemplate.findUnique({ where: { key } });
+  return db.documentTemplate.findUnique({ where: { key } })
 }
 
 export function getTemplate(id: string) {
-  return db.documentTemplate.findUnique({ where: { id } });
+  return db.documentTemplate.findUnique({ where: { id } })
 }
 
 export function listTemplates(filter: { docKind?: string; scope?: MediaScope } = {}) {
@@ -70,16 +70,16 @@ export function listTemplates(filter: { docKind?: string; scope?: MediaScope } =
       ...(filter.scope ? { scope: filter.scope } : {}),
     },
     orderBy: { createdAt: 'desc' },
-  });
+  })
 }
 
 export interface UpdateTemplateInput {
-  name?: LocalizedText;
-  description?: LocalizedText;
-  sections?: TemplateSection[];
-  style?: TemplateStyle;
-  rubric?: string[];
-  status?: string;
+  name?: LocalizedText
+  description?: LocalizedText
+  sections?: TemplateSection[]
+  style?: TemplateStyle
+  rubric?: string[]
+  status?: string
 }
 
 export function updateTemplate(id: string, input: UpdateTemplateInput) {
@@ -94,5 +94,5 @@ export function updateTemplate(id: string, input: UpdateTemplateInput) {
       status: input.status ?? undefined,
       ...(input.sections ? { version: { increment: 1 } } : {}),
     },
-  });
+  })
 }

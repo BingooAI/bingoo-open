@@ -1,15 +1,15 @@
-'use client';
+'use client'
 
-import type { RichBlock } from '@bingoo/core';
-import { cn } from './lib/cn';
-import { SoundButton } from './sound-button';
+import type { RichBlock } from '@bingoo/core'
+import { cn } from './lib/cn'
+import { SoundButton } from './sound-button'
 
 export interface StemViewProps {
   /** The question body — an ordered mix of text, images, audio and video. */
-  body: RichBlock[];
+  body: RichBlock[]
   /** A11y label for audio play buttons (data). */
-  playLabel?: string;
-  className?: string;
+  playLabel?: string
+  className?: string
 }
 
 /**
@@ -19,7 +19,7 @@ export interface StemViewProps {
  * string arrives in the data.
  */
 export function StemView({ body, playLabel, className }: StemViewProps) {
-  if (!body.length) return null;
+  if (!body.length) return null
   return (
     <div className={cn('flex w-full flex-col gap-3', className)}>
       {body.map((b, i) => {
@@ -31,13 +31,12 @@ export function StemView({ body, playLabel, className }: StemViewProps) {
                 className={cn(
                   'text-foreground',
                   b.emphasis === 'lead' && 'text-lg font-semibold',
-                  b.emphasis === 'quote' &&
-                    'border-l-4 border-primary/40 pl-3 italic text-foreground-muted',
+                  b.emphasis === 'quote' && 'border-l-4 border-primary/40 pl-3 italic text-foreground-muted',
                 )}
               >
                 {b.text}
               </p>
-            );
+            )
           case 'image':
             return b.src ? (
               <img
@@ -46,20 +45,16 @@ export function StemView({ body, playLabel, className }: StemViewProps) {
                 alt={b.alt ?? ''}
                 className="max-h-64 w-full rounded-2xl object-contain"
               />
-            ) : null;
+            ) : null
           case 'video':
             return b.src ? (
               <figure key={i} className="flex flex-col gap-1">
-                <video
-                  src={b.src}
-                  controls
-                  className="max-h-72 w-full rounded-2xl bg-black object-contain"
-                />
+                <video src={b.src} controls className="max-h-72 w-full rounded-2xl bg-black object-contain" />
                 {b.caption ? (
                   <figcaption className="text-xs text-foreground-muted">{b.caption}</figcaption>
                 ) : null}
               </figure>
-            ) : null;
+            ) : null
           case 'audio':
             return b.src ? (
               <div
@@ -71,13 +66,10 @@ export function StemView({ body, playLabel, className }: StemViewProps) {
                   <span className="text-sm text-foreground-muted">{b.caption ?? b.alt}</span>
                 ) : null}
               </div>
-            ) : null;
+            ) : null
           case 'list':
             return b.ordered ? (
-              <ol
-                key={i}
-                className="list-decimal pl-6 text-foreground marker:text-foreground-muted"
-              >
+              <ol key={i} className="list-decimal pl-6 text-foreground marker:text-foreground-muted">
                 {b.items.map((it, j) => (
                   <li key={j}>{it}</li>
                 ))}
@@ -88,9 +80,9 @@ export function StemView({ body, playLabel, className }: StemViewProps) {
                   <li key={j}>{it}</li>
                 ))}
               </ul>
-            );
+            )
         }
       })}
     </div>
-  );
+  )
 }

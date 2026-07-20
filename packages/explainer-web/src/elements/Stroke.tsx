@@ -3,25 +3,25 @@
  * The path lives in a 0..100 local box; we normalize pathLength to 1 so
  * `strokeDashoffset = 1 - drawProgress` self-draws regardless of path length.
  */
-import * as React from 'react';
-import type { RenderItem, StrokeContent } from '@bingoo/explainer';
-import type { ThemeTokens } from '@bingoo/explainer';
-import { resolveStyle } from '../theme/tokens';
-import { getRegister } from '../theme/registers';
-import { itemTransform } from './util';
+import * as React from 'react'
+import type { RenderItem, StrokeContent } from '@bingoo/explainer'
+import type { ThemeTokens } from '@bingoo/explainer'
+import { resolveStyle } from '../theme/tokens'
+import { getRegister } from '../theme/registers'
+import { itemTransform } from './util'
 
 export function Stroke({ item, theme }: { item: RenderItem; theme: ThemeTokens }) {
-  const c = item.content as StrokeContent;
-  const { transform, opacity } = itemTransform(item);
-  const s = resolveStyle(theme, item.style);
-  const reg = getRegister(item.style?.register ?? theme.register);
-  const draw = item.pose.drawProgress;
+  const c = item.content as StrokeContent
+  const { transform, opacity } = itemTransform(item)
+  const s = resolveStyle(theme, item.style)
+  const reg = getRegister(item.style?.register ?? theme.register)
+  const draw = item.pose.drawProgress
   const dashProps =
-    draw !== undefined ? { pathLength: 1, strokeDasharray: 1, strokeDashoffset: 1 - draw } : {};
+    draw !== undefined ? { pathLength: 1, strokeDasharray: 1, strokeDashoffset: 1 - draw } : {}
 
   // scale local 0..100 box to the element rect
-  const sx = item.rect.w / 100;
-  const sy = item.rect.h / 100;
+  const sx = item.rect.w / 100
+  const sy = item.rect.h / 100
 
   return (
     <g transform={transform} opacity={opacity}>
@@ -37,5 +37,5 @@ export function Stroke({ item, theme }: { item: RenderItem; theme: ThemeTokens }
         />
       </g>
     </g>
-  );
+  )
 }

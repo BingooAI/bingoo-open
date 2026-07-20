@@ -3,24 +3,24 @@
  * object into the scene at the playhead; it's selected so its clip appears on
  * the timeline. Grouped: Chữ · Hình · Nhân vật · Thiên nhiên · Tương tác · Art.
  */
-'use client';
-import * as React from 'react';
-import { useState } from 'react';
-import type { Element, Place, GateSpec } from '@bingoo/explainer';
-import { PROP_META } from '@bingoo/explainer';
-import { Button } from '@bingoo/ui-web';
-import { SVG_ASSETS } from '../../kit/svgAssets';
-import { manipCatalog, SUBJECTS } from '../manipCatalog';
-import { SFX_META, SFX_GROUPS, sfxUrl } from '@bingoo/explainer';
-import { useSnap, useStore, genId } from '../store/ctx';
-import { insertGateOps } from './split';
-import { dragState, type ElFactory } from './dragState';
-import { Thumb } from './Thumb';
-import type { CapCtx } from './ExplainerStudio';
-import { EXPLAINER_API, apiPost } from './endpoints';
+'use client'
+import * as React from 'react'
+import { useState } from 'react'
+import type { Element, Place, GateSpec } from '@bingoo/explainer'
+import { PROP_META } from '@bingoo/explainer'
+import { Button } from '@bingoo/ui-web'
+import { SVG_ASSETS } from '../../kit/svgAssets'
+import { manipCatalog, SUBJECTS } from '../manipCatalog'
+import { SFX_META, SFX_GROUPS, sfxUrl } from '@bingoo/explainer'
+import { useSnap, useStore, genId } from '../store/ctx'
+import { insertGateOps } from './split'
+import { dragState, type ElFactory } from './dragState'
+import { Thumb } from './Thumb'
+import type { CapCtx } from './ExplainerStudio'
+import { EXPLAINER_API, apiPost } from './endpoints'
 
-const SKY = Object.keys(PROP_META).filter((k) => PROP_META[k]!.anchor === 'center');
-const GROUND = Object.keys(PROP_META).filter((k) => PROP_META[k]!.anchor === 'bottom');
+const SKY = Object.keys(PROP_META).filter((k) => PROP_META[k]!.anchor === 'center')
+const GROUND = Object.keys(PROP_META).filter((k) => PROP_META[k]!.anchor === 'bottom')
 const TABS = [
   { id: 'text', label: 'Chữ' },
   { id: 'shape', label: 'Hình' },
@@ -30,32 +30,32 @@ const TABS = [
   { id: 'img', label: 'Ảnh' },
   { id: 'audio', label: 'Âm thanh' },
   { id: 'art', label: 'Art' },
-] as const;
-type Tab = (typeof TABS)[number]['id'];
+] as const
+type Tab = (typeof TABS)[number]['id']
 
 export function MediaPanel({ cap }: { cap: CapCtx }) {
-  const store = useStore();
-  const { doc, bundles, ui } = useSnap();
-  const [tab, setTab] = useState<Tab>('text');
-  const [sfxFilter, setSfxFilter] = useState('');
-  const [imgPrompt, setImgPrompt] = useState('');
-  const [imgBusy, setImgBusy] = useState(false);
-  const [imgErr, setImgErr] = useState<string | null>(null);
+  const store = useStore()
+  const { doc, bundles, ui } = useSnap()
+  const [tab, setTab] = useState<Tab>('text')
+  const [sfxFilter, setSfxFilter] = useState('')
+  const [imgPrompt, setImgPrompt] = useState('')
+  const [imgBusy, setImgBusy] = useState(false)
+  const [imgErr, setImgErr] = useState<string | null>(null)
 
   // AI image: generate a picture from a description via the image provider and
   // drop it into the scene (upload path stays for local files).
   const genImage = async () => {
-    const p = imgPrompt.trim();
-    if (!p || imgBusy) return;
-    setImgBusy(true);
-    setImgErr(null);
+    const p = imgPrompt.trim()
+    if (!p || imgBusy) return
+    setImgBusy(true)
+    setImgErr(null)
     try {
       const data = await apiPost<{ url?: string }>(EXPLAINER_API.image, {
         prompt: p,
         query: p,
         allowGenerate: true,
-      });
-      if (!data.url) throw new Error('Không tạo được ảnh (chưa cấu hình provider?)');
+      })
+      if (!data.url) throw new Error('Không tạo được ảnh (chưa cấu hình provider?)')
       // the layout engine places by SLOT — a free x/y here would be exactly the
       // "LLM puts things at random coordinates" bug, committed by the editor
       add((id) => ({
@@ -66,24 +66,24 @@ export function MediaPanel({ cap }: { cap: CapCtx }) {
           content: { kind: 'image', src: data.url, alt: p },
           z: 5,
         },
-      }));
-      setImgPrompt('');
+      }))
+      setImgPrompt('')
     } catch (e) {
-      setImgErr(String(e));
+      setImgErr(String(e))
     }
-    setImgBusy(false);
-  };
+    setImgBusy(false)
+  }
 
   // Attach a REAL sound from the built-in library (SFX_CATALOG on R2) at the
   // playhead. No generation — the old flow called a broken ElevenLabs endpoint;
   // these are curated clips that just play.
   const addSfx = (name: string) => {
-    const url = sfxUrl(name);
-    if (!url) return;
-    const sceneId = targetScene();
-    const b = cap.project.sceneBounds.find((s) => s.id === sceneId);
-    const at = +Math.max(0, cap.gt - (b?.start ?? 0)).toFixed(2);
-    const id = genId('sfx');
+    const url = sfxUrl(name)
+    if (!url) return
+    const sceneId = targetScene()
+    const b = cap.project.sceneBounds.find((s) => s.id === sceneId)
+    const at = +Math.max(0, cap.gt - (b?.start ?? 0)).toFixed(2)
+    const id = genId('sfx')
     store.dispatch({
       t: 'el.add',
       sceneId,
@@ -94,49 +94,39 @@ export function MediaPanel({ cap }: { cap: CapCtx }) {
         place: { at: 'free', x: 0.5, y: 0.5, size: 0.06 },
         z: 0,
       },
-    });
-    store.setUI({ activeSceneId: sceneId, selection: id });
-  };
+    })
+    store.setUI({ activeSceneId: sceneId, selection: id })
+  }
   const previewSfx = (name: string) => {
-    const url = sfxUrl(name);
+    const url = sfxUrl(name)
     if (url) {
       try {
-        void new Audio(url).play().catch(() => undefined);
+        void new Audio(url).play().catch(() => undefined)
       } catch {
         /* ignore */
       }
     }
-  };
+  }
 
   // add to the scene shown at the playhead (so the new object is visible now)
   const targetScene = () =>
-    (
-      cap.project.sceneBounds.find((s) => cap.gt >= s.start && cap.gt < s.end) ??
-      cap.project.sceneBounds[0]
-    )?.id ?? ui.activeSceneId;
+    (cap.project.sceneBounds.find((s) => cap.gt >= s.start && cap.gt < s.end) ?? cap.project.sceneBounds[0])
+      ?.id ?? ui.activeSceneId
 
   // insert an interactive checkpoint, SPLITTING the scene at the playhead so the
   // question sits between "before" and "after" halves (spec: real break point).
   const addGate = (gate: GateSpec) => {
-    const curId = targetScene();
-    const b = cap.project.sceneBounds.find((s) => s.id === curId);
-    const tsLocal = b ? cap.gt - b.start : 0;
-    const gateId = genId('gate');
-    const { ops, split } = insertGateOps(
-      doc,
-      bundles,
-      curId,
-      tsLocal,
-      gate,
-      gateId,
-      genId('scene'),
-    );
-    store.batch(ops);
-    store.setUI({ activeSceneId: gateId, selection: null });
+    const curId = targetScene()
+    const b = cap.project.sceneBounds.find((s) => s.id === curId)
+    const tsLocal = b ? cap.gt - b.start : 0
+    const gateId = genId('gate')
+    const { ops, split } = insertGateOps(doc, bundles, curId, tsLocal, gate, gateId, genId('scene'))
+    store.batch(ops)
+    store.setUI({ activeSceneId: gateId, selection: null })
     // place the playhead on the new checkpoint (it sits right at the cut)
-    if (!split && b) cap.setGt(b.end + 0.05);
-    else cap.setGt(cap.gt);
-  };
+    if (!split && b) cap.setGt(b.end + 0.05)
+    else cap.setGt(cap.gt)
+  }
   const GATES: { label: string; icon: string; make: () => GateSpec }[] = [
     {
       label: 'Chọn đáp án',
@@ -200,26 +190,25 @@ export function MediaPanel({ cap }: { cap: CapCtx }) {
         onPass: 'resume',
       }),
     },
-  ];
+  ]
   const add = (make: (id: string) => { el: Element; text?: string }) => {
-    const id = genId('el');
-    const sceneId = targetScene();
-    const { el, text } = make(id);
-    store.dispatch({ t: 'el.add', sceneId, element: el });
-    if (text !== undefined)
-      store.dispatch({ t: 'str.set', locale: ui.activeLocale, elId: id, text });
-    store.setUI({ activeSceneId: sceneId, selection: id });
-  };
+    const id = genId('el')
+    const sceneId = targetScene()
+    const { el, text } = make(id)
+    store.dispatch({ t: 'el.add', sceneId, element: el })
+    if (text !== undefined) store.dispatch({ t: 'str.set', locale: ui.activeLocale, elId: id, text })
+    store.setUI({ activeSceneId: sceneId, selection: id })
+  }
   const shapeEl = (shape: string, place: Place, color = 'ink'): Element => ({
     id: '',
     type: 'shape',
     content: { shape },
     place,
     style: { color, weight: 'md' },
-  });
-  const skyP: Place = { at: 'sky', x: 0.5, y: 0.24, size: 0.16 };
-  const groundP: Place = { at: 'ground', x: 0.5, size: 0.22 };
-  const freeP: Place = { at: 'free', x: 0.5, y: 0.5, size: 0.2 };
+  })
+  const skyP: Place = { at: 'sky', x: 0.5, y: 0.24, size: 0.16 }
+  const groundP: Place = { at: 'ground', x: 0.5, size: 0.22 }
+  const freeP: Place = { at: 'free', x: 0.5, y: 0.5, size: 0.2 }
   const titleF: ElFactory = (id) => ({
     el: {
       id,
@@ -229,7 +218,7 @@ export function MediaPanel({ cap }: { cap: CapCtx }) {
       style: { color: 'ink', fontSize: 'title', font: 'hand', align: 'center' },
     },
     text: 'Tiêu đề',
-  });
+  })
   const subF: ElFactory = (id) => ({
     el: {
       id,
@@ -239,17 +228,17 @@ export function MediaPanel({ cap }: { cap: CapCtx }) {
       style: { color: 'ink', fontSize: 'body', font: 'sans', align: 'center' },
     },
     text: 'Câu phụ đề',
-  });
+  })
   const dragProps = (f: ElFactory) => ({
     draggable: true,
     onDragStart: (e: React.DragEvent) => {
-      dragState.make = f;
-      e.dataTransfer.effectAllowed = 'copy';
+      dragState.make = f
+      e.dataTransfer.effectAllowed = 'copy'
     },
     onDragEnd: () => {
-      dragState.make = null;
+      dragState.make = null
     },
-  });
+  })
 
   return (
     <div className="cc-media">
@@ -275,11 +264,7 @@ export function MediaPanel({ cap }: { cap: CapCtx }) {
           <>
             <button
               className={ui.connecting ? 'cc-add on' : 'cc-add'}
-              style={
-                ui.connecting
-                  ? { borderColor: 'var(--cc-brand)', color: 'var(--cc-brand)' }
-                  : undefined
-              }
+              style={ui.connecting ? { borderColor: 'var(--cc-brand)', color: 'var(--cc-brand)' } : undefined}
               onClick={() => store.setUI({ connecting: !ui.connecting, connectFrom: null })}
             >
               {ui.connecting
@@ -439,9 +424,9 @@ export function MediaPanel({ cap }: { cap: CapCtx }) {
                 accept="image/*"
                 hidden
                 onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (!f) return;
-                  const rd = new FileReader();
+                  const f = e.target.files?.[0]
+                  if (!f) return
+                  const rd = new FileReader()
                   rd.onload = () =>
                     add((id) => ({
                       el: {
@@ -451,15 +436,15 @@ export function MediaPanel({ cap }: { cap: CapCtx }) {
                         place: { at: 'free', x: 0.5, y: 0.5, size: 0.4 },
                         z: 5,
                       },
-                    }));
-                  rd.readAsDataURL(f);
-                  e.currentTarget.value = '';
+                    }))
+                  rd.readAsDataURL(f)
+                  e.currentTarget.value = ''
                 }}
               />
             </label>
             <p className="cc-muted">
-              Chọn ảnh từ máy (PNG/JPG/SVG). Ảnh chèn vào giữa khung — kéo, đổi cỡ, thêm hiệu ứng
-              như mọi đối tượng.
+              Chọn ảnh từ máy (PNG/JPG/SVG). Ảnh chèn vào giữa khung — kéo, đổi cỡ, thêm hiệu ứng như mọi đối
+              tượng.
             </p>
             <div className="cc-media-sub" style={{ marginTop: 10 }}>
               ✨ Tạo ảnh bằng AI
@@ -501,17 +486,17 @@ export function MediaPanel({ cap }: { cap: CapCtx }) {
               style={{ marginBottom: 8 }}
             />
             {(() => {
-              const q = sfxFilter.trim().toLowerCase();
+              const q = sfxFilter.trim().toLowerCase()
               const matched = SFX_META.filter(
                 (m) =>
                   !q ||
                   m.label.toLowerCase().includes(q) ||
                   m.name.includes(q) ||
                   m.group.toLowerCase().includes(q),
-              );
+              )
               return SFX_GROUPS.map((g) => {
-                const items = matched.filter((m) => m.group === g);
-                if (!items.length) return null;
+                const items = matched.filter((m) => m.group === g)
+                if (!items.length) return null
                 return (
                   <div key={g} className="cc-sfx-group">
                     <div className="cc-sfx-grouphead">
@@ -520,11 +505,7 @@ export function MediaPanel({ cap }: { cap: CapCtx }) {
                     <div className="cc-sfx-list">
                       {items.map((m) => (
                         <div key={m.name} className="cc-sfx-row">
-                          <button
-                            className="cc-mini"
-                            title="Nghe thử"
-                            onClick={() => previewSfx(m.name)}
-                          >
+                          <button className="cc-mini" title="Nghe thử" onClick={() => previewSfx(m.name)}>
                             ▶
                           </button>
                           <span className="cc-sfx-name">
@@ -541,12 +522,12 @@ export function MediaPanel({ cap }: { cap: CapCtx }) {
                       ))}
                     </div>
                   </div>
-                );
-              });
+                )
+              })
             })()}
             <p className="cc-muted" style={{ marginTop: 8 }}>
-              ▶ nghe thử · ＋ chèn vào cảnh tại kim thời gian. Kéo khối tiếng trên timeline để khớp
-              với animation.
+              ▶ nghe thử · ＋ chèn vào cảnh tại kim thời gian. Kéo khối tiếng trên timeline để khớp với
+              animation.
             </p>
             <div className="cc-media-sub" style={{ marginTop: 12 }}>
               🎵 Nhạc nền (lặp cả bài)
@@ -588,16 +569,16 @@ export function MediaPanel({ cap }: { cap: CapCtx }) {
                   accept="audio/*"
                   hidden
                   onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (!f) return;
-                    const rd = new FileReader();
+                    const f = e.target.files?.[0]
+                    if (!f) return
+                    const rd = new FileReader()
                     rd.onload = () =>
                       store.dispatch({
                         t: 'doc.setMusic',
                         music: { src: String(rd.result), volume: 0.3 },
-                      });
-                    rd.readAsDataURL(f);
-                    e.currentTarget.value = '';
+                      })
+                    rd.readAsDataURL(f)
+                    e.currentTarget.value = ''
                   }}
                 />
               </label>
@@ -622,7 +603,7 @@ export function MediaPanel({ cap }: { cap: CapCtx }) {
         )}
       </div>
     </div>
-  );
+  )
 }
 
 function Tiles({
@@ -632,11 +613,11 @@ function Tiles({
   labels,
   thumbType = 'shape',
 }: {
-  items: string[];
-  make: (s: string) => ElFactory;
-  onAdd: (f: ElFactory) => void;
-  labels?: Record<string, string>;
-  thumbType?: string;
+  items: string[]
+  make: (s: string) => ElFactory
+  onAdd: (f: ElFactory) => void
+  labels?: Record<string, string>
+  thumbType?: string
 }) {
   return (
     <div className="cc-tiles">
@@ -647,11 +628,11 @@ function Tiles({
           draggable
           onClick={() => onAdd(make(s))}
           onDragStart={(e) => {
-            dragState.make = make(s);
-            e.dataTransfer.effectAllowed = 'copy';
+            dragState.make = make(s)
+            e.dataTransfer.effectAllowed = 'copy'
           }}
           onDragEnd={() => {
-            dragState.make = null;
+            dragState.make = null
           }}
           title="Bấm để thêm, hoặc kéo thả vào khung"
         >
@@ -662,5 +643,5 @@ function Tiles({
         </button>
       ))}
     </div>
-  );
+  )
 }

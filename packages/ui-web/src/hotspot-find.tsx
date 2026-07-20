@@ -1,21 +1,21 @@
-'use client';
+'use client'
 
-import type { ChoiceReveal, DiagramHotspot } from '@bingoo/core';
-import { Check, X } from 'lucide-react';
-import { cn } from './lib/cn';
-import { POP, SHAKE, tile } from './lib/interactive';
+import type { ChoiceReveal, DiagramHotspot } from '@bingoo/core'
+import { Check, X } from 'lucide-react'
+import { cn } from './lib/cn'
+import { POP, SHAKE, tile } from './lib/interactive'
 
 export interface HotspotFindProps {
-  hotspots: DiagramHotspot[];
+  hotspots: DiagramHotspot[]
   /** Controlled selection: hotspot ids. */
-  selected: string[];
-  onChange: (selected: string[]) => void;
-  imageSrc?: string;
+  selected: string[]
+  onChange: (selected: string[]) => void
+  imageSrc?: string
   /** After checking: hotspotId → correct/incorrect. */
-  reveal?: Record<string, ChoiceReveal>;
-  disabled?: boolean;
-  label?: string;
-  className?: string;
+  reveal?: Record<string, ChoiceReveal>
+  disabled?: boolean
+  label?: string
+  className?: string
 }
 
 /**
@@ -33,12 +33,12 @@ export function HotspotFind({
   label,
   className,
 }: HotspotFindProps) {
-  const locked = !!reveal || disabled;
-  const picked = new Set(selected);
+  const locked = !!reveal || disabled
+  const picked = new Set(selected)
 
   function toggle(id: string) {
-    if (locked) return;
-    onChange(picked.has(id) ? selected.filter((s) => s !== id) : [...selected, id]);
+    if (locked) return
+    onChange(picked.has(id) ? selected.filter((s) => s !== id) : [...selected, id])
   }
 
   return (
@@ -50,12 +50,10 @@ export function HotspotFind({
       )}
       aria-label={label}
     >
-      {imageSrc ? (
-        <img src={imageSrc} alt="" className="absolute inset-0 size-full object-contain" />
-      ) : null}
+      {imageSrc ? <img src={imageSrc} alt="" className="absolute inset-0 size-full object-contain" /> : null}
       {hotspots.map((h) => {
-        const mark = reveal?.[h.id];
-        const on = picked.has(h.id);
+        const mark = reveal?.[h.id]
+        const on = picked.has(h.id)
         return (
           <button
             key={h.id}
@@ -95,8 +93,8 @@ export function HotspotFind({
               />
             ) : null}
           </button>
-        );
+        )
       })}
     </div>
-  );
+  )
 }

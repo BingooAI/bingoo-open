@@ -1,16 +1,16 @@
-'use client';
+'use client'
 
-import { cn } from './lib/cn';
-import { ENTER, tile } from './lib/interactive';
+import { cn } from './lib/cn'
+import { ENTER, tile } from './lib/interactive'
 
 export interface ReadingPassageProps {
-  title?: string;
-  author?: string;
-  paragraphs: string[];
+  title?: string
+  author?: string
+  paragraphs: string[]
   /** Number the paragraphs so questions can point at them ("see paragraph 3"). */
-  numbered?: boolean;
-  glossary?: Array<{ term: string; definition: string }>;
-  className?: string;
+  numbered?: boolean
+  glossary?: Array<{ term: string; definition: string }>
+  className?: string
 }
 
 /** A reading text — numbered paragraphs plus the hard words defined underneath. i18n-free. */
@@ -59,5 +59,5 @@ export function ReadingPassage({
         </dl>
       ) : null}
     </article>
-  );
+  )
 }

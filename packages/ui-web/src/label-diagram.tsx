@@ -1,23 +1,23 @@
-'use client';
+'use client'
 
-import type { DiagramHotspot, QuizItem } from '@bingoo/core';
-import { useQuizText } from './quiz-locale';
-import { useState } from 'react';
-import { cn } from './lib/cn';
-import { POP, SHAKE, stagger, tile } from './lib/interactive';
+import type { DiagramHotspot, QuizItem } from '@bingoo/core'
+import { useQuizText } from './quiz-locale'
+import { useState } from 'react'
+import { cn } from './lib/cn'
+import { POP, SHAKE, stagger, tile } from './lib/interactive'
 
 export interface LabelDiagramProps {
-  hotspots: DiagramHotspot[];
-  labels: QuizItem[];
+  hotspots: DiagramHotspot[]
+  labels: QuizItem[]
   /** Controlled: labelId → hotspotId. */
-  assignment: Record<string, string>;
-  onChange: (assignment: Record<string, string>) => void;
-  imageSrc?: string;
+  assignment: Record<string, string>
+  onChange: (assignment: Record<string, string>) => void
+  imageSrc?: string
   /** After checking: labelId → correct. */
-  reveal?: Record<string, boolean>;
-  disabled?: boolean;
-  label?: string;
-  className?: string;
+  reveal?: Record<string, boolean>
+  disabled?: boolean
+  label?: string
+  className?: string
 }
 
 /**
@@ -36,33 +36,33 @@ export function LabelDiagram({
   label,
   className,
 }: LabelDiagramProps) {
-  const t = useQuizText();
-  const [armed, setArmed] = useState<string | null>(null);
-  const locked = !!reveal || disabled;
-  const labelAt = (hotspotId: string) => labels.find((l) => assignment[l.id] === hotspotId);
+  const t = useQuizText()
+  const [armed, setArmed] = useState<string | null>(null)
+  const locked = !!reveal || disabled
+  const labelAt = (hotspotId: string) => labels.find((l) => assignment[l.id] === hotspotId)
 
   function tapLabel(id: string) {
-    if (locked) return;
+    if (locked) return
     if (assignment[id]) {
-      const next = { ...assignment };
-      delete next[id];
-      onChange(next);
-      setArmed(null);
-      return;
+      const next = { ...assignment }
+      delete next[id]
+      onChange(next)
+      setArmed(null)
+      return
     }
-    setArmed((cur) => (cur === id ? null : id));
+    setArmed((cur) => (cur === id ? null : id))
   }
   function tapHotspot(hotspotId: string) {
-    if (locked || !armed) return;
-    const next = { ...assignment };
+    if (locked || !armed) return
+    const next = { ...assignment }
     // A hotspot holds one label — clear any previous occupant.
-    for (const l of Object.keys(next)) if (next[l] === hotspotId) delete next[l];
-    next[armed] = hotspotId;
-    onChange(next);
-    setArmed(null);
+    for (const l of Object.keys(next)) if (next[l] === hotspotId) delete next[l]
+    next[armed] = hotspotId
+    onChange(next)
+    setArmed(null)
   }
 
-  const pool = labels.filter((l) => !(l.id in assignment));
+  const pool = labels.filter((l) => !(l.id in assignment))
 
   return (
     <div className={cn('flex flex-col gap-3', className)} aria-label={label}>
@@ -76,8 +76,8 @@ export function LabelDiagram({
           <img src={imageSrc} alt="" className="absolute inset-0 size-full object-contain" />
         ) : null}
         {hotspots.map((h) => {
-          const occupant = labelAt(h.id);
-          const ok = occupant ? reveal?.[occupant.id] : undefined;
+          const occupant = labelAt(h.id)
+          const ok = occupant ? reveal?.[occupant.id] : undefined
           return (
             <button
               key={h.id}
@@ -102,8 +102,7 @@ export function LabelDiagram({
                       'whitespace-nowrap rounded-md border px-1.5 py-0.5 text-xs font-semibold',
                       ok === true && cn('border-success bg-success-soft text-success', POP),
                       ok === false && cn('border-danger bg-danger-soft text-danger', SHAKE),
-                      ok === undefined &&
-                        'border-primary bg-primary-soft text-primary-soft-foreground',
+                      ok === undefined && 'border-primary bg-primary-soft text-primary-soft-foreground',
                     )}
                   >
                     {t(occupant.label)}
@@ -111,7 +110,7 @@ export function LabelDiagram({
                 ) : null}
               </span>
             </button>
-          );
+          )
         })}
       </div>
       {pool.length > 0 ? (
@@ -135,5 +134,5 @@ export function LabelDiagram({
         </div>
       ) : null}
     </div>
-  );
+  )
 }

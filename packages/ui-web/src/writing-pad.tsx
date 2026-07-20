@@ -1,33 +1,33 @@
-'use client';
+'use client'
 
-import { countWords, type RubricCriterion } from '@bingoo/core';
-import { cn } from './lib/cn';
-import { POP, stagger, tile } from './lib/interactive';
-import { RubricList } from './rubric-list';
+import { countWords, type RubricCriterion } from '@bingoo/core'
+import { cn } from './lib/cn'
+import { POP, stagger, tile } from './lib/interactive'
+import { RubricList } from './rubric-list'
 
 export interface WritingLabels {
   /** Heading over the success criteria, e.g. "Bài của em cần có:". */
-  criteria: string;
+  criteria: string
   /** Word counter, e.g. (n) => `${n} từ`. */
-  words: (n: number) => string;
+  words: (n: number) => string
   /** Heading over the model answer shown on reveal. */
-  exemplar?: string;
-  placeholder?: string;
+  exemplar?: string
+  placeholder?: string
 }
 
 export interface WritingPadProps {
-  text: string;
-  met: string[];
-  onChange: (next: { text: string; met: string[] }) => void;
-  criteria: RubricCriterion[];
-  minWords?: number;
-  maxWords?: number;
+  text: string
+  met: string[]
+  onChange: (next: { text: string; met: string[] }) => void
+  criteria: RubricCriterion[]
+  minWords?: number
+  maxWords?: number
   /** A writing frame — sentence openers the learner can tap to insert. */
-  starters?: string[];
-  labels: WritingLabels;
-  reveal?: { correct: boolean; need: number; exemplar?: string };
-  disabled?: boolean;
-  className?: string;
+  starters?: string[]
+  labels: WritingLabels
+  reveal?: { correct: boolean; need: number; exemplar?: string }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -48,10 +48,10 @@ export function WritingPad({
   disabled,
   className,
 }: WritingPadProps) {
-  const locked = !!reveal || disabled;
-  const n = countWords(text);
-  const short = minWords !== undefined && n < minWords;
-  const long = maxWords !== undefined && n > maxWords;
+  const locked = !!reveal || disabled
+  const n = countWords(text)
+  const short = minWords !== undefined && n < minWords
+  const long = maxWords !== undefined && n > maxWords
 
   return (
     <div className={cn('flex w-full flex-col gap-3', className)}>
@@ -110,13 +110,11 @@ export function WritingPad({
       {reveal?.exemplar ? (
         <div className={cn('rounded-2xl border-2 border-success bg-success-soft p-3', POP)}>
           {labels.exemplar ? (
-            <p className="mb-1 text-xs font-bold uppercase tracking-wide text-success">
-              {labels.exemplar}
-            </p>
+            <p className="mb-1 text-xs font-bold uppercase tracking-wide text-success">{labels.exemplar}</p>
           ) : null}
           <p className="text-sm text-foreground">{reveal.exemplar}</p>
         </div>
       ) : null}
     </div>
-  );
+  )
 }

@@ -1,21 +1,21 @@
-import { forwardRef, type HTMLAttributes } from 'react';
+import { forwardRef, type HTMLAttributes } from 'react'
 
 /**
  * The style packs that re-skin structure (radius, depth, motion) via tokens.
  * `junior` (mầm non) and `pro` (người đi làm) extend the age range: junior is the
  * roundest/bounciest, pro the tightest/quietest — the same components, re-skinned.
  */
-export type StylePack = 'base' | 'playful' | 'calm' | 'toy3d' | 'junior' | 'pro';
+export type StylePack = 'base' | 'playful' | 'calm' | 'toy3d' | 'junior' | 'pro'
 /** The accent packs that re-hue the primary/ring family. Blue = default. */
-export type AccentPack = 'blue' | 'teal' | 'sunbeam' | 'coral' | 'grape';
+export type AccentPack = 'blue' | 'teal' | 'sunbeam' | 'coral' | 'grape'
 
 export interface PackScopeProps extends HTMLAttributes<HTMLDivElement> {
   /** Style pack (radius/depth/motion). `base` = no attribute. */
-  pack?: StylePack;
+  pack?: StylePack
   /** Accent hue. `blue` = no attribute (brand default). */
-  accent?: AccentPack;
+  accent?: AccentPack
   /** Theme world id (§3B) — sets `data-theme-pack` for a themed subtree. */
-  themePack?: string;
+  themePack?: string
 }
 
 /**
@@ -36,5 +36,5 @@ export const PackScope = forwardRef<HTMLDivElement, PackScopeProps>(function Pac
       data-theme-pack={themePack || undefined}
       {...props}
     />
-  );
-});
+  )
+})

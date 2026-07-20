@@ -1,9 +1,9 @@
-import { ShieldCheck } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
-import { Logo } from '@/components/brand/logo';
-import { LocaleSwitcher } from '@/components/brand/locale-switcher';
-import { ThemeToggle } from '@/components/brand/theme-toggle';
+import { ShieldCheck } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { setRequestLocale } from 'next-intl/server'
+import { Logo } from '@/components/brand/logo'
+import { LocaleSwitcher } from '@/components/brand/locale-switcher'
+import { ThemeToggle } from '@/components/brand/theme-toggle'
 
 /**
  * Admin auth layout — a calm, staff-facing sign-in surface (no marketing). The
@@ -14,11 +14,11 @@ export default async function AuthLayout({
   children,
   params,
 }: {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
+  const { locale } = await params
+  setRequestLocale(locale)
 
   return (
     <div className="flex min-h-dvh flex-col bg-surface-muted">
@@ -27,11 +27,11 @@ export default async function AuthLayout({
         <div className="w-full max-w-md">{children}</div>
       </main>
     </div>
-  );
+  )
 }
 
 function TopBar() {
-  const t = useTranslations('admin');
+  const t = useTranslations('admin')
   return (
     <div className="flex items-center justify-between gap-3 px-5 py-5 sm:px-8">
       <div className="flex items-center gap-2">
@@ -46,5 +46,5 @@ function TopBar() {
         <ThemeToggle />
       </div>
     </div>
-  );
+  )
 }

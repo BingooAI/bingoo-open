@@ -1,27 +1,27 @@
-'use client';
+'use client'
 
-import { cn } from './lib/cn';
-import { stagger, tile } from './lib/interactive';
+import { cn } from './lib/cn'
+import { stagger, tile } from './lib/interactive'
 
 export interface ClockInputProps {
-  hour: number | null;
-  minute: number | null;
-  onChange: (hour: number, minute: number) => void;
+  hour: number | null
+  minute: number | null
+  onChange: (hour: number, minute: number) => void
   /** Minute choices to offer (default [0,15,30,45]). */
-  minuteOptions?: number[];
+  minuteOptions?: number[]
   /** After checking: whether correct + the expected time. */
-  reveal?: { correct: boolean; hour: number; minute: number };
+  reveal?: { correct: boolean; hour: number; minute: number }
   /** Localized labels for the minute buttons, e.g. { "0": "o'clock", "30": "half past" }. */
-  minuteLabels?: Record<number, string>;
-  disabled?: boolean;
-  label?: string;
-  className?: string;
+  minuteLabels?: Record<number, string>
+  disabled?: boolean
+  label?: string
+  className?: string
 }
 
 const hand = (angleDeg: number, length: number) => {
-  const a = ((angleDeg - 90) * Math.PI) / 180;
-  return { x: 50 + Math.cos(a) * length, y: 50 + Math.sin(a) * length };
-};
+  const a = ((angleDeg - 90) * Math.PI) / 180
+  return { x: 50 + Math.cos(a) * length, y: 50 + Math.sin(a) * length }
+}
 
 /**
  * Read/set an analog clock: tap an hour (1–12) and a minute option — the hands
@@ -38,47 +38,33 @@ export function ClockInput({
   label,
   className,
 }: ClockInputProps) {
-  const locked = !!reveal || disabled;
-  const shownHour = reveal ? reveal.hour : hour;
-  const shownMinute = reveal ? reveal.minute : minute;
-  const minuteAngle = shownMinute != null ? shownMinute * 6 : null;
+  const locked = !!reveal || disabled
+  const shownHour = reveal ? reveal.hour : hour
+  const shownMinute = reveal ? reveal.minute : minute
+  const minuteAngle = shownMinute != null ? shownMinute * 6 : null
   // Hour hand advances with the minutes.
-  const hourAngle = shownHour != null ? (shownHour % 12) * 30 + (shownMinute ?? 0) * 0.5 : null;
-  const handTint = reveal
-    ? reveal.correct
-      ? 'stroke-success'
-      : 'stroke-danger'
-    : 'stroke-primary';
+  const hourAngle = shownHour != null ? (shownHour % 12) * 30 + (shownMinute ?? 0) * 0.5 : null
+  const handTint = reveal ? (reveal.correct ? 'stroke-success' : 'stroke-danger') : 'stroke-primary'
 
   function pickHour(h: number) {
-    if (locked) return;
-    onChange(h, minute ?? 0);
+    if (locked) return
+    onChange(h, minute ?? 0)
   }
   function pickMinute(m: number) {
-    if (locked) return;
-    onChange(hour ?? 12, m);
+    if (locked) return
+    onChange(hour ?? 12, m)
   }
 
   return (
     <div className={cn('flex flex-col items-center gap-3', className)}>
       <svg viewBox="0 0 100 100" role="img" aria-label={label} className="w-48 max-w-full">
-        <circle
-          cx={50}
-          cy={50}
-          r={47}
-          className="fill-surface stroke-border-strong"
-          strokeWidth={1.5}
-        />
+        <circle cx={50} cy={50} r={47} className="fill-surface stroke-border-strong" strokeWidth={1.5} />
         {Array.from({ length: 12 }, (_, i) => {
-          const h = i + 1;
-          const p = hand(h * 30, 38);
-          const active = shownHour != null && shownHour % 12 === h % 12;
+          const h = i + 1
+          const p = hand(h * 30, 38)
+          const active = shownHour != null && shownHour % 12 === h % 12
           return (
-            <g
-              key={h}
-              onClick={() => pickHour(h)}
-              className={cn('group', !locked && 'cursor-pointer')}
-            >
+            <g key={h} onClick={() => pickHour(h)} className={cn('group', !locked && 'cursor-pointer')}>
               <circle
                 cx={p.x}
                 cy={p.y}
@@ -99,7 +85,7 @@ export function ClockInput({
                 {h}
               </text>
             </g>
-          );
+          )
         })}
         {minuteAngle != null ? (
           <line
@@ -127,9 +113,7 @@ export function ClockInput({
           cx={50}
           cy={50}
           r={2.4}
-          className={cn(
-            reveal ? (reveal.correct ? 'fill-success' : 'fill-danger') : 'fill-primary',
-          )}
+          className={cn(reveal ? (reveal.correct ? 'fill-success' : 'fill-danger') : 'fill-primary')}
         />
       </svg>
       <div className="flex flex-wrap justify-center gap-2">
@@ -150,5 +134,5 @@ export function ClockInput({
         ))}
       </div>
     </div>
-  );
+  )
 }

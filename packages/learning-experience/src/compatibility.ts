@@ -10,28 +10,28 @@
  * (dev-facing, không phải text người dùng). Không LLM, không ngưỡng mờ.
  */
 
-import type { Axis } from './axes';
-import type { ExperienceDescriptor } from './descriptor';
+import type { Axis } from './axes'
+import type { ExperienceDescriptor } from './descriptor'
 
-export type CompatibilitySeverity = 'INVALID' | 'DISCOURAGED';
-export type CompatibilityVerdict = 'VALID' | 'DISCOURAGED' | 'INVALID';
+export type CompatibilitySeverity = 'INVALID' | 'DISCOURAGED'
+export type CompatibilityVerdict = 'VALID' | 'DISCOURAGED' | 'INVALID'
 
 export interface CompatibilityViolation {
   /** Mã luật ổn định — host có thể map sang thông điệp i18n riêng nếu muốn. */
-  readonly rule: string;
-  readonly severity: CompatibilitySeverity;
+  readonly rule: string
+  readonly severity: CompatibilitySeverity
   /** Các trục làm nên mâu thuẫn. */
-  readonly axes: readonly Axis[];
+  readonly axes: readonly Axis[]
   /** Giải thích kiểm chứng được (tiếng Việt, dev-facing). */
-  readonly reason: string;
+  readonly reason: string
 }
 
 export interface CompatibilityResult {
-  readonly verdict: CompatibilityVerdict;
-  readonly violations: readonly CompatibilityViolation[];
+  readonly verdict: CompatibilityVerdict
+  readonly violations: readonly CompatibilityViolation[]
 }
 
-type Rule = (d: ExperienceDescriptor) => CompatibilityViolation | null;
+type Rule = (d: ExperienceDescriptor) => CompatibilityViolation | null
 
 const RULES: readonly Rule[] = [
   // ── Mâu thuẫn cứng (INVALID) ────────────────────────────────────────────────
@@ -41,8 +41,7 @@ const RULES: readonly Rule[] = [
           rule: 'live-time-needs-sync-delivery',
           severity: 'INVALID',
           axes: ['time', 'delivery'],
-          reason:
-            'Thời gian "trực tiếp" không thể chạy trong định dạng tự học không đồng bộ (async).',
+          reason: 'Thời gian "trực tiếp" không thể chạy trong định dạng tự học không đồng bộ (async).',
         }
       : null,
 
@@ -107,24 +106,23 @@ const RULES: readonly Rule[] = [
           rule: 'classroom-wants-instructor',
           severity: 'DISCOURAGED',
           axes: ['delivery', 'companion'],
-          reason:
-            'Lớp học thường có người dẫn (teacher/TA/mentor); thiếu thì chỉ còn là nhóm tự học.',
+          reason: 'Lớp học thường có người dẫn (teacher/TA/mentor); thiếu thì chỉ còn là nhóm tự học.',
         }
       : null,
-];
+]
 
 /** Chấm một descriptor: gom mọi vi phạm rồi rút gọn thành verdict tổng. */
 export function checkCompatibility(d: ExperienceDescriptor): CompatibilityResult {
-  const violations = RULES.map((r) => r(d)).filter((v): v is CompatibilityViolation => v !== null);
+  const violations = RULES.map((r) => r(d)).filter((v): v is CompatibilityViolation => v !== null)
   const verdict: CompatibilityVerdict = violations.some((v) => v.severity === 'INVALID')
     ? 'INVALID'
     : violations.length > 0
       ? 'DISCOURAGED'
-      : 'VALID';
-  return { verdict, violations };
+      : 'VALID'
+  return { verdict, violations }
 }
 
 /** Có tồn tại được không (không có mâu thuẫn cứng). DISCOURAGED vẫn tính là hợp lệ. */
 export function isValid(d: ExperienceDescriptor): boolean {
-  return checkCompatibility(d).verdict !== 'INVALID';
+  return checkCompatibility(d).verdict !== 'INVALID'
 }

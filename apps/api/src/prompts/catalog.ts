@@ -8,11 +8,11 @@
  */
 
 export interface PromptDefinition {
-  id: string;
-  description: string;
+  id: string
+  description: string
   /** Placeholder names used in the template (documentation + admin UI hints). */
-  variables: readonly string[];
-  template: string;
+  variables: readonly string[]
+  template: string
 }
 
 export const PROMPTS = {
@@ -56,8 +56,7 @@ export const PROMPTS = {
 
   'media.doc.author': {
     id: 'media.doc.author',
-    description:
-      'System prompt that drives template-based document authoring (structured section output).',
+    description: 'System prompt that drives template-based document authoring (structured section output).',
     variables: ['locale', 'tone', 'gradeBand', 'length', 'refine'],
     template: [
       'You are an expert author of learning materials for children aged 6–15 on the Bingoo platform.',
@@ -72,8 +71,7 @@ export const PROMPTS = {
 
   'media.doc.score': {
     id: 'media.doc.score',
-    description:
-      'Reviewer prompt that scores a generated document 0..1 against a rubric (verify pass).',
+    description: 'Reviewer prompt that scores a generated document 0..1 against a rubric (verify pass).',
     variables: [],
     template: [
       "You are a strict reviewer of children's learning material. Score the document",
@@ -327,8 +325,7 @@ export const PROMPTS = {
 
   'authoring.course.generate': {
     id: 'authoring.course.generate',
-    description:
-      'Generate a course SHELL (units → lessons with teaches) aligned to a competency framework.',
+    description: 'Generate a course SHELL (units → lessons with teaches) aligned to a competency framework.',
     variables: ['brief', 'locale', 'stage', 'vocab'],
     template: [
       'CANONICAL LANGUAGE = ENGLISH. Every localized field MUST include an "en" value — it is the',
@@ -623,8 +620,8 @@ export const PROMPTS = {
       'No prose outside JSON.',
     ].join(' '),
   },
-} as const satisfies Record<string, PromptDefinition>;
+} as const satisfies Record<string, PromptDefinition>
 
-export type PromptId = keyof typeof PROMPTS;
+export type PromptId = keyof typeof PROMPTS
 
-export const PROMPT_IDS = Object.keys(PROMPTS) as PromptId[];
+export const PROMPT_IDS = Object.keys(PROMPTS) as PromptId[]

@@ -1,33 +1,24 @@
-'use client';
+'use client'
 
-import { Search, Sparkles, X } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { Input, Select } from '@bingoo/ui-web';
-import type { MediaKind, ModerationStatus } from '@bingoo/core';
-import { cn } from '@/lib/cn';
-import { KindIcon } from './kind-icon';
+import { Search, Sparkles, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { Input, Select } from '@bingoo/ui-web'
+import type { MediaKind, ModerationStatus } from '@bingoo/core'
+import { cn } from '@/lib/cn'
+import { KindIcon } from './kind-icon'
 
-const KINDS: MediaKind[] = [
-  'IMAGE',
-  'VIDEO',
-  'AUDIO',
-  'DOCUMENT',
-  'ANIMATION',
-  'FONT',
-  'ARCHIVE',
-  'OTHER',
-];
+const KINDS: MediaKind[] = ['IMAGE', 'VIDEO', 'AUDIO', 'DOCUMENT', 'ANIMATION', 'FONT', 'ARCHIVE', 'OTHER']
 
-const MODERATIONS: ModerationStatus[] = ['PENDING', 'APPROVED', 'REJECTED', 'FLAGGED'];
+const MODERATIONS: ModerationStatus[] = ['PENDING', 'APPROVED', 'REJECTED', 'FLAGGED']
 
 export interface SearchState {
-  text: string;
-  kind: MediaKind[];
-  locale: string; // '' = any
+  text: string
+  kind: MediaKind[]
+  locale: string // '' = any
   /** Review state; '' = any. Staff-only facet — the server ignores it otherwise. */
-  moderation: ModerationStatus | '';
+  moderation: ModerationStatus | ''
   /** Natural-language mode: the LLM parses `text` into a structured query. */
-  nl: boolean;
+  nl: boolean
 }
 
 export const EMPTY_SEARCH: SearchState = {
@@ -36,11 +27,11 @@ export const EMPTY_SEARCH: SearchState = {
   locale: '',
   moderation: '',
   nl: false,
-};
+}
 
 /** Active only in structured mode (NL mode is driven by explicit submit). */
 export function isSearchActive(s: SearchState): boolean {
-  return s.text.trim().length > 0 || s.kind.length > 0 || s.locale !== '' || s.moderation !== '';
+  return s.text.trim().length > 0 || s.kind.length > 0 || s.locale !== '' || s.moderation !== ''
 }
 
 export function SearchToolbar({
@@ -49,22 +40,22 @@ export function SearchToolbar({
   onSubmit,
   locales,
 }: {
-  value: SearchState;
-  onChange: (next: SearchState) => void;
+  value: SearchState
+  onChange: (next: SearchState) => void
   /** Called on Enter in NL mode to run the (LLM-backed) search. */
-  onSubmit: () => void;
-  locales: string[];
+  onSubmit: () => void
+  locales: string[]
 }) {
-  const t = useTranslations('admin.library');
-  const tk = useTranslations('admin.kind');
-  const tm = useTranslations('admin.moderation.state');
+  const t = useTranslations('admin.library')
+  const tk = useTranslations('admin.kind')
+  const tm = useTranslations('admin.moderation.state')
 
   const toggleKind = (k: MediaKind) => {
-    const has = value.kind.includes(k);
-    onChange({ ...value, kind: has ? value.kind.filter((x) => x !== k) : [...value.kind, k] });
-  };
+    const has = value.kind.includes(k)
+    onChange({ ...value, kind: has ? value.kind.filter((x) => x !== k) : [...value.kind, k] })
+  }
 
-  const active = isSearchActive(value);
+  const active = isSearchActive(value)
 
   return (
     <div className="space-y-3">
@@ -76,8 +67,8 @@ export function SearchToolbar({
             onChange={(e) => onChange({ ...value, text: e.target.value })}
             onKeyDown={(e) => {
               if (value.nl && e.key === 'Enter') {
-                e.preventDefault();
-                onSubmit();
+                e.preventDefault()
+                onSubmit()
               }
             }}
             placeholder={value.nl ? t('nlPlaceholder') : t('searchPlaceholder')}
@@ -124,9 +115,7 @@ export function SearchToolbar({
           <Select
             aria-label={t('moderationFilter')}
             value={value.moderation}
-            onChange={(e) =>
-              onChange({ ...value, moderation: e.target.value as ModerationStatus | '' })
-            }
+            onChange={(e) => onChange({ ...value, moderation: e.target.value as ModerationStatus | '' })}
             className="sm:w-44"
           >
             <option value="">{t('moderationAll')}</option>
@@ -155,7 +144,7 @@ export function SearchToolbar({
       ) : (
         <div className="flex flex-wrap gap-1.5" role="group" aria-label={t('kindFilter')}>
           {KINDS.map((k) => {
-            const on = value.kind.includes(k);
+            const on = value.kind.includes(k)
             return (
               <button
                 key={k}
@@ -172,10 +161,10 @@ export function SearchToolbar({
                 <KindIcon kind={k} className="size-3.5" />
                 {tk(k)}
               </button>
-            );
+            )
           })}
         </div>
       )}
     </div>
-  );
+  )
 }

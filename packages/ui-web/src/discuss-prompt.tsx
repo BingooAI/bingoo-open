@@ -1,19 +1,19 @@
-'use client';
+'use client'
 
-import { MessagesSquare, Timer, Users } from 'lucide-react';
-import { cn } from './lib/cn';
-import { ENTER } from './lib/interactive';
+import { MessagesSquare, Timer, Users } from 'lucide-react'
+import { cn } from './lib/cn'
+import { ENTER } from './lib/interactive'
 
 export interface DiscussPromptProps {
-  prompt: string;
+  prompt: string
   /** Talk partner, small group, or the whole class. */
-  mode?: 'pair' | 'group' | 'class';
+  mode?: 'pair' | 'group' | 'class'
   /** Talking points to get them started. */
-  points?: string[];
-  minutes?: number;
+  points?: string[]
+  minutes?: number
   /** Localized wrapper copy — e.g. { pair: 'Nói với bạn bên cạnh', minutes: (n) => `${n} phút` }. */
-  labels?: { pair?: string; group?: string; class?: string; minutes?: (n: number) => string };
-  className?: string;
+  labels?: { pair?: string; group?: string; class?: string; minutes?: (n: number) => string }
+  className?: string
 }
 
 /**
@@ -29,23 +29,17 @@ export function DiscussPrompt({
   labels,
   className,
 }: DiscussPromptProps) {
-  const modeLabel = labels?.[mode];
-  const Icon = mode === 'pair' ? MessagesSquare : Users;
+  const modeLabel = labels?.[mode]
+  const Icon = mode === 'pair' ? MessagesSquare : Users
 
   return (
     <section
-      className={cn(
-        'rounded-2xl border-2 border-warning/50 bg-warning-soft/40 p-4',
-        ENTER,
-        className,
-      )}
+      className={cn('rounded-2xl border-2 border-warning/50 bg-warning-soft/40 p-4', ENTER, className)}
     >
       <header className="mb-2 flex items-center gap-2">
         <Icon className="size-4 text-warning" />
         {modeLabel ? (
-          <span className="text-xs font-bold uppercase tracking-wide text-warning">
-            {modeLabel}
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wide text-warning">{modeLabel}</span>
         ) : null}
         {minutes && labels?.minutes ? (
           <span className="ml-auto flex items-center gap-1 text-xs font-semibold text-foreground-muted">
@@ -70,5 +64,5 @@ export function DiscussPrompt({
         </ul>
       ) : null}
     </section>
-  );
+  )
 }

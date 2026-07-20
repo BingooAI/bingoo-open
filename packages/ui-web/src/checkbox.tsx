@@ -1,10 +1,10 @@
-import { Check } from 'lucide-react';
-import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { Check } from 'lucide-react'
+import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
-  label?: ReactNode;
-  description?: ReactNode;
+  label?: ReactNode
+  description?: ReactNode
 }
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
@@ -38,5 +38,5 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
         </span>
       )}
     </label>
-  );
-});
+  )
+})

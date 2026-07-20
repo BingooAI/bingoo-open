@@ -1,20 +1,20 @@
-'use client';
+'use client'
 
-import type { QuizItem } from '@bingoo/core';
-import { useQuizText } from './quiz-locale';
-import { cn } from './lib/cn';
-import { POP, SHAKE, stagger, tile } from './lib/interactive';
+import type { QuizItem } from '@bingoo/core'
+import { useQuizText } from './quiz-locale'
+import { cn } from './lib/cn'
+import { POP, SHAKE, stagger, tile } from './lib/interactive'
 
 export interface BarChartBuilderProps {
-  categories: QuizItem[];
-  maxValue: number;
-  unitLabel?: string;
+  categories: QuizItem[]
+  maxValue: number
+  unitLabel?: string
   /** Controlled: catId → bar height. */
-  heights: Record<string, number>;
-  onChange: (heights: Record<string, number>) => void;
-  reveal?: { cells: Record<string, boolean>; answer: Record<string, number> };
-  disabled?: boolean;
-  className?: string;
+  heights: Record<string, number>
+  onChange: (heights: Record<string, number>) => void
+  reveal?: { cells: Record<string, boolean>; answer: Record<string, number> }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -32,15 +32,15 @@ export function BarChartBuilder({
   disabled,
   className,
 }: BarChartBuilderProps) {
-  const locked = !!reveal || disabled;
-  const levels = Array.from({ length: maxValue }, (_, i) => maxValue - i); // top → bottom
+  const locked = !!reveal || disabled
+  const levels = Array.from({ length: maxValue }, (_, i) => maxValue - i) // top → bottom
 
-  const t = useQuizText();
+  const t = useQuizText()
   const setHeight = (id: string, level: number) => {
-    if (locked) return;
-    const cur = heights[id] ?? 0;
-    onChange({ ...heights, [id]: cur === level ? level - 1 : level });
-  };
+    if (locked) return
+    const cur = heights[id] ?? 0
+    onChange({ ...heights, [id]: cur === level ? level - 1 : level })
+  }
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>
@@ -52,9 +52,9 @@ export function BarChartBuilder({
           </span>
         ) : null}
         {categories.map((c, i) => {
-          const h = heights[c.id] ?? 0;
-          const ok = reveal?.cells[c.id];
-          const barTone = reveal ? (ok ? 'bg-success' : 'bg-danger') : 'bg-primary';
+          const h = heights[c.id] ?? 0
+          const ok = reveal?.cells[c.id]
+          const barTone = reveal ? (ok ? 'bg-success' : 'bg-danger') : 'bg-primary'
           return (
             <div
               key={c.id}
@@ -72,7 +72,7 @@ export function BarChartBuilder({
                 )}
               >
                 {levels.map((level) => {
-                  const filled = level <= h;
+                  const filled = level <= h
                   return (
                     <button
                       key={level}
@@ -85,7 +85,7 @@ export function BarChartBuilder({
                         filled ? barTone : 'bg-surface hover:bg-primary-soft',
                       )}
                     />
-                  );
+                  )
                 })}
               </div>
               <span className="flex items-center gap-0.5 text-center text-xs font-semibold text-foreground-muted">
@@ -96,9 +96,9 @@ export function BarChartBuilder({
                 <span className="text-2xs font-semibold text-success">→ {reveal.answer[c.id]}</span>
               ) : null}
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }

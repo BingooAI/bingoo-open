@@ -1,4 +1,4 @@
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority'
 
 /**
  * The house feel for every tappable learning surface — one recipe so 60+ activity
@@ -30,10 +30,7 @@ export const tile = cva(
           'border-primary bg-primary-soft text-foreground shadow-pop',
           'motion-safe:active:scale-[0.97]',
         ],
-        correct: [
-          'border-success bg-success-soft text-success shadow-pop',
-          'motion-safe:animate-pop-in',
-        ],
+        correct: ['border-success bg-success-soft text-success shadow-pop', 'motion-safe:animate-pop-in'],
         wrong: ['border-danger bg-danger-soft text-danger', 'motion-safe:animate-wiggle'],
         /** The answer the learner MISSED — shown dashed next to their wrong one. */
         ghost: 'border-dashed border-success bg-success-soft/40 text-success',
@@ -50,23 +47,23 @@ export const tile = cva(
     },
     defaultVariants: { state: 'idle', size: 'md' },
   },
-);
-export type TileProps = VariantProps<typeof tile>;
+)
+export type TileProps = VariantProps<typeof tile>
 
 /** Map a reveal to a tile state in one place, so every component agrees. */
 export function tileState(opts: {
-  selected?: boolean;
-  revealed?: boolean;
-  correct?: boolean;
+  selected?: boolean
+  revealed?: boolean
+  correct?: boolean
   /** The right answer the learner did not pick. */
-  missed?: boolean;
+  missed?: boolean
 }): NonNullable<TileProps['state']> {
   if (opts.revealed) {
-    if (opts.missed && !opts.selected) return 'ghost';
-    if (!opts.selected) return 'idle';
-    return opts.correct ? 'correct' : 'wrong';
+    if (opts.missed && !opts.selected) return 'ghost'
+    if (!opts.selected) return 'idle'
+    return opts.correct ? 'correct' : 'wrong'
   }
-  return opts.selected ? 'selected' : 'idle';
+  return opts.selected ? 'selected' : 'idle'
 }
 
 /**
@@ -74,12 +71,12 @@ export function tileState(opts: {
  * Capped so a 40-cell grid does not take three seconds to appear.
  */
 export function stagger(index: number, stepMs = 40, maxMs = 320): React.CSSProperties {
-  return { animationDelay: `${Math.min(index * stepMs, maxMs)}ms` };
+  return { animationDelay: `${Math.min(index * stepMs, maxMs)}ms` }
 }
 
 /** Entrance for a freshly-rendered question / panel. */
-export const ENTER = 'motion-safe:animate-fade-up';
+export const ENTER = 'motion-safe:animate-fade-up'
 /** Entrance for a thing that should feel like it POPPED into place (a token, a stamp). */
-export const POP = 'motion-safe:animate-pop-in';
+export const POP = 'motion-safe:animate-pop-in'
 /** Applied to the whole input when a checked answer turned out wrong. */
-export const SHAKE = 'motion-safe:animate-wiggle';
+export const SHAKE = 'motion-safe:animate-wiggle'

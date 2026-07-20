@@ -8,7 +8,7 @@
  * is stored verbatim in the DB (`ContentItem.payload`), so adding to it here needs no
  * migration.
  */
-import { z } from 'zod';
+import { z } from 'zod'
 
 /** How a single asset is referenced — a library id (preferred) or a resolved URL. */
 const assetRef = {
@@ -20,7 +20,7 @@ const assetRef = {
   src: z.string().url().optional().describe('Resolved or external absolute URL.'),
   alt: z.string().optional().describe('Alt text (image/video) or a transcript hint (audio).'),
   caption: z.string().optional().describe('Optional caption shown with the media.'),
-};
+}
 
 /** A single piece of media — an image, a sound clip, or a short video. */
 export const MediaResource = z
@@ -33,9 +33,9 @@ export const MediaResource = z
       ctx.addIssue({
         code: 'custom',
         message: 'media needs assetId (library) or src (external) — at least one',
-      });
-  });
-export type MediaResource = z.infer<typeof MediaResource>;
+      })
+  })
+export type MediaResource = z.infer<typeof MediaResource>
 
 /**
  * A rich block — the building unit of a question's `body` (its stem). A stem is an
@@ -57,9 +57,7 @@ export const RichBlock = z.discriminatedUnion('type', [
   z
     .object({ type: z.literal('audio'), ...assetRef })
     .describe('A sound clip in the question body (listening tasks).'),
-  z
-    .object({ type: z.literal('video'), ...assetRef })
-    .describe('A short video in the question body.'),
+  z.object({ type: z.literal('video'), ...assetRef }).describe('A short video in the question body.'),
   z
     .object({
       type: z.literal('list'),
@@ -67,8 +65,8 @@ export const RichBlock = z.discriminatedUnion('type', [
       items: z.array(z.string().min(1)).min(1).describe('The list items.'),
     })
     .describe('A bulleted or numbered list in the question body.'),
-]);
-export type RichBlock = z.infer<typeof RichBlock>;
+])
+export type RichBlock = z.infer<typeof RichBlock>
 
 /** Every media/prose block a question's body carries a `src` OR an `assetId`. */
 function refineBlockAsset(b: RichBlock, ctx: z.RefinementCtx, i: number) {
@@ -78,7 +76,7 @@ function refineBlockAsset(b: RichBlock, ctx: z.RefinementCtx, i: number) {
         code: 'custom',
         path: [i],
         message: `${b.type} block needs assetId (library) or src (external)`,
-      });
+      })
   }
 }
 
@@ -90,5 +88,5 @@ function refineBlockAsset(b: RichBlock, ctx: z.RefinementCtx, i: number) {
 export const Stem = z
   .array(RichBlock)
   .superRefine((blocks, ctx) => blocks.forEach((b, i) => refineBlockAsset(b, ctx, i)))
-  .describe('Rich question body — an ordered mix of text, images, audio and video.');
-export type Stem = z.infer<typeof Stem>;
+  .describe('Rich question body — an ordered mix of text, images, audio and video.')
+export type Stem = z.infer<typeof Stem>

@@ -1,18 +1,18 @@
 /** Cổng tiên quyết — REQUIRED chặn, RECOMMENDED chỉ cảnh báo. SPEC §7.3. */
 
-import type { PrerequisiteRef } from '../contracts';
-import type { SkillGraph } from './build';
-import { nodeMastery, type MasteryStates } from './composite';
+import type { PrerequisiteRef } from '../contracts'
+import type { SkillGraph } from './build'
+import { nodeMastery, type MasteryStates } from './composite'
 
 export interface PrereqCheck {
-  readonly ref: PrerequisiteRef;
-  readonly met: boolean;
+  readonly ref: PrerequisiteRef
+  readonly met: boolean
 }
 
 export interface PrereqGateResult {
-  readonly locked: boolean;
-  readonly required: readonly PrereqCheck[];
-  readonly recommended: readonly PrereqCheck[];
+  readonly locked: boolean
+  readonly required: readonly PrereqCheck[]
+  readonly recommended: readonly PrereqCheck[]
 }
 
 /**
@@ -24,20 +24,20 @@ export function prereqGate(
   prereqs: readonly PrerequisiteRef[],
   met: (ref: PrerequisiteRef) => boolean,
 ): PrereqGateResult {
-  if (prereqs.length === 0) return { locked: false, required: [], recommended: [] };
+  if (prereqs.length === 0) return { locked: false, required: [], recommended: [] }
 
-  const required: PrereqCheck[] = [];
-  const recommended: PrereqCheck[] = [];
+  const required: PrereqCheck[] = []
+  const recommended: PrereqCheck[] = []
   for (const ref of prereqs) {
-    const check: PrereqCheck = { ref, met: met(ref) };
-    if (ref.mode === 'REQUIRED') required.push(check);
-    else recommended.push(check);
+    const check: PrereqCheck = { ref, met: met(ref) }
+    if (ref.mode === 'REQUIRED') required.push(check)
+    else recommended.push(check)
   }
   return {
     locked: required.some((c) => !c.met),
     required,
     recommended,
-  };
+  }
 }
 
 /**
@@ -51,8 +51,8 @@ export function competencyMetFactory(
   isLessonDone: (lessonId: string) => boolean = () => true,
 ): (ref: PrerequisiteRef) => boolean {
   return (ref) => {
-    if (ref.requiredType === 'LESSON') return isLessonDone(ref.requiredId);
-    if (!graph.has(ref.requiredId)) return true; // không có node → không chặn
-    return nodeMastery(graph, states, ref.requiredId, threshold).achieved;
-  };
+    if (ref.requiredType === 'LESSON') return isLessonDone(ref.requiredId)
+    if (!graph.has(ref.requiredId)) return true // không có node → không chặn
+    return nodeMastery(graph, states, ref.requiredId, threshold).achieved
+  }
 }

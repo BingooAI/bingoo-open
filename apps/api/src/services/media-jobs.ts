@@ -18,39 +18,39 @@
  * Phạm vi: in-memory, đủ cho 1 instance (dev/single-node). Đa-instance sau này thay bằng store dùng chung.
  */
 
-export type MediaJobState = 'running' | 'done' | 'error' | 'cancelled';
-export type MediaJobKind = 'image' | 'audio';
+export type MediaJobState = 'running' | 'done' | 'error' | 'cancelled'
+export type MediaJobKind = 'image' | 'audio'
 
 /** Bản CHIẾU an toàn trả cho client (không lộ AbortController). `result` chỉ có khi state='done'. */
 export interface MediaJobView<R = unknown> {
-  readonly id: string;
-  readonly kind: MediaJobKind;
-  readonly state: MediaJobState;
-  readonly startedAt: number;
-  readonly finishedAt?: number;
+  readonly id: string
+  readonly kind: MediaJobKind
+  readonly state: MediaJobState
+  readonly startedAt: number
+  readonly finishedAt?: number
   /** Ước lượng ms để client vẽ thanh tiến trình — KHÔNG ảnh hưởng logic. */
-  readonly etaMs: number;
+  readonly etaMs: number
   /** Kết quả đã serialize (image: {count,assets}; audio: asset) — chỉ khi 'done'. */
-  readonly result?: R;
+  readonly result?: R
   /** Thông điệp lỗi người đọc được — chỉ khi 'error'. */
-  readonly error?: string;
+  readonly error?: string
 }
 
 interface MediaJob extends Omit<MediaJobView, 'error' | 'result'> {
-  state: MediaJobState;
-  finishedAt?: number;
-  result?: unknown;
-  error?: string;
-  readonly controller: AbortController;
+  state: MediaJobState
+  finishedAt?: number
+  result?: unknown
+  error?: string
+  readonly controller: AbortController
 }
 
-const jobs = new Map<string, MediaJob>();
+const jobs = new Map<string, MediaJob>()
 
 /** ETA vẽ progress theo loại — ảnh (OpenAI) lâu hơn audio. Chỉ để hiển thị. */
 const ETA_BY_KIND: Record<MediaJobKind, number> = {
   image: 30_000,
   audio: 20_000,
-};
+}
 
 const view = (j: MediaJob): MediaJobView => ({
   id: j.id,
@@ -61,11 +61,11 @@ const view = (j: MediaJob): MediaJobView => ({
   ...(j.finishedAt !== undefined ? { finishedAt: j.finishedAt } : {}),
   ...(j.result !== undefined ? { result: j.result } : {}),
   ...(j.error !== undefined ? { error: j.error } : {}),
-});
+})
 
 export function getMediaJob(id: string): MediaJobView | undefined {
-  const j = jobs.get(id);
-  return j ? view(j) : undefined;
+  const j = jobs.get(id)
+  return j ? view(j) : undefined
 }
 
 /**
@@ -77,7 +77,7 @@ export function startMediaJob<R>(
   id: string,
   fn: (signal: AbortSignal) => Promise<R>,
 ): MediaJobView {
-  const controller = new AbortController();
+  const controller = new AbortController()
   const job: MediaJob = {
     id,
     kind,
@@ -85,29 +85,29 @@ export function startMediaJob<R>(
     startedAt: Date.now(),
     etaMs: ETA_BY_KIND[kind],
     controller,
-  };
-  jobs.set(id, job);
+  }
+  jobs.set(id, job)
 
   fn(controller.signal)
     .then((result) => {
-      job.state = 'done';
-      job.finishedAt = Date.now();
-      job.result = result;
+      job.state = 'done'
+      job.finishedAt = Date.now()
+      job.result = result
     })
     .catch((e: unknown) => {
-      const aborted = controller.signal.aborted || (e instanceof Error && e.name === 'AbortError');
-      job.state = aborted ? 'cancelled' : 'error';
-      job.finishedAt = Date.now();
-      if (!aborted) job.error = e instanceof Error ? e.message : String(e);
-    });
+      const aborted = controller.signal.aborted || (e instanceof Error && e.name === 'AbortError')
+      job.state = aborted ? 'cancelled' : 'error'
+      job.finishedAt = Date.now()
+      if (!aborted) job.error = e instanceof Error ? e.message : String(e)
+    })
 
-  return view(job);
+  return view(job)
 }
 
 /** HỦY job đang chạy (abort provider call). Trả job hoặc undefined nếu không có id đó. */
 export function cancelMediaJob(id: string): MediaJobView | undefined {
-  const j = jobs.get(id);
-  if (!j) return undefined;
-  if (j.state === 'running') j.controller.abort();
-  return view(j);
+  const j = jobs.get(id)
+  if (!j) return undefined
+  if (j.state === 'running') j.controller.abort()
+  return view(j)
 }

@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import {
   currentQuestion,
@@ -13,151 +13,151 @@ import {
   type Solid3DName,
   type QuizResponse,
   type QuizSummary,
-} from '@bingoo/core';
-import { QuizLocaleProvider, useQuizText } from './quiz-locale';
-import { CheckCircle2, XCircle } from 'lucide-react';
-import { useEffect, useReducer, useRef, type ReactNode } from 'react';
-import { AssistBlock } from './assist-block';
-import { Button } from './button';
-import { Card } from './card';
-import { CategorizeBoard } from './categorize-board';
-import { ChoiceList, TrueFalse } from './quiz-choice';
-import { ClockInput } from './clock-input';
-import { ExplanationCard } from './explanation-card';
-import { FillBlank } from './fill-blank';
-import { HighlightText } from './highlight-text';
-import { HintReveal } from './hint-reveal';
-import { ArrayBuilder } from './array-builder';
-import { ArrowInput } from './arrow-input';
-import { BalanceScale } from './balance-scale';
-import { AnnotateImage } from './annotate-image';
-import { PictogramChart } from './pictogram-chart';
-import { TallyChart } from './tally-chart';
-import { BarChartBuilder } from './bar-chart-builder';
-import { CarrollGrid } from './carroll-grid';
-import { AngleTool, type AngleLabels } from './angle-tool';
-import { BranchKey, type BranchKeyLabels } from './branch-key';
-import { CoordinateGrid } from './coordinate-grid';
-import { LineGraph } from './line-graph';
-import { TranslationGrid } from './translation-grid';
-import { CompassRose } from './compass-rose';
-import { NetPicker } from './net-picker';
-import { DrawingPad, type DrawingLabels } from './drawing-pad';
-import { WritingPad, type WritingLabels } from './writing-pad';
-import { EstimateStep, type EstimateLabels } from './estimate-step';
-import { WaffleGrid } from './waffle-grid';
-import { ChanceScale } from './chance-scale';
-import { ProofreadText } from './proofread-text';
-import { SolidInspector } from './solid-inspector';
-import { GridShapeBoard } from './grid-shape-board';
-import { CrosswordGrid } from './crossword-grid';
-import { MathField } from './math-field';
-import { SpeechRecorder, type SpeechLabels } from './speech-recorder';
-import { DigitalClock } from './digital-clock';
-import { RotationDial } from './rotation-dial';
-import { RouteGrid } from './route-grid';
-import { ScaleReader } from './scale-reader';
-import { RulerMeasure } from './ruler-measure';
-import { SymmetryGrid } from './symmetry-grid';
-import { FractionBar } from './fraction-bar';
-import { WordSearch } from './word-search';
-import { HotspotFind } from './hotspot-find';
-import { LabelDiagram } from './label-diagram';
-import { cn } from './lib/cn';
-import { MatchPairs } from './match-pairs';
-import { MoneyTray } from './money-tray';
-import { NumberLineInput } from './number-line-input';
-import { NumericAnswer } from './numeric-answer';
-import { OrderList } from './order-list';
-import { PartWholeInput } from './part-whole-input';
-import { PatternInput } from './pattern-input';
-import { PlaceValueInput } from './place-value-input';
-import { QuestionMedia } from './quiz-media';
-import { StemView } from './stem-view';
-import { QuizProgress, type QuizSegmentStatus } from './quiz-progress';
-import { ResultScreen, type ResultLabels } from './result-screen';
-import { TableFill } from './table-fill';
-import { TenFrameInput } from './ten-frame-input';
-import { VennBoard } from './venn-board';
-import { WordBank } from './word-bank';
+} from '@bingoo/core'
+import { QuizLocaleProvider, useQuizText } from './quiz-locale'
+import { CheckCircle2, XCircle } from 'lucide-react'
+import { useEffect, useReducer, useRef, type ReactNode } from 'react'
+import { AssistBlock } from './assist-block'
+import { Button } from './button'
+import { Card } from './card'
+import { CategorizeBoard } from './categorize-board'
+import { ChoiceList, TrueFalse } from './quiz-choice'
+import { ClockInput } from './clock-input'
+import { ExplanationCard } from './explanation-card'
+import { FillBlank } from './fill-blank'
+import { HighlightText } from './highlight-text'
+import { HintReveal } from './hint-reveal'
+import { ArrayBuilder } from './array-builder'
+import { ArrowInput } from './arrow-input'
+import { BalanceScale } from './balance-scale'
+import { AnnotateImage } from './annotate-image'
+import { PictogramChart } from './pictogram-chart'
+import { TallyChart } from './tally-chart'
+import { BarChartBuilder } from './bar-chart-builder'
+import { CarrollGrid } from './carroll-grid'
+import { AngleTool, type AngleLabels } from './angle-tool'
+import { BranchKey, type BranchKeyLabels } from './branch-key'
+import { CoordinateGrid } from './coordinate-grid'
+import { LineGraph } from './line-graph'
+import { TranslationGrid } from './translation-grid'
+import { CompassRose } from './compass-rose'
+import { NetPicker } from './net-picker'
+import { DrawingPad, type DrawingLabels } from './drawing-pad'
+import { WritingPad, type WritingLabels } from './writing-pad'
+import { EstimateStep, type EstimateLabels } from './estimate-step'
+import { WaffleGrid } from './waffle-grid'
+import { ChanceScale } from './chance-scale'
+import { ProofreadText } from './proofread-text'
+import { SolidInspector } from './solid-inspector'
+import { GridShapeBoard } from './grid-shape-board'
+import { CrosswordGrid } from './crossword-grid'
+import { MathField } from './math-field'
+import { SpeechRecorder, type SpeechLabels } from './speech-recorder'
+import { DigitalClock } from './digital-clock'
+import { RotationDial } from './rotation-dial'
+import { RouteGrid } from './route-grid'
+import { ScaleReader } from './scale-reader'
+import { RulerMeasure } from './ruler-measure'
+import { SymmetryGrid } from './symmetry-grid'
+import { FractionBar } from './fraction-bar'
+import { WordSearch } from './word-search'
+import { HotspotFind } from './hotspot-find'
+import { LabelDiagram } from './label-diagram'
+import { cn } from './lib/cn'
+import { MatchPairs } from './match-pairs'
+import { MoneyTray } from './money-tray'
+import { NumberLineInput } from './number-line-input'
+import { NumericAnswer } from './numeric-answer'
+import { OrderList } from './order-list'
+import { PartWholeInput } from './part-whole-input'
+import { PatternInput } from './pattern-input'
+import { PlaceValueInput } from './place-value-input'
+import { QuestionMedia } from './quiz-media'
+import { StemView } from './stem-view'
+import { QuizProgress, type QuizSegmentStatus } from './quiz-progress'
+import { ResultScreen, type ResultLabels } from './result-screen'
+import { TableFill } from './table-fill'
+import { TenFrameInput } from './ten-frame-input'
+import { VennBoard } from './venn-board'
+import { WordBank } from './word-bank'
 
 /** All chrome copy for the shell — data supplied by the caller (i18n-free). */
 export interface QuizLabels {
   /** Header, e.g. "Câu 3/10" (caller formats the numbers). */
-  questionOf?: (index: number, total: number) => ReactNode;
-  check: ReactNode;
-  next: ReactNode;
-  finish: ReactNode;
+  questionOf?: (index: number, total: number) => ReactNode
+  check: ReactNode
+  next: ReactNode
+  finish: ReactNode
   /** "Skip" — advance without answering (no life lost). Omit to hide the button. */
-  skip?: ReactNode;
+  skip?: ReactNode
   /** Undo label for the annotate (draw-on-image) tool. */
-  undo?: string;
+  undo?: string
   /** Crossword clue-list headings. */
-  crosswordAcross?: string;
-  crosswordDown?: string;
+  crosswordAcross?: string
+  crosswordDown?: string
   /** Copy for the speech (read-aloud) recorder. */
-  speech?: SpeechLabels;
+  speech?: SpeechLabels
   /** Readout labels for grid-shape (area / perimeter) questions. */
-  gridShape?: { area: string; perimeter: string };
+  gridShape?: { area: string; perimeter: string }
   /** Copy for the 3D solid inspector (tap every face/edge/vertex). */
-  solid?: { found: string; hint?: string };
+  solid?: { found: string; hint?: string }
   /** Copy for the open (rubric-assessed) tasks — drawing & writing. */
-  drawing?: DrawingLabels;
-  writing?: WritingLabels;
+  drawing?: DrawingLabels
+  writing?: WritingLabels
   /** Copy for the estimate-then-check task. */
-  estimate?: EstimateLabels;
+  estimate?: EstimateLabels
   /** Localized solid names (cube, cuboid…) for the net task. */
-  solidNames?: Partial<Record<Solid3DName, string>>;
+  solidNames?: Partial<Record<Solid3DName, string>>
   /** Yes/No/Back copy for the identification key. */
-  branchKey?: BranchKeyLabels;
+  branchKey?: BranchKeyLabels
   /** Placeholder for the proofreading inline editor. */
-  proofreadPlaceholder?: string;
+  proofreadPlaceholder?: string
   /** Angle-kind names (acute / right / obtuse …). */
-  angle?: AngleLabels;
-  showHint: ReactNode;
-  correct: ReactNode;
-  incorrect: ReactNode;
-  explanationTitle?: ReactNode;
-  moveUp?: string;
-  moveDown?: string;
-  fillPlaceholder?: string;
-  progressLabel?: string;
+  angle?: AngleLabels
+  showHint: ReactNode
+  correct: ReactNode
+  incorrect: ReactNode
+  explanationTitle?: ReactNode
+  moveUp?: string
+  moveDown?: string
+  fillPlaceholder?: string
+  progressLabel?: string
   /** A11y label for a question's attached audio play button. */
-  playMedia?: string;
+  playMedia?: string
   /** Minute-button labels for clock questions, e.g. { 0: "o'clock", 30: "half past" }. */
-  clockMinuteLabels?: Record<number, string>;
+  clockMinuteLabels?: Record<number, string>
   /** "outside / neither" label for Venn questions. */
-  vennNeither?: string;
+  vennNeither?: string
   /** Column labels for place-value questions, e.g. { tens: "Chục", ones: "Đơn vị" }. */
-  placeValueLabels?: { tens: string; ones: string };
+  placeValueLabels?: { tens: string; ones: string }
   result: {
-    passTitle: ReactNode;
-    failTitle: ReactNode;
-    passSubtitle?: ReactNode;
-    failSubtitle?: ReactNode;
-    accuracyLabel: ReactNode;
-    correctLabel: ReactNode;
-    retry: ReactNode;
-    continueLabel: ReactNode;
+    passTitle: ReactNode
+    failTitle: ReactNode
+    passSubtitle?: ReactNode
+    failSubtitle?: ReactNode
+    accuracyLabel: ReactNode
+    correctLabel: ReactNode
+    retry: ReactNode
+    continueLabel: ReactNode
     /** Format the "8 / 10" correct count; defaults to `${correct} / ${total}`. */
-    correctText?: (correct: number, total: number) => ReactNode;
-  };
+    correctText?: (correct: number, total: number) => ReactNode
+  }
 }
 
 export interface QuizShellProps {
-  questions: QuizQuestion[];
-  labels: QuizLabels;
+  questions: QuizQuestion[]
+  labels: QuizLabels
   /** Locale hiển thị cho text đa ngôn ngữ của quiz (đề/nhãn). Mặc định 'vi'. Content một-ngôn-ngữ (chuỗi) không đổi. */
-  locale?: string;
+  locale?: string
   /** Lives mode: wrong checks cost a life. Omit for unlimited. */
-  lives?: number;
+  lives?: number
   /** Pass mark 0–1 for the result screen (default 0.6). */
-  passMark?: number;
+  passMark?: number
   /** Fired once when the session ends (complete or failed). */
-  onComplete?: (summary: QuizSummary) => void;
+  onComplete?: (summary: QuizSummary) => void
   /** Continue button on the result screen. */
-  onContinue?: () => void;
-  className?: string;
+  onContinue?: () => void
+  className?: string
 }
 
 /**
@@ -176,24 +176,23 @@ export function QuizShell({
   onContinue,
   className,
 }: QuizShellProps) {
-  const [state, dispatch] = useReducer(quizReducer, { questions, lives }, initQuiz);
-  const done = state.status === 'complete' || state.status === 'failed';
+  const [state, dispatch] = useReducer(quizReducer, { questions, lives }, initQuiz)
+  const done = state.status === 'complete' || state.status === 'failed'
 
   // Fire onComplete exactly once when the session finishes (ref guards re-runs).
-  const firedRef = useRef(false);
+  const firedRef = useRef(false)
   useEffect(() => {
     if (done && !firedRef.current) {
-      firedRef.current = true;
-      onComplete?.(quizSummary(state, passMark));
+      firedRef.current = true
+      onComplete?.(quizSummary(state, passMark))
     }
-    if (!done) firedRef.current = false;
-  }, [done, state, passMark, onComplete]);
+    if (!done) firedRef.current = false
+  }, [done, state, passMark, onComplete])
 
   if (done) {
-    const summary = quizSummary(state, passMark);
+    const summary = quizSummary(state, passMark)
     const correctText =
-      labels.result.correctText?.(summary.correct, summary.total) ??
-      `${summary.correct} / ${summary.total}`;
+      labels.result.correctText?.(summary.correct, summary.total) ?? `${summary.correct} / ${summary.total}`
     const resultLabels: ResultLabels = {
       title: summary.passed ? labels.result.passTitle : labels.result.failTitle,
       subtitle: summary.passed ? labels.result.passSubtitle : labels.result.failSubtitle,
@@ -202,7 +201,7 @@ export function QuizShell({
       correctLabel: labels.result.correctLabel,
       retry: labels.result.retry,
       continueLabel: labels.result.continueLabel,
-    };
+    }
     return (
       <ResultScreen
         summary={summary}
@@ -211,20 +210,20 @@ export function QuizShell({
         onContinue={onContinue}
         className={className}
       />
-    );
+    )
   }
 
-  const q = currentQuestion(state);
-  if (!q) return null;
-  const response = state.responses[q.id];
-  const grade = state.grades[q.id];
-  const checked = !!grade;
-  const isLast = state.index === state.questions.length - 1;
+  const q = currentQuestion(state)
+  if (!q) return null
+  const response = state.responses[q.id]
+  const grade = state.grades[q.id]
+  const checked = !!grade
+  const isLast = state.index === state.questions.length - 1
 
   const statuses: QuizSegmentStatus[] = state.questions.map((question) => {
-    const g = state.grades[question.id];
-    return g ? (g.correct ? 'correct' : 'incorrect') : 'pending';
-  });
+    const g = state.grades[question.id]
+    return g ? (g.correct ? 'correct' : 'incorrect') : 'pending'
+  })
 
   return (
     <QuizLocaleProvider value={locale}>
@@ -256,15 +255,11 @@ export function QuizShell({
           {q.media ? <QuestionMedia media={q.media} playLabel={labels.playMedia} /> : null}
           {q.body?.length ? <StemView body={q.body} playLabel={labels.playMedia} /> : null}
           {q.prompt ? (
-            <h3 className="font-display text-xl font-bold text-foreground">
-              {pickText(q.prompt, locale)}
-            </h3>
+            <h3 className="font-display text-xl font-bold text-foreground">{pickText(q.prompt, locale)}</h3>
           ) : null}
 
           {/* Support layers: guide (how-to) + instruction (detailed steps). */}
-          {q.guide ? (
-            <AssistBlock assist={q.guide} tone="guide" playLabel={labels.playMedia} />
-          ) : null}
+          {q.guide ? <AssistBlock assist={q.guide} tone="guide" playLabel={labels.playMedia} /> : null}
           {q.instruction ? (
             <AssistBlock assist={q.instruction} tone="instruction" playLabel={labels.playMedia} />
           ) : null}
@@ -299,11 +294,7 @@ export function QuizShell({
                     : 'border-danger bg-danger-soft text-danger',
                 )}
               >
-                {grade!.correct ? (
-                  <CheckCircle2 className="size-6" />
-                ) : (
-                  <XCircle className="size-6" />
-                )}
+                {grade!.correct ? <CheckCircle2 className="size-6" /> : <XCircle className="size-6" />}
                 {grade!.correct ? labels.correct : labels.incorrect}
               </div>
               {q.explanation ? (
@@ -348,21 +339,21 @@ export function QuizShell({
         </div>
       </Card>
     </QuizLocaleProvider>
-  );
+  )
 }
 
 interface QuestionInputProps {
-  q: QuizQuestion;
-  response: QuizResponse | undefined;
-  checked: boolean;
-  labels: QuizLabels;
-  onRespond: (r: QuizResponse) => void;
+  q: QuizQuestion
+  response: QuizResponse | undefined
+  checked: boolean
+  labels: QuizLabels
+  onRespond: (r: QuizResponse) => void
 }
 
 /** Renders the controlled input for whichever question type is active. */
 function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInputProps) {
-  const reveal = checked ? revealFor(q, response) : undefined;
-  const t = useQuizText(); // rút nhãn đa-locale theo locale hiện hành
+  const reveal = checked ? revealFor(q, response) : undefined
+  const t = useQuizText() // rút nhãn đa-locale theo locale hiện hành
 
   switch (q.type) {
     case 'single':
@@ -382,7 +373,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           onChange={(ids) => onRespond({ type: 'single', choiceId: ids[0] ?? null })}
           reveal={reveal?.type === 'single' ? reveal.choices : undefined}
         />
-      );
+      )
     case 'multiple':
       return (
         <ChoiceList
@@ -399,7 +390,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           onChange={(ids) => onRespond({ type: 'multiple', choiceIds: ids })}
           reveal={reveal?.type === 'multiple' ? reveal.choices : undefined}
         />
-      );
+      )
     case 'boolean':
       return (
         <TrueFalse
@@ -409,7 +400,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           onChange={(v) => onRespond({ type: 'boolean', value: v })}
           reveal={reveal?.type === 'boolean' ? { answer: reveal.answer } : undefined}
         />
-      );
+      )
     case 'fill':
       return (
         <FillBlank
@@ -419,7 +410,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           reveal={reveal?.type === 'fill' ? reveal.blanks : undefined}
           placeholder={labels.fillPlaceholder}
         />
-      );
+      )
     case 'order':
       return (
         <OrderList
@@ -433,7 +424,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'match':
       return (
         <MatchPairs
@@ -443,21 +434,17 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           onChange={(pairs) => onRespond({ type: 'match', pairs })}
           reveal={reveal?.type === 'match' ? reveal.left : undefined}
         />
-      );
+      )
     case 'numeric':
       return (
         <NumericAnswer
           value={response?.type === 'numeric' ? response.value : ''}
           onChange={(value) => onRespond({ type: 'numeric', value })}
-          reveal={
-            reveal?.type === 'numeric'
-              ? { correct: reveal.correct, answer: reveal.answer }
-              : undefined
-          }
+          reveal={reveal?.type === 'numeric' ? { correct: reveal.correct, answer: reveal.answer } : undefined}
           unitLabel={q.unitLabel}
           placeholder={q.placeholder ?? labels.fillPlaceholder}
         />
-      );
+      )
     case 'wordbank':
       return (
         <WordBank
@@ -465,12 +452,10 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           picks={response?.type === 'wordbank' ? response.picks : []}
           onChange={(picks) => onRespond({ type: 'wordbank', picks })}
           reveal={
-            reveal?.type === 'wordbank'
-              ? { positions: reveal.positions, answer: reveal.answer }
-              : undefined
+            reveal?.type === 'wordbank' ? { positions: reveal.positions, answer: reveal.answer } : undefined
           }
         />
-      );
+      )
     case 'categorize':
       return (
         <CategorizeBoard
@@ -480,7 +465,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           onChange={(assignment) => onRespond({ type: 'categorize', assignment })}
           reveal={reveal?.type === 'categorize' ? reveal.items : undefined}
         />
-      );
+      )
     case 'highlight':
       return (
         <HighlightText
@@ -489,7 +474,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           onChange={(indexes) => onRespond({ type: 'highlight', indexes })}
           reveal={reveal?.type === 'highlight' ? reveal.tokens : undefined}
         />
-      );
+      )
     case 'numberline':
       return (
         <NumberLineInput
@@ -499,12 +484,10 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           value={response?.type === 'numberline' ? response.value : null}
           onChange={(value) => onRespond({ type: 'numberline', value })}
           reveal={
-            reveal?.type === 'numberline'
-              ? { correct: reveal.correct, answer: reveal.answer }
-              : undefined
+            reveal?.type === 'numberline' ? { correct: reveal.correct, answer: reveal.answer } : undefined
           }
         />
-      );
+      )
     case 'clock':
       return (
         <ClockInput
@@ -519,7 +502,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'venn':
       return (
         <VennBoard
@@ -531,7 +514,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           reveal={reveal?.type === 'venn' ? reveal.items : undefined}
           neitherLabel={labels.vennNeither}
         />
-      );
+      )
     case 'tablefill':
       return (
         <TableFill
@@ -541,7 +524,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           onChange={(values) => onRespond({ type: 'tablefill', values })}
           reveal={reveal?.type === 'tablefill' ? reveal.cells : undefined}
         />
-      );
+      )
     case 'tenframe':
       return (
         <TenFrameInput
@@ -549,12 +532,10 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           count={response?.type === 'tenframe' ? response.count : 0}
           onChange={(count) => onRespond({ type: 'tenframe', count })}
           reveal={
-            reveal?.type === 'tenframe'
-              ? { correct: reveal.correct, answer: reveal.answer }
-              : undefined
+            reveal?.type === 'tenframe' ? { correct: reveal.correct, answer: reveal.answer } : undefined
           }
         />
-      );
+      )
     case 'partwhole':
       return (
         <PartWholeInput
@@ -563,12 +544,10 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           value={response?.type === 'partwhole' ? response.value : ''}
           onChange={(value) => onRespond({ type: 'partwhole', value })}
           reveal={
-            reveal?.type === 'partwhole'
-              ? { correct: reveal.correct, answer: reveal.answer }
-              : undefined
+            reveal?.type === 'partwhole' ? { correct: reveal.correct, answer: reveal.answer } : undefined
           }
         />
-      );
+      )
     case 'placevalue':
       return (
         <PlaceValueInput
@@ -576,13 +555,11 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           ones={response?.type === 'placevalue' ? response.ones : 0}
           onChange={(tens, ones) => onRespond({ type: 'placevalue', tens, ones })}
           reveal={
-            reveal?.type === 'placevalue'
-              ? { correct: reveal.correct, answer: reveal.answer }
-              : undefined
+            reveal?.type === 'placevalue' ? { correct: reveal.correct, answer: reveal.answer } : undefined
           }
           columnLabels={labels.placeValueLabels}
         />
-      );
+      )
     case 'pattern':
       return (
         <PatternInput
@@ -592,12 +569,10 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           picks={response?.type === 'pattern' ? response.picks : []}
           onChange={(picks) => onRespond({ type: 'pattern', picks })}
           reveal={
-            reveal?.type === 'pattern'
-              ? { positions: reveal.positions, answer: reveal.answer }
-              : undefined
+            reveal?.type === 'pattern' ? { positions: reveal.positions, answer: reveal.answer } : undefined
           }
         />
-      );
+      )
     case 'label':
       return (
         <LabelDiagram
@@ -608,7 +583,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           onChange={(assignment) => onRespond({ type: 'label', assignment })}
           reveal={reveal?.type === 'label' ? reveal.items : undefined}
         />
-      );
+      )
     case 'hotspot':
       return (
         <HotspotFind
@@ -618,7 +593,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           onChange={(selected) => onRespond({ type: 'hotspot', selected })}
           reveal={reveal?.type === 'hotspot' ? reveal.spots : undefined}
         />
-      );
+      )
     case 'arrow':
       return (
         <ArrowInput
@@ -627,11 +602,9 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           imageSrc={q.imageSrc}
           edges={response?.type === 'arrow' ? response.edges : []}
           onChange={(edges) => onRespond({ type: 'arrow', edges })}
-          reveal={
-            reveal?.type === 'arrow' ? { answer: reveal.answer, marks: reveal.marks } : undefined
-          }
+          reveal={reveal?.type === 'arrow' ? { answer: reveal.answer, marks: reveal.marks } : undefined}
         />
-      );
+      )
     case 'wordsearch':
       return (
         <WordSearch
@@ -639,11 +612,9 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           words={q.words}
           found={response?.type === 'wordsearch' ? response.found : []}
           onChange={(found) => onRespond({ type: 'wordsearch', found })}
-          reveal={
-            reveal?.type === 'wordsearch' ? { words: reveal.words, found: reveal.found } : undefined
-          }
+          reveal={reveal?.type === 'wordsearch' ? { words: reveal.words, found: reveal.found } : undefined}
         />
-      );
+      )
     case 'fraction':
       return (
         <FractionBar
@@ -657,7 +628,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'carroll':
       return (
         <CarrollGrid
@@ -666,11 +637,9 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           items={q.items}
           assignment={response?.type === 'carroll' ? response.assignment : {}}
           onChange={(assignment) => onRespond({ type: 'carroll', assignment })}
-          reveal={
-            reveal?.type === 'carroll' ? { items: reveal.items, answer: reveal.answer } : undefined
-          }
+          reveal={reveal?.type === 'carroll' ? { items: reveal.items, answer: reveal.answer } : undefined}
         />
-      );
+      )
     case 'money':
       return (
         <MoneyTray
@@ -684,7 +653,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'balance':
       return (
         <BalanceScale
@@ -696,13 +665,9 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           rightEmoji={q.rightEmoji}
           choice={response?.type === 'balance' ? response.choice : null}
           onChange={(choice) => onRespond({ type: 'balance', choice })}
-          reveal={
-            reveal?.type === 'balance'
-              ? { correct: reveal.correct, answer: reveal.answer }
-              : undefined
-          }
+          reveal={reveal?.type === 'balance' ? { correct: reveal.correct, answer: reveal.answer } : undefined}
         />
-      );
+      )
     case 'barchart':
       return (
         <BarChartBuilder
@@ -711,11 +676,9 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           unitLabel={q.unitLabel}
           heights={response?.type === 'barchart' ? response.heights : {}}
           onChange={(heights) => onRespond({ type: 'barchart', heights })}
-          reveal={
-            reveal?.type === 'barchart' ? { cells: reveal.cells, answer: reveal.answer } : undefined
-          }
+          reveal={reveal?.type === 'barchart' ? { cells: reveal.cells, answer: reveal.answer } : undefined}
         />
-      );
+      )
     case 'ruler':
       return (
         <RulerMeasure
@@ -725,13 +688,9 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           unitLabel={q.unitLabel}
           value={response?.type === 'ruler' ? response.value : null}
           onChange={(value) => onRespond({ type: 'ruler', value })}
-          reveal={
-            reveal?.type === 'ruler'
-              ? { correct: reveal.correct, answer: reveal.answer }
-              : undefined
-          }
+          reveal={reveal?.type === 'ruler' ? { correct: reveal.correct, answer: reveal.answer } : undefined}
         />
-      );
+      )
     case 'symmetry':
       return (
         <SymmetryGrid
@@ -752,7 +711,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'annotate':
       return (
         <AnnotateImage
@@ -763,18 +722,16 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           locked={reveal?.type === 'annotate'}
           undoLabel={labels.undo}
         />
-      );
+      )
     case 'tally':
       return (
         <TallyChart
           categories={q.categories}
           counts={response?.type === 'tally' ? response.counts : {}}
           onChange={(counts) => onRespond({ type: 'tally', counts })}
-          reveal={
-            reveal?.type === 'tally' ? { cells: reveal.cells, answer: reveal.answer } : undefined
-          }
+          reveal={reveal?.type === 'tally' ? { cells: reveal.cells, answer: reveal.answer } : undefined}
         />
-      );
+      )
     case 'pictogram':
       return (
         <PictogramChart
@@ -783,13 +740,9 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           iconValue={q.iconValue}
           counts={response?.type === 'pictogram' ? response.counts : {}}
           onChange={(counts) => onRespond({ type: 'pictogram', counts })}
-          reveal={
-            reveal?.type === 'pictogram'
-              ? { cells: reveal.cells, answer: reveal.answer }
-              : undefined
-          }
+          reveal={reveal?.type === 'pictogram' ? { cells: reveal.cells, answer: reveal.answer } : undefined}
         />
-      );
+      )
     case 'array':
       return (
         <ArrayBuilder
@@ -805,7 +758,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'rotation':
       return (
         <RotationDial
@@ -815,12 +768,10 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           position={response?.type === 'rotation' ? response.position : null}
           onChange={(position) => onRespond({ type: 'rotation', position })}
           reveal={
-            reveal?.type === 'rotation'
-              ? { correct: reveal.correct, answer: reveal.answer }
-              : undefined
+            reveal?.type === 'rotation' ? { correct: reveal.correct, answer: reveal.answer } : undefined
           }
         />
-      );
+      )
     case 'scale':
       return (
         <ScaleReader
@@ -831,13 +782,9 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           unitLabel={q.unitLabel}
           value={response?.type === 'scale' ? response.value : null}
           onChange={(value) => onRespond({ type: 'scale', value })}
-          reveal={
-            reveal?.type === 'scale'
-              ? { correct: reveal.correct, answer: reveal.answer }
-              : undefined
-          }
+          reveal={reveal?.type === 'scale' ? { correct: reveal.correct, answer: reveal.answer } : undefined}
         />
-      );
+      )
     case 'digitalclock':
       return (
         <DigitalClock
@@ -851,7 +798,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'route':
       return (
         <RouteGrid
@@ -870,7 +817,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'crossword':
       return (
         <CrosswordGrid
@@ -883,7 +830,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           acrossLabel={labels.crosswordAcross}
           downLabel={labels.crosswordDown}
         />
-      );
+      )
     case 'math':
       return (
         <MathField
@@ -892,11 +839,9 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           placeholder={q.placeholder}
           value={response?.type === 'math' ? response.value : ''}
           onChange={(value) => onRespond({ type: 'math', value })}
-          reveal={
-            reveal?.type === 'math' ? { correct: reveal.correct, answer: reveal.answer } : undefined
-          }
+          reveal={reveal?.type === 'math' ? { correct: reveal.correct, answer: reveal.answer } : undefined}
         />
-      );
+      )
     case 'gridshape':
       return (
         <GridShapeBoard
@@ -919,7 +864,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'linegraph':
       return (
         <LineGraph
@@ -937,7 +882,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'drawing':
       return labels.drawing ? (
         <DrawingPad
@@ -953,7 +898,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      ) : null;
+      ) : null
     case 'writing':
       return labels.writing ? (
         <WritingPad
@@ -971,7 +916,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      ) : null;
+      ) : null
     case 'estimate':
       return labels.estimate ? (
         <EstimateStep
@@ -992,7 +937,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      ) : null;
+      ) : null
     case 'net':
       return (
         <NetPicker
@@ -1004,11 +949,9 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           solidLabels={labels.solidNames}
           value={response?.type === 'net' ? response.choice : null}
           onChange={(choice) => onRespond({ type: 'net', choice })}
-          reveal={
-            reveal?.type === 'net' ? { correct: reveal.correct, answer: reveal.answer } : undefined
-          }
+          reveal={reveal?.type === 'net' ? { correct: reveal.correct, answer: reveal.answer } : undefined}
         />
-      );
+      )
     case 'translation':
       return (
         <TranslationGrid
@@ -1026,7 +969,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'compass':
       return (
         <CompassRose
@@ -1037,13 +980,9 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           to={q.to}
           value={response?.type === 'compass' ? response.direction : null}
           onChange={(direction) => onRespond({ type: 'compass', direction })}
-          reveal={
-            reveal?.type === 'compass'
-              ? { correct: reveal.correct, answer: reveal.answer }
-              : undefined
-          }
+          reveal={reveal?.type === 'compass' ? { correct: reveal.correct, answer: reveal.answer } : undefined}
         />
-      );
+      )
     case 'waffle':
       return (
         <WaffleGrid
@@ -1062,7 +1001,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'coordinates':
       return (
         <CoordinateGrid
@@ -1078,7 +1017,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'angle':
       return (
         <AngleTool
@@ -1088,16 +1027,14 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           degrees={response?.type === 'angle' ? response.degrees : null}
           kind={response?.type === 'angle' ? response.kind : null}
           onChange={({ degrees, kind }) => onRespond({ type: 'angle', degrees, kind })}
-          labels={
-            labels.angle ?? { acute: 'Acute', right: 'Right', obtuse: 'Obtuse', reflex: 'Reflex' }
-          }
+          labels={labels.angle ?? { acute: 'Acute', right: 'Right', obtuse: 'Obtuse', reflex: 'Reflex' }}
           reveal={
             reveal?.type === 'angle'
               ? { correct: reveal.correct, answer: reveal.answer, kind: reveal.kind }
               : undefined
           }
         />
-      );
+      )
     case 'branchkey':
       return (
         <BranchKey
@@ -1115,7 +1052,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'proofread':
       return (
         <ProofreadText
@@ -1123,13 +1060,9 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           fixes={response?.type === 'proofread' ? response.fixes : {}}
           onChange={(fixes) => onRespond({ type: 'proofread', fixes })}
           placeholder={labels.proofreadPlaceholder}
-          reveal={
-            reveal?.type === 'proofread'
-              ? { marks: reveal.marks, errors: reveal.errors }
-              : undefined
-          }
+          reveal={reveal?.type === 'proofread' ? { marks: reveal.marks, errors: reveal.errors } : undefined}
         />
-      );
+      )
     case 'solid':
       return (
         <SolidInspector
@@ -1144,7 +1077,7 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
               : undefined
           }
         />
-      );
+      )
     case 'chance':
       return (
         <ChanceScale
@@ -1152,11 +1085,9 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
           items={q.items}
           assignment={response?.type === 'chance' ? response.assignment : {}}
           onChange={(assignment) => onRespond({ type: 'chance', assignment })}
-          reveal={
-            reveal?.type === 'chance' ? { items: reveal.items, answer: reveal.answer } : undefined
-          }
+          reveal={reveal?.type === 'chance' ? { items: reveal.items, answer: reveal.answer } : undefined}
         />
-      );
+      )
     case 'speech':
       return (
         <SpeechRecorder
@@ -1177,6 +1108,6 @@ function QuestionInput({ q, response, checked, labels, onRespond }: QuestionInpu
             }
           }
         />
-      );
+      )
   }
 }

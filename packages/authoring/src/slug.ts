@@ -1,6 +1,6 @@
 /** Sinh slug ổn định từ tiêu đề. Slug là khoá tham chiếu bền (B5) — TIẾNG ANH LÀ GỐC. */
 
-import type { LocalizedText } from './model';
+import type { LocalizedText } from './model'
 
 /**
  * TIẾNG ANH LÀ GỐC — mọi slug (KC, skill, objective…) mint từ tiêu đề tiếng Anh, bất kể nguồn tiếng gì.
@@ -10,7 +10,7 @@ import type { LocalizedText } from './model';
  * Hệ quả tốt: dedup so tiêu đề tiếng Anh nên khớp được xuyên ngôn ngữ mà chưa cần embedding.
  */
 export function canonicalTitle(t: LocalizedText): string {
-  return t['en'] ?? t['en-US'] ?? Object.values(t)[0] ?? '';
+  return t['en'] ?? t['en-US'] ?? Object.values(t)[0] ?? ''
 }
 
 /**
@@ -19,7 +19,7 @@ export function canonicalTitle(t: LocalizedText): string {
  * conservation of number and one-to-one correspondence") → slug 80+ ký tự, xấu và dễ vỡ khi biên tập lại.
  * Cắt ở ranh giới từ; chống trùng đã có mintSlug lo.
  */
-const MAX_SLUG = 56;
+const MAX_SLUG = 56
 
 /** "Phép cộng có nhớ" → "phep-cong-co-nho". Bỏ dấu, đ→d, kebab-case, cắt trần theo từ. */
 export function slugify(s: string): string {
@@ -29,25 +29,25 @@ export function slugify(s: string): string {
     .toLowerCase()
     .replace(/đ/g, 'd')
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-  if (out.length === 0) return 'concept';
-  if (out.length <= MAX_SLUG) return out;
-  const cut = out.slice(0, MAX_SLUG);
-  const lastDash = cut.lastIndexOf('-');
-  const trimmed = lastDash > MAX_SLUG / 2 ? cut.slice(0, lastDash) : cut;
-  return trimmed.replace(/-+$/g, '') || 'concept';
+    .replace(/^-+|-+$/g, '')
+  if (out.length === 0) return 'concept'
+  if (out.length <= MAX_SLUG) return out
+  const cut = out.slice(0, MAX_SLUG)
+  const lastDash = cut.lastIndexOf('-')
+  const trimmed = lastDash > MAX_SLUG / 2 ? cut.slice(0, lastDash) : cut
+  return trimmed.replace(/-+$/g, '') || 'concept'
 }
 
 /** Mint slug không trùng: base, base-2, base-3… `taken` được cập nhật. */
 export function mintSlug(base: string, taken: Set<string>): string {
-  const b = slugify(base);
+  const b = slugify(base)
   if (!taken.has(b)) {
-    taken.add(b);
-    return b;
+    taken.add(b)
+    return b
   }
-  let i = 2;
-  while (taken.has(`${b}-${i}`)) i++;
-  const slug = `${b}-${i}`;
-  taken.add(slug);
-  return slug;
+  let i = 2
+  while (taken.has(`${b}-${i}`)) i++
+  const slug = `${b}-${i}`
+  taken.add(slug)
+  return slug
 }

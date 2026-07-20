@@ -4,45 +4,45 @@ import {
   reciprocalRankFusion,
   resolveSearchMode,
   type MediaSearchQuery,
-} from '@bingoo/core';
-import { db, Prisma } from '@bingoo/db';
-import type { ProviderAdapter } from '../../core/registry';
-import { embeddingRegistry } from '../../embedding';
-import type { SearchFilter, SearchHit, SearchPort, SearchResult } from '../port';
+} from '@bingoo/core'
+import { db, Prisma } from '@bingoo/db'
+import type { ProviderAdapter } from '../../core/registry'
+import { embeddingRegistry } from '../../embedding'
+import type { SearchFilter, SearchHit, SearchPort, SearchResult } from '../port'
 
 interface ScoredRow {
-  id: string;
-  score: number;
+  id: string
+  score: number
 }
 
 /** Candidate pool per lane before fusion/truncation. */
 function poolSize(limit: number): number {
-  return Math.min(MEDIA_SEARCH_MAX_LIMIT * 2, Math.max(limit * 4, 50));
+  return Math.min(MEDIA_SEARCH_MAX_LIMIT * 2, Math.max(limit * 4, 50))
 }
 
 function clampLimit(limit?: number): number {
-  if (!limit || limit < 1) return MEDIA_SEARCH_DEFAULT_LIMIT;
-  return Math.min(limit, MEDIA_SEARCH_MAX_LIMIT);
+  if (!limit || limit < 1) return MEDIA_SEARCH_DEFAULT_LIMIT
+  return Math.min(limit, MEDIA_SEARCH_MAX_LIMIT)
 }
 
 /** AND-joined predicates: facet filters + permission pre-filter (§5). Never
  *  interpolates raw text — every value is a bound parameter. */
 function buildWhere(q: MediaSearchQuery, f: SearchFilter): Prisma.Sql {
-  const conds: Prisma.Sql[] = [Prisma.sql`a."moderation"::text = ANY(${f.moderation})`];
+  const conds: Prisma.Sql[] = [Prisma.sql`a."moderation"::text = ANY(${f.moderation})`]
 
-  if (q.kind?.length) conds.push(Prisma.sql`a."kind"::text = ANY(${q.kind})`);
-  if (q.anyTags?.length) conds.push(Prisma.sql`a."keywords" && ${q.anyTags}`);
-  if (q.allTags?.length) conds.push(Prisma.sql`a."keywords" @> ${q.allTags}`);
-  if (q.locale) conds.push(Prisma.sql`a."locale" = ${q.locale}`);
-  if (q.license?.length) conds.push(Prisma.sql`a."license" = ANY(${q.license})`);
-  if (q.ageRating?.length) conds.push(Prisma.sql`a."ageRating" = ANY(${q.ageRating})`);
+  if (q.kind?.length) conds.push(Prisma.sql`a."kind"::text = ANY(${q.kind})`)
+  if (q.anyTags?.length) conds.push(Prisma.sql`a."keywords" && ${q.anyTags}`)
+  if (q.allTags?.length) conds.push(Prisma.sql`a."keywords" @> ${q.allTags}`)
+  if (q.locale) conds.push(Prisma.sql`a."locale" = ${q.locale}`)
+  if (q.license?.length) conds.push(Prisma.sql`a."license" = ANY(${q.license})`)
+  if (q.ageRating?.length) conds.push(Prisma.sql`a."ageRating" = ANY(${q.ageRating})`)
   if (q.folderId) {
     conds.push(
       Prisma.sql`a."folderId" IN (
         SELECT id FROM "media_folder"
         WHERE "path" LIKE (SELECT "path" FROM "media_folder" WHERE id = ${q.folderId}) || '%'
       )`,
-    );
+    )
   }
 
   if (!f.staff) {
@@ -68,14 +68,14 @@ function buildWhere(q: MediaSearchQuery, f: SearchFilter): Prisma.Sql {
           )
         )
       )
-    )`);
+    )`)
   }
 
-  return Prisma.join(conds, ' AND ');
+  return Prisma.join(conds, ' AND ')
 }
 
 function lexical(q: MediaSearchQuery, where: Prisma.Sql, k: number): Promise<ScoredRow[]> {
-  const text = q.text ?? '';
+  const text = q.text ?? ''
   return db.$queryRaw<ScoredRow[]>(Prisma.sql`
     SELECT a."id" AS id,
            ts_rank(a."searchVector", websearch_to_tsquery('simple', ${text}))::float8 AS score
@@ -83,7 +83,7 @@ function lexical(q: MediaSearchQuery, where: Prisma.Sql, k: number): Promise<Sco
     WHERE a."searchVector" @@ websearch_to_tsquery('simple', ${text}) AND ${where}
     ORDER BY score DESC
     LIMIT ${k}
-  `);
+  `)
 }
 
 function browse(where: Prisma.Sql, k: number): Promise<ScoredRow[]> {
@@ -93,15 +93,10 @@ function browse(where: Prisma.Sql, k: number): Promise<ScoredRow[]> {
     WHERE ${where}
     ORDER BY a."createdAt" DESC
     LIMIT ${k}
-  `);
+  `)
 }
 
-function semantic(
-  vecLiteral: string,
-  model: string,
-  where: Prisma.Sql,
-  k: number,
-): Promise<ScoredRow[]> {
+function semantic(vecLiteral: string, model: string, where: Prisma.Sql, k: number): Promise<ScoredRow[]> {
   return db.$queryRaw<ScoredRow[]>(Prisma.sql`
     SELECT e."assetId" AS id,
            (1 - (e."embedding" <=> ${vecLiteral}::vector))::float8 AS score
@@ -110,7 +105,7 @@ function semantic(
     WHERE e."model" = ${model} AND ${where}
     ORDER BY e."embedding" <=> ${vecLiteral}::vector ASC
     LIMIT ${k}
-  `);
+  `)
 }
 
 export const postgresSearchAdapter: ProviderAdapter<SearchPort> = {
@@ -121,59 +116,54 @@ export const postgresSearchAdapter: ProviderAdapter<SearchPort> = {
     // configured; otherwise we degrade to lexical transparently.
     const canEmbed = embeddingRegistry
       .health()
-      .some((h) => h.provider === embeddingRegistry.activeKey && h.configured);
+      .some((h) => h.provider === embeddingRegistry.activeKey && h.configured)
 
     return {
       canEmbed,
       async query(q: MediaSearchQuery, f: SearchFilter): Promise<SearchResult> {
-        const limit = clampLimit(q.limit);
-        const k = poolSize(limit);
-        const where = buildWhere(q, f);
-        const mode = resolveSearchMode(q, canEmbed);
+        const limit = clampLimit(q.limit)
+        const k = poolSize(limit)
+        const where = buildWhere(q, f)
+        const mode = resolveSearchMode(q, canEmbed)
 
         // Facet-only browse (no free text).
         if (!q.text) {
-          const rows = await browse(where, limit);
-          return { hits: rows.map((r) => ({ assetId: r.id, score: r.score })), mode: 'lexical' };
+          const rows = await browse(where, limit)
+          return { hits: rows.map((r) => ({ assetId: r.id, score: r.score })), mode: 'lexical' }
         }
 
         // Try to build a query embedding for semantic/hybrid modes.
-        let vecLiteral: string | null = null;
-        let model = '';
+        let vecLiteral: string | null = null
+        let model = ''
         if (mode === 'semantic' || mode === 'hybrid') {
           try {
-            const res = await embeddingRegistry.get().embed({ texts: [q.text] });
-            const first = res.vectors[0];
+            const res = await embeddingRegistry.get().embed({ texts: [q.text] })
+            const first = res.vectors[0]
             if (first) {
-              vecLiteral = `[${first.join(',')}]`;
-              model = res.model;
+              vecLiteral = `[${first.join(',')}]`
+              model = res.model
             }
           } catch {
-            vecLiteral = null; // provider missing/failed → fall back to lexical
+            vecLiteral = null // provider missing/failed → fall back to lexical
           }
         }
 
         if (mode === 'semantic' && vecLiteral) {
-          const rows = await semantic(vecLiteral, model, where, limit);
-          return { hits: rows.map((r) => ({ assetId: r.id, score: r.score })), mode: 'semantic' };
+          const rows = await semantic(vecLiteral, model, where, limit)
+          return { hits: rows.map((r) => ({ assetId: r.id, score: r.score })), mode: 'semantic' }
         }
 
         if (mode === 'hybrid' && vecLiteral) {
-          const [lex, sem] = await Promise.all([
-            lexical(q, where, k),
-            semantic(vecLiteral, model, where, k),
-          ]);
-          const fused = reciprocalRankFusion([lex.map((r) => r.id), sem.map((r) => r.id)]);
-          const hits: SearchHit[] = fused
-            .slice(0, limit)
-            .map((h) => ({ assetId: h.id, score: h.score }));
-          return { hits, mode: 'hybrid' };
+          const [lex, sem] = await Promise.all([lexical(q, where, k), semantic(vecLiteral, model, where, k)])
+          const fused = reciprocalRankFusion([lex.map((r) => r.id), sem.map((r) => r.id)])
+          const hits: SearchHit[] = fused.slice(0, limit).map((h) => ({ assetId: h.id, score: h.score }))
+          return { hits, mode: 'hybrid' }
         }
 
         // Default / fallback: lexical.
-        const rows = await lexical(q, where, limit);
-        return { hits: rows.map((r) => ({ assetId: r.id, score: r.score })), mode: 'lexical' };
+        const rows = await lexical(q, where, limit)
+        return { hits: rows.map((r) => ({ assetId: r.id, score: r.score })), mode: 'lexical' }
       },
-    };
+    }
   },
-};
+}

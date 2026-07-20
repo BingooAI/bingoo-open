@@ -1,6 +1,6 @@
-import { db } from '@bingoo/db';
-import { parseRoles } from '../auth/roles';
-import { isGuardianOf } from './children.repo';
+import { db } from '@bingoo/db'
+import { parseRoles } from '../auth/roles'
+import { isGuardianOf } from './children.repo'
 
 /**
  * Class + membership data access and the academic-scope authorization rules (§6).
@@ -9,15 +9,15 @@ import { isGuardianOf } from './children.repo';
  * ids are cuid-defaulted in the schema, so Better Auth isn't involved here.
  */
 
-export type ClassRole = 'TEACHER' | 'TA' | 'TUTOR' | 'STUDENT';
-export const TEACHING_ROLES = ['TEACHER', 'TA', 'TUTOR'] as const;
+export type ClassRole = 'TEACHER' | 'TA' | 'TUTOR' | 'STUDENT'
+export const TEACHING_ROLES = ['TEACHER', 'TA', 'TUTOR'] as const
 
 export interface CreateClassInput {
-  creatorId: string;
-  name: string;
-  subject?: string | null;
-  term?: string | null;
-  organizationId?: string | null;
+  creatorId: string
+  name: string
+  subject?: string | null
+  term?: string | null
+  organizationId?: string | null
 }
 
 /** Create a class and enroll the creator as its lead TEACHER. */
@@ -30,12 +30,12 @@ export async function createClass(input: CreateClassInput) {
         term: input.term ?? null,
         organizationId: input.organizationId ?? null,
       },
-    });
+    })
     await tx.classMember.create({
       data: { classId: cls.id, userId: input.creatorId, role: 'TEACHER', status: 'active' },
-    });
-    return cls;
-  });
+    })
+    return cls
+  })
 }
 
 /** The requester's active role in a class, or null if they aren't an active member. */
@@ -43,8 +43,8 @@ export async function getClassRole(classId: string, userId: string): Promise<Cla
   const member = await db.classMember.findUnique({
     where: { classId_userId: { classId, userId } },
     select: { role: true, status: true },
-  });
-  return member && member.status === 'active' ? (member.role as ClassRole) : null;
+  })
+  return member && member.status === 'active' ? (member.role as ClassRole) : null
 }
 
 /** Classes the user actively belongs to, with their role in each. */
@@ -65,8 +65,8 @@ export async function listClassesForUser(userId: string) {
         },
       },
     },
-  });
-  return rows.map((r) => ({ ...r.class, myRole: r.role }));
+  })
+  return rows.map((r) => ({ ...r.class, myRole: r.role }))
 }
 
 /** Add (or reactivate) a member with a class role. */
@@ -75,7 +75,7 @@ export async function addMember(classId: string, userId: string, role: ClassRole
     where: { classId_userId: { classId, userId } },
     create: { classId, userId, role, status: 'active' },
     update: { role, status: 'active' },
-  });
+  })
 }
 
 /** Soft-remove a member (keeps enrollment history). */
@@ -83,7 +83,7 @@ export async function removeMember(classId: string, userId: string): Promise<voi
   await db.classMember.updateMany({
     where: { classId, userId },
     data: { status: 'removed' },
-  });
+  })
 }
 
 /** Active roster of a class. */
@@ -98,8 +98,8 @@ export async function listMembers(classId: string) {
         select: { id: true, publicId: true, name: true, username: true, accountType: true },
       },
     },
-  });
-  return rows.map((r) => ({ ...r.user, classRole: r.role, joinedAt: r.joinedAt }));
+  })
+  return rows.map((r) => ({ ...r.user, classRole: r.role, joinedAt: r.joinedAt }))
 }
 
 /** True when `teacherId` teaches a class in which `studentId` is an active
@@ -108,8 +108,8 @@ export async function sharesClassAsTeacher(teacherId: string, studentId: string)
   const teaching = await db.classMember.findMany({
     where: { userId: teacherId, role: { in: [...TEACHING_ROLES] }, status: 'active' },
     select: { classId: true },
-  });
-  if (teaching.length === 0) return false;
+  })
+  if (teaching.length === 0) return false
 
   const shared = await db.classMember.findFirst({
     where: {
@@ -119,8 +119,8 @@ export async function sharesClassAsTeacher(teacherId: string, studentId: string)
       status: 'active',
     },
     select: { id: true },
-  });
-  return shared !== null;
+  })
+  return shared !== null
 }
 
 /** True when two users share any active class — a "known contact" for the
@@ -129,13 +129,13 @@ export async function shareAnyClass(userA: string, userB: string): Promise<boole
   const aClasses = await db.classMember.findMany({
     where: { userId: userA, status: 'active' },
     select: { classId: true },
-  });
-  if (aClasses.length === 0) return false;
+  })
+  if (aClasses.length === 0) return false
   const shared = await db.classMember.findFirst({
     where: { classId: { in: aClasses.map((c) => c.classId) }, userId: userB, status: 'active' },
     select: { id: true },
-  });
-  return shared !== null;
+  })
+  return shared !== null
 }
 
 /**
@@ -147,9 +147,9 @@ export async function canAccessStudent(
   requester: { id: string; role?: string | null },
   studentId: string,
 ): Promise<boolean> {
-  if (requester.id === studentId) return true;
-  if (parseRoles(requester.role).some((r) => r === 'ADMIN' || r === 'MODERATOR')) return true;
-  if (await isGuardianOf(requester.id, studentId)) return true;
-  if (await sharesClassAsTeacher(requester.id, studentId)) return true;
-  return false;
+  if (requester.id === studentId) return true
+  if (parseRoles(requester.role).some((r) => r === 'ADMIN' || r === 'MODERATOR')) return true
+  if (await isGuardianOf(requester.id, studentId)) return true
+  if (await sharesClassAsTeacher(requester.id, studentId)) return true
+  return false
 }

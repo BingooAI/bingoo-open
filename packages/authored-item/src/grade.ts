@@ -1,24 +1,24 @@
 /** Cầu grading: @bingoo/core `Grade` → engine `Verdict` → Submission. */
 
-import type { Submission, Verdict } from '@bingoo/knowledge-engine';
-import { gradeQuestion, type QuizQuestion, type QuizResponse } from '@bingoo/core';
-import { checkAnswer } from '@bingoo/manipulatives';
-import type { AuthoredItem, Grade, Grader } from './model';
-import { primitiveMeta } from './registry';
+import type { Submission, Verdict } from '@bingoo/knowledge-engine'
+import { gradeQuestion, type QuizQuestion, type QuizResponse } from '@bingoo/core'
+import { checkAnswer } from '@bingoo/manipulatives'
+import type { AuthoredItem, Grade, Grader } from './model'
+import { primitiveMeta } from './registry'
 
 function clamp01(x: number): number {
-  return x < 0 ? 0 : x > 1 ? 1 : x;
+  return x < 0 ? 0 : x > 1 ? 1 : x
 }
 
 /** Grade{score} → Verdict{outcome}. Độ tin cậy lấy theo cách chấm (registry). */
 export function toVerdict(item: AuthoredItem, grade: Grade): Verdict {
-  const confidence = primitiveMeta(item.primitiveKind)?.baseConfidence ?? 1;
-  return { outcome: clamp01(grade.score), confidence };
+  const confidence = primitiveMeta(item.primitiveKind)?.baseConfidence ?? 1
+  return { outcome: clamp01(grade.score), confidence }
 }
 
 /** Chấm một item bằng grader host cấp → Verdict. */
 export function gradeItem(item: AuthoredItem, response: unknown, grader: Grader): Verdict {
-  return toVerdict(item, grader(item.payload, response));
+  return toVerdict(item, grader(item.payload, response))
 }
 
 /**
@@ -26,7 +26,7 @@ export function gradeItem(item: AuthoredItem, response: unknown, grader: Grader)
  * payload là một `QuizQuestion`, response là `QuizResponse`.
  */
 export const quizGrader: Grader = (payload, response) =>
-  gradeQuestion(payload as QuizQuestion, response as QuizResponse | undefined);
+  gradeQuestion(payload as QuizQuestion, response as QuizResponse | undefined)
 
 /**
  * Grader cho MANIPULATIVE kit (mọi kind, ĐỘNG). `payload` mang `{ kind, target }` (đáp án của item);
@@ -37,12 +37,12 @@ export const quizGrader: Grader = (payload, response) =>
  * Observation → mastery. Trước đây `graderFor` trả null cho kit nên hệ mù với mọi tương tác kit.
  */
 export const manipGrader: Grader = (payload, response): Grade => {
-  const p = (payload ?? {}) as { kind?: unknown; target?: unknown };
-  const kind = typeof p.kind === 'string' ? p.kind : undefined;
-  if (!kind) return { correct: false, score: 0 };
-  const ok = checkAnswer(kind, response, p.target);
-  return { correct: ok, score: ok ? 1 : 0 };
-};
+  const p = (payload ?? {}) as { kind?: unknown; target?: unknown }
+  const kind = typeof p.kind === 'string' ? p.kind : undefined
+  if (!kind) return { correct: false, score: 0 }
+  const ok = checkAnswer(kind, response, p.target)
+  return { correct: ok, score: ok ? 1 : 0 }
+}
 
 /**
  * Dựng Submission cho engine. `attemptId` do host sinh (idempotency); `atMs` là thời gian
@@ -53,10 +53,10 @@ export function itemSubmission(
   response: unknown,
   attemptId: string,
   opts: {
-    readonly atMs?: number;
-    readonly latencyMs?: number;
-    readonly hintsUsed?: number;
-    readonly lang?: string;
+    readonly atMs?: number
+    readonly latencyMs?: number
+    readonly hintsUsed?: number
+    readonly lang?: string
   } = {},
 ): Submission {
   return {
@@ -68,5 +68,5 @@ export function itemSubmission(
     ...(opts.latencyMs !== undefined ? { latencyMs: opts.latencyMs } : {}),
     ...(opts.hintsUsed !== undefined ? { hintsUsed: opts.hintsUsed } : {}),
     ...(opts.lang !== undefined ? { lang: opts.lang } : {}),
-  };
+  }
 }

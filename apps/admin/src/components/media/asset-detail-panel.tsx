@@ -1,8 +1,8 @@
-'use client';
+'use client'
 
-import { Download, Loader2, Plus, Trash2 } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useMemo, useState } from 'react';
+import { Download, Loader2, Plus, Trash2 } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Button,
   Combobox,
@@ -14,10 +14,10 @@ import {
   Textarea,
   useToast,
   type ComboboxOption,
-} from '@bingoo/ui-web';
-import type { LocalizedText, MediaVisibility } from '@bingoo/core';
-import { ApiError } from '@/lib/api-client';
-import { pickText } from '@/lib/i18n-text';
+} from '@bingoo/ui-web'
+import type { LocalizedText, MediaVisibility } from '@bingoo/core'
+import { ApiError } from '@/lib/api-client'
+import { pickText } from '@/lib/i18n-text'
 import {
   useAsset,
   useAttachTags,
@@ -25,29 +25,29 @@ import {
   usePatchAsset,
   useRemoveTag,
   useTags,
-} from '@/lib/media-queries';
-import type { MediaAssetDto } from '@/lib/api-types';
-import { KindIcon } from './kind-icon';
-import { ModerationBadge, StatusBadge } from './media-badges';
-import { ModerationActions } from './moderation-actions';
+} from '@/lib/media-queries'
+import type { MediaAssetDto } from '@/lib/api-types'
+import { KindIcon } from './kind-icon'
+import { ModerationBadge, StatusBadge } from './media-badges'
+import { ModerationActions } from './moderation-actions'
 
-const VISIBILITIES: MediaVisibility[] = ['PRIVATE', 'SCOPE', 'PUBLIC'];
+const VISIBILITIES: MediaVisibility[] = ['PRIVATE', 'SCOPE', 'PUBLIC']
 
 interface FormState {
-  titleVi: string;
-  titleEn: string;
-  descVi: string;
-  descEn: string;
-  altVi: string;
-  altEn: string;
-  visibility: MediaVisibility;
-  locale: string;
-  license: string;
-  ageRating: string;
+  titleVi: string
+  titleEn: string
+  descVi: string
+  descEn: string
+  altVi: string
+  altEn: string
+  visibility: MediaVisibility
+  locale: string
+  license: string
+  ageRating: string
 }
 
 function toForm(a: MediaAssetDto): FormState {
-  const g = (v: LocalizedText | null | undefined, k: string) => v?.[k] ?? '';
+  const g = (v: LocalizedText | null | undefined, k: string) => v?.[k] ?? ''
   return {
     titleVi: g(a.title, 'vi'),
     titleEn: g(a.title, 'en'),
@@ -59,14 +59,14 @@ function toForm(a: MediaAssetDto): FormState {
     locale: a.locale ?? '',
     license: a.license ?? '',
     ageRating: a.ageRating ?? '',
-  };
+  }
 }
 
 function localized(vi: string, en: string): LocalizedText | null {
-  const out: LocalizedText = {};
-  if (vi.trim()) out.vi = vi.trim();
-  if (en.trim()) out.en = en.trim();
-  return Object.keys(out).length ? out : null;
+  const out: LocalizedText = {}
+  if (vi.trim()) out.vi = vi.trim()
+  if (en.trim()) out.en = en.trim()
+  return Object.keys(out).length ? out : null
 }
 
 /** Full asset detail + inline editing. Rendered inside the controlled Drawer. */
@@ -76,57 +76,56 @@ export function AssetDetailPanel({
   canModerate,
   onDeleted,
 }: {
-  assetId: string;
-  canEdit: boolean;
+  assetId: string
+  canEdit: boolean
   /** MODERATOR|ADMIN — shows the approve/reject/flag actions (server re-enforces). */
-  canModerate: boolean;
-  onDeleted: () => void;
+  canModerate: boolean
+  onDeleted: () => void
 }) {
-  const t = useTranslations('admin.detail');
-  const tv = useTranslations('admin.visibility');
-  const locale = useLocale();
-  const { toast } = useToast();
+  const t = useTranslations('admin.detail')
+  const tv = useTranslations('admin.visibility')
+  const locale = useLocale()
+  const { toast } = useToast()
 
-  const asset = useAsset(assetId);
-  const allTags = useTags();
-  const patch = usePatchAsset();
-  const del = useDeleteAsset();
-  const attach = useAttachTags();
-  const removeTag = useRemoveTag();
+  const asset = useAsset(assetId)
+  const allTags = useTags()
+  const patch = usePatchAsset()
+  const del = useDeleteAsset()
+  const attach = useAttachTags()
+  const removeTag = useRemoveTag()
 
-  const [form, setForm] = useState<FormState | null>(null);
+  const [form, setForm] = useState<FormState | null>(null)
   useEffect(() => {
-    if (asset.data) setForm(toForm(asset.data));
-  }, [asset.data]);
+    if (asset.data) setForm(toForm(asset.data))
+  }, [asset.data])
 
   const slugToId = useMemo(() => {
-    const m = new Map<string, string>();
-    for (const tg of allTags.data ?? []) m.set(tg.slug, tg.id);
-    return m;
-  }, [allTags.data]);
+    const m = new Map<string, string>()
+    for (const tg of allTags.data ?? []) m.set(tg.slug, tg.id)
+    return m
+  }, [allTags.data])
 
   if (asset.isLoading || !form) {
     return (
       <div className="grid place-items-center py-16">
         <Loader2 className="size-6 animate-spin text-foreground-subtle" />
       </div>
-    );
+    )
   }
   if (asset.isError || !asset.data) {
-    return <p className="py-8 text-center text-sm text-danger">{t('loadError')}</p>;
+    return <p className="py-8 text-center text-sm text-danger">{t('loadError')}</p>
   }
 
-  const a = asset.data;
-  const set = <K extends keyof FormState>(k: K, v: FormState[K]) =>
-    setForm((f) => (f ? { ...f, [k]: v } : f));
+  const a = asset.data
+  const set = <K extends keyof FormState>(k: K, v: FormState[K]) => setForm((f) => (f ? { ...f, [k]: v } : f))
 
-  const title = localized(form.titleVi, form.titleEn);
-  const dirty = form && asset.data && JSON.stringify(form) !== JSON.stringify(toForm(asset.data));
+  const title = localized(form.titleVi, form.titleEn)
+  const dirty = form && asset.data && JSON.stringify(form) !== JSON.stringify(toForm(asset.data))
 
   async function save() {
     if (!title) {
-      toast({ variant: 'danger', title: t('titleRequired') });
-      return;
+      toast({ variant: 'danger', title: t('titleRequired') })
+      return
     }
     try {
       await patch.mutateAsync({
@@ -140,35 +139,35 @@ export function AssetDetailPanel({
           license: form!.license.trim() || null,
           ageRating: form!.ageRating.trim() || null,
         },
-      });
-      toast({ variant: 'success', title: t('saved') });
+      })
+      toast({ variant: 'success', title: t('saved') })
     } catch (err) {
       toast({
         variant: 'danger',
         title: t('saveError'),
         description: err instanceof ApiError ? err.message : undefined,
-      });
+      })
     }
   }
 
   async function onDelete() {
     try {
-      await del.mutateAsync(a.id);
-      toast({ variant: 'success', title: t('deleted') });
-      onDeleted();
+      await del.mutateAsync(a.id)
+      toast({ variant: 'success', title: t('deleted') })
+      onDeleted()
     } catch (err) {
       toast({
         variant: 'danger',
         title: t('deleteError'),
         description: err instanceof ApiError ? err.message : undefined,
-      });
+      })
     }
   }
 
-  const currentTags = a.tags ?? [];
+  const currentTags = a.tags ?? []
   const tagOptions: ComboboxOption[] = (allTags.data ?? [])
     .filter((tg) => !currentTags.some((ct) => ct.slug === tg.slug))
-    .map((tg) => ({ id: tg.slug, label: pickText(tg.label, locale, tg.slug) }));
+    .map((tg) => ({ id: tg.slug, label: pickText(tg.label, locale, tg.slug) }))
 
   return (
     <div className="space-y-6">
@@ -183,11 +182,7 @@ export function AssetDetailPanel({
       </div>
 
       {canModerate && (
-        <ModerationActions
-          assetId={a.id}
-          moderation={a.moderation}
-          moderationReason={a.moderationReason}
-        />
+        <ModerationActions assetId={a.id} moderation={a.moderation} moderationReason={a.moderationReason} />
       )}
 
       {/* Metadata form */}
@@ -229,18 +224,10 @@ export function AssetDetailPanel({
         </div>
         <div className="grid grid-cols-2 gap-3">
           <Field label={t('altVi')} hint={t('altHint')}>
-            <Input
-              value={form.altVi}
-              onChange={(e) => set('altVi', e.target.value)}
-              disabled={!canEdit}
-            />
+            <Input value={form.altVi} onChange={(e) => set('altVi', e.target.value)} disabled={!canEdit} />
           </Field>
           <Field label={t('altEn')}>
-            <Input
-              value={form.altEn}
-              onChange={(e) => set('altEn', e.target.value)}
-              disabled={!canEdit}
-            />
+            <Input value={form.altEn} onChange={(e) => set('altEn', e.target.value)} disabled={!canEdit} />
           </Field>
         </div>
         <div className="grid grid-cols-3 gap-3">
@@ -274,11 +261,7 @@ export function AssetDetailPanel({
           </Field>
         </div>
         <Field label={t('license')}>
-          <Input
-            value={form.license}
-            onChange={(e) => set('license', e.target.value)}
-            disabled={!canEdit}
-          />
+          <Input value={form.license} onChange={(e) => set('license', e.target.value)} disabled={!canEdit} />
         </Field>
         {canEdit && (
           <Button onClick={save} loading={patch.isPending} disabled={!dirty} className="w-full">
@@ -316,7 +299,7 @@ export function AssetDetailPanel({
                 placeholder={t('addTag')}
                 options={tagOptions}
                 onSelectionChange={(slug) => {
-                  if (slug) void attach.mutate({ id: a.id, slugs: [slug] });
+                  if (slug) void attach.mutate({ id: a.id, slugs: [slug] })
                 }}
               />
             </div>
@@ -340,9 +323,7 @@ export function AssetDetailPanel({
                 >
                   <span className="truncate">
                     {r.kind}
-                    {r.mimeType ? (
-                      <span className="text-foreground-subtle"> · {r.mimeType}</span>
-                    ) : null}
+                    {r.mimeType ? <span className="text-foreground-subtle"> · {r.mimeType}</span> : null}
                   </span>
                   <Download className="size-4 shrink-0 text-foreground-subtle" />
                 </a>
@@ -375,8 +356,8 @@ export function AssetDetailPanel({
                   variant="danger"
                   loading={del.isPending}
                   onClick={async () => {
-                    await onDelete();
-                    close();
+                    await onDelete()
+                    close()
                   }}
                 >
                   {t('delete')}
@@ -387,20 +368,20 @@ export function AssetDetailPanel({
         </section>
       )}
     </div>
-  );
+  )
 }
 
 function Preview({ asset }: { asset: MediaAssetDto }) {
-  const locale = useLocale();
-  const alt = pickText(asset.altText, locale, pickText(asset.title, locale, asset.publicId));
+  const locale = useLocale()
+  const alt = pickText(asset.altText, locale, pickText(asset.title, locale, asset.publicId))
   const url =
     asset.renditions.find((r) => r.kind === 'PREVIEW')?.url ??
     asset.renditions.find((r) => r.kind === 'ORIGINAL')?.url ??
     asset.renditions.find((r) => r.kind === 'THUMBNAIL')?.url ??
     asset.renditions.find((r) => r.url)?.url ??
-    null;
+    null
 
-  const box = 'w-full overflow-hidden rounded-2xl border border-border bg-surface-muted';
+  const box = 'w-full overflow-hidden rounded-2xl border border-border bg-surface-muted'
 
   if (asset.kind === 'IMAGE' && url) {
     return (
@@ -408,7 +389,7 @@ function Preview({ asset }: { asset: MediaAssetDto }) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={url} alt={alt} className="max-h-72 w-full object-contain" />
       </div>
-    );
+    )
   }
   if (asset.kind === 'AUDIO' && url) {
     return (
@@ -417,7 +398,7 @@ function Preview({ asset }: { asset: MediaAssetDto }) {
           <track kind="captions" />
         </audio>
       </div>
-    );
+    )
   }
   if (asset.kind === 'VIDEO' && url) {
     return (
@@ -426,11 +407,11 @@ function Preview({ asset }: { asset: MediaAssetDto }) {
           <track kind="captions" />
         </video>
       </div>
-    );
+    )
   }
   return (
     <div className={`${box} grid aspect-video place-items-center text-foreground-subtle`}>
       <KindIcon kind={asset.kind} className="size-12" />
     </div>
-  );
+  )
 }

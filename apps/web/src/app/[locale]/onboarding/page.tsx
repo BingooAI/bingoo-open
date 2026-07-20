@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import {
   ArrowLeft,
@@ -9,13 +9,13 @@ import {
   Languages,
   Palette,
   Puzzle,
-} from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useMemo, useState, type ComponentType } from 'react';
-import { Logo } from '@/components/brand/logo';
-import { LocaleSwitcher } from '@/components/brand/locale-switcher';
-import { Mascot } from '@/components/brand/mascot';
-import { ThemeToggle } from '@/components/brand/theme-toggle';
+} from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useMemo, useState, type ComponentType } from 'react'
+import { Logo } from '@/components/brand/logo'
+import { LocaleSwitcher } from '@/components/brand/locale-switcher'
+import { Mascot } from '@/components/brand/mascot'
+import { ThemeToggle } from '@/components/brand/theme-toggle'
 import {
   Button,
   Field,
@@ -26,13 +26,13 @@ import {
   Progress,
   SegmentedControl,
   Switch,
-} from '@bingoo/ui-web';
-import { Link, useRouter } from '@/i18n/navigation';
-import { type MascotEmotion } from '@bingoo/core';
+} from '@bingoo/ui-web'
+import { Link, useRouter } from '@/i18n/navigation'
+import { type MascotEmotion } from '@bingoo/core'
 
-type Icon = ComponentType<{ className?: string }>;
-type Role = 'student' | 'parent';
-const CONTENT_STEPS = 5;
+type Icon = ComponentType<{ className?: string }>
+type Role = 'student' | 'parent'
+const CONTENT_STEPS = 5
 
 const SUBJECTS: { key: string; Icon: Icon; color: IconChipColor }[] = [
   { key: 'math', Icon: Calculator, color: 'primary' },
@@ -41,52 +41,52 @@ const SUBJECTS: { key: string; Icon: Icon; color: IconChipColor }[] = [
   { key: 'science', Icon: FlaskConical, color: 'sunbeam' },
   { key: 'logic', Icon: Puzzle, color: 'success' },
   { key: 'art', Icon: Palette, color: 'primary' },
-];
+]
 
-const GRADES = ['g1', 'g2', 'g3', 'g4', 'g5'] as const;
+const GRADES = ['g1', 'g2', 'g3', 'g4', 'g5'] as const
 const GOALS = [
   { key: 'relaxed', minutes: 10 },
   { key: 'regular', minutes: 20 },
   { key: 'serious', minutes: 30 },
   { key: 'intense', minutes: 45 },
-] as const;
-const AVATARS: MascotEmotion[] = ['happy', 'excited', 'proud', 'celebrate', 'graduate', 'idea'];
+] as const
+const AVATARS: MascotEmotion[] = ['happy', 'excited', 'proud', 'celebrate', 'graduate', 'idea']
 
 export default function OnboardingPage() {
-  const t = useTranslations('onboarding');
-  const tSub = useTranslations('landing.subjects.items');
-  const router = useRouter();
+  const t = useTranslations('onboarding')
+  const tSub = useTranslations('landing.subjects.items')
+  const router = useRouter()
 
-  const [step, setStep] = useState(0);
-  const [role, setRole] = useState<Role | null>(null);
-  const [name, setName] = useState('');
-  const [grade, setGrade] = useState<(typeof GRADES)[number]>('g1');
-  const [subjects, setSubjects] = useState<string[]>([]);
-  const [goal, setGoal] = useState<string | null>(null);
-  const [reminder, setReminder] = useState(true);
-  const [avatar, setAvatar] = useState<MascotEmotion | null>(null);
+  const [step, setStep] = useState(0)
+  const [role, setRole] = useState<Role | null>(null)
+  const [name, setName] = useState('')
+  const [grade, setGrade] = useState<(typeof GRADES)[number]>('g1')
+  const [subjects, setSubjects] = useState<string[]>([])
+  const [goal, setGoal] = useState<string | null>(null)
+  const [reminder, setReminder] = useState(true)
+  const [avatar, setAvatar] = useState<MascotEmotion | null>(null)
 
   const canNext = useMemo(() => {
     switch (step) {
       case 0:
-        return role !== null;
+        return role !== null
       case 1:
-        return name.trim().length >= 2;
+        return name.trim().length >= 2
       case 2:
-        return subjects.length >= 1;
+        return subjects.length >= 1
       case 3:
-        return goal !== null;
+        return goal !== null
       case 4:
-        return avatar !== null;
+        return avatar !== null
       default:
-        return true;
+        return true
     }
-  }, [step, role, name, subjects, goal, avatar]);
+  }, [step, role, name, subjects, goal, avatar])
 
   const toggleSubject = (key: string) =>
-    setSubjects((prev) => (prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key]));
+    setSubjects((prev) => (prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key]))
 
-  const finish = () => router.push(role === 'parent' ? '/parent' : '/student');
+  const finish = () => router.push(role === 'parent' ? '/parent' : '/student')
 
   return (
     <div className="flex min-h-dvh flex-col bg-background">
@@ -238,12 +238,7 @@ export default function OnboardingPage() {
             <p className="mt-3 max-w-md text-lg text-foreground-muted">
               {t('done.subtitle', { name: name.trim() || 'Bingoo' })}
             </p>
-            <Button
-              size="xl"
-              className="mt-8"
-              onClick={finish}
-              rightIcon={<ArrowRight className="size-5" />}
-            >
+            <Button size="xl" className="mt-8" onClick={finish} rightIcon={<ArrowRight className="size-5" />}>
               {t('done.cta')}
             </Button>
           </div>
@@ -273,7 +268,7 @@ export default function OnboardingPage() {
         </footer>
       )}
     </div>
-  );
+  )
 }
 
 function StepShell({
@@ -281,17 +276,15 @@ function StepShell({
   subtitle,
   children,
 }: {
-  title: string;
-  subtitle: string;
-  children: React.ReactNode;
+  title: string
+  subtitle: string
+  children: React.ReactNode
 }) {
   return (
     <div className="animate-fade-up">
-      <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-        {title}
-      </h1>
+      <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">{title}</h1>
       <p className="mt-2 text-foreground-muted">{subtitle}</p>
       <div className="mt-8">{children}</div>
     </div>
-  );
+  )
 }

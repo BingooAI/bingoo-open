@@ -1,4 +1,4 @@
-import type { SessionData, SessionUser } from '../auth/auth';
+import type { SessionData, SessionUser } from '../auth/auth'
 
 /**
  * Shared Hono generics. Every router/middleware is typed with `AppEnv` so
@@ -10,8 +10,8 @@ import type { SessionData, SessionUser } from '../auth/auth';
  */
 export type AppEnv = {
   Variables: {
-    requestId: string;
-    user: SessionUser | null;
-    session: SessionData | null;
-  };
-};
+    requestId: string
+    user: SessionUser | null
+    session: SessionData | null
+  }
+}

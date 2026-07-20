@@ -10,13 +10,13 @@
  * `User.role` is a comma-separated set (Better Auth admin plugin). We only need
  * the staff subset here; non-staff roles collapse to "not staff".
  */
-export type StaffRole = 'ADMIN' | 'CONTENT_EDITOR' | 'MODERATOR';
+export type StaffRole = 'ADMIN' | 'CONTENT_EDITOR' | 'MODERATOR'
 
-const STAFF_ROLES: readonly StaffRole[] = ['ADMIN', 'CONTENT_EDITOR', 'MODERATOR'];
+const STAFF_ROLES: readonly StaffRole[] = ['ADMIN', 'CONTENT_EDITOR', 'MODERATOR']
 
 /** Split the comma-separated role string into a normalized, de-duped set. */
 export function parseRoles(role: string | null | undefined): string[] {
-  if (!role) return [];
+  if (!role) return []
   return [
     ...new Set(
       role
@@ -24,39 +24,39 @@ export function parseRoles(role: string | null | undefined): string[] {
         .map((r) => r.trim().toUpperCase())
         .filter(Boolean),
     ),
-  ];
+  ]
 }
 
 function has(roles: string[], ...any: string[]): boolean {
-  return any.some((r) => roles.includes(r));
+  return any.some((r) => roles.includes(r))
 }
 
 /** Any staff role at all — the baseline for entering the admin app. */
 export function isStaff(role: string | null | undefined): boolean {
-  return has(parseRoles(role), ...STAFF_ROLES);
+  return has(parseRoles(role), ...STAFF_ROLES)
 }
 
 /** ADMIN or CONTENT_EDITOR — may create/edit content, tags, templates, generate. */
 export function canManageContent(role: string | null | undefined): boolean {
-  return has(parseRoles(role), 'ADMIN', 'CONTENT_EDITOR');
+  return has(parseRoles(role), 'ADMIN', 'CONTENT_EDITOR')
 }
 
 /** ADMIN or MODERATOR — may approve/reject/flag assets. */
 export function canModerate(role: string | null | undefined): boolean {
-  return has(parseRoles(role), 'ADMIN', 'MODERATOR');
+  return has(parseRoles(role), 'ADMIN', 'MODERATOR')
 }
 
 /** ADMIN only — prompt management, destructive platform actions. */
 export function isAdmin(role: string | null | undefined): boolean {
-  return has(parseRoles(role), 'ADMIN');
+  return has(parseRoles(role), 'ADMIN')
 }
 
 /** Capability bundle derived once from a role string, handed to the UI. */
 export interface StaffCapabilities {
-  isStaff: boolean;
-  canManageContent: boolean;
-  canModerate: boolean;
-  isAdmin: boolean;
+  isStaff: boolean
+  canManageContent: boolean
+  canModerate: boolean
+  isAdmin: boolean
 }
 
 export function resolveCapabilities(role: string | null | undefined): StaffCapabilities {
@@ -65,5 +65,5 @@ export function resolveCapabilities(role: string | null | undefined): StaffCapab
     canManageContent: canManageContent(role),
     canModerate: canModerate(role),
     isAdmin: isAdmin(role),
-  };
+  }
 }

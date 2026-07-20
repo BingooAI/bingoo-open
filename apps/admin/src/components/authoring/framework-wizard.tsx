@@ -1,110 +1,110 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { Button, Callout, Textarea, useToast } from '@bingoo/ui-web';
-import { Dropzone } from './dropzone';
-import { Stepper, type StepDef, type StepState } from './stepper';
+import { useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { Button, Callout, Textarea, useToast } from '@bingoo/ui-web'
+import { Dropzone } from './dropzone'
+import { Stepper, type StepDef, type StepState } from './stepper'
 import {
   useApplyFramework,
   useExtractText,
   useFrameworkFromPrompt,
   useFrameworkFromText,
   type IngestResultDto,
-} from '@/lib/authoring-queries';
-import { cn } from '@/lib/cn';
+} from '@/lib/authoring-queries'
+import { cn } from '@/lib/cn'
 
-type Mode = 'pdf' | 'prompt';
+type Mode = 'pdf' | 'prompt'
 
 /**
  * Sinh khung năng lực theo TỪNG BƯỚC, mỗi bước hiện kết quả để người soạn xem/sửa trước khi đi tiếp:
  * nguồn → (OCR → văn bản sửa được) → khái niệm + quan hệ → duyệt & ghi vào đồ thị.
  */
 export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
-  const t = useTranslations('admin.authoring');
-  const { toast } = useToast();
+  const t = useTranslations('admin.authoring')
+  const { toast } = useToast()
 
-  const [mode, setMode] = useState<Mode>('pdf');
-  const [file, setFile] = useState<File | null>(null);
-  const [topic, setTopic] = useState('');
-  const [text, setText] = useState('');
-  const [draft, setDraft] = useState<IngestResultDto | null>(null);
-  const [appliedMsg, setAppliedMsg] = useState<string | null>(null);
+  const [mode, setMode] = useState<Mode>('pdf')
+  const [file, setFile] = useState<File | null>(null)
+  const [topic, setTopic] = useState('')
+  const [text, setText] = useState('')
+  const [draft, setDraft] = useState<IngestResultDto | null>(null)
+  const [appliedMsg, setAppliedMsg] = useState<string | null>(null)
 
-  const extract = useExtractText();
-  const fromText = useFrameworkFromText();
-  const fromPrompt = useFrameworkFromPrompt();
-  const apply = useApplyFramework();
+  const extract = useExtractText()
+  const fromText = useFrameworkFromText()
+  const fromPrompt = useFrameworkFromPrompt()
+  const apply = useApplyFramework()
 
   const onErr = (e: unknown) =>
     toast({
       variant: 'danger',
       title: t('failed'),
       description: e instanceof Error ? e.message : String(e),
-    });
+    })
 
   const reset = () => {
-    setFile(null);
-    setTopic('');
-    setText('');
-    setDraft(null);
-    setAppliedMsg(null);
-  };
+    setFile(null)
+    setTopic('')
+    setText('')
+    setDraft(null)
+    setAppliedMsg(null)
+  }
 
   const runExtract = () => {
-    if (!file) return;
+    if (!file) return
     extract.mutate(file, {
       onSuccess: (r) => setText(r.text),
       onError: onErr,
-    });
-  };
+    })
+  }
 
   const runGenerate = () => {
-    const onSuccess = (r: IngestResultDto) => setDraft(r);
-    if (mode === 'pdf') fromText.mutate({ text }, { onSuccess, onError: onErr });
-    else fromPrompt.mutate({ topic }, { onSuccess, onError: onErr });
-  };
+    const onSuccess = (r: IngestResultDto) => setDraft(r)
+    if (mode === 'pdf') fromText.mutate({ text }, { onSuccess, onError: onErr })
+    else fromPrompt.mutate({ topic }, { onSuccess, onError: onErr })
+  }
 
   const runApply = () => {
-    if (!draft) return;
+    if (!draft) return
     apply.mutate(draft.compiled, {
       onSuccess: (r) => {
-        setAppliedMsg(`${r.nodes} ${t('concepts')} · ${r.edges} ${t('edges')}`);
-        toast({ variant: 'success', title: t('fwApplied') });
-        onApplied?.();
+        setAppliedMsg(`${r.nodes} ${t('concepts')} · ${r.edges} ${t('edges')}`)
+        toast({ variant: 'success', title: t('fwApplied') })
+        onApplied?.()
       },
       onError: onErr,
-    });
-  };
+    })
+  }
 
   // ── trạng thái từng bước ───────────────────────────────────────────────────
-  const hasSource = mode === 'pdf' ? !!file : topic.trim().length > 0;
-  const genPending = fromText.isPending || fromPrompt.isPending;
+  const hasSource = mode === 'pdf' ? !!file : topic.trim().length > 0
+  const genPending = fromText.isPending || fromPrompt.isPending
 
-  const sourceState: StepState = hasSource ? 'done' : 'idle';
+  const sourceState: StepState = hasSource ? 'done' : 'idle'
   const extractState: StepState = extract.isPending
     ? 'running'
     : extract.isError
       ? 'error'
       : text
         ? 'done'
-        : 'idle';
+        : 'idle'
   const genState: StepState = genPending
     ? 'running'
     : fromText.isError || fromPrompt.isError
       ? 'error'
       : draft
         ? 'done'
-        : 'idle';
+        : 'idle'
   const applyState: StepState = apply.isPending
     ? 'running'
     : apply.isError
       ? 'error'
       : appliedMsg
         ? 'done'
-        : 'idle';
+        : 'idle'
 
-  const steps: StepDef[] = [];
+  const steps: StepDef[] = []
 
   // 1) Nguồn
   steps.push({
@@ -149,7 +149,7 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
         )}
       </div>
     ),
-  });
+  })
 
   // 2) Trích văn bản — chỉ ở luồng PDF
   if (mode === 'pdf') {
@@ -178,7 +178,7 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
           ) : null}
         </div>
       ),
-    });
+    })
   }
 
   // 3) Sinh khung
@@ -211,26 +211,19 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
                 .filter((n) => n.kind !== 'OBJECTIVE')
                 .slice(0, 14)
                 .map((n) => {
-                  const f = (n.facets ?? {}) as Record<string, unknown>;
+                  const f = (n.facets ?? {}) as Record<string, unknown>
                   const chips = [
                     typeof f.object === 'string' ? `object: ${f.object}` : null,
                     f.scope ? `scope: ${JSON.stringify(f.scope)}` : null,
                     typeof f.channel === 'string' ? f.channel : null,
                     typeof f.bloom === 'string' ? f.bloom : null,
                     typeof f.representation === 'string' ? f.representation : null,
-                  ].filter(Boolean) as string[];
+                  ].filter(Boolean) as string[]
                   return (
-                    <li
-                      key={n.slug}
-                      className="rounded-lg border border-border bg-surface px-2.5 py-1.5"
-                    >
+                    <li key={n.slug} className="rounded-lg border border-border bg-surface px-2.5 py-1.5">
                       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                        <span className="text-sm text-foreground">
-                          {n.title.en ?? n.title.vi ?? n.slug}
-                        </span>
-                        <span className="font-mono text-[11px] text-foreground-subtle">
-                          {n.slug}
-                        </span>
+                        <span className="text-sm text-foreground">{n.title.en ?? n.title.vi ?? n.slug}</span>
+                        <span className="font-mono text-[11px] text-foreground-subtle">{n.slug}</span>
                       </div>
                       {chips.length ? (
                         <div className="mt-1 flex flex-wrap gap-1">
@@ -249,16 +242,14 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
                         </span>
                       )}
                     </li>
-                  );
+                  )
                 })}
             </ul>
 
             {/* VI PHẠM BẤT BIẾN — xem TRƯỚC, không đợi bấm Duyệt mới bị chặn. */}
             {draft.violations?.length ? (
               <Callout
-                variant={
-                  draft.violations.some((v) => v.severity === 'error') ? 'danger' : 'warning'
-                }
+                variant={draft.violations.some((v) => v.severity === 'error') ? 'danger' : 'warning'}
                 title={`Vi phạm bất biến (${draft.violations.length})`}
               >
                 <ul className="list-disc space-y-1 pl-4 text-sm">
@@ -295,7 +286,7 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
         ) : null}
       </div>
     ),
-  });
+  })
 
   // 4) Duyệt & ghi
   steps.push({
@@ -320,7 +311,7 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
         ) : null}
       </div>
     ),
-  });
+  })
 
-  return <Stepper steps={steps} />;
+  return <Stepper steps={steps} />
 }

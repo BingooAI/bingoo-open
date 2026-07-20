@@ -6,20 +6,20 @@
  * narration that had been spoken — both of which cost money — and there was
  * nothing to come back to, from this machine or any other.
  */
-import { db } from '@bingoo/db';
-import type { Prisma } from '@bingoo/db';
+import { db } from '@bingoo/db'
+import type { Prisma } from '@bingoo/db'
 
 export type LessonInput = {
-  slug: string;
-  title: string;
-  doc: Prisma.InputJsonValue;
-  bundles: Prisma.InputJsonValue;
-  imagesDone?: number;
-  imagesTotal?: number;
-  audioDone?: number;
-  audioTotal?: number;
-  status?: 'DRAFT' | 'READY' | 'PUBLISHED';
-};
+  slug: string
+  title: string
+  doc: Prisma.InputJsonValue
+  bundles: Prisma.InputJsonValue
+  imagesDone?: number
+  imagesTotal?: number
+  audioDone?: number
+  audioTotal?: number
+  status?: 'DRAFT' | 'READY' | 'PUBLISHED'
+}
 
 const LIST_FIELDS = {
   id: true,
@@ -33,7 +33,7 @@ const LIST_FIELDS = {
   audioTotal: true,
   createdAt: true,
   updatedAt: true,
-} as const;
+} as const
 
 /** Every lesson this user owns, newest first. */
 export function listLessons(userId: string) {
@@ -41,12 +41,12 @@ export function listLessons(userId: string) {
     where: { createdById: userId },
     orderBy: { updatedAt: 'desc' },
     select: LIST_FIELDS,
-  });
+  })
 }
 
 /** One lesson WITH its doc — the only call that ships the whole payload. */
 export function getLesson(userId: string, id: string) {
-  return db.explainerLesson.findFirst({ where: { id, createdById: userId } });
+  return db.explainerLesson.findFirst({ where: { id, createdById: userId } })
 }
 
 /**
@@ -64,16 +64,16 @@ export function upsertLesson(userId: string, input: LessonInput) {
     audioDone: input.audioDone ?? 0,
     audioTotal: input.audioTotal ?? 0,
     ...(input.status ? { status: input.status } : {}),
-  };
+  }
   return db.explainerLesson.upsert({
     where: { createdById_slug: { createdById: userId, slug: input.slug } },
     create: { ...data, slug: input.slug, createdById: userId },
     update: data,
     select: LIST_FIELDS,
-  });
+  })
 }
 
 export async function deleteLesson(userId: string, id: string): Promise<boolean> {
-  const { count } = await db.explainerLesson.deleteMany({ where: { id, createdById: userId } });
-  return count > 0;
+  const { count } = await db.explainerLesson.deleteMany({ where: { id, createdById: userId } })
+  return count > 0
 }

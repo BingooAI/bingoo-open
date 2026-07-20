@@ -1,13 +1,13 @@
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export interface TimelineItemData {
-  id: string;
-  title: ReactNode;
-  time?: ReactNode;
-  description?: ReactNode;
-  icon?: ReactNode;
-  color?: 'primary' | 'teal' | 'sunbeam' | 'coral' | 'success';
+  id: string
+  title: ReactNode
+  time?: ReactNode
+  description?: ReactNode
+  icon?: ReactNode
+  color?: 'primary' | 'teal' | 'sunbeam' | 'coral' | 'success'
 }
 
 const DOT = {
@@ -16,11 +16,11 @@ const DOT = {
   sunbeam: 'bg-accent-sunbeam',
   coral: 'bg-accent-coral',
   success: 'bg-success',
-} as const;
+} as const
 
 export interface TimelineProps {
-  items: TimelineItemData[];
-  className?: string;
+  items: TimelineItemData[]
+  className?: string
 }
 
 /** Vertical timeline / activity feed. */
@@ -28,7 +28,7 @@ export function Timeline({ items, className }: TimelineProps) {
   return (
     <ol className={cn('flex flex-col', className)}>
       {items.map((it, i) => {
-        const last = i === items.length - 1;
+        const last = i === items.length - 1
         return (
           <li key={it.id} className="flex gap-3">
             <div className="flex flex-col items-center">
@@ -47,13 +47,11 @@ export function Timeline({ items, className }: TimelineProps) {
                 <p className="font-display text-sm font-bold text-foreground">{it.title}</p>
                 {it.time ? <span className="text-xs text-foreground-subtle">{it.time}</span> : null}
               </div>
-              {it.description ? (
-                <p className="text-sm text-foreground-muted">{it.description}</p>
-              ) : null}
+              {it.description ? <p className="text-sm text-foreground-muted">{it.description}</p> : null}
             </div>
           </li>
-        );
+        )
       })}
     </ol>
-  );
+  )
 }

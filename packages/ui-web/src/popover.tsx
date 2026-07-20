@@ -1,18 +1,13 @@
-'use client';
+'use client'
 
-import type { ReactNode } from 'react';
-import {
-  Button as AriaButton,
-  Dialog,
-  DialogTrigger,
-  Popover as AriaPopover,
-} from 'react-aria-components';
-import { buttonVariants, type ButtonProps } from './button';
+import type { ReactNode } from 'react'
+import { Button as AriaButton, Dialog, DialogTrigger, Popover as AriaPopover } from 'react-aria-components'
+import { buttonVariants, type ButtonProps } from './button'
 
 export interface PopoverProps {
-  trigger: ReactNode;
-  triggerVariant?: ButtonProps['variant'];
-  children: ReactNode;
+  trigger: ReactNode
+  triggerVariant?: ButtonProps['variant']
+  children: ReactNode
 }
 
 /** Accessible popover (positioning, focus, dismiss) from React Aria, skinned. */
@@ -24,5 +19,5 @@ export function Popover({ trigger, triggerVariant = 'secondary', children }: Pop
         <Dialog className="text-sm text-foreground outline-none">{children}</Dialog>
       </AriaPopover>
     </DialogTrigger>
-  );
+  )
 }

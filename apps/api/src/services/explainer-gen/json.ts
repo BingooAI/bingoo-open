@@ -9,20 +9,20 @@
  */
 export function looseParse(text: string): unknown {
   try {
-    return JSON.parse(text);
+    return JSON.parse(text)
   } catch {
     /* fall through to repair */
   }
-  const repaired = text.replace(/,\s*([}\]])/g, '$1'); // drop trailing commas
-  return JSON.parse(repaired);
+  const repaired = text.replace(/,\s*([}\]])/g, '$1') // drop trailing commas
+  return JSON.parse(repaired)
 }
 
 export function extractJson(text: string): unknown {
-  let t = (text ?? '').trim();
-  const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  if (fence?.[1]) t = fence[1].trim();
-  const s = t.indexOf('{');
-  const e = t.lastIndexOf('}');
-  if (s < 0 || e < 0) throw new Error('no JSON object in response');
-  return looseParse(t.slice(s, e + 1));
+  let t = (text ?? '').trim()
+  const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/i)
+  if (fence?.[1]) t = fence[1].trim()
+  const s = t.indexOf('{')
+  const e = t.lastIndexOf('}')
+  if (s < 0 || e < 0) throw new Error('no JSON object in response')
+  return looseParse(t.slice(s, e + 1))
 }

@@ -1,29 +1,29 @@
-'use client';
+'use client'
 
-import { cn } from './lib/cn';
-import { tile } from './lib/interactive';
+import { cn } from './lib/cn'
+import { tile } from './lib/interactive'
 
 export interface EstimateLabels {
   /** "Ước lượng của em" — step 1. */
-  estimate: string;
+  estimate: string
   /** "Đo / tính thật" — step 2. */
-  actual: string;
+  actual: string
   /** Praise when the estimate landed inside the tolerance, e.g. "Ước lượng rất sát!". */
-  close: string;
+  close: string
   /** Shown when it did not, e.g. (off) => `Lệch ${off}`. */
-  off: (off: number) => string;
+  off: (off: number) => string
 }
 
 export interface EstimateStepProps {
-  estimate: number | null;
-  actual: number | null;
-  onChange: (next: { estimate: number | null; actual: number | null }) => void;
-  unit?: string;
-  step?: number;
-  labels: EstimateLabels;
-  reveal?: { correct: boolean; actual: number; close: boolean; off: number | null };
-  disabled?: boolean;
-  className?: string;
+  estimate: number | null
+  actual: number | null
+  onChange: (next: { estimate: number | null; actual: number | null }) => void
+  unit?: string
+  step?: number
+  labels: EstimateLabels
+  reveal?: { correct: boolean; actual: number; close: boolean; off: number | null }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -43,8 +43,8 @@ export function EstimateStep({
   disabled,
   className,
 }: EstimateStepProps) {
-  const locked = !!reveal || disabled;
-  const estimated = estimate !== null;
+  const locked = !!reveal || disabled
+  const estimated = estimate !== null
 
   return (
     <div className={cn('flex w-full flex-col items-center gap-3', className)}>
@@ -79,10 +79,7 @@ export function EstimateStep({
           ) : null}
           {reveal.off !== null ? (
             <p
-              className={cn(
-                'text-sm font-semibold',
-                reveal.close ? 'text-success' : 'text-foreground-muted',
-              )}
+              className={cn('text-sm font-semibold', reveal.close ? 'text-success' : 'text-foreground-muted')}
             >
               {reveal.close ? labels.close : labels.off(reveal.off)}
             </p>
@@ -90,7 +87,7 @@ export function EstimateStep({
         </div>
       ) : null}
     </div>
-  );
+  )
 }
 
 function Field({
@@ -102,16 +99,16 @@ function Field({
   disabled,
   tone,
 }: {
-  title: string;
-  value: number | null;
-  onChange: (v: number) => void;
-  unit?: string;
-  step: number;
-  disabled?: boolean;
-  tone: 'plain' | 'good' | 'bad';
+  title: string
+  value: number | null
+  onChange: (v: number) => void
+  unit?: string
+  step: number
+  disabled?: boolean
+  tone: 'plain' | 'good' | 'bad'
 }) {
-  const bump = (d: number) => onChange(Number(((value ?? 0) + d * step).toFixed(4)));
-  const key = cn(tile({ size: 'none' }), 'size-9 rounded-xl text-lg font-bold');
+  const bump = (d: number) => onChange(Number(((value ?? 0) + d * step).toFixed(4)))
+  const key = cn(tile({ size: 'none' }), 'size-9 rounded-xl text-lg font-bold')
   return (
     <div
       className={cn(
@@ -125,13 +122,7 @@ function Field({
     >
       <p className="text-xs font-bold uppercase tracking-wide text-foreground-subtle">{title}</p>
       <div className="flex items-center justify-center gap-3">
-        <button
-          type="button"
-          disabled={disabled}
-          aria-label="-"
-          onClick={() => bump(-1)}
-          className={key}
-        >
+        <button type="button" disabled={disabled} aria-label="-" onClick={() => bump(-1)} className={key}>
           −
         </button>
         <p className="min-w-16 text-center text-2xl font-bold tabular-nums text-foreground">
@@ -140,16 +131,10 @@ function Field({
             <span className="ml-1 text-sm font-semibold text-foreground-muted">{unit}</span>
           ) : null}
         </p>
-        <button
-          type="button"
-          disabled={disabled}
-          aria-label="+"
-          onClick={() => bump(1)}
-          className={key}
-        >
+        <button type="button" disabled={disabled} aria-label="+" onClick={() => bump(1)} className={key}>
           +
         </button>
       </div>
     </div>
-  );
+  )
 }

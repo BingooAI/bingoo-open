@@ -13,49 +13,45 @@ import {
   checkInvariants,
   hasBlockingViolation,
   type RawSource,
-} from '@bingoo/authoring';
-import { buildAuthoringPorts } from './authoring-adapters';
-import {
-  loadDomainProfiles,
-  loadExistingConcepts,
-  loadExistingNodes,
-} from '../repos/authoring.repo';
+} from '@bingoo/authoring'
+import { buildAuthoringPorts } from './authoring-adapters'
+import { loadDomainProfiles, loadExistingConcepts, loadExistingNodes } from '../repos/authoring.repo'
 
 export interface IngestResult {
-  readonly compiled: CompiledFramework;
-  readonly issues: readonly DraftIssue[];
+  readonly compiled: CompiledFramework
+  readonly issues: readonly DraftIssue[]
   /**
    * Cảnh báo từ pipeline (vd "bỏ cạnh X→Y vì không khớp khái niệm nào").
    * TRƯỚC ĐÂY BỊ NUỐT — và đó là lý do đồ thị mất sạch cạnh tiên quyết suốt 3 lần chạy mà không
    * ai biết. Cảnh báo không được phơi ra thì bằng không có.
    */
-  readonly warnings: readonly string[];
+  readonly warnings: readonly string[]
   /**
    * Vi phạm BẤT BIẾN — xem TRƯỚC khi ghi.
    * Trước đây chỉ biết lúc /apply ném lỗi: người soạn chờ LLM chạy xong, bấm Duyệt, rồi mới bị chặn.
    * Phải hiện ngay ở bước sinh thì mới sửa được.
    */
   readonly violations: readonly {
-    code: string;
-    severity: string;
-    message: string;
-    slugs: string[];
-  }[];
+    code: string
+    severity: string
+    message: string
+    slugs: string[]
+  }[]
   /** Có lỗi chặn (issue HOẶC vi phạm bất biến) → chưa được phép áp vào đồ thị. */
-  readonly blocking: boolean;
+  readonly blocking: boolean
 }
 
 export async function ingestSource(
   source: RawSource,
   opts?: { aiKey?: string; embeddingKey?: string; threshold?: number },
 ): Promise<IngestResult> {
-  const ports = buildAuthoringPorts(opts);
-  const draft = await runIngest(source, ports);
-  const existing = await loadExistingConcepts();
-  const compiled = compileDraft(draft, existing, opts?.threshold);
-  const issues = validateDraft(compiled);
-  const [profiles, existing2] = await Promise.all([loadDomainProfiles(), loadExistingNodes()]);
-  const violations = checkInvariants(compiled.graph, { profiles, existing: existing2 });
+  const ports = buildAuthoringPorts(opts)
+  const draft = await runIngest(source, ports)
+  const existing = await loadExistingConcepts()
+  const compiled = compileDraft(draft, existing, opts?.threshold)
+  const issues = validateDraft(compiled)
+  const [profiles, existing2] = await Promise.all([loadDomainProfiles(), loadExistingNodes()])
+  const violations = checkInvariants(compiled.graph, { profiles, existing: existing2 })
   return {
     compiled,
     issues,
@@ -67,5 +63,5 @@ export async function ingestSource(
       slugs: [...v.slugs],
     })),
     blocking: hasBlockingIssue(issues) || hasBlockingViolation(violations),
-  };
+  }
 }

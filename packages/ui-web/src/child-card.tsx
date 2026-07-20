@@ -1,26 +1,26 @@
-import type { ReactNode } from 'react';
-import { Avatar } from './avatar';
-import { cn } from './lib/cn';
-import { StreakBadge } from './streak-badge';
-import { XPBar } from './xp-bar';
+import type { ReactNode } from 'react'
+import { Avatar } from './avatar'
+import { cn } from './lib/cn'
+import { StreakBadge } from './streak-badge'
+import { XPBar } from './xp-bar'
 
 export interface ChildCardProps {
-  name: string;
-  avatarSrc?: string | null;
+  name: string
+  avatarSrc?: string | null
   /** e.g. "Lớp 3" — pass localized text. */
-  meta?: ReactNode;
-  level: number;
-  xp: number;
-  nextXp: number;
-  levelPrefix?: string;
-  streakDays?: number;
-  streakLabel?: ReactNode;
+  meta?: ReactNode
+  level: number
+  xp: number
+  nextXp: number
+  levelPrefix?: string
+  streakDays?: number
+  streakLabel?: ReactNode
   /** Subject chips (already-localized short names). */
-  subjects?: ReactNode[];
+  subjects?: ReactNode[]
   /** CTA slot (e.g. a Button). */
-  action?: ReactNode;
-  onClick?: () => void;
-  className?: string;
+  action?: ReactNode
+  onClick?: () => void
+  className?: string
 }
 
 /**
@@ -42,7 +42,7 @@ export function ChildCard({
   onClick,
   className,
 }: ChildCardProps) {
-  const Tag = onClick ? 'button' : 'div';
+  const Tag = onClick ? 'button' : 'div'
   return (
     <Tag
       type={onClick ? 'button' : undefined}
@@ -77,5 +77,5 @@ export function ChildCard({
       ) : null}
       {action}
     </Tag>
-  );
+  )
 }

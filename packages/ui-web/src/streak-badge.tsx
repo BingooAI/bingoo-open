@@ -1,11 +1,11 @@
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export interface StreakBadgeProps {
-  days: number;
+  days: number
   /** Unit label, e.g. "ngày" / "days" — pass localized text. */
-  label?: ReactNode;
-  className?: string;
+  label?: ReactNode
+  className?: string
 }
 
 /** Streak chip with a flame. */
@@ -21,5 +21,5 @@ export function StreakBadge({ days, label, className }: StreakBadgeProps) {
       <span className="tabular-nums">{days}</span>
       {label ? <span>{label}</span> : null}
     </span>
-  );
+  )
 }

@@ -1,19 +1,19 @@
-'use client';
+'use client'
 
-import type { TableFillQuestion } from '@bingoo/core';
-import { cn } from './lib/cn';
+import type { TableFillQuestion } from '@bingoo/core'
+import { cn } from './lib/cn'
 
 export interface TableFillProps {
-  columns: TableFillQuestion['columns'];
-  rows: TableFillQuestion['rows'];
+  columns: TableFillQuestion['columns']
+  rows: TableFillQuestion['rows']
   /** Controlled fills: blankId → value. */
-  values: Record<string, string>;
-  onChange: (values: Record<string, string>) => void;
+  values: Record<string, string>
+  onChange: (values: Record<string, string>) => void
   /** After checking: blankId → correct. */
-  reveal?: Record<string, boolean>;
-  disabled?: boolean;
-  label?: string;
-  className?: string;
+  reveal?: Record<string, boolean>
+  disabled?: boolean
+  label?: string
+  className?: string
 }
 
 /** Complete a data table by filling the blank cells (Cambridge tables:
@@ -28,8 +28,8 @@ export function TableFill({
   label,
   className,
 }: TableFillProps) {
-  const locked = !!reveal || disabled;
-  const hasRowHeaders = rows.some((r) => r.header != null);
+  const locked = !!reveal || disabled
+  const hasRowHeaders = rows.some((r) => r.header != null)
 
   return (
     <div className={cn('max-w-full overflow-x-auto', className)}>
@@ -57,7 +57,7 @@ export function TableFill({
               ) : null}
               {row.cells.map((cell, ci) => {
                 if (cell.blankId) {
-                  const ok = reveal?.[cell.blankId];
+                  const ok = reveal?.[cell.blankId]
                   return (
                     <td key={ci} className="border border-border p-1">
                       <input
@@ -73,18 +73,18 @@ export function TableFill({
                         )}
                       />
                     </td>
-                  );
+                  )
                 }
                 return (
                   <td key={ci} className="border border-border p-2 text-center text-foreground">
                     {cell.text}
                   </td>
-                );
+                )
               })}
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-  );
+  )
 }

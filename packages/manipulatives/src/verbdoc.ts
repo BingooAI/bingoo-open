@@ -12,7 +12,7 @@
  *     ("apple"); nothing said "star", "heart", "flower" also exist. And kit params
  *     are `unknown`, so a wrong value renders the wrong object with NO error.
  */
-export type KitDoc = { desc: string; verbs: string; paramEnums?: Record<string, string[]> };
+export type KitDoc = { desc: string; verbs: string; paramEnums?: Record<string, string[]> }
 
 export const KIT_DOCS: Record<string, KitDoc> = {
   addstory: {
@@ -24,8 +24,7 @@ export const KIT_DOCS: Record<string, KitDoc> = {
   },
   algebratile: {
     desc: 'AlgebraTiles (giải phương trình bằng gạch đại số). Middle school (THCS, grades 6–8): model a linear equation on a two-sided mat — x-tiles (long rects, labeled "x") and unit tiles (small squares); nega',
-    verbs:
-      'addBoth({x,units}) · removeBoth({x,units}) · splitEqually · showSolution · setAnswer({v})',
+    verbs: 'addBoth({x,units}) · removeBoth({x,units}) · splitEqually · showSolution · setAnswer({v})',
   },
   alphabet: {
     desc: 'alphabet arc (Cambridge Primary English: phonics/handwriting — letter knowledge, upper/lower case, vowels).',
@@ -83,8 +82,7 @@ export const KIT_DOCS: Record<string, KitDoc> = {
   },
   dialogue: {
     desc: 'DialogueFlow: conversation / exchange builder (TOEIC conversations, business email chains, speaking-test role-play; teens–adult). A two-speaker chat: bubbles appear turn by turn (play mode), functiona',
-    verbs:
-      'next · playAll · swap({i,j}) · highlightFn · setDialogue({speakers,turns}) · setMode({mode})',
+    verbs: 'next · playAll · swap({i,j}) · highlightFn · setDialogue({speakers,turns}) · setMode({mode})',
   },
   equationbalance: {
     desc: 'EquationBalance (cân thăng bằng phương trình ax+b=c). Middle school (THCS, grades 6–8): a beam balance that stays LEVEL — the equation is always true — with `a` x-bags + `b` unit weights on the left p',
@@ -167,8 +165,7 @@ export const KIT_DOCS: Record<string, KitDoc> = {
   },
   money: {
     desc: 'coins & notes (Cambridge: money, making amounts, change). Values in the smallest unit (e.g. cents). `total` is the sum → verifiable by code.',
-    verbs:
-      'addCoin({value}) · makeAmount({amount}) · giveChange({paid,cost}) · setTarget({amount})',
+    verbs: 'addCoin({value}) · makeAmount({amount}) · giveChange({paid,cost}) · setTarget({amount})',
   },
   morpheme: {
     desc: 'prefix + root + suffix (Cambridge Primary English: vocabulary & spelling — word building, e.g. un + happy + ness).',
@@ -216,8 +213,7 @@ export const KIT_DOCS: Record<string, KitDoc> = {
   },
   probtree: {
     desc: 'ProbabilityTree (cây xác suất hai tầng). A two-stage probability tree: root → stage-1 branches → stage-2 sub-branches, with the branch probability written on every segment and the product probability ',
-    verbs:
-      'reveal({stage}) · highlight({path}) · showProducts · setStages({stage1,stage2}) · answer({p})',
+    verbs: 'reveal({stage}) · highlight({path}) · showProducts · setStages({stage1,stage2}) · answer({p})',
   },
   punctuation: {
     desc: 'capital letters & punctuation (Cambridge Primary English: Writing — punctuation). Fix a plain string: capitalise words, drop in end marks / commas.',
@@ -262,8 +258,7 @@ export const KIT_DOCS: Record<string, KitDoc> = {
   },
   stresspattern: {
     desc: 'WordStress: word stress & syllables (academic pronunciation, IELTS speaking; teens–adult). Syllable boxes joined by dots; the learner marks the stressed syllable (big accent dot glides above it), metr',
-    verbs:
-      'mark({i}) · showBeats · showCompare · reveal · setWord({word,syllables,stressed,compare})',
+    verbs: 'mark({i}) · showBeats · showCompare · reveal · setWord({word,syllables,stressed,compare})',
   },
   subitize: {
     desc: 'Subitize (nhìn nhanh số lượng — instant recognition of 1–10 without counting). A big dot card shows `count` dots in one of four arrangements (dice / pairs / random / tenframe); the SAME number can be ',
@@ -321,9 +316,9 @@ export const KIT_DOCS: Record<string, KitDoc> = {
     desc: 'WordFormFamily (họ từ / word form — exam prep TOEIC/TOEFL/IELTS, e.g. decide → decision → decisive → decisively). The root word sits in a hub; POS satellites reveal each derived form with its suffix h',
     verbs: 'reveal · revealAll · highlightSuffix · place · setFamily',
   },
-};
+}
 
 /** Just the verb signatures, keyed by kind. */
 export const KIT_VERBS: Record<string, string> = Object.fromEntries(
   Object.entries(KIT_DOCS).map(([k, v]) => [k, v.verbs]),
-);
+)

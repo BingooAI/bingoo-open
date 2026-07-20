@@ -1,42 +1,42 @@
-'use client';
+'use client'
 
-import { Check, Eye, FlaskConical, Lightbulb, Sparkles } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
-import { Button } from './button';
-import { cn } from './lib/cn';
-import { POP, SHAKE, stagger, tile } from './lib/interactive';
+import { Check, Eye, FlaskConical, Lightbulb, Sparkles } from 'lucide-react'
+import { useState, type ReactNode } from 'react'
+import { Button } from './button'
+import { cn } from './lib/cn'
+import { POP, SHAKE, stagger, tile } from './lib/interactive'
 
 export interface ExperimentHypothesis {
-  question: ReactNode;
-  options: { id: string; label: ReactNode; emoji?: string }[];
+  question: ReactNode
+  options: { id: string; label: ReactNode; emoji?: string }[]
   /** The option that matches what actually happens. */
-  correctId: string;
+  correctId: string
 }
 
 export interface ExperimentFlowProps {
-  title?: ReactNode;
+  title?: ReactNode
   /** The four stage names, in order. */
-  stageLabels: { predict: string; experiment: string; observe: string; conclude: string };
-  hypothesis: ExperimentHypothesis;
+  stageLabels: { predict: string; experiment: string; observe: string; conclude: string }
+  hypothesis: ExperimentHypothesis
   /** The procedure — each step is checked off before moving on. */
-  procedure: { id: string; label: ReactNode }[];
+  procedure: { id: string; label: ReactNode }[]
   /** What is revealed at the Observe stage (text, emoji, image slot…). */
-  observation: ReactNode;
+  observation: ReactNode
   /** The takeaway shown at the Conclude stage. */
-  conclusion: ReactNode;
+  conclusion: ReactNode
   labels: {
-    next: string;
-    back: string;
-    finish: string;
-    yourGuess: string;
-    correct: string;
-    incorrect: string;
-  };
-  onComplete?: (result: { prediction: string | null; correct: boolean }) => void;
-  className?: string;
+    next: string
+    back: string
+    finish: string
+    yourGuess: string
+    correct: string
+    incorrect: string
+  }
+  onComplete?: (result: { prediction: string | null; correct: boolean }) => void
+  className?: string
 }
 
-const STAGE_ICONS = [Lightbulb, FlaskConical, Eye, Sparkles];
+const STAGE_ICONS = [Lightbulb, FlaskConical, Eye, Sparkles]
 
 /**
  * The scientific method as an interactive flow: Predict → Experiment → Observe →
@@ -54,53 +54,43 @@ export function ExperimentFlow({
   onComplete,
   className,
 }: ExperimentFlowProps) {
-  const stages = [
-    stageLabels.predict,
-    stageLabels.experiment,
-    stageLabels.observe,
-    stageLabels.conclude,
-  ];
-  const [stage, setStage] = useState(0);
-  const [prediction, setPrediction] = useState<string | null>(null);
-  const [checked, setChecked] = useState<Set<string>>(new Set());
+  const stages = [stageLabels.predict, stageLabels.experiment, stageLabels.observe, stageLabels.conclude]
+  const [stage, setStage] = useState(0)
+  const [prediction, setPrediction] = useState<string | null>(null)
+  const [checked, setChecked] = useState<Set<string>>(new Set())
 
-  const allChecked = procedure.every((s) => checked.has(s.id));
-  const canNext = stage === 0 ? prediction != null : stage === 1 ? allChecked : true;
-  const isLast = stage === stages.length - 1;
-  const correct = prediction === hypothesis.correctId;
-  const guessLabel = hypothesis.options.find((o) => o.id === prediction);
+  const allChecked = procedure.every((s) => checked.has(s.id))
+  const canNext = stage === 0 ? prediction != null : stage === 1 ? allChecked : true
+  const isLast = stage === stages.length - 1
+  const correct = prediction === hypothesis.correctId
+  const guessLabel = hypothesis.options.find((o) => o.id === prediction)
 
   function toggleStep(id: string) {
     setChecked((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
   }
   function advance() {
     if (isLast) {
-      onComplete?.({ prediction, correct });
-      return;
+      onComplete?.({ prediction, correct })
+      return
     }
-    setStage((s) => s + 1);
+    setStage((s) => s + 1)
   }
 
   return (
-    <div
-      className={cn(
-        'flex flex-col gap-5 rounded-2xl border border-border bg-surface p-5',
-        className,
-      )}
-    >
+    <div className={cn('flex flex-col gap-5 rounded-2xl border border-border bg-surface p-5', className)}>
       {title ? <h3 className="font-display text-lg font-bold text-foreground">{title}</h3> : null}
 
       {/* Stage tracker */}
       <ol className="flex items-center gap-1.5">
         {stages.map((name, i) => {
-          const Icon = STAGE_ICONS[i]!;
-          const done = i < stage;
-          const active = i === stage;
+          const Icon = STAGE_ICONS[i]!
+          const done = i < stage
+          const active = i === stage
           return (
             <li key={name} className="flex flex-1 flex-col items-center gap-1">
               <div className="flex w-full items-center">
@@ -136,7 +126,7 @@ export function ExperimentFlow({
                 {name}
               </span>
             </li>
-          );
+          )
         })}
       </ol>
 
@@ -174,7 +164,7 @@ export function ExperimentFlow({
         {stage === 1 ? (
           <ul className="flex flex-col gap-2">
             {procedure.map((s, i) => {
-              const on = checked.has(s.id);
+              const on = checked.has(s.id)
               return (
                 <li key={s.id} className="motion-safe:animate-fade-up" style={stagger(i)}>
                   <button
@@ -203,7 +193,7 @@ export function ExperimentFlow({
                     </span>
                   </button>
                 </li>
-              );
+              )
             })}
           </ul>
         ) : null}
@@ -249,5 +239,5 @@ export function ExperimentFlow({
         </Button>
       </div>
     </div>
-  );
+  )
 }

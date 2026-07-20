@@ -1,17 +1,17 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
-import { IconChip, type IconChipColor } from './icon-chip';
-import { cn } from './lib/cn';
-import { Progress } from './progress';
+import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import { IconChip, type IconChipColor } from './icon-chip'
+import { cn } from './lib/cn'
+import { Progress } from './progress'
 
 export interface SubjectCardProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   'title' | 'color' | 'name'
 > {
-  icon: ReactNode;
-  name: ReactNode;
-  color?: IconChipColor;
+  icon: ReactNode
+  name: ReactNode
+  color?: IconChipColor
   /** 0–100; hidden when undefined. */
-  progress?: number;
+  progress?: number
 }
 
 /** Tappable subject tile — colored icon + name + optional progress. */
@@ -38,5 +38,5 @@ export function SubjectCard({
       <span className="font-display text-sm font-bold text-foreground">{name}</span>
       {progress != null ? <Progress value={progress} /> : null}
     </button>
-  );
+  )
 }

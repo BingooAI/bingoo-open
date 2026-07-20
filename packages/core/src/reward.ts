@@ -4,16 +4,16 @@
  * display text; the UI localizes them.
  */
 
-import { clamp } from './utils';
+import { clamp } from './utils'
 
 /* --------------------------------- Leagues -------------------------------- */
 
-export type LeagueTier = 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond';
+export type LeagueTier = 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond'
 
 export interface LeagueDef {
-  tier: LeagueTier;
+  tier: LeagueTier
   /** Minimum points to enter this tier. */
-  min: number;
+  min: number
 }
 
 /** Default weekly-points ladder (override via remote config later, §R6). */
@@ -23,88 +23,85 @@ export const LEAGUES: readonly LeagueDef[] = [
   { tier: 'gold', min: 1500 },
   { tier: 'platinum', min: 3500 },
   { tier: 'diamond', min: 7000 },
-];
+]
 
 export interface LeagueInfo {
-  tier: LeagueTier;
-  index: number;
-  points: number;
+  tier: LeagueTier
+  index: number
+  points: number
   /** Points at which the current tier starts. */
-  floor: number;
+  floor: number
   /** Points to reach the next tier, or null at the top. */
-  next: number | null;
+  next: number | null
   /** 0–1 progress toward the next tier (1 at the top). */
-  progress: number;
+  progress: number
 }
 
 /** Resolve points to a league tier + progress toward the next. */
-export function leagueFromPoints(
-  points: number,
-  ladder: readonly LeagueDef[] = LEAGUES,
-): LeagueInfo {
-  const pts = Math.max(0, Math.floor(points));
-  let index = 0;
+export function leagueFromPoints(points: number, ladder: readonly LeagueDef[] = LEAGUES): LeagueInfo {
+  const pts = Math.max(0, Math.floor(points))
+  let index = 0
   for (let i = 0; i < ladder.length; i++) {
-    if (pts >= ladder[i]!.min) index = i;
+    if (pts >= ladder[i]!.min) index = i
   }
-  const floor = ladder[index]!.min;
-  const nextDef = ladder[index + 1];
-  const next = nextDef ? nextDef.min : null;
-  const progress = next == null ? 1 : clamp((pts - floor) / (next - floor), 0, 1);
-  return { tier: ladder[index]!.tier, index, points: pts, floor, next, progress };
+  const floor = ladder[index]!.min
+  const nextDef = ladder[index + 1]
+  const next = nextDef ? nextDef.min : null
+  const progress = next == null ? 1 : clamp((pts - floor) / (next - floor), 0, 1)
+  return { tier: ladder[index]!.tier, index, points: pts, floor, next, progress }
 }
 
 /* --------------------------------- Badges --------------------------------- */
 
 export interface BadgeRequirement {
-  id: string;
+  id: string
   /** Stat key this badge tracks, e.g. "lessons", "streak", "perfectQuizzes". */
-  metric: string;
+  metric: string
   /** Value of `metric` at which it unlocks. */
-  threshold: number;
+  threshold: number
 }
 
 /** Whether a badge is unlocked given the player's stats. */
 export function badgeUnlocked(req: BadgeRequirement, stats: Record<string, number>): boolean {
-  return (stats[req.metric] ?? 0) >= req.threshold;
+  return (stats[req.metric] ?? 0) >= req.threshold
 }
 
 /** 0–1 progress toward unlocking a badge (1 = unlocked). */
 export function badgeProgress(req: BadgeRequirement, stats: Record<string, number>): number {
-  if (req.threshold <= 0) return 1;
-  return clamp((stats[req.metric] ?? 0) / req.threshold, 0, 1);
+  if (req.threshold <= 0) return 1
+  return clamp((stats[req.metric] ?? 0) / req.threshold, 0, 1)
 }
 
 /* -------------------------------- Missions -------------------------------- */
 
 export interface MissionProgress {
-  current: number;
-  goal: number;
-  complete: boolean;
+  current: number
+  goal: number
+  complete: boolean
   /** 0–1. */
-  ratio: number;
+  ratio: number
 }
 
 export function missionProgress(current: number, goal: number): MissionProgress {
-  const ratio = goal > 0 ? clamp(current / goal, 0, 1) : 0;
-  return { current, goal, complete: goal > 0 && current >= goal, ratio };
+  const ratio = goal > 0 ? clamp(current / goal, 0, 1) : 0
+  return { current, goal, complete: goal > 0 && current >= goal, ratio }
 }
 
 /* ------------------------------- Countdown -------------------------------- */
 
 export interface CountdownParts {
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
+  days: number
+  hours: number
+  minutes: number
+  seconds: number
   /** Total whole seconds remaining. */
-  totalSeconds: number;
-  done: boolean;
+  totalSeconds: number
+  done: boolean
 }
 
 /** Break a remaining-milliseconds value into d/h/m/s for a countdown timer. */
 export function countdownParts(ms: number): CountdownParts {
-  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000))
   return {
     days: Math.floor(totalSeconds / 86400),
     hours: Math.floor((totalSeconds % 86400) / 3600),
@@ -112,5 +109,5 @@ export function countdownParts(ms: number): CountdownParts {
     seconds: totalSeconds % 60,
     totalSeconds,
     done: totalSeconds === 0,
-  };
+  }
 }

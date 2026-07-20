@@ -1,16 +1,16 @@
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export interface MascotMessageProps {
   /** The mascot visual — caller supplies (e.g. <Mascot emotion="happy" />). */
-  mascot?: ReactNode;
-  message: ReactNode;
+  mascot?: ReactNode
+  message: ReactNode
   /** Optional speaker name above the message. */
-  name?: ReactNode;
+  name?: ReactNode
   /** Which side the mascot sits on. */
-  side?: 'left' | 'right';
-  onMedia?: boolean;
-  className?: string;
+  side?: 'left' | 'right'
+  onMedia?: boolean
+  className?: string
 }
 
 /**
@@ -28,8 +28,8 @@ export function MascotMessage({
 }: MascotMessageProps) {
   const bubble = onMedia
     ? 'bg-black/40 text-white backdrop-blur-md'
-    : 'bg-surface text-foreground border border-border';
-  const tail = onMedia ? 'bg-black/40' : 'bg-surface border-b border-l border-border';
+    : 'bg-surface text-foreground border border-border'
+  const tail = onMedia ? 'bg-black/40' : 'bg-surface border-b border-l border-border'
   return (
     <div className={cn('flex items-end gap-2', side === 'right' && 'flex-row-reverse', className)}>
       {mascot ? <div className="shrink-0">{mascot}</div> : null}
@@ -58,5 +58,5 @@ export function MascotMessage({
         />
       </div>
     </div>
-  );
+  )
 }

@@ -8,21 +8,20 @@
  * App chỉ gọi `primitiveDisplay(kind)` — KHÔNG giữ map nhãn riêng nữa.
  */
 
-import { KIT_DOCS, kitDisplay } from '@bingoo/manipulatives';
-import { BLOCK_PREFIX, MANIP_PREFIX } from './registry';
+import { KIT_DOCS, kitDisplay } from '@bingoo/manipulatives'
+import { BLOCK_PREFIX, MANIP_PREFIX } from './registry'
 
 export interface PrimitiveLoc {
-  readonly vi: string;
-  readonly en: string;
+  readonly vi: string
+  readonly en: string
 }
 export interface PrimitiveDisplay {
-  readonly label: PrimitiveLoc;
-  readonly desc: PrimitiveLoc | null;
+  readonly label: PrimitiveLoc
+  readonly desc: PrimitiveLoc | null
 }
 
 /** Tên đọc được từ slug khi chưa có nhãn: "count-on" → "Count On". */
-const titleize = (s: string): string =>
-  s.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+const titleize = (s: string): string => s.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 
 // QUIZ (dạng câu hỏi auto-key của core). label = tên nút; desc = "học sinh làm gì". Loại trùng tên với
 // kit (tenframe, numberline, clock, placevalue, pattern, partwhole, estimate) là bản QUIZ — bản KIT ở
@@ -151,7 +150,7 @@ const QUIZ_DISPLAY: Record<string, PrimitiveDisplay> = {
     label: { vi: 'Biểu đồ tranh', en: 'Pictogram' },
     desc: { vi: 'Đọc/hoàn thành biểu đồ tranh.', en: 'Pictogram.' },
   },
-};
+}
 
 /**
  * Nhãn + mô tả song ngữ cho MỘT primitiveKind, dispatch theo namespace. Luôn trả label (titleize nếu
@@ -159,16 +158,16 @@ const QUIZ_DISPLAY: Record<string, PrimitiveDisplay> = {
  */
 export function primitiveDisplay(kind: string): PrimitiveDisplay {
   if (kind.startsWith(MANIP_PREFIX)) {
-    const b = kind.slice(MANIP_PREFIX.length);
-    const kd = kitDisplay(b);
-    if (kd) return { label: kd.label, desc: kd.desc };
+    const b = kind.slice(MANIP_PREFIX.length)
+    const kd = kitDisplay(b)
+    if (kd) return { label: kd.label, desc: kd.desc }
     // Kit chưa khai nhãn → titleize + mô tả dự phòng từ KIT_DOCS.en (câu đầu).
-    const en = KIT_DOCS[b]?.desc ? KIT_DOCS[b]!.desc.split('. ')[0]! + '.' : '';
-    return { label: { vi: titleize(b), en: titleize(b) }, desc: en ? { vi: en, en } : null };
+    const en = KIT_DOCS[b]?.desc ? KIT_DOCS[b]!.desc.split('. ')[0]! + '.' : ''
+    return { label: { vi: titleize(b), en: titleize(b) }, desc: en ? { vi: en, en } : null }
   }
   if (kind.startsWith(BLOCK_PREFIX)) {
-    const b = kind.slice(BLOCK_PREFIX.length);
-    return { label: { vi: titleize(b), en: titleize(b) }, desc: null };
+    const b = kind.slice(BLOCK_PREFIX.length)
+    return { label: { vi: titleize(b), en: titleize(b) }, desc: null }
   }
-  return QUIZ_DISPLAY[kind] ?? { label: { vi: titleize(kind), en: titleize(kind) }, desc: null };
+  return QUIZ_DISPLAY[kind] ?? { label: { vi: titleize(kind), en: titleize(kind) }, desc: null }
 }

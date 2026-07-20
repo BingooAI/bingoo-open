@@ -1,12 +1,12 @@
 /** coverageReport — lỗ phủ objective. SPEC §11 (gate KHÔNG chặn, chỉ để lộ). */
 
-import type { Slug } from '../contracts';
-import type { SkillGraph } from '../graph/build';
+import type { Slug } from '../contracts'
+import type { SkillGraph } from '../graph/build'
 
 export interface CoverageReport {
-  readonly total: number;
-  readonly covered: number;
-  readonly missing: readonly Slug[];
+  readonly total: number
+  readonly covered: number
+  readonly missing: readonly Slug[]
 }
 
 /**
@@ -24,11 +24,11 @@ export function coverageReport(
   attached: ReadonlySet<Slug>,
   taughtConcepts: ReadonlySet<Slug>,
 ): CoverageReport {
-  const missing: Slug[] = [];
+  const missing: Slug[] = []
   for (const obj of objectives) {
-    if (attached.has(obj) || taughtConcepts.has(obj)) continue;
-    const mappedCovered = graph.mapsTo(obj).some((e) => taughtConcepts.has(e.to));
-    if (!mappedCovered) missing.push(obj);
+    if (attached.has(obj) || taughtConcepts.has(obj)) continue
+    const mappedCovered = graph.mapsTo(obj).some((e) => taughtConcepts.has(e.to))
+    if (!mappedCovered) missing.push(obj)
   }
-  return { total: objectives.length, covered: objectives.length - missing.length, missing };
+  return { total: objectives.length, covered: objectives.length - missing.length, missing }
 }

@@ -24,51 +24,42 @@
  *      the contract cannot produce a scene that overflows, collides, or names a
  *      slot that doesn't exist — those become unrepresentable, not "unlikely".
  */
-import type { Aspect, ElementType, Scene } from './schema';
-import { LayoutSpec } from './schema';
-import { resolveLayout } from './layout';
-import { charBudget } from './type';
+import type { Aspect, ElementType, Scene } from './schema'
+import { LayoutSpec } from './schema'
+import { resolveLayout } from './layout'
+import { charBudget } from './type'
 
-export type Template = Scene['layout']['template'];
+export type Template = Scene['layout']['template']
 
 /** Every template the schema declares — the single source of truth. */
-export const TEMPLATES = LayoutSpec.shape.template.options as readonly Template[];
+export const TEMPLATES = LayoutSpec.shape.template.options as readonly Template[]
 
 export type SlotMeta = {
   /** which element types may live here (empty ⇒ any) */
-  accepts: ElementType[];
+  accepts: ElementType[]
   /** how many elements this slot expects */
-  min: number;
-  max: number;
+  min: number
+  max: number
   /** the type rung a text element in this slot should use */
-  rung?: string;
+  rung?: string
   /** how many LINES this slot may use before it stops reading as a heading and
    *  starts reading as a paragraph. This is the one genuinely semantic knob —
    *  everything else (the rect, the type size, the resulting budget) is measured.
    *  A callout that wraps to three lines is not a callout any more. */
-  lines?: number;
+  lines?: number
   /** what the slot is FOR — the only prose here, and it is pedagogical, not visual */
-  role: string;
-};
+  role: string
+}
 
 export type TemplateMeta = {
   /** when to reach for this template — drives selection, not decoration */
-  use: string;
-  slots: Record<string, SlotMeta>;
-};
+  use: string
+  slots: Record<string, SlotMeta>
+}
 
-const TEXT: ElementType[] = ['text'];
-const OBJECT: ElementType[] = [
-  'image',
-  'shape',
-  'manipulative',
-  'stick',
-  'chart',
-  'table',
-  'list',
-  'stat',
-];
-const ANY: ElementType[] = [];
+const TEXT: ElementType[] = ['text']
+const OBJECT: ElementType[] = ['image', 'shape', 'manipulative', 'stick', 'chart', 'table', 'list', 'stat']
+const ANY: ElementType[] = []
 
 /**
  * `Record<Template, …>` — this is the auto-discovery mechanism. Add a template
@@ -343,22 +334,22 @@ export const SLOT_META: Record<Template, TemplateMeta> = {
       title: { accepts: TEXT, min: 1, max: 1, rung: 'huge', lines: 2, role: 'Tên phần' },
     },
   },
-};
+}
 
 /* ───────────────────────────────── the derived, machine-readable catalog ──── */
 
 export type SlotContract = SlotMeta & {
-  name: string;
+  name: string
   /** MEASURED from resolveLayout — the tighter of the two aspects, because the
    *  text must fit BOTH. A budget that only holds at 16:9 is not a budget. */
-  maxChars?: number;
-};
+  maxChars?: number
+}
 
 export type TemplateContract = {
-  template: Template;
-  use: string;
-  slots: SlotContract[];
-};
+  template: Template
+  use: string
+  slots: SlotContract[]
+}
 
 /** A probe scene: one dummy element per slot, so resolveLayout hands back the
  *  slot's real rect at each aspect. We MEASURE the layout instead of restating
@@ -377,49 +368,49 @@ function measure(
       region: name,
       content: { text: '' },
     })),
-  };
-  const out: Record<string, Record<Aspect, { w: number; h: number }>> = {};
+  }
+  const out: Record<string, Record<Aspect, { w: number; h: number }>> = {}
   for (const aspect of ['16:9', '9:16'] as Aspect[]) {
-    const { rects } = resolveLayout(scene, aspect);
+    const { rects } = resolveLayout(scene, aspect)
     for (const name of Object.keys(slots)) {
-      const r = rects.get(name);
-      if (!r) continue;
-      out[name] ??= {} as Record<Aspect, { w: number; h: number }>;
-      out[name]![aspect] = { w: r.w, h: r.h };
+      const r = rects.get(name)
+      if (!r) continue
+      out[name] ??= {} as Record<Aspect, { w: number; h: number }>
+      out[name]![aspect] = { w: r.w, h: r.h }
     }
   }
-  return out;
+  return out
 }
 
-let CACHE: TemplateContract[] | null = null;
+let CACHE: TemplateContract[] | null = null
 
 /** The contract for every template a generator may produce into. */
 export function templateCatalog(): TemplateContract[] {
-  if (CACHE) return CACHE;
+  if (CACHE) return CACHE
   CACHE = TEMPLATES.filter((t) => !SLOT_META[t].use.startsWith('LEGACY')).map((template) => {
-    const meta = SLOT_META[template];
-    const rects = measure(template, meta.slots);
+    const meta = SLOT_META[template]
+    const rects = measure(template, meta.slots)
     return {
       template,
       use: meta.use,
       slots: Object.entries(meta.slots).map(([name, sm]) => {
-        const contract: SlotContract = { ...sm, name };
-        const r = rects[name];
+        const contract: SlotContract = { ...sm, name }
+        const r = rects[name]
         if (r && sm.accepts.includes('text')) {
           // the text must fit BOTH aspects → take the tighter budget
           const budgets = (['16:9', '9:16'] as Aspect[]).map((a) =>
             r[a] ? charBudget(r[a]!, sm.rung, a, sm.lines ?? 2) : Infinity,
-          );
-          const b = Math.min(...budgets);
-          if (Number.isFinite(b)) contract.maxChars = b;
+          )
+          const b = Math.min(...budgets)
+          if (Number.isFinite(b)) contract.maxChars = b
         }
-        return contract;
+        return contract
       }),
-    };
-  });
-  return CACHE;
+    }
+  })
+  return CACHE
 }
 
 export function contractOf(template: Template): TemplateContract | undefined {
-  return templateCatalog().find((t) => t.template === template);
+  return templateCatalog().find((t) => t.template === template)
 }

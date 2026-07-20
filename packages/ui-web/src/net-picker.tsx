@@ -1,44 +1,36 @@
-'use client';
+'use client'
 
-import { getNet, netBounds, type NetDef, type Solid3DName } from '@bingoo/core';
-import { GeoShape } from './geo-shape';
-import { cn } from './lib/cn';
-import { stagger, tile, tileState } from './lib/interactive';
+import { getNet, netBounds, type NetDef, type Solid3DName } from '@bingoo/core'
+import { GeoShape } from './geo-shape'
+import { cn } from './lib/cn'
+import { stagger, tile, tileState } from './lib/interactive'
 
 export interface NetPickerProps {
   /** pick = which net folds into this solid? name = which solid does this net make? */
-  task?: 'pick' | 'name';
+  task?: 'pick' | 'name'
   /** pick: the target solid, shown in 3D (turn it to see every face). */
-  solid?: Solid3DName;
+  solid?: Solid3DName
   /** pick: the nets to choose from (ids from `NET_LIBRARY`). */
-  options?: string[];
+  options?: string[]
   /** name: the net shown. */
-  net?: string;
+  net?: string
   /** name: the solids to choose from. */
-  solidOptions?: Solid3DName[];
+  solidOptions?: Solid3DName[]
   /** Localized names for the solids — the component itself is i18n-free. */
-  solidLabels?: Partial<Record<Solid3DName, string>>;
-  value: string | null;
-  onChange: (choice: string) => void;
-  reveal?: { correct: boolean; answer: string | null };
-  disabled?: boolean;
-  className?: string;
+  solidLabels?: Partial<Record<Solid3DName, string>>
+  value: string | null
+  onChange: (choice: string) => void
+  reveal?: { correct: boolean; answer: string | null }
+  disabled?: boolean
+  className?: string
 }
 
 /** Draw a net — flat polygons + circles, scaled to fit its box. */
-export function NetShape({
-  net,
-  size = 110,
-  className,
-}: {
-  net: NetDef;
-  size?: number;
-  className?: string;
-}) {
-  const b = netBounds(net);
-  const w = b.maxX - b.minX;
-  const h = b.maxY - b.minY;
-  const pad = 0.15;
+export function NetShape({ net, size = 110, className }: { net: NetDef; size?: number; className?: string }) {
+  const b = netBounds(net)
+  const w = b.maxX - b.minX
+  const h = b.maxY - b.minY
+  const pad = 0.15
   return (
     <svg
       viewBox={`${b.minX - pad} ${b.minY - pad} ${w + 2 * pad} ${h + 2 * pad}`}
@@ -66,7 +58,7 @@ export function NetShape({
         />
       ))}
     </svg>
-  );
+  )
 }
 
 /**
@@ -87,7 +79,7 @@ export function NetPicker({
   disabled,
   className,
 }: NetPickerProps) {
-  const locked = !!reveal || disabled;
+  const locked = !!reveal || disabled
 
   const tone = (id: string) =>
     cn(
@@ -101,7 +93,7 @@ export function NetPicker({
         size: 'none',
       }),
       'p-2 motion-safe:animate-fade-up',
-    );
+    )
 
   return (
     <div className={cn('flex flex-col items-center gap-5', className)}>
@@ -117,8 +109,8 @@ export function NetPicker({
       {task === 'pick' ? (
         <div className="flex flex-wrap justify-center gap-3">
           {options.map((id, i) => {
-            const def = getNet(id);
-            if (!def) return null;
+            const def = getNet(id)
+            if (!def) return null
             return (
               <button
                 key={id}
@@ -130,7 +122,7 @@ export function NetPicker({
               >
                 <NetShape net={def} size={110} />
               </button>
-            );
+            )
           })}
         </div>
       ) : (
@@ -145,13 +137,11 @@ export function NetPicker({
               className={cn(tone(name), 'flex flex-col items-center gap-1 px-3')}
             >
               <GeoShape kind="3d" name={name} size={84} rotatable={false} />
-              <span className="text-sm font-semibold text-foreground">
-                {solidLabels?.[name] ?? name}
-              </span>
+              <span className="text-sm font-semibold text-foreground">{solidLabels?.[name] ?? name}</span>
             </button>
           ))}
         </div>
       )}
     </div>
-  );
+  )
 }

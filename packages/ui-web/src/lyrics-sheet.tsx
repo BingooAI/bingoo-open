@@ -1,35 +1,35 @@
-'use client';
+'use client'
 
-import { Music, Play } from 'lucide-react';
-import { cn } from './lib/cn';
-import { ENTER, tile } from './lib/interactive';
+import { Music, Play } from 'lucide-react'
+import { cn } from './lib/cn'
+import { ENTER, tile } from './lib/interactive'
 
 export interface LyricLine {
-  text: string;
+  text: string
   /** Seconds into the audio. Give every line one to get karaoke highlighting. */
-  at?: number;
+  at?: number
 }
 
 export interface LyricsSheetProps {
-  title: string;
-  lines: LyricLine[];
-  audioSrc?: string;
+  title: string
+  lines: LyricLine[]
+  audioSrc?: string
   /** Play the track. The app owns playback. */
-  onPlayAudio?: (src: string) => void;
+  onPlayAudio?: (src: string) => void
   /** Where playback has reached, in seconds — feed this to light up the current line. */
-  audioTime?: number;
-  className?: string;
+  audioTime?: number
+  className?: string
 }
 
 /** Find the line that should be lit at `t` — the last one whose `at` has passed. */
 function currentLine(lines: LyricLine[], t?: number): number {
-  if (t === undefined) return -1;
-  let hit = -1;
+  if (t === undefined) return -1
+  let hit = -1
   for (let i = 0; i < lines.length; i++) {
-    const at = lines[i]?.at;
-    if (at !== undefined && at <= t) hit = i;
+    const at = lines[i]?.at
+    if (at !== undefined && at <= t) hit = i
   }
-  return hit;
+  return hit
 }
 
 /**
@@ -37,20 +37,11 @@ function currentLine(lines: LyricLine[], t?: number): number {
  * the early stages teach English. Karaoke highlighting turns on by itself once the lines
  * carry timings and the app feeds `audioTime`. i18n-free.
  */
-export function LyricsSheet({
-  title,
-  lines,
-  audioSrc,
-  onPlayAudio,
-  audioTime,
-  className,
-}: LyricsSheetProps) {
-  const active = currentLine(lines, audioTime);
+export function LyricsSheet({ title, lines, audioSrc, onPlayAudio, audioTime, className }: LyricsSheetProps) {
+  const active = currentLine(lines, audioTime)
 
   return (
-    <section
-      className={cn('rounded-2xl border-2 border-primary/40 bg-surface p-4', ENTER, className)}
-    >
+    <section className={cn('rounded-2xl border-2 border-primary/40 bg-surface p-4', ENTER, className)}>
       <header className="mb-3 flex items-center gap-2">
         <Music className="size-4 text-primary" />
         <h4 className="flex-1 font-display text-base font-bold text-foreground">{title}</h4>
@@ -84,5 +75,5 @@ export function LyricsSheet({
         ))}
       </ol>
     </section>
-  );
+  )
 }

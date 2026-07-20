@@ -1,4 +1,4 @@
-import { routing } from '@/i18n/routing';
+import { routing } from '@/i18n/routing'
 
 /**
  * Global fallback for paths that never entered the [locale] segment. It renders
@@ -6,7 +6,7 @@ import { routing } from '@/i18n/routing';
  * bounce to the default-locale home, where the friendly localized 404 lives.
  */
 export default function GlobalNotFound() {
-  const url = `/${routing.defaultLocale}`;
+  const url = `/${routing.defaultLocale}`
   return (
     <html lang={routing.defaultLocale}>
       <head>
@@ -16,5 +16,5 @@ export default function GlobalNotFound() {
         <a href={url}>Bingoo →</a>
       </body>
     </html>
-  );
+  )
 }

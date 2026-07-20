@@ -1,4 +1,4 @@
-import { db, Prisma } from '@bingoo/db';
+import { db, Prisma } from '@bingoo/db'
 
 /**
  * Semantic index writes (docs/media-library-design.md §3.9). The `embedding`
@@ -9,11 +9,11 @@ import { db, Prisma } from '@bingoo/db';
  */
 
 export interface UpsertEmbeddingInput {
-  assetId: string;
-  model: string;
-  dim: number;
-  vector: number[];
-  contentHash?: string | null;
+  assetId: string
+  model: string
+  dim: number
+  vector: number[]
+  contentHash?: string | null
 }
 
 export async function upsertEmbedding(input: UpsertEmbeddingInput): Promise<void> {
@@ -27,11 +27,11 @@ export async function upsertEmbedding(input: UpsertEmbeddingInput): Promise<void
     },
     update: { dim: input.dim, contentHash: input.contentHash ?? null },
     select: { id: true },
-  });
-  const literal = `[${input.vector.join(',')}]`;
+  })
+  const literal = `[${input.vector.join(',')}]`
   await db.$executeRaw(
     Prisma.sql`UPDATE "media_embedding" SET "embedding" = ${literal}::vector, "updatedAt" = now() WHERE "id" = ${row.id}`,
-  );
+  )
 }
 
 /** The contentHash currently stored for an asset+model, or null. */
@@ -39,6 +39,6 @@ export async function currentEmbeddingHash(assetId: string, model: string): Prom
   const row = await db.mediaEmbedding.findUnique({
     where: { assetId_model: { assetId, model } },
     select: { contentHash: true },
-  });
-  return row?.contentHash ?? null;
+  })
+  return row?.contentHash ?? null
 }

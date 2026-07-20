@@ -4,21 +4,21 @@
  * device tokens and moderates child-facing content (R5) before calling this.
  */
 export interface NotificationMessage {
-  title: string;
-  body: string;
-  imageUrl?: string;
+  title: string
+  body: string
+  imageUrl?: string
   /** FCM data payload — values must be strings. */
-  data?: Record<string, string>;
+  data?: Record<string, string>
 }
 
 export interface SendToTokensResult {
-  successCount: number;
-  failureCount: number;
+  successCount: number
+  failureCount: number
   /** Tokens the provider reported as unregistered/invalid — prune these from DB. */
-  invalidTokens: string[];
+  invalidTokens: string[]
 }
 
 export interface NotificationPort {
-  sendToTokens(tokens: string[], message: NotificationMessage): Promise<SendToTokensResult>;
-  sendToTopic(topic: string, message: NotificationMessage): Promise<{ messageId: string }>;
+  sendToTokens(tokens: string[], message: NotificationMessage): Promise<SendToTokensResult>
+  sendToTopic(topic: string, message: NotificationMessage): Promise<{ messageId: string }>
 }

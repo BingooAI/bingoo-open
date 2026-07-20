@@ -1,20 +1,9 @@
-'use client';
+'use client'
 
-import {
-  ArrowRight,
-  Calculator,
-  Check,
-  Clock,
-  Crown,
-  Flame,
-  Play,
-  Target,
-  Trophy,
-  Zap,
-} from 'lucide-react';
-import { useFormatter, useTranslations } from 'next-intl';
-import { useState } from 'react';
-import { Mascot } from '@/components/brand/mascot';
+import { ArrowRight, Calculator, Check, Clock, Crown, Flame, Play, Target, Trophy, Zap } from 'lucide-react'
+import { useFormatter, useTranslations } from 'next-intl'
+import { useState } from 'react'
+import { Mascot } from '@/components/brand/mascot'
 import {
   Avatar,
   Badge,
@@ -26,8 +15,8 @@ import {
   Progress,
   ProgressRing,
   StatCard,
-} from '@bingoo/ui-web';
-import { cn } from '@/lib/cn';
+} from '@bingoo/ui-web'
+import { cn } from '@/lib/cn'
 import {
   achievements,
   continueLesson,
@@ -35,18 +24,18 @@ import {
   student,
   subjectProgress,
   todayQuests,
-} from '@/lib/demo-data';
-import { greetingKey } from '@bingoo/core';
+} from '@/lib/demo-data'
+import { greetingKey } from '@bingoo/core'
 
 export default function StudentDashboard() {
-  const t = useTranslations('student');
-  const tc = useTranslations('common');
-  const tSub = useTranslations('landing.subjects.items');
-  const format = useFormatter();
+  const t = useTranslations('student')
+  const tc = useTranslations('common')
+  const tSub = useTranslations('landing.subjects.items')
+  const format = useFormatter()
 
-  const [done, setDone] = useState(() => todayQuests.map((q) => q.done));
-  const goalPct = Math.round((student.minutesToday / student.goalMinutes) * 100);
-  const goalMet = student.minutesToday >= student.goalMinutes;
+  const [done, setDone] = useState(() => todayQuests.map((q) => q.done))
+  const goalPct = Math.round((student.minutesToday / student.goalMinutes) * 100)
+  const goalMet = student.minutesToday >= student.goalMinutes
 
   return (
     <div className="space-y-6">
@@ -73,21 +62,11 @@ export default function StudentDashboard() {
               })}
             </h1>
             <p className="mt-1.5 text-white/85">{t('hero.subtitle')}</p>
-            <Button
-              variant="secondary"
-              className="mt-5"
-              rightIcon={<ArrowRight className="size-4" />}
-            >
+            <Button variant="secondary" className="mt-5" rightIcon={<ArrowRight className="size-4" />}>
               {t('hero.cta')}
             </Button>
           </div>
-          <Mascot
-            emotion={student.avatar}
-            size={160}
-            float
-            alt=""
-            className="hidden shrink-0 sm:block"
-          />
+          <Mascot emotion={student.avatar} size={160} float alt="" className="hidden shrink-0 sm:block" />
         </div>
       </Card>
 
@@ -106,12 +85,7 @@ export default function StudentDashboard() {
           value={`${student.minutesToday} ${tc('unit.minutesShort')}`}
           label={t('stats.minutes')}
         />
-        <StatCard
-          icon={<Trophy />}
-          color="primary"
-          value={student.lessonsDone}
-          label={t('stats.lessons')}
-        />
+        <StatCard icon={<Trophy />} color="primary" value={student.lessonsDone} label={t('stats.lessons')} />
         <StatCard
           icon={<Target />}
           color="success"
@@ -200,12 +174,8 @@ export default function StudentDashboard() {
               {subjectProgress.map((s) => (
                 <div key={s.key} className="rounded-2xl border border-border p-4">
                   <div className="flex items-center gap-2">
-                    <span className="font-display font-semibold text-foreground">
-                      {tSub(s.key)}
-                    </span>
-                    <span className="ml-auto text-sm font-semibold text-foreground-muted">
-                      {s.percent}%
-                    </span>
+                    <span className="font-display font-semibold text-foreground">{tSub(s.key)}</span>
+                    <span className="ml-auto text-sm font-semibold text-foreground-muted">{s.percent}%</span>
                   </div>
                   <Progress
                     value={s.percent}
@@ -234,9 +204,7 @@ export default function StudentDashboard() {
               className="mx-auto"
             >
               <div className="text-center">
-                <div className="font-display text-2xl font-bold text-foreground">
-                  {student.minutesToday}
-                </div>
+                <div className="font-display text-2xl font-bold text-foreground">{student.minutesToday}</div>
                 <div className="text-xs text-foreground-muted">
                   {t('goal.value', { done: student.minutesToday, total: student.goalMinutes })}
                 </div>
@@ -291,9 +259,7 @@ export default function StudentDashboard() {
                   <span
                     className={cn(
                       'grid size-6 shrink-0 place-items-center rounded-full text-xs font-bold',
-                      i === 0
-                        ? 'bg-accent-sunbeam text-accent-sunbeam-foreground'
-                        : 'text-foreground-muted',
+                      i === 0 ? 'bg-accent-sunbeam text-accent-sunbeam-foreground' : 'text-foreground-muted',
                     )}
                   >
                     {i === 0 ? <Crown className="size-3.5" /> : i + 1}
@@ -323,5 +289,5 @@ export default function StudentDashboard() {
         </div>
       </div>
     </div>
-  );
+  )
 }

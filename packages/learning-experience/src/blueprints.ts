@@ -9,19 +9,19 @@
  *   • `accent`/`icon` — gợi ý trình bày; host map sang token/icon thật.
  */
 
-import type { ExperienceDescriptor } from './descriptor';
+import type { ExperienceDescriptor } from './descriptor'
 
 /** Gợi ý màu nhấn — trùng tên với accent token của Bingoo (host map sang IconChipColor). */
-export type ExperienceAccent = 'primary' | 'teal' | 'sunbeam' | 'coral' | 'success' | 'neutral';
+export type ExperienceAccent = 'primary' | 'teal' | 'sunbeam' | 'coral' | 'success' | 'neutral'
 
 export interface Blueprint {
-  readonly id: string;
-  readonly descriptor: ExperienceDescriptor;
+  readonly id: string
+  readonly descriptor: ExperienceDescriptor
   /** Hậu tố khoá i18n (vd 'aiTutor' → kitchenSink.experiences.blueprints.aiTutor). */
-  readonly labelKey: string;
-  readonly accent: ExperienceAccent;
+  readonly labelKey: string
+  readonly accent: ExperienceAccent
   /** Tên icon (lucide) — host map sang component. */
-  readonly icon: string;
+  readonly icon: string
 }
 
 export const BLUEPRINTS: readonly Blueprint[] = [
@@ -116,9 +116,9 @@ export const BLUEPRINTS: readonly Blueprint[] = [
     accent: 'teal',
     icon: 'Rss',
   },
-];
+]
 
 /** Tra blueprint theo id. */
 export function getBlueprint(id: string): Blueprint | undefined {
-  return BLUEPRINTS.find((b) => b.id === id);
+  return BLUEPRINTS.find((b) => b.id === id)
 }

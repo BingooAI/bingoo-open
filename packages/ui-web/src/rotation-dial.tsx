@@ -1,26 +1,26 @@
-'use client';
+'use client'
 
-import { cn } from './lib/cn';
-import { tile, tileState } from './lib/interactive';
+import { cn } from './lib/cn'
+import { tile, tileState } from './lib/interactive'
 
 export interface RotationDialProps {
   /** Positions around the dial (4 = quarter turns). */
-  steps: number;
+  steps: number
   /** Starting position index (shown as a ghost). */
-  start: number;
+  start: number
   /** Controlled: the position the learner picked. */
-  position: number | null;
-  onChange: (position: number) => void;
-  emoji?: string;
-  reveal?: { correct: boolean; answer: number };
-  disabled?: boolean;
-  className?: string;
+  position: number | null
+  onChange: (position: number) => void
+  emoji?: string
+  reveal?: { correct: boolean; answer: number }
+  disabled?: boolean
+  className?: string
 }
 
 /** Position i on a circle of `steps`, as {x,y} in 0–100 space (0 = up, clockwise). */
 function at(i: number, steps: number, radius = 38) {
-  const a = (i / steps) * 2 * Math.PI - Math.PI / 2;
-  return { x: 50 + radius * Math.cos(a), y: 50 + radius * Math.sin(a) };
+  const a = (i / steps) * 2 * Math.PI - Math.PI / 2
+  return { x: 50 + radius * Math.cos(a), y: 50 + radius * Math.sin(a) }
 }
 
 /**
@@ -37,9 +37,9 @@ export function RotationDial({
   disabled,
   className,
 }: RotationDialProps) {
-  const locked = !!reveal || disabled;
-  const mark = emoji ?? '⬆️';
-  const sel = position != null ? at(position, steps) : null;
+  const locked = !!reveal || disabled
+  const mark = emoji ?? '⬆️'
+  const sel = position != null ? at(position, steps) : null
 
   return (
     <div className={cn('mx-auto aspect-square w-52 max-w-full', className)}>
@@ -47,11 +47,7 @@ export function RotationDial({
         {/* Dial ring */}
         <div className="absolute inset-[6%] rounded-full border-2 border-dashed border-border" />
         {/* Pointer from centre to selection */}
-        <svg
-          viewBox="0 0 100 100"
-          className="pointer-events-none absolute inset-0 size-full"
-          aria-hidden
-        >
+        <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 size-full" aria-hidden>
           {sel ? (
             <line
               x1={50}
@@ -69,10 +65,10 @@ export function RotationDial({
         </svg>
         {/* Position buttons */}
         {Array.from({ length: steps }, (_, i) => {
-          const p = at(i, steps);
-          const isStart = i === start;
-          const isSel = position === i;
-          const isAnswer = reveal?.answer === i;
+          const p = at(i, steps)
+          const isStart = i === start
+          const isSel = position === i
+          const isAnswer = reveal?.answer === i
           return (
             // The seat holds the position on the circle; the tile inside is free to
             // lift and press without fighting the -50%/-50% centring transform.
@@ -103,9 +99,9 @@ export function RotationDial({
                 {isSel ? mark : isStart ? <span className="opacity-30">{mark}</span> : null}
               </button>
             </span>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }

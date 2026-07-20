@@ -34,9 +34,9 @@ export const MASCOT_EMOTIONS = [
   'companion',
   'schedule',
   'target',
-] as const;
+] as const
 
-export type MascotEmotion = (typeof MASCOT_EMOTIONS)[number];
+export type MascotEmotion = (typeof MASCOT_EMOTIONS)[number]
 
 /** Emotions that ship with a matching sound effect in `public/sounds`. */
 const EMOTION_SOUND: Partial<Record<MascotEmotion, string>> = {
@@ -48,13 +48,13 @@ const EMOTION_SOUND: Partial<Record<MascotEmotion, string>> = {
   encourage: 'star',
   win: 'win',
   idea: 'idea',
-};
+}
 
 export function mascotSrc(emotion: MascotEmotion): string {
-  return `/brand/mascot/emotions/${emotion}.svg`;
+  return `/brand/mascot/emotions/${emotion}.svg`
 }
 
 export function mascotSound(emotion: MascotEmotion): string | undefined {
-  const file = EMOTION_SOUND[emotion];
-  return file ? `/sounds/${file}.wav` : undefined;
+  const file = EMOTION_SOUND[emotion]
+  return file ? `/sounds/${file}.wav` : undefined
 }

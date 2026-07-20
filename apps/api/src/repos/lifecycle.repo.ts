@@ -1,7 +1,7 @@
-import { db } from '@bingoo/db';
-import { deriveAccountType, isSynthEmail } from '@bingoo/core';
-import { writeAudit } from './audit.repo';
-import { resolveConsentConfig } from './config.repo';
+import { db } from '@bingoo/db'
+import { deriveAccountType, isSynthEmail } from '@bingoo/core'
+import { writeAudit } from './audit.repo'
+import { resolveConsentConfig } from './config.repo'
 
 /**
  * Account lifecycle transitions (§3.2, §10) driven by Better Auth data hooks.
@@ -11,11 +11,11 @@ import { resolveConsentConfig } from './config.repo';
 
 /** The user fields the update hook needs (a structural subset of BA's user). */
 interface UpdatedUser {
-  id: string;
-  email: string | null;
-  emailVerified: boolean;
-  status: string;
-  managedByGuardian: boolean;
+  id: string
+  email: string | null
+  emailVerified: boolean
+  status: string
+  managedByGuardian: boolean
 }
 
 /**
@@ -28,17 +28,17 @@ interface UpdatedUser {
  */
 export async function onUserUpdated(user: UpdatedUser): Promise<void> {
   if (user.emailVerified && user.status === 'PENDING') {
-    await db.user.update({ where: { id: user.id }, data: { status: 'ACTIVE' } });
+    await db.user.update({ where: { id: user.id }, data: { status: 'ACTIVE' } })
     await writeAudit({
       action: 'auth.email.verified',
       actorUserId: user.id,
       targetType: 'user',
       targetId: user.id,
-    });
+    })
   }
 
   if (user.emailVerified && user.managedByGuardian && !isSynthEmail(user.email)) {
-    await graduate(user.id);
+    await graduate(user.id)
   }
 }
 
@@ -49,18 +49,18 @@ async function graduate(userId: string): Promise<void> {
     await tx.user.update({
       where: { id: userId },
       data: { managedByGuardian: false, status: 'ACTIVE' },
-    });
+    })
     await tx.guardianship.updateMany({
       where: { childId: userId, status: 'active' },
       data: { status: 'inactive' },
-    });
-  });
+    })
+  })
   await writeAudit({
     action: 'account.claimed',
     actorUserId: userId,
     targetType: 'user',
     targetId: userId,
-  });
+  })
 }
 
 /**
@@ -72,19 +72,19 @@ export async function refreshAccountType(userId: string): Promise<void> {
   const user = await db.user.findUnique({
     where: { id: userId },
     select: { dateOfBirth: true, country: true, accountType: true },
-  });
-  if (!user?.dateOfBirth) return;
+  })
+  if (!user?.dateOfBirth) return
 
-  const config = await resolveConsentConfig();
-  const derived = deriveAccountType(user.dateOfBirth, user.country, config);
-  if (derived === user.accountType) return;
+  const config = await resolveConsentConfig()
+  const derived = deriveAccountType(user.dateOfBirth, user.country, config)
+  if (derived === user.accountType) return
 
-  await db.user.update({ where: { id: userId }, data: { accountType: derived } });
+  await db.user.update({ where: { id: userId }, data: { accountType: derived } })
   await writeAudit({
     action: 'account.tier_changed',
     actorUserId: userId,
     targetType: 'user',
     targetId: userId,
     metadata: { from: user.accountType, to: derived },
-  });
+  })
 }

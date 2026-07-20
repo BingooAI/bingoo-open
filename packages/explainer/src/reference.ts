@@ -16,7 +16,7 @@
  * is worse than no example: it teaches the model to produce exactly the lesson
  * that gets thrown away.
  */
-import type { ExplainerDoc, LocaleBundle } from './schema';
+import type { ExplainerDoc, LocaleBundle } from './schema'
 
 export const REFERENCE_DOC: ExplainerDoc = {
   version: 'explainer/v2',
@@ -751,7 +751,7 @@ export const REFERENCE_DOC: ExplainerDoc = {
       },
     },
   ],
-};
+}
 
 export const REFERENCE_BUNDLE: LocaleBundle = {
   locale: 'vi',
@@ -881,4 +881,4 @@ export const REFERENCE_BUNDLE: LocaleBundle = {
       ],
     },
   },
-};
+}

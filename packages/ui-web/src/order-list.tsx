@@ -1,27 +1,27 @@
-'use client';
+'use client'
 
-import { ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
-import { stagger, tile } from './lib/interactive';
+import { ChevronDown, ChevronUp, GripVertical } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
+import { stagger, tile } from './lib/interactive'
 
 export interface OrderItem {
-  id: string;
-  label?: ReactNode;
+  id: string
+  label?: ReactNode
 }
 
 export interface OrderListProps {
   /** The pool of items (any order); presentation follows `order`. */
-  items: OrderItem[];
+  items: OrderItem[]
   /** Controlled sequence of item ids. */
-  order: string[];
-  onChange: (order: string[]) => void;
+  order: string[]
+  onChange: (order: string[]) => void
   /** After checking: id → whether it sits in the correct position. */
-  reveal?: Record<string, boolean>;
-  disabled?: boolean;
+  reveal?: Record<string, boolean>
+  disabled?: boolean
   /** A11y labels for the reorder buttons (data). */
-  labels?: { moveUp: string; moveDown: string };
-  className?: string;
+  labels?: { moveUp: string; moveDown: string }
+  className?: string
 }
 
 /**
@@ -29,33 +29,25 @@ export interface OrderListProps {
  * (each row has real up/down buttons), so it works without drag on web + mobile.
  * Controlled + i18n-free; correctness is revealed by the caller.
  */
-export function OrderList({
-  items,
-  order,
-  onChange,
-  reveal,
-  disabled,
-  labels,
-  className,
-}: OrderListProps) {
-  const locked = !!reveal || disabled;
-  const byId = new Map(items.map((it) => [it.id, it]));
+export function OrderList({ items, order, onChange, reveal, disabled, labels, className }: OrderListProps) {
+  const locked = !!reveal || disabled
+  const byId = new Map(items.map((it) => [it.id, it]))
 
   function move(from: number, to: number) {
-    if (locked || to < 0 || to >= order.length) return;
-    const next = order.slice();
-    const [moved] = next.splice(from, 1);
-    if (moved === undefined) return;
-    next.splice(to, 0, moved);
-    onChange(next);
+    if (locked || to < 0 || to >= order.length) return
+    const next = order.slice()
+    const [moved] = next.splice(from, 1)
+    if (moved === undefined) return
+    next.splice(to, 0, moved)
+    onChange(next)
   }
 
   return (
     <ol className={cn('flex flex-col gap-2.5', className)}>
       {order.map((id, i) => {
-        const item = byId.get(id);
-        if (!item) return null;
-        const ok = reveal?.[id];
+        const item = byId.get(id)
+        if (!item) return null
+        const ok = reveal?.[id]
         return (
           <li
             key={id}
@@ -99,8 +91,8 @@ export function OrderList({
               <GripVertical className="size-5 text-foreground-subtle" aria-hidden />
             )}
           </li>
-        );
+        )
       })}
     </ol>
-  );
+  )
 }

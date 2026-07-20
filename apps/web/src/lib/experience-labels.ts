@@ -1,7 +1,7 @@
-import type { LearningExperienceLabels } from '@bingoo/ui-web';
+import type { LearningExperienceLabels } from '@bingoo/ui-web'
 
 /** Translator (next-intl) đã bound namespace `kitchenSink.experiences`. */
-type ExpT = (key: string) => string;
+type ExpT = (key: string) => string
 
 /**
  * Dựng bảng nhãn 5 trục cho `@bingoo/ui-web` từ i18n (`kitchenSink.experiences`). Một nơi duy nhất
@@ -66,5 +66,5 @@ export function buildExperienceLabels(exp: ExpT): LearningExperienceLabels {
       DISCOURAGED: exp('verdict.DISCOURAGED'),
       INVALID: exp('verdict.INVALID'),
     },
-  };
+  }
 }

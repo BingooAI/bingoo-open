@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 /**
  * LessonsView — the lessons a person owns.
@@ -12,34 +12,34 @@
  * means "this one is finished and costs nothing to open", and `ảnh 2/6` means
  * "four pictures still to find or generate".
  */
-import { useEffect, useState } from 'react';
-import { Link } from '@/i18n/navigation';
-import { listLessons, deleteLesson, type LessonRow } from '@/lib/explainerLessons';
+import { useEffect, useState } from 'react'
+import { Link } from '@/i18n/navigation'
+import { listLessons, deleteLesson, type LessonRow } from '@/lib/explainerLessons'
 
 const STATUS: Record<LessonRow['status'], { label: string; tone: string }> = {
   DRAFT: { label: 'Nháp', tone: 'var(--foreground-muted, #6f665e)' },
   READY: { label: 'Sẵn sàng', tone: '#3f9d5a' },
   PUBLISHED: { label: 'Đã xuất bản', tone: '#d4703c' },
-};
+}
 
 export function LessonsView() {
-  const [rows, setRows] = useState<LessonRow[] | null>(null);
-  const [busy, setBusy] = useState<string | null>(null);
+  const [rows, setRows] = useState<LessonRow[] | null>(null)
+  const [busy, setBusy] = useState<string | null>(null)
 
   useEffect(() => {
     void listLessons()
       .then(setRows)
-      .catch(() => setRows([]));
-  }, []);
+      .catch(() => setRows([]))
+  }, [])
 
   async function remove(l: LessonRow) {
-    if (!confirm(`Xoá bài "${l.title}"? Ảnh và giọng đọc vẫn còn trong thư viện media.`)) return;
-    setBusy(l.id);
+    if (!confirm(`Xoá bài "${l.title}"? Ảnh và giọng đọc vẫn còn trong thư viện media.`)) return
+    setBusy(l.id)
     try {
-      await deleteLesson(l.id);
-      setRows(await listLessons());
+      await deleteLesson(l.id)
+      setRows(await listLessons())
     } finally {
-      setBusy(null);
+      setBusy(null)
     }
   }
 
@@ -64,8 +64,8 @@ export function LessonsView() {
               maxWidth: '70ch',
             }}
           >
-            Ảnh và giọng đọc trong mỗi bài là <b>MediaAsset thật</b>, sinh một lần và trả tiền một
-            lần. Mở lại bài là phát luôn — không sinh lại.
+            Ảnh và giọng đọc trong mỗi bài là <b>MediaAsset thật</b>, sinh một lần và trả tiền một lần. Mở lại
+            bài là phát luôn — không sinh lại.
           </p>
         </div>
         <Link
@@ -98,10 +98,7 @@ export function LessonsView() {
           <p style={{ margin: '0 0 12px', color: 'var(--foreground-muted, #6f665e)' }}>
             Chưa có bài nào. Tải file hướng dẫn, đưa cho ChatGPT/Claude, rồi nhập JSON nó trả về.
           </p>
-          <Link
-            href="/explainer-import"
-            style={{ fontWeight: 700, color: 'var(--accent-coral, #d4703c)' }}
-          >
+          <Link href="/explainer-import" style={{ fontWeight: 700, color: 'var(--accent-coral, #d4703c)' }}>
             Tạo bài đầu tiên →
           </Link>
         </div>
@@ -119,9 +116,9 @@ export function LessonsView() {
           }}
         >
           {rows.map((l) => {
-            const st = STATUS[l.status];
-            const imagesLeft = l.imagesTotal - l.imagesDone;
-            const audioLeft = l.audioTotal - l.audioDone;
+            const st = STATUS[l.status]
+            const imagesLeft = l.imagesTotal - l.imagesDone
+            const audioLeft = l.audioTotal - l.audioDone
             return (
               <li
                 key={l.id}
@@ -139,8 +136,7 @@ export function LessonsView() {
                 <div style={{ flex: 1, minWidth: 200 }}>
                   <div style={{ fontWeight: 800 }}>{l.title}</div>
                   <div style={{ fontSize: 12, color: 'var(--foreground-muted, #6f665e)' }}>
-                    <code>{l.slug}</code> · sửa lần cuối{' '}
-                    {new Date(l.updatedAt).toLocaleString('vi')}
+                    <code>{l.slug}</code> · sửa lần cuối {new Date(l.updatedAt).toLocaleString('vi')}
                   </div>
                 </div>
 
@@ -194,10 +190,10 @@ export function LessonsView() {
                   Xoá
                 </button>
               </li>
-            );
+            )
           })}
         </ul>
       )}
     </div>
-  );
+  )
 }

@@ -1,5 +1,5 @@
-import type { DrawStroke } from '@bingoo/core';
-import { Button, cn, DrawingCanvas, Input } from '@bingoo/ui-web';
+import type { DrawStroke } from '@bingoo/core'
+import { Button, cn, DrawingCanvas, Input } from '@bingoo/ui-web'
 import {
   Hand,
   LayoutGrid,
@@ -17,26 +17,26 @@ import {
   Video,
   VideoOff,
   X,
-} from 'lucide-react';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
-import type { ExperienceLabels, Participant } from '../types';
+} from 'lucide-react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import type { ExperienceLabels, Participant } from '../types'
 
-const PEN_COLORS = ['#2e62ec', '#f74c6c', '#18b862', '#ffaf0c', '#f8fafc'];
-const REACTIONS = ['👍', '❤️', '👏', '🎉', '😮'];
-type View = 'grid' | 'present';
-type Panel = 'chat' | 'people' | null;
+const PEN_COLORS = ['#2e62ec', '#f74c6c', '#18b862', '#ffaf0c', '#f8fafc']
+const REACTIONS = ['👍', '❤️', '👏', '🎉', '😮']
+type View = 'grid' | 'present'
+type Panel = 'chat' | 'people' | null
 interface ChatMsg {
-  id: number;
-  name: string;
-  text: string;
+  id: number
+  name: string
+  text: string
 }
 interface Float {
-  id: number;
-  emoji: string;
-  left: number;
+  id: number
+  emoji: string
+  left: number
 }
 
-const two = (n: number) => String(n).padStart(2, '0');
+const two = (n: number) => String(n).padStart(2, '0')
 
 /**
  * Lớp LIVE kiểu Zoom/Google Meet — sân khấu video tối (speaker + filmstrip / lưới), thanh điều khiển
@@ -48,48 +48,48 @@ export function ClassroomMode({
   labels,
   onExit,
 }: {
-  participants: Participant[];
-  labels: ExperienceLabels;
-  onExit?: () => void;
+  participants: Participant[]
+  labels: ExperienceLabels
+  onExit?: () => void
 }) {
-  const c = labels.classroom;
-  const you = String(c.you);
+  const c = labels.classroom
+  const you = String(c.you)
   // Toàn bộ danh sách + trạng thái đến TỪ DỮ LIỆU (host/engine). View không bịa theo index.
-  const teacher = participants.find((p) => p.role === 'teacher');
-  const roster: Participant[] = participants.filter((p) => p.role !== 'teacher');
+  const teacher = participants.find((p) => p.role === 'teacher')
+  const roster: Participant[] = participants.filter((p) => p.role !== 'teacher')
 
-  const [view, setView] = useState<View>('present');
-  const [panel, setPanel] = useState<Panel>('chat');
-  const [sharing, setSharing] = useState(true);
-  const [muted, setMuted] = useState(false);
-  const [camOff, setCamOff] = useState(false);
-  const [hand, setHand] = useState(false);
-  const [sec, setSec] = useState(0);
-  const [strokes, setStrokes] = useState<DrawStroke[]>([]);
-  const [color, setColor] = useState(PEN_COLORS[0]!);
-  const [msgs, setMsgs] = useState<ChatMsg[]>([]);
-  const [draft, setDraft] = useState('');
-  const [floats, setFloats] = useState<Float[]>([]);
-  const [pickReact, setPickReact] = useState(false);
-  const floatId = useRef(0);
+  const [view, setView] = useState<View>('present')
+  const [panel, setPanel] = useState<Panel>('chat')
+  const [sharing, setSharing] = useState(true)
+  const [muted, setMuted] = useState(false)
+  const [camOff, setCamOff] = useState(false)
+  const [hand, setHand] = useState(false)
+  const [sec, setSec] = useState(0)
+  const [strokes, setStrokes] = useState<DrawStroke[]>([])
+  const [color, setColor] = useState(PEN_COLORS[0]!)
+  const [msgs, setMsgs] = useState<ChatMsg[]>([])
+  const [draft, setDraft] = useState('')
+  const [floats, setFloats] = useState<Float[]>([])
+  const [pickReact, setPickReact] = useState(false)
+  const floatId = useRef(0)
 
   useEffect(() => {
-    const id = setInterval(() => setSec((s) => s + 1), 1000);
-    return () => clearInterval(id);
-  }, []);
+    const id = setInterval(() => setSec((s) => s + 1), 1000)
+    return () => clearInterval(id)
+  }, [])
 
   const send = () => {
-    const text = draft.trim();
-    if (!text) return;
-    setMsgs((m) => [...m, { id: m.length, name: you, text }]);
-    setDraft('');
-  };
+    const text = draft.trim()
+    if (!text) return
+    setMsgs((m) => [...m, { id: m.length, name: you, text }])
+    setDraft('')
+  }
   const react = (emoji: string) => {
-    const id = ++floatId.current;
-    setFloats((f) => [...f, { id, emoji, left: 20 + ((id * 37) % 60) }]);
-    setPickReact(false);
-    setTimeout(() => setFloats((f) => f.filter((x) => x.id !== id)), 2200);
-  };
+    const id = ++floatId.current
+    setFloats((f) => [...f, { id, emoji, left: 20 + ((id * 37) % 60) }])
+    setPickReact(false)
+    setTimeout(() => setFloats((f) => f.filter((x) => x.id !== id)), 2200)
+  }
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-[#0b1120] text-white">
@@ -114,11 +114,7 @@ export function ClassroomMode({
                 view === v ? 'bg-white text-[#0b1120]' : 'text-white/80 hover:text-white',
               )}
             >
-              {v === 'grid' ? (
-                <LayoutGrid className="size-3.5" />
-              ) : (
-                <Presentation className="size-3.5" />
-              )}
+              {v === 'grid' ? <LayoutGrid className="size-3.5" /> : <Presentation className="size-3.5" />}
               <span className="hidden sm:inline">{v === 'grid' ? c.grid : c.present}</span>
             </button>
           ))}
@@ -177,9 +173,7 @@ export function ClassroomMode({
         {panel ? (
           <aside className="flex w-72 shrink-0 flex-col border-l border-white/10 bg-surface text-foreground">
             <div className="flex items-center justify-between border-b border-border px-3 py-2">
-              <span className="text-sm font-bold">
-                {panel === 'chat' ? c.chatTitle : c.participants}
-              </span>
+              <span className="text-sm font-bold">{panel === 'chat' ? c.chatTitle : c.participants}</span>
               <button
                 type="button"
                 onClick={() => setPanel(null)}
@@ -190,13 +184,7 @@ export function ClassroomMode({
               </button>
             </div>
             {panel === 'chat' ? (
-              <ChatPanel
-                labels={labels}
-                msgs={msgs}
-                draft={draft}
-                setDraft={setDraft}
-                onSend={send}
-              />
+              <ChatPanel labels={labels} msgs={msgs} draft={draft} setDraft={setDraft} onSend={send} />
             ) : (
               <PeoplePanel teacher={teacher} roster={roster} you={you} labels={labels} />
             )}
@@ -224,20 +212,15 @@ export function ClassroomMode({
           <Ctrl label={c.muteToggle} on={!muted} danger={muted} onClick={() => setMuted((v) => !v)}>
             {muted ? <MicOff className="size-5" /> : <Mic className="size-5" />}
           </Ctrl>
-          <Ctrl
-            label={c.camToggle}
-            on={!camOff}
-            danger={camOff}
-            onClick={() => setCamOff((v) => !v)}
-          >
+          <Ctrl label={c.camToggle} on={!camOff} danger={camOff} onClick={() => setCamOff((v) => !v)}>
             {camOff ? <VideoOff className="size-5" /> : <Video className="size-5" />}
           </Ctrl>
           <Ctrl
             label={c.share}
             active={sharing}
             onClick={() => {
-              setSharing((v) => !v);
-              setView('present');
+              setSharing((v) => !v)
+              setView('present')
             }}
           >
             <MonitorUp className="size-5" />
@@ -273,7 +256,7 @@ export function ClassroomMode({
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function Ctrl({
@@ -285,13 +268,13 @@ function Ctrl({
   danger,
   badge,
 }: {
-  children: ReactNode;
-  label: string;
-  onClick?: () => void;
-  on?: boolean;
-  active?: boolean;
-  danger?: boolean;
-  badge?: number;
+  children: ReactNode
+  label: string
+  onClick?: () => void
+  on?: boolean
+  active?: boolean
+  danger?: boolean
+  badge?: number
 }) {
   return (
     <button
@@ -316,12 +299,12 @@ function Ctrl({
         </span>
       ) : null}
     </button>
-  );
+  )
 }
 
 function Tile({ p, you, big }: { p: Participant; you: string; big?: boolean }) {
-  const isYou = p.name === you;
-  const { speaking, handRaised: raised, muted } = p;
+  const isYou = p.name === you
+  const { speaking, handRaised: raised, muted } = p
   return (
     <div
       className={cn(
@@ -347,7 +330,7 @@ function Tile({ p, you, big }: { p: Participant; you: string; big?: boolean }) {
         </span>
       ) : null}
     </div>
-  );
+  )
 }
 
 function Whiteboard({
@@ -357,13 +340,13 @@ function Whiteboard({
   color,
   onColor,
 }: {
-  labels: ExperienceLabels;
-  strokes: DrawStroke[];
-  onStrokes: (s: DrawStroke[]) => void;
-  color: string;
-  onColor: (c: string) => void;
+  labels: ExperienceLabels
+  strokes: DrawStroke[]
+  onStrokes: (s: DrawStroke[]) => void
+  color: string
+  onColor: (c: string) => void
 }) {
-  const c = labels.classroom;
+  const c = labels.classroom
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-white/10">
       <div className="flex shrink-0 items-center gap-2 border-b border-slate-200 px-3 py-2">
@@ -399,7 +382,7 @@ function Whiteboard({
         />
       </div>
     </div>
-  );
+  )
 }
 
 function ChatPanel({
@@ -409,13 +392,13 @@ function ChatPanel({
   setDraft,
   onSend,
 }: {
-  labels: ExperienceLabels;
-  msgs: ChatMsg[];
-  draft: string;
-  setDraft: (v: string) => void;
-  onSend: () => void;
+  labels: ExperienceLabels
+  msgs: ChatMsg[]
+  draft: string
+  setDraft: (v: string) => void
+  onSend: () => void
 }) {
-  const c = labels.classroom;
+  const c = labels.classroom
   return (
     <>
       <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-3 text-sm">
@@ -433,8 +416,8 @@ function ChatPanel({
       <form
         className="flex items-center gap-1.5 border-t border-border p-2"
         onSubmit={(e) => {
-          e.preventDefault();
-          onSend();
+          e.preventDefault()
+          onSend()
         }}
       >
         <Input
@@ -448,7 +431,7 @@ function ChatPanel({
         </Button>
       </form>
     </>
-  );
+  )
 }
 
 function PeoplePanel({
@@ -457,13 +440,13 @@ function PeoplePanel({
   you,
   labels,
 }: {
-  teacher?: Participant;
-  roster: Participant[];
-  you: string;
-  labels: ExperienceLabels;
+  teacher?: Participant
+  roster: Participant[]
+  you: string
+  labels: ExperienceLabels
 }) {
-  const c = labels.classroom;
-  const teacherName = teacher?.name ?? String(c.teacher);
+  const c = labels.classroom
+  const teacherName = teacher?.name ?? String(c.teacher)
   return (
     <div className="flex flex-col gap-1 overflow-y-auto p-2">
       <div className="flex items-center gap-2 rounded-lg px-2 py-1.5">
@@ -491,5 +474,5 @@ function PeoplePanel({
         </div>
       ))}
     </div>
-  );
+  )
 }

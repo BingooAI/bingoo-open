@@ -1,29 +1,29 @@
-'use client';
+'use client'
 
-import { COMPASS_DIRECTIONS, type CompassDirection } from '@bingoo/core';
-import { cn } from './lib/cn';
-import { stagger, tile, tileState } from './lib/interactive';
+import { COMPASS_DIRECTIONS, type CompassDirection } from '@bingoo/core'
+import { cn } from './lib/cn'
+import { stagger, tile, tileState } from './lib/interactive'
 
 export interface CompassPlace {
-  id: string;
-  label: string;
-  x: number;
-  y: number;
-  emoji?: string;
+  id: string
+  label: string
+  x: number
+  y: number
+  emoji?: string
 }
 
 export interface CompassRoseProps {
-  maxX: number;
-  maxY: number;
-  places: CompassPlace[];
+  maxX: number
+  maxY: number
+  places: CompassPlace[]
   /** Where you start (drawn ringed) and where you are going (drawn with a route). */
-  from: string;
-  to: string;
-  value: CompassDirection | null;
-  onChange: (dir: CompassDirection) => void;
-  reveal?: { correct: boolean; answer: CompassDirection | null };
-  disabled?: boolean;
-  className?: string;
+  from: string
+  to: string
+  value: CompassDirection | null
+  onChange: (dir: CompassDirection) => void
+  reveal?: { correct: boolean; answer: CompassDirection | null }
+  disabled?: boolean
+  className?: string
 }
 
 const A: Record<CompassDirection, number> = {
@@ -35,7 +35,7 @@ const A: Record<CompassDirection, number> = {
   SW: -135,
   W: 180,
   NW: 135,
-};
+}
 
 /**
  * 8-point compass — read a small map, then name the direction from one place to another.
@@ -54,22 +54,17 @@ export function CompassRose({
   disabled,
   className,
 }: CompassRoseProps) {
-  const locked = !!reveal || disabled;
-  const start = places.find((p) => p.id === from);
-  const end = places.find((p) => p.id === to);
+  const locked = !!reveal || disabled
+  const start = places.find((p) => p.id === from)
+  const end = places.find((p) => p.id === to)
 
-  const S = 100;
-  const pad = 8;
-  const gx = (x: number) => pad + (x / maxX) * (S - 2 * pad);
-  const gy = (y: number) => S - pad - (y / maxY) * (S - 2 * pad);
+  const S = 100
+  const pad = 8
+  const gx = (x: number) => pad + (x / maxX) * (S - 2 * pad)
+  const gy = (y: number) => S - pad - (y / maxY) * (S - 2 * pad)
 
   return (
-    <div
-      className={cn(
-        'flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-8',
-        className,
-      )}
-    >
+    <div className={cn('flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-8', className)}>
       {/* the map */}
       <svg
         viewBox="0 0 100 100"
@@ -111,8 +106,8 @@ export function CompassRose({
         ) : null}
 
         {places.map((p) => {
-          const isStart = p.id === from;
-          const isEnd = p.id === to;
+          const isStart = p.id === from
+          const isEnd = p.id === to
           return (
             <g key={p.id}>
               <circle
@@ -142,7 +137,7 @@ export function CompassRose({
                 {p.label}
               </text>
             </g>
-          );
+          )
         })}
       </svg>
 
@@ -150,7 +145,7 @@ export function CompassRose({
       <div className="relative size-[190px] shrink-0">
         <div className="absolute inset-[30%] rounded-full border-2 border-border-strong bg-surface" />
         {COMPASS_DIRECTIONS.map((d, i) => {
-          const rad = (A[d] * Math.PI) / 180;
+          const rad = (A[d] * Math.PI) / 180
           return (
             // The centring translate sits on a wrapper so the tile's hover lift
             // (a transform too) cannot knock the point off its bearing.
@@ -183,9 +178,9 @@ export function CompassRose({
                 {d}
               </button>
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }

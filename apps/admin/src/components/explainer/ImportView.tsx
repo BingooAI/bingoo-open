@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 /**
  * ImportView — bring an LLM-written lesson in, step by step.
@@ -9,27 +9,15 @@
  * failed picture must not throw away a working narration. Only then does the
  * lesson reach the Studio, where a human fixes what a model can't.
  */
-import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import type { ExplainerDoc, LocaleBundle } from '@bingoo/explainer';
-import {
-  promptMarkdown,
-  promptMessage,
-  AUDIENCES,
-  DEFAULT_MINUTES,
-  planFor,
-} from '@bingoo/explainer';
-import { buildProgram, frame } from '@bingoo/explainer';
-import { ExplainerPlayer, ExplainerStudio, Stage } from '@bingoo/explainer-web';
-import '@bingoo/explainer-web/styles.css';
-import { api } from '@/lib/api-client';
-import {
-  saveLesson,
-  listLessons,
-  getLesson,
-  deleteLesson,
-  type LessonRow,
-} from '@/lib/explainerLessons';
+import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import type { ExplainerDoc, LocaleBundle } from '@bingoo/explainer'
+import { promptMarkdown, promptMessage, AUDIENCES, DEFAULT_MINUTES, planFor } from '@bingoo/explainer'
+import { buildProgram, frame } from '@bingoo/explainer'
+import { ExplainerPlayer, ExplainerStudio, Stage } from '@bingoo/explainer-web'
+import '@bingoo/explainer-web/styles.css'
+import { api } from '@/lib/api-client'
+import { saveLesson, listLessons, getLesson, deleteLesson, type LessonRow } from '@/lib/explainerLessons'
 import {
   validateImport,
   repairPrompt,
@@ -40,7 +28,7 @@ import {
   type ImportIssue,
   type ImageJob,
   type MediaHit,
-} from '@/lib/explainerImport';
+} from '@/lib/explainerImport'
 
 /**
  * Order matters, and it is not the obvious one. Resolving images and speaking
@@ -49,9 +37,9 @@ import {
  * paying for. (Unresolved pictures render as labelled placeholders, so the
  * preview is honest about what is missing rather than showing holes.)
  */
-type Step = 1 | 2 | 3 | 4 | 5;
-type JobState = 'idle' | 'running' | 'done' | 'error';
-type Job = { key: string; label: string; state: JobState; note?: string };
+type Step = 1 | 2 | 3 | 4 | 5
+type JobState = 'idle' | 'running' | 'done' | 'error'
+type Job = { key: string; label: string; state: JobState; note?: string }
 
 const STEPS: { n: Step; title: string; sub: string }[] = [
   { n: 1, title: 'Kiểm tra', sub: 'schema · bố cục · sư phạm' },
@@ -59,23 +47,23 @@ const STEPS: { n: Step; title: string; sub: string }[] = [
   { n: 3, title: 'Ảnh', sub: 'tìm thư viện trước, sinh sau' },
   { n: 4, title: 'Giọng đọc', sub: 'TTS + mốc cue' },
   { n: 5, title: 'Hoàn tất', sub: 'xem lại · tải JSON' },
-];
+]
 
 export function ImportView() {
-  const [raw, setRaw] = useState('');
-  const [step, setStep] = useState<Step>(1);
-  const [issues, setIssues] = useState<ImportIssue[]>([]);
-  const [doc, setDoc] = useState<ExplainerDoc | null>(null);
-  const [bundle, setBundle] = useState<LocaleBundle | null>(null);
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [busy, setBusy] = useState(false);
-  const mode: 'play' | 'edit' = 'play';
-  const [dragging, setDragging] = useState(false);
-  const [hits, setHits] = useState<Record<string, MediaHit[]>>({});
-  const [searched, setSearched] = useState(false);
+  const [raw, setRaw] = useState('')
+  const [step, setStep] = useState<Step>(1)
+  const [issues, setIssues] = useState<ImportIssue[]>([])
+  const [doc, setDoc] = useState<ExplainerDoc | null>(null)
+  const [bundle, setBundle] = useState<LocaleBundle | null>(null)
+  const [jobs, setJobs] = useState<Job[]>([])
+  const [busy, setBusy] = useState(false)
+  const mode: 'play' | 'edit' = 'play'
+  const [dragging, setDragging] = useState(false)
+  const [hits, setHits] = useState<Record<string, MediaHit[]>>({})
+  const [searched, setSearched] = useState(false)
   /** generated-but-not-yet-approved pictures, by element id */
-  const [proposed, setProposed] = useState<Record<string, string>>({});
-  const [fileName, setFileName] = useState('');
+  const [proposed, setProposed] = useState<Record<string, string>>({})
+  const [fileName, setFileName] = useState('')
 
   /**
    * Read an uploaded lesson. Decoded as UTF-8 explicitly, and REPAIRED if it
@@ -85,36 +73,36 @@ export function ImportView() {
    * broken. Round-tripping the bytes back through latin-1 undoes it.
    */
   async function readFile(f: File) {
-    setFileName(f.name);
-    const text = await f.text();
-    setRaw(looksMojibake(text) ? repairMojibake(text) : text);
-    setIssues([]);
+    setFileName(f.name)
+    const text = await f.text()
+    setRaw(looksMojibake(text) ? repairMojibake(text) : text)
+    setIssues([])
   }
 
-  const errors = issues.filter((i) => i.level === 'error');
-  const warns = issues.filter((i) => i.level === 'warn');
+  const errors = issues.filter((i) => i.level === 'error')
+  const warns = issues.filter((i) => i.level === 'warn')
   // LOCALE CHUẨN của bài = doc.meta.defaultLocale. File import (LLM sinh) đôi khi ghi bundle.locale
   // LỆCH ("vi-VN"/"en") → key bundle theo nó thì player/studio tra `defaultLocale` KHÔNG THẤY và nổ
   // trắng trang. Ép khớp doc — đúng cách store `importLesson` làm. Dùng chung cho player, TTS và bản
   // autosave, để không ghi locale lệch xuống DB.
-  const docLocale = doc?.meta.defaultLocale ?? bundle?.locale ?? 'vi';
+  const docLocale = doc?.meta.defaultLocale ?? bundle?.locale ?? 'vi'
   const bundles = useMemo(
     () => (bundle ? { [docLocale]: { ...bundle, locale: docLocale } } : {}),
     [bundle, docLocale],
-  );
+  )
 
   /* ── step 1 ── */
   function runValidate() {
-    const r = validateImport(raw);
-    setIssues(r.issues);
+    const r = validateImport(raw)
+    setIssues(r.issues)
     if (!r.ok) {
-      setDoc(null);
-      setBundle(null);
-      return;
+      setDoc(null)
+      setBundle(null)
+      return
     }
-    setDoc(r.parsed.doc);
-    setBundle(r.parsed.bundle);
-    setStep(2);
+    setDoc(r.parsed.doc)
+    setBundle(r.parsed.bundle)
+    setStep(2)
   }
 
   /* ── step 3: images ────────────────────────────────────────────────────────
@@ -132,20 +120,20 @@ export function ImportView() {
    * pictures a human explicitly clicks.
    */
   async function searchImages() {
-    if (!doc) return;
-    const todo = pendingImages(doc);
+    if (!doc) return
+    const todo = pendingImages(doc)
     if (!todo.length) {
-      setStep(4);
-      return;
+      setStep(4)
+      return
     }
-    setBusy(true);
-    setJobs([]);
+    setBusy(true)
+    setJobs([])
     try {
       const res = await api.post<Record<string, MediaHit[]>>('/explainer/images/search', {
         queries: [...new Set(todo.map((t) => t.query))],
-      });
-      setHits(res);
-      setSearched(true);
+      })
+      setHits(res)
+      setSearched(true)
     } catch (e) {
       setJobs([
         {
@@ -154,9 +142,9 @@ export function ImportView() {
           state: 'error',
           note: String((e as Error).message),
         },
-      ]);
+      ])
     }
-    setBusy(false);
+    setBusy(false)
   }
 
   /**
@@ -169,7 +157,7 @@ export function ImportView() {
    * one gate: see it in the scene, then keep it.
    */
   function useHit(job: ImageJob, hit: MediaHit) {
-    setProposed((p) => ({ ...p, [job.elementId]: hit.url }));
+    setProposed((p) => ({ ...p, [job.elementId]: hit.url }))
   }
 
   /**
@@ -186,7 +174,7 @@ export function ImportView() {
     setJobs((js) => [
       ...js.filter((j) => j.key !== job.elementId),
       { key: job.elementId, label: job.query, state: 'running' as JobState },
-    ]);
+    ])
     try {
       const res = await api.post<{ url: string }>('/explainer/image/resolve', {
         // the image MODEL gets the English prompt; the LIBRARY gets the query
@@ -197,69 +185,63 @@ export function ImportView() {
         allowGenerate: true,
         // "sinh cái khác": a fresh draw, not the one already cached for this prompt
         ...(proposed[job.elementId] ? { variant: Date.now() } : {}),
-      });
-      setProposed((p) => ({ ...p, [job.elementId]: res.url }));
+      })
+      setProposed((p) => ({ ...p, [job.elementId]: res.url }))
       setJobs((js) =>
         js.map((j) =>
-          j.key === job.elementId
-            ? { ...j, state: 'done', note: 'ảnh mới — duyệt hoặc sinh lại' }
-            : j,
+          j.key === job.elementId ? { ...j, state: 'done', note: 'ảnh mới — duyệt hoặc sinh lại' } : j,
         ),
-      );
+      )
     } catch (e) {
       setJobs((js) =>
         js.map((j) =>
-          j.key === job.elementId
-            ? { ...j, state: 'error', note: String((e as Error).message) }
-            : j,
+          j.key === job.elementId ? { ...j, state: 'error', note: String((e as Error).message) } : j,
         ),
-      );
+      )
     }
   }
 
   function rejectProposed(job: ImageJob) {
     setProposed((p) => {
-      const next = { ...p };
-      delete next[job.elementId];
-      return next;
-    });
+      const next = { ...p }
+      delete next[job.elementId]
+      return next
+    })
   }
 
   function acceptProposed(job: ImageJob) {
-    const url = proposed[job.elementId];
-    if (!url) return;
-    setDoc((d) => (d ? withImage(d, job.elementId, url) : d));
+    const url = proposed[job.elementId]
+    if (!url) return
+    setDoc((d) => (d ? withImage(d, job.elementId, url) : d))
     setProposed((p) => {
-      const next = { ...p };
-      delete next[job.elementId];
-      return next;
-    });
+      const next = { ...p }
+      delete next[job.elementId]
+      return next
+    })
   }
 
   /* ── step 3: audio ── */
   async function runAudio() {
-    if (!bundle) return;
-    const todo = pendingAudio(bundle);
+    if (!bundle) return
+    const todo = pendingAudio(bundle)
     if (!todo.length) {
-      setStep(5);
-      return;
+      setStep(5)
+      return
     }
-    setBusy(true);
-    setJobs(
-      todo.map((t) => ({ key: t.ref, label: t.script.slice(0, 60), state: 'idle' as JobState })),
-    );
-    let next = bundle;
+    setBusy(true)
+    setJobs(todo.map((t) => ({ key: t.ref, label: t.script.slice(0, 60), state: 'idle' as JobState })))
+    let next = bundle
     for (const t of todo) {
-      setJobs((js) => js.map((j) => (j.key === t.ref ? { ...j, state: 'running' } : j)));
+      setJobs((js) => js.map((j) => (j.key === t.ref ? { ...j, state: 'running' } : j)))
       try {
         const res = await api.post<{
-          audioUrl: string | null;
-          duration: number;
-          cueMarks: { cue: string; t: number }[];
-          mock?: boolean;
-        }>('/explainer/tts', { text: t.script, locale: docLocale });
-        if (res.audioUrl) next = withAudio(next, t.ref, res.audioUrl, res.cueMarks);
-        setBundle(next);
+          audioUrl: string | null
+          duration: number
+          cueMarks: { cue: string; t: number }[]
+          mock?: boolean
+        }>('/explainer/tts', { text: t.script, locale: docLocale })
+        if (res.audioUrl) next = withAudio(next, t.ref, res.audioUrl, res.cueMarks)
+        setBundle(next)
         setJobs((js) =>
           js.map((j) =>
             j.key === t.ref
@@ -272,27 +254,25 @@ export function ImportView() {
                 }
               : j,
           ),
-        );
+        )
       } catch (e) {
         setJobs((js) =>
-          js.map((j) =>
-            j.key === t.ref ? { ...j, state: 'error', note: String((e as Error).message) } : j,
-          ),
-        );
+          js.map((j) => (j.key === t.ref ? { ...j, state: 'error', note: String((e as Error).message) } : j)),
+        )
       }
     }
-    setBusy(false);
+    setBusy(false)
   }
 
-  const imgTodo = doc && bundle ? pendingImages(doc, bundle) : [];
+  const imgTodo = doc && bundle ? pendingImages(doc, bundle) : []
 
   // Search is free and instant, so it should just HAPPEN when you arrive. Making
   // it a button left "Sinh mới ($)" as the only thing on screen to click — the UI
   // was inviting you to pay before it had even looked.
   useEffect(() => {
-    if (step === 3 && doc && !searched && !busy) void searchImages();
+    if (step === 3 && doc && !searched && !busy) void searchImages()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, doc]);
+  }, [step, doc])
 
   // AUTOSAVE. Pictures and narration cost money to produce; losing them to an
   // accidental refresh is not an acceptable failure mode, and this page had no
@@ -301,15 +281,13 @@ export function ImportView() {
   // them to a refresh is not an acceptable failure mode, and this page had no
   // persistence of any kind. Debounced — every accepted picture and every spoken
   // line changes the doc.
-  const [saved, setSaved] = useState('');
-  const [lessonId, setLessonId] = useState<string | null>(null);
+  const [saved, setSaved] = useState('')
+  const [lessonId, setLessonId] = useState<string | null>(null)
   useEffect(() => {
-    if (!doc || !bundle) return;
+    if (!doc || !bundle) return
     const t = setTimeout(() => {
-      const totalImgs = doc.scenes
-        .flatMap((s2) => s2.elements)
-        .filter((e) => e.type === 'image').length;
-      const totalAuds = Object.keys(bundle.narration ?? {}).length;
+      const totalImgs = doc.scenes.flatMap((s2) => s2.elements).filter((e) => e.type === 'image').length
+      const totalAuds = Object.keys(bundle.narration ?? {}).length
       void saveLesson({
         doc,
         bundles,
@@ -317,58 +295,58 @@ export function ImportView() {
         audio: { done: totalAuds - pendingAudio(bundle).length, total: totalAuds },
       })
         .then((row) => {
-          setLessonId(row.id);
-          setSaved(new Date().toLocaleTimeString('vi'));
+          setLessonId(row.id)
+          setSaved(new Date().toLocaleTimeString('vi'))
           void listLessons()
             .then(setLessons)
-            .catch(() => undefined);
+            .catch(() => undefined)
         })
-        .catch(() => setSaved('lỗi lưu'));
-    }, 800);
-    return () => clearTimeout(t);
-  }, [doc, bundle, bundles]);
+        .catch(() => setSaved('lỗi lưu'))
+    }, 800)
+    return () => clearTimeout(t)
+  }, [doc, bundle, bundles])
 
-  const [lessons, setLessons] = useState<LessonRow[]>([]);
+  const [lessons, setLessons] = useState<LessonRow[]>([])
   useEffect(() => {
     void listLessons()
       .then(setLessons)
-      .catch(() => setLessons([]));
-  }, []);
+      .catch(() => setLessons([]))
+  }, [])
 
   // Opened from the lessons list (?lesson=<id>) — load it straight into step 2.
-  const params = useSearchParams();
-  const openId = params.get('lesson');
+  const params = useSearchParams()
+  const openId = params.get('lesson')
   useEffect(() => {
-    if (!openId || doc) return;
+    if (!openId || doc) return
     void getLesson(openId)
       .then((full) => {
-        const b = Object.values(full.bundles)[0];
-        if (!b) return;
-        setLessonId(full.id);
-        setDoc(full.doc);
-        setBundle(b);
-        setStep(2);
+        const b = Object.values(full.bundles)[0]
+        if (!b) return
+        setLessonId(full.id)
+        setDoc(full.doc)
+        setBundle(b)
+        setStep(2)
       })
-      .catch(() => undefined);
+      .catch(() => undefined)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openId]);
+  }, [openId])
 
   /** Re-open a saved lesson. Its pictures and narration are MediaAssets with
    *  permanent URLs, so this plays what was made — it never regenerates. */
   async function resume(row: LessonRow) {
-    const full = await getLesson(row.id);
-    const b = Object.values(full.bundles)[0];
-    if (!b) return;
-    setLessonId(full.id);
-    setDoc(full.doc);
-    setBundle(b);
-    setIssues([]);
-    setSearched(false);
-    setHits({});
-    setStep(2);
+    const full = await getLesson(row.id)
+    const b = Object.values(full.bundles)[0]
+    if (!b) return
+    setLessonId(full.id)
+    setDoc(full.doc)
+    setBundle(b)
+    setIssues([])
+    setSearched(false)
+    setHits({})
+    setStep(2)
   }
 
-  const audTodo = bundle ? pendingAudio(bundle) : [];
+  const audTodo = bundle ? pendingAudio(bundle) : []
 
   return (
     <div
@@ -385,9 +363,9 @@ export function ImportView() {
       <header style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         <h1 style={{ margin: 0, letterSpacing: '-0.02em' }}>Nhập bài từ AI</h1>
         <p style={{ margin: 0, color: 'var(--foreground-muted, #6f665e)', maxWidth: '70ch' }}>
-          Tải file hướng dẫn bên dưới, đưa cho AI, rồi dán JSON nó trả về vào đây. Ảnh và giọng đọc
-          được điền ở các bước sau — model chỉ mô tả ảnh bằng <code>query</code>, vì một model bịa
-          URL ảnh là bịa ra một cái 404.
+          Tải file hướng dẫn bên dưới, đưa cho AI, rồi dán JSON nó trả về vào đây. Ảnh và giọng đọc được điền
+          ở các bước sau — model chỉ mô tả ảnh bằng <code>query</code>, vì một model bịa URL ảnh là bịa ra một
+          cái 404.
         </p>
       </header>
 
@@ -404,8 +382,8 @@ export function ImportView() {
               maxWidth: '74ch',
             }}
           >
-            Lưu trên server, gắn với tài khoản. Ảnh và giọng đọc đã sinh là <b>MediaAsset thật</b> —
-            mở lại là phát luôn, <b>không sinh lại, không trả tiền lần hai</b>. Mở được từ máy khác.
+            Lưu trên server, gắn với tài khoản. Ảnh và giọng đọc đã sinh là <b>MediaAsset thật</b> — mở lại là
+            phát luôn, <b>không sinh lại, không trả tiền lần hai</b>. Mở được từ máy khác.
           </p>
           <ul
             style={{
@@ -446,9 +424,7 @@ export function ImportView() {
                 <Btn primary onClick={() => void resume(l)}>
                   Mở tiếp
                 </Btn>
-                <Btn
-                  onClick={() => void deleteLesson(l.id).then(() => listLessons().then(setLessons))}
-                >
+                <Btn onClick={() => void deleteLesson(l.id).then(() => listLessons().then(setLessons))}>
                   Xoá
                 </Btn>
               </li>
@@ -473,15 +449,15 @@ export function ImportView() {
         <section style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div
             onDragOver={(e) => {
-              e.preventDefault();
-              setDragging(true);
+              e.preventDefault()
+              setDragging(true)
             }}
             onDragLeave={() => setDragging(false)}
             onDrop={(e) => {
-              e.preventDefault();
-              setDragging(false);
-              const f = e.dataTransfer.files[0];
-              if (f) void readFile(f);
+              e.preventDefault()
+              setDragging(false)
+              const f = e.dataTransfer.files[0]
+              if (f) void readFile(f)
             }}
             style={{
               padding: '18px',
@@ -492,17 +468,15 @@ export function ImportView() {
             }}
           >
             <div style={{ fontWeight: 700, marginBottom: 6 }}>Kéo file .json vào đây</div>
-            <div
-              style={{ fontSize: 13, color: 'var(--foreground-muted, #6f665e)', marginBottom: 10 }}
-            >
+            <div style={{ fontSize: 13, color: 'var(--foreground-muted, #6f665e)', marginBottom: 10 }}>
               hoặc dán JSON vào ô bên dưới
             </div>
             <input
               type="file"
               accept=".json,application/json,text/plain"
               onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) void readFile(f);
+                const f = e.target.files?.[0]
+                if (f) void readFile(f)
               }}
               style={{ display: 'none' }}
               id="lesson-file"
@@ -523,9 +497,7 @@ export function ImportView() {
               </span>
             </label>
             {fileName && (
-              <div
-                style={{ marginTop: 10, fontSize: 13, color: 'var(--foreground-muted, #6f665e)' }}
-              >
+              <div style={{ marginTop: 10, fontSize: 13, color: 'var(--foreground-muted, #6f665e)' }}>
                 {fileName}
               </div>
             )}
@@ -572,8 +544,7 @@ export function ImportView() {
                     padding: '10px 12px',
                     borderRadius: 8,
                     fontSize: 13,
-                    background:
-                      i.level === 'error' ? 'rgba(200,60,40,.06)' : 'rgba(217,139,43,.08)',
+                    background: i.level === 'error' ? 'rgba(200,60,40,.06)' : 'rgba(217,139,43,.08)',
                     border: `1px solid ${i.level === 'error' ? 'rgba(200,60,40,.25)' : 'rgba(217,139,43,.3)'}`,
                   }}
                 >
@@ -581,9 +552,7 @@ export function ImportView() {
                   <span style={{ color: 'var(--foreground-muted, #6f665e)' }}>{i.where}</span>
                   <div>{i.message}</div>
                   {i.fix && (
-                    <div style={{ marginTop: 4, color: 'var(--accent-coral, #d4703c)' }}>
-                      FIX → {i.fix}
-                    </div>
+                    <div style={{ marginTop: 4, color: 'var(--accent-coral, #d4703c)' }}>FIX → {i.fix}</div>
                   )}
                 </div>
               ))}
@@ -606,16 +575,16 @@ export function ImportView() {
             // Render THE ACTUAL SCENE this picture lands in, with the candidate in
             // place. Approving a picture without seeing where it goes is guessing:
             // the same picture is right in one scene and wrong in the next.
-            const staged = url ? withImage(doc, job.elementId, url) : doc;
-            return <ScenePreview doc={staged} bundle={bundle} sceneId={job.sceneId} />;
+            const staged = url ? withImage(doc, job.elementId, url) : doc
+            return <ScenePreview doc={staged} bundle={bundle} sceneId={job.sceneId} />
           }}
           onSearch={searchImages}
           onUse={useHit}
           onGenerate={generateImage}
           onNext={() => setStep(4)}
           resolved={(id) => {
-            const el = doc.scenes.flatMap((sc) => sc.elements).find((e) => e.id === id);
-            return !!(el?.content as { src?: string } | undefined)?.src;
+            const el = doc.scenes.flatMap((sc) => sc.elements).find((e) => e.id === id)
+            return !!(el?.content as { src?: string } | undefined)?.src
           }}
         />
       )}
@@ -627,9 +596,7 @@ export function ImportView() {
           jobs={jobs}
           busy={busy}
           onRun={runAudio}
-          runLabel={
-            audTodo.length ? `Đọc ${audTodo.length} lời giảng` : 'Không có lời giảng nào cần đọc'
-          }
+          runLabel={audTodo.length ? `Đọc ${audTodo.length} lời giảng` : 'Không có lời giảng nào cần đọc'}
           onNext={() => setStep(5)}
           canNext={!busy}
         />
@@ -648,8 +615,8 @@ export function ImportView() {
                   maxWidth: '72ch',
                 }}
               >
-                Ảnh chưa sinh nên hiện dưới dạng ô có nhãn — đủ để đọc bài. Duyệt xong (hoặc sửa
-                trong Studio) rồi mới sang bước Ảnh và Giọng đọc, vì hai bước đó <b>mất tiền</b>.
+                Ảnh chưa sinh nên hiện dưới dạng ô có nhãn — đủ để đọc bài. Duyệt xong (hoặc sửa trong Studio)
+                rồi mới sang bước Ảnh và Giọng đọc, vì hai bước đó <b>mất tiền</b>.
               </p>
             </div>
           )}
@@ -676,18 +643,16 @@ export function ImportView() {
             >
               Mở Studio để sửa ↗
             </a>
-            {step === 2 && (
-              <Btn onClick={() => setStep(3)}>Bài ổn → sinh ảnh &amp; giọng đọc →</Btn>
-            )}
+            {step === 2 && <Btn onClick={() => setStep(3)}>Bài ổn → sinh ảnh &amp; giọng đọc →</Btn>}
             <Btn
               onClick={() => {
                 const blob = new Blob([JSON.stringify({ doc, bundle }, null, 2)], {
                   type: 'application/json',
-                });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = `${doc.meta.id}.json`;
-                a.click();
+                })
+                const a = document.createElement('a')
+                a.href = URL.createObjectURL(blob)
+                a.download = `${doc.meta.id}.json`
+                a.click()
               }}
             >
               Tải JSON
@@ -709,7 +674,7 @@ export function ImportView() {
         </section>
       )}
     </div>
-  );
+  )
 }
 
 /**
@@ -720,19 +685,19 @@ export function ImportView() {
  * that is actually deployed.
  */
 function PromptCard() {
-  const [copied, setCopied] = useState<'' | 'brief' | 'full' | 'msg'>('');
-  const [topic, setTopic] = useState('Số chẵn và số lẻ');
-  const [stage, setStage] = useState(AUDIENCES[1]?.id ?? 'primary');
-  const [detail, setDetail] = useState('lớp 1');
+  const [copied, setCopied] = useState<'' | 'brief' | 'full' | 'msg'>('')
+  const [topic, setTopic] = useState('Số chẵn và số lẻ')
+  const [stage, setStage] = useState(AUDIENCES[1]?.id ?? 'primary')
+  const [detail, setDetail] = useState('lớp 1')
   // The field holds the RAW TEXT while you type; the number is only read back
   // from it. Clamping on every keystroke made the input unusable: typing "1" on
   // the way to "10" was rewritten to "3" (the minimum), and clearing the box gave
   // Number("") === 0, which is falsy, so it snapped back to the default — you
   // could neither type a two-digit value nor delete what was there.
-  const [minutesText, setMinutesText] = useState(String(DEFAULT_MINUTES));
-  const minutes = clampMinutes(Number(minutesText)) ?? DEFAULT_MINUTES;
+  const [minutesText, setMinutesText] = useState(String(DEFAULT_MINUTES))
+  const minutes = clampMinutes(Number(minutesText)) ?? DEFAULT_MINUTES
 
-  const audience = `${AUDIENCES.find((a) => a.id === stage)?.label ?? ''}${detail ? ` — ${detail}` : ''}`;
+  const audience = `${AUDIENCES.find((a) => a.id === stage)?.label ?? ''}${detail ? ` — ${detail}` : ''}`
   // The brief is generated FOR this duration: the scene count and every phase
   // minimum inside it scale with the minutes, because a teacher has minutes,
   // not scenes.
@@ -744,27 +709,24 @@ function PromptCard() {
   //   • full (~120KB) — every kit's params, all 55 question shapes, a complete
   //     14-scene sample. The strongest reference; use it in a tool that accepts
   //     large files, or when the brief-authored draft needs more to imitate.
-  const briefMd = useMemo(() => promptMarkdown(minutes, true), [minutes]);
-  const fullMd = useMemo(() => promptMarkdown(minutes, false), [minutes]);
-  const msg = useMemo(
-    () => promptMessage(topic || '<CHỦ ĐỀ>', audience, minutes),
-    [topic, audience, minutes],
-  );
-  const plan = useMemo(() => planFor(minutes), [minutes]);
+  const briefMd = useMemo(() => promptMarkdown(minutes, true), [minutes])
+  const fullMd = useMemo(() => promptMarkdown(minutes, false), [minutes])
+  const msg = useMemo(() => promptMessage(topic || '<CHỦ ĐỀ>', audience, minutes), [topic, audience, minutes])
+  const plan = useMemo(() => planFor(minutes), [minutes])
 
   const copy = (text: string, which: '' | 'brief' | 'full' | 'msg') => {
     void navigator.clipboard.writeText(text).then(() => {
-      setCopied(which);
-      setTimeout(() => setCopied(''), 1600);
-    });
-  };
+      setCopied(which)
+      setTimeout(() => setCopied(''), 1600)
+    })
+  }
   const download = (text: string, suffix: string) => {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([text], { type: 'text/markdown;charset=utf-8' }));
-    a.download = `EXPLAINER-PROMPT-${minutes}p-${suffix}.md`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  };
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(new Blob([text], { type: 'text/markdown;charset=utf-8' }))
+    a.download = `EXPLAINER-PROMPT-${minutes}p-${suffix}.md`
+    a.click()
+    URL.revokeObjectURL(a.href)
+  }
 
   return (
     <section
@@ -809,9 +771,7 @@ function PromptCard() {
             <Btn primary onClick={() => download(briefMd, 'gon')}>
               ↓ Tải bản gọn
             </Btn>
-            <Btn onClick={() => copy(briefMd, 'brief')}>
-              {copied === 'brief' ? '✓ Đã copy' : 'Copy'}
-            </Btn>
+            <Btn onClick={() => copy(briefMd, 'brief')}>{copied === 'brief' ? '✓ Đã copy' : 'Copy'}</Btn>
           </div>
         </div>
         {/* full reference */}
@@ -825,18 +785,14 @@ function PromptCard() {
             border: '1px solid var(--border, #e6ddd0)',
           }}
         >
-          <div style={{ fontWeight: 700 }}>
-            Bản đầy đủ — {(fullMd.length / 1024).toFixed(0)} KB · tra cứu
-          </div>
+          <div style={{ fontWeight: 700 }}>Bản đầy đủ — {(fullMd.length / 1024).toFixed(0)} KB · tra cứu</div>
           <div style={{ fontSize: 12.5, color: 'var(--foreground-muted, #6f665e)' }}>
-            Mọi kit (kèm giá trị hợp lệ), cả 55 loại câu hỏi, bài mẫu 14 scene. Bản mạnh nhất —
-            nhưng <b>có thể bị chặn khi tải lên</b> do quá dài. Dùng khi công cụ nhận file lớn.
+            Mọi kit (kèm giá trị hợp lệ), cả 55 loại câu hỏi, bài mẫu 14 scene. Bản mạnh nhất — nhưng{' '}
+            <b>có thể bị chặn khi tải lên</b> do quá dài. Dùng khi công cụ nhận file lớn.
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <Btn onClick={() => download(fullMd, 'day-du')}>↓ Tải bản đầy đủ</Btn>
-            <Btn onClick={() => copy(fullMd, 'full')}>
-              {copied === 'full' ? '✓ Đã copy' : 'Copy'}
-            </Btn>
+            <Btn onClick={() => copy(fullMd, 'full')}>{copied === 'full' ? '✓ Đã copy' : 'Copy'}</Btn>
           </div>
         </div>
       </div>
@@ -905,9 +861,7 @@ function PromptCard() {
               value={minutesText}
               onChange={(e) => setMinutesText(e.target.value)}
               // clamp only when you LEAVE the field — never while typing
-              onBlur={() =>
-                setMinutesText(String(clampMinutes(Number(minutesText)) ?? DEFAULT_MINUTES))
-              }
+              onBlur={() => setMinutesText(String(clampMinutes(Number(minutesText)) ?? DEFAULT_MINUTES))}
               style={{
                 padding: '8px 10px',
                 borderRadius: 8,
@@ -946,18 +900,10 @@ function PromptCard() {
         </div>
       </div>
     </section>
-  );
+  )
 }
 
-function Field({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-}) {
+function Field({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
     <label
       style={{
@@ -985,22 +931,22 @@ function Field({
         }}
       />
     </label>
-  );
+  )
 }
 
 /** Below this relevance the resolver does not trust a library hit. Shown so
  *  "không tìm thấy" means something instead of just "shrug". */
-const SCORE_HINT = 0.34;
+const SCORE_HINT = 0.34
 
-const MIN_MINUTES = 3;
-const MAX_MINUTES = 45;
+const MIN_MINUTES = 3
+const MAX_MINUTES = 45
 
 /** null while the box holds something that isn't a usable number yet (empty, "1"
  *  on the way to "10") — the caller keeps the last good value instead of fighting
  *  the keystroke. */
 function clampMinutes(n: number): number | null {
-  if (!Number.isFinite(n) || n < MIN_MINUTES || n > MAX_MINUTES) return null;
-  return Math.round(n);
+  if (!Number.isFinite(n) || n < MIN_MINUTES || n > MAX_MINUTES) return null
+  return Math.round(n)
 }
 
 /** The scene a picture lands in, drawn by the real engine at a glance-able size. */
@@ -1009,15 +955,15 @@ function ScenePreview({
   bundle,
   sceneId,
 }: {
-  doc: ExplainerDoc;
-  bundle: LocaleBundle;
-  sceneId: string;
+  doc: ExplainerDoc
+  bundle: LocaleBundle
+  sceneId: string
 }) {
   const model = useMemo(() => {
-    const program = buildProgram(doc, bundle, '16:9');
-    const slot = program.slots.find((s) => s.scene.id === sceneId);
-    return frame(program, Math.max(0, (slot?.end ?? 0) - 0.05));
-  }, [doc, bundle, sceneId]);
+    const program = buildProgram(doc, bundle, '16:9')
+    const slot = program.slots.find((s) => s.scene.id === sceneId)
+    return frame(program, Math.max(0, (slot?.end ?? 0) - 0.05))
+  }, [doc, bundle, sceneId])
   return (
     <div
       style={{
@@ -1029,21 +975,21 @@ function ScenePreview({
     >
       <Stage model={model} theme={doc.theme} caption={false} />
     </div>
-  );
+  )
 }
 
 /** Telltale of UTF-8 bytes read as cp1252/latin-1: "Ã", "á»", "áº" clusters. */
 function looksMojibake(s: string): boolean {
-  const hits = (s.match(/[ÃÂáºá»Ä]/g) ?? []).length;
-  return hits > 20 && hits > s.length / 500;
+  const hits = (s.match(/[ÃÂáºá»Ä]/g) ?? []).length
+  return hits > 20 && hits > s.length / 500
 }
 
 function repairMojibake(s: string): string {
   try {
-    const bytes = Uint8Array.from([...s].map((c) => c.charCodeAt(0) & 0xff));
-    return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    const bytes = Uint8Array.from([...s].map((c) => c.charCodeAt(0) & 0xff))
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes)
   } catch {
-    return s; // not actually mojibake — leave it alone
+    return s // not actually mojibake — leave it alone
   }
 }
 
@@ -1054,9 +1000,9 @@ function Stepper({
   onGo,
   canGo,
 }: {
-  step: Step;
-  onGo: (s: Step) => void;
-  canGo: (s: Step) => boolean;
+  step: Step
+  onGo: (s: Step) => void
+  canGo: (s: Step) => boolean
 }) {
   return (
     <ol
@@ -1070,9 +1016,9 @@ function Stepper({
       }}
     >
       {STEPS.map((s) => {
-        const active = s.n === step;
-        const done = s.n < step;
-        const allowed = canGo(s.n);
+        const active = s.n === step
+        const done = s.n < step
+        const allowed = canGo(s.n)
         return (
           <li key={s.n} style={{ flex: '1 1 180px' }}>
             <button
@@ -1086,11 +1032,7 @@ function Stepper({
                 borderRadius: 10,
                 cursor: allowed ? 'pointer' : 'default',
                 border: `1px solid ${active ? 'var(--accent-coral, #d4703c)' : 'var(--border, #e6ddd0)'}`,
-                background: active
-                  ? 'rgba(212,112,60,.08)'
-                  : done
-                    ? 'rgba(63,157,90,.07)'
-                    : 'transparent',
+                background: active ? 'rgba(212,112,60,.08)' : done ? 'rgba(63,157,90,.07)' : 'transparent',
                 opacity: allowed ? 1 : 0.5,
               }}
             >
@@ -1107,10 +1049,10 @@ function Stepper({
               <div style={{ fontSize: 12, color: 'var(--foreground-muted, #6f665e)' }}>{s.sub}</div>
             </button>
           </li>
-        );
+        )
       })}
     </ol>
-  );
+  )
 }
 
 /** Search is free and instant. Generation costs money and 40+ seconds — so it
@@ -1132,25 +1074,25 @@ function ImagesPane({
   onReject,
   scenePreview,
 }: {
-  todo: ImageJob[];
-  hits: Record<string, MediaHit[]>;
-  searched: boolean;
-  busy: boolean;
-  jobs: Job[];
+  todo: ImageJob[]
+  hits: Record<string, MediaHit[]>
+  searched: boolean
+  busy: boolean
+  jobs: Job[]
   /** generated but NOT yet approved — shown for a decision, not applied */
-  proposed: Record<string, string>;
-  onAccept: (j: ImageJob) => void;
-  onReject: (j: ImageJob) => void;
+  proposed: Record<string, string>
+  onAccept: (j: ImageJob) => void
+  onReject: (j: ImageJob) => void
   /** the scene this picture lands in, rendered with the candidate in place */
-  scenePreview: (j: ImageJob, url?: string) => React.ReactNode;
-  onSearch: () => void;
-  onUse: (j: ImageJob, h: MediaHit) => void;
-  onGenerate: (j: ImageJob) => void;
-  onNext: () => void;
-  resolved: (elementId: string) => boolean;
+  scenePreview: (j: ImageJob, url?: string) => React.ReactNode
+  onSearch: () => void
+  onUse: (j: ImageJob, h: MediaHit) => void
+  onGenerate: (j: ImageJob) => void
+  onNext: () => void
+  resolved: (elementId: string) => boolean
 }) {
-  const done = todo.filter((t) => resolved(t.elementId)).length;
-  const found = todo.filter((t) => (hits[t.query] ?? []).length > 0).length;
+  const done = todo.filter((t) => resolved(t.elementId)).length
+  const found = todo.filter((t) => (hits[t.query] ?? []).length > 0).length
   return (
     <section style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div>
@@ -1163,10 +1105,9 @@ function ImagesPane({
             maxWidth: '74ch',
           }}
         >
-          <b>Tìm là miễn phí, sinh mới thì tốn tiền</b> (~40s và một lượt gọi model mỗi ảnh). Nên ở
-          đây chỉ
-          <b> tìm trong thư viện</b> — một lần cho cả loạt, gộp các mô tả trùng nhau. Ảnh nào thư
-          viện có thì bấm chọn; ảnh nào không có, anh <b>tự bấm “Sinh mới”</b>.
+          <b>Tìm là miễn phí, sinh mới thì tốn tiền</b> (~40s và một lượt gọi model mỗi ảnh). Nên ở đây chỉ
+          <b> tìm trong thư viện</b> — một lần cho cả loạt, gộp các mô tả trùng nhau. Ảnh nào thư viện có thì
+          bấm chọn; ảnh nào không có, anh <b>tự bấm “Sinh mới”</b>.
         </p>
       </div>
 
@@ -1217,9 +1158,9 @@ function ImagesPane({
         }}
       >
         {todo.map((t) => {
-          const cands = hits[t.query] ?? [];
-          const job = jobs.find((j) => j.key === t.elementId);
-          const ok = resolved(t.elementId);
+          const cands = hits[t.query] ?? []
+          const job = jobs.find((j) => j.key === t.elementId)
+          const ok = resolved(t.elementId)
           return (
             <li
               key={t.elementId}
@@ -1237,9 +1178,7 @@ function ImagesPane({
                 <span style={{ width: 16 }}>{ok ? '✓' : job?.state === 'running' ? '…' : '·'}</span>
                 <span style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column' }}>
                   <b>{t.sceneTitle ?? t.sceneId}</b>
-                  <span style={{ fontSize: 12, color: 'var(--foreground-muted, #6f665e)' }}>
-                    {t.query}
-                  </span>
+                  <span style={{ fontSize: 12, color: 'var(--foreground-muted, #6f665e)' }}>{t.query}</span>
                   {t.caption && (
                     <span style={{ fontSize: 12, color: 'var(--foreground-muted, #6f665e)' }}>
                       <span style={{ fontWeight: 700 }}>Lời giảng: </span>“{t.caption}”
@@ -1263,9 +1202,7 @@ function ImagesPane({
                     {job?.state === 'running' ? 'Đang sinh…' : 'Sinh mới ($)'}
                   </Btn>
                 ) : (
-                  <span style={{ fontSize: 12, color: 'var(--foreground-muted, #6f665e)' }}>
-                    đang tìm…
-                  </span>
+                  <span style={{ fontSize: 12, color: 'var(--foreground-muted, #6f665e)' }}>đang tìm…</span>
                 )}
               </div>
               {proposed[t.elementId] && (
@@ -1295,9 +1232,7 @@ function ImagesPane({
                   <div style={{ flex: '1 1 260px', minWidth: 0 }}>
                     {scenePreview(t, proposed[t.elementId])}
                   </div>
-                  <div
-                    style={{ flex: '0 0 210px', display: 'flex', flexDirection: 'column', gap: 8 }}
-                  >
+                  <div style={{ flex: '0 0 210px', display: 'flex', flexDirection: 'column', gap: 8 }}>
                     <div style={{ fontWeight: 800, fontSize: 13 }}>{t.sceneTitle ?? t.sceneId}</div>
                     {t.caption && (
                       // the LINE OF SCRIPT this scene narrates — so you can judge
@@ -1326,9 +1261,7 @@ function ImagesPane({
                 </div>
               )}
               {!searched && !busy && (
-                <span style={{ fontSize: 12, color: 'var(--foreground-muted, #6f665e)' }}>
-                  Chưa tìm.
-                </span>
+                <span style={{ fontSize: 12, color: 'var(--foreground-muted, #6f665e)' }}>Chưa tìm.</span>
               )}
               {searched &&
                 (cands.length ? (
@@ -1374,16 +1307,16 @@ function ImagesPane({
                   </div>
                 ) : (
                   <span style={{ fontSize: 12, color: 'var(--foreground-muted, #6f665e)' }}>
-                    Đã tìm — <b>thư viện không có ảnh nào khớp</b> (điểm dưới ngưỡng {SCORE_HINT}).
-                    Bấm “Sinh mới ($)” nếu ảnh này đáng để tốn tiền.
+                    Đã tìm — <b>thư viện không có ảnh nào khớp</b> (điểm dưới ngưỡng {SCORE_HINT}). Bấm “Sinh
+                    mới ($)” nếu ảnh này đáng để tốn tiền.
                   </span>
                 ))}
             </li>
-          );
+          )
         })}
       </ul>
     </section>
-  );
+  )
 }
 
 function StepPane({
@@ -1396,17 +1329,17 @@ function StepPane({
   onNext,
   canNext,
 }: {
-  title: string;
-  hint: string;
-  jobs: Job[];
-  busy: boolean;
-  onRun: () => void;
-  runLabel: string;
-  onNext: () => void;
-  canNext: boolean;
+  title: string
+  hint: string
+  jobs: Job[]
+  busy: boolean
+  onRun: () => void
+  runLabel: string
+  onNext: () => void
+  canNext: boolean
 }) {
-  const done = jobs.filter((j) => j.state === 'done').length;
-  const failed = jobs.filter((j) => j.state === 'error').length;
+  const done = jobs.filter((j) => j.state === 'done').length
+  const failed = jobs.filter((j) => j.state === 'error').length
   return (
     <section style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <div>
@@ -1429,9 +1362,7 @@ function StepPane({
         <Btn onClick={onNext} disabled={!canNext}>
           Bước tiếp →
         </Btn>
-        {failed > 0 && (
-          <Note tone="warn">{failed} lỗi — bấm chạy lại, phần đã xong sẽ được bỏ qua.</Note>
-        )}
+        {failed > 0 && <Note tone="warn">{failed} lỗi — bấm chạy lại, phần đã xong sẽ được bỏ qua.</Note>}
         {jobs.length > 0 && (
           <span
             style={{
@@ -1475,13 +1406,7 @@ function StepPane({
               }}
             >
               <span style={{ width: 18 }}>
-                {j.state === 'done'
-                  ? '✓'
-                  : j.state === 'error'
-                    ? '✗'
-                    : j.state === 'running'
-                      ? '…'
-                      : '·'}
+                {j.state === 'done' ? '✓' : j.state === 'error' ? '✗' : j.state === 'running' ? '…' : '·'}
               </span>
               <span
                 style={{
@@ -1494,15 +1419,13 @@ function StepPane({
               >
                 {j.label}
               </span>
-              {j.note && (
-                <span style={{ color: 'var(--foreground-muted, #6f665e)' }}>{j.note}</span>
-              )}
+              {j.note && <span style={{ color: 'var(--foreground-muted, #6f665e)' }}>{j.note}</span>}
             </li>
           ))}
         </ul>
       )}
     </section>
-  );
+  )
 }
 
 function Btn({
@@ -1511,10 +1434,10 @@ function Btn({
   disabled,
   primary,
 }: {
-  children: React.ReactNode;
-  onClick: () => void;
-  disabled?: boolean;
-  primary?: boolean;
+  children: React.ReactNode
+  onClick: () => void
+  disabled?: boolean
+  primary?: boolean
 }) {
   return (
     <button
@@ -1535,7 +1458,7 @@ function Btn({
     >
       {children}
     </button>
-  );
+  )
 }
 
 function Note({ tone, children }: { tone: 'bad' | 'warn'; children: React.ReactNode }) {
@@ -1549,5 +1472,5 @@ function Note({ tone, children }: { tone: 'bad' | 'warn'; children: React.ReactN
     >
       {children}
     </span>
-  );
+  )
 }

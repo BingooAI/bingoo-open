@@ -1,32 +1,32 @@
-'use client';
+'use client'
 
-import { cn } from './lib/cn';
-import { tile, tileState } from './lib/interactive';
+import { cn } from './lib/cn'
+import { tile, tileState } from './lib/interactive'
 
 export interface ScaleReaderProps {
-  shape?: 'thermometer' | 'dial';
-  min: number;
-  max: number;
-  step?: number;
+  shape?: 'thermometer' | 'dial'
+  min: number
+  max: number
+  step?: number
   /** Controlled reading. */
-  value: number | null;
-  onChange: (value: number) => void;
-  unitLabel?: string;
-  reveal?: { correct: boolean; answer: number };
-  disabled?: boolean;
-  className?: string;
+  value: number | null
+  onChange: (value: number) => void
+  unitLabel?: string
+  reveal?: { correct: boolean; answer: number }
+  disabled?: boolean
+  className?: string
 }
 
 function ticks(min: number, max: number, step: number) {
-  const out: number[] = [];
-  for (let v = min; v <= max; v += step) out.push(v);
-  return out;
+  const out: number[] = []
+  for (let v = min; v <= max; v += step) out.push(v)
+  return out
 }
 /** Position on a 270° gauge arc (bottom-left → bottom-right), in 0–100 space. */
 function dialAt(v: number, min: number, max: number, radius = 38) {
-  const frac = (v - min) / (max - min || 1);
-  const a = (-135 + frac * 270) * (Math.PI / 180) - Math.PI / 2;
-  return { x: 50 + radius * Math.cos(a), y: 50 + radius * Math.sin(a) };
+  const frac = (v - min) / (max - min || 1)
+  const a = (-135 + frac * 270) * (Math.PI / 180) - Math.PI / 2
+  return { x: 50 + radius * Math.cos(a), y: 50 + radius * Math.sin(a) }
 }
 
 /**
@@ -45,22 +45,18 @@ export function ScaleReader({
   disabled,
   className,
 }: ScaleReaderProps) {
-  const locked = !!reveal || disabled;
-  const vals = ticks(min, max, step);
-  const tone = reveal ? (reveal.correct ? 'text-success' : 'text-danger') : 'text-primary';
-  const fillClass = reveal ? (reveal.correct ? 'bg-success' : 'bg-danger') : 'bg-accent-coral';
+  const locked = !!reveal || disabled
+  const vals = ticks(min, max, step)
+  const tone = reveal ? (reveal.correct ? 'text-success' : 'text-danger') : 'text-primary'
+  const fillClass = reveal ? (reveal.correct ? 'bg-success' : 'bg-danger') : 'bg-accent-coral'
 
   if (shape === 'dial') {
-    const sel = value != null ? dialAt(value, min, max) : null;
+    const sel = value != null ? dialAt(value, min, max) : null
     return (
       <div className={cn('mx-auto aspect-square w-56 max-w-full', className)}>
         <div className="relative size-full">
           <div className="absolute inset-[8%] rounded-full border-2 border-border" />
-          <svg
-            viewBox="0 0 100 100"
-            className="pointer-events-none absolute inset-0 size-full"
-            aria-hidden
-          >
+          <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 size-full" aria-hidden>
             {sel ? (
               <line
                 x1={50}
@@ -77,9 +73,9 @@ export function ScaleReader({
             <circle cx={50} cy={50} r={3.5} className="fill-foreground-muted" />
           </svg>
           {vals.map((v) => {
-            const p = dialAt(v, min, max);
-            const on = value === v;
-            const isAns = reveal?.answer === v;
+            const p = dialAt(v, min, max)
+            const on = value === v
+            const isAns = reveal?.answer === v
             return (
               // The seat holds the tick's place on the arc; the tile inside is then free to
               // lift and press without fighting the -50%/-50% centring transform.
@@ -108,7 +104,7 @@ export function ScaleReader({
                   {v}
                 </button>
               </span>
-            );
+            )
           })}
           {unitLabel ? (
             <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-xs font-semibold text-foreground-muted">
@@ -117,11 +113,11 @@ export function ScaleReader({
           ) : null}
         </div>
       </div>
-    );
+    )
   }
 
   // Thermometer
-  const pct = value != null ? ((value - min) / (max - min || 1)) * 100 : 0;
+  const pct = value != null ? ((value - min) / (max - min || 1)) * 100 : 0
   return (
     <div className={cn('flex items-end justify-center gap-4', className)}>
       <div
@@ -143,8 +139,8 @@ export function ScaleReader({
       </div>
       <div className="flex h-56 flex-col-reverse justify-between py-1">
         {vals.map((v) => {
-          const on = value === v;
-          const isAns = reveal?.answer === v;
+          const on = value === v
+          const isAns = reveal?.answer === v
           return (
             <button
               key={v}
@@ -170,7 +166,7 @@ export function ScaleReader({
                 <span className="text-2xs font-normal text-foreground-muted">{unitLabel}</span>
               ) : null}
             </button>
-          );
+          )
         })}
       </div>
       {value != null ? (
@@ -180,5 +176,5 @@ export function ScaleReader({
         </span>
       ) : null}
     </div>
-  );
+  )
 }

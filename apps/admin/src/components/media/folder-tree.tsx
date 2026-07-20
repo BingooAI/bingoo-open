@@ -1,23 +1,23 @@
-'use client';
+'use client'
 
-import { ChevronRight, Folder, FolderOpen, Images, Loader2 } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { useState } from 'react';
-import { cn } from '@/lib/cn';
-import { pickText } from '@/lib/i18n-text';
-import { useFolderChildren } from '@/lib/media-queries';
-import type { MediaFolderDto } from '@/lib/api-types';
+import { ChevronRight, Folder, FolderOpen, Images, Loader2 } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
+import { useState } from 'react'
+import { cn } from '@/lib/cn'
+import { pickText } from '@/lib/i18n-text'
+import { useFolderChildren } from '@/lib/media-queries'
+import type { MediaFolderDto } from '@/lib/api-types'
 
 export interface FolderTreeProps {
-  selectedId: string | null;
-  onSelect: (id: string | null, folder: MediaFolderDto | null) => void;
+  selectedId: string | null
+  onSelect: (id: string | null, folder: MediaFolderDto | null) => void
 }
 
 /** Lazy folder tree. "All assets" (null) sits at the top; real roots load from
  *  GET /media/folders, children load on expand. */
 export function FolderTree({ selectedId, onSelect }: FolderTreeProps) {
-  const t = useTranslations('admin.library');
-  const roots = useFolderChildren(null);
+  const t = useTranslations('admin.library')
+  const roots = useFolderChildren(null)
 
   return (
     <nav aria-label={t('folders')} className="space-y-0.5 text-sm">
@@ -56,7 +56,7 @@ export function FolderTree({ selectedId, onSelect }: FolderTreeProps) {
         <p className="px-2 py-1.5 text-xs text-foreground-subtle">{t('noFolders')}</p>
       )}
     </nav>
-  );
+  )
 }
 
 function FolderNode({
@@ -65,16 +65,16 @@ function FolderNode({
   selectedId,
   onSelect,
 }: {
-  folder: MediaFolderDto;
-  depth: number;
-  selectedId: string | null;
-  onSelect: (id: string | null, folder: MediaFolderDto | null) => void;
+  folder: MediaFolderDto
+  depth: number
+  selectedId: string | null
+  onSelect: (id: string | null, folder: MediaFolderDto | null) => void
 }) {
-  const locale = useLocale();
-  const [expanded, setExpanded] = useState(false);
-  const children = useFolderChildren(folder.id, expanded);
-  const isSelected = selectedId === folder.id;
-  const name = pickText(folder.name, locale, folder.slug ?? folder.id);
+  const locale = useLocale()
+  const [expanded, setExpanded] = useState(false)
+  const children = useFolderChildren(folder.id, expanded)
+  const isSelected = selectedId === folder.id
+  const name = pickText(folder.name, locale, folder.slug ?? folder.id)
 
   return (
     <div>
@@ -101,11 +101,7 @@ function FolderNode({
           onClick={() => onSelect(folder.id, folder)}
           className="flex min-w-0 flex-1 items-center gap-2 py-1.5 text-left"
         >
-          {expanded ? (
-            <FolderOpen className="size-4 shrink-0" />
-          ) : (
-            <Folder className="size-4 shrink-0" />
-          )}
+          {expanded ? <FolderOpen className="size-4 shrink-0" /> : <Folder className="size-4 shrink-0" />}
           <span className="truncate font-medium">{name}</span>
         </button>
       </div>
@@ -133,5 +129,5 @@ function FolderNode({
         </div>
       )}
     </div>
-  );
+  )
 }

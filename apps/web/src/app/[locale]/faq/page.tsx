@@ -1,26 +1,26 @@
-import type { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { Accordion, Container } from '@bingoo/ui-web';
-import { SiteFooter } from '@/components/marketing/site-footer';
-import { SiteHeader } from '@/components/marketing/site-header';
+import type { Metadata } from 'next'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { Accordion, Container } from '@bingoo/ui-web'
+import { SiteFooter } from '@/components/marketing/site-footer'
+import { SiteHeader } from '@/components/marketing/site-header'
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: string }>
 }): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'faq' });
-  return { title: t('metaTitle'), description: t('metaDescription') };
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'faq' })
+  return { title: t('metaTitle'), description: t('metaDescription') }
 }
 
 export default async function FAQPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations('faq');
+  const { locale } = await params
+  setRequestLocale(locale)
+  const t = await getTranslations('faq')
 
-  const raw = t.raw('items') as Record<string, { q: string; a: string }>;
-  const items = Object.entries(raw).map(([id, v]) => ({ id, title: v.q, content: v.a }));
+  const raw = t.raw('items') as Record<string, { q: string; a: string }>
+  const items = Object.entries(raw).map(([id, v]) => ({ id, title: v.q, content: v.a }))
 
   return (
     <div data-pack="playful" className="flex min-h-dvh flex-col bg-background">
@@ -40,5 +40,5 @@ export default async function FAQPage({ params }: { params: Promise<{ locale: st
       </main>
       <SiteFooter />
     </div>
-  );
+  )
 }

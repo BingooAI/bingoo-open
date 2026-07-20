@@ -6,34 +6,29 @@
  * context tổng thể thì LLM bịa — nên gate ở đây, không cho tắt.
  */
 
-import {
-  planQuality,
-  type CoursePlan,
-  type LessonInstructionPlan,
-  type PlanQuality,
-} from '@bingoo/plans';
-import type { Slug } from '@bingoo/knowledge-engine';
-import { generateLessonPlan } from './plan-adapters';
-import { getSkillGraph } from './knowledge.service';
-import { getCourse } from '../repos/course.repo';
-import { getPlan, isApproved, savePlan, type StoredPlan } from '../repos/plan-hierarchy.repo';
-import { AppError } from '../lib/errors';
+import { planQuality, type CoursePlan, type LessonInstructionPlan, type PlanQuality } from '@bingoo/plans'
+import type { Slug } from '@bingoo/knowledge-engine'
+import { generateLessonPlan } from './plan-adapters'
+import { getSkillGraph } from './knowledge.service'
+import { getCourse } from '../repos/course.repo'
+import { getPlan, isApproved, savePlan, type StoredPlan } from '../repos/plan-hierarchy.repo'
+import { AppError } from '../lib/errors'
 
 export interface LessonPlanResult {
-  readonly plan: LessonInstructionPlan;
-  readonly quality: PlanQuality;
-  readonly stored?: StoredPlan;
+  readonly plan: LessonInstructionPlan
+  readonly quality: PlanQuality
+  readonly stored?: StoredPlan
 }
 
 /** Đường CŨ (không khoá/context) — giữ cho gọi trực tiếp theo KCs; KHÔNG lưu, KHÔNG grounding. */
 export async function generateLessonPlanFor(input: {
-  kcs: readonly Slug[];
-  language: string;
-  level?: string;
-  aiKey?: string;
+  kcs: readonly Slug[]
+  language: string
+  level?: string
+  aiKey?: string
 }): Promise<LessonPlanResult> {
-  const plan = await generateLessonPlan(input);
-  return { plan, quality: qualityOf(await getSkillGraph(), plan) };
+  const plan = await generateLessonPlan(input)
+  return { plan, quality: qualityOf(await getSkillGraph(), plan) }
 }
 
 /**
@@ -41,20 +36,20 @@ export async function generateLessonPlanFor(input: {
  * KCs lấy TỪ vỏ khoá (không tin client), nên bài luôn dạy đúng KC đã map.
  */
 export async function generateLessonPlanInCourse(input: {
-  courseSlug: string;
-  lessonSlug: string;
-  language: string;
-  level?: string;
-  userId: string;
-  aiKey?: string;
+  courseSlug: string
+  lessonSlug: string
+  language: string
+  level?: string
+  userId: string
+  aiKey?: string
   /** Cho phép HỦY job nền — luồn xuống LLM call. */
-  signal?: AbortSignal;
+  signal?: AbortSignal
 }): Promise<LessonPlanResult> {
-  const course = await getCourse(input.courseSlug);
-  if (!course) throw AppError.notFound('Không có khoá này.');
-  const unit = course.plan.units.find((u) => u.lessons.some((l) => l.slug === input.lessonSlug));
-  const lesson = unit?.lessons.find((l) => l.slug === input.lessonSlug);
-  if (!unit || !lesson) throw AppError.notFound('Không có bài này trong khoá.');
+  const course = await getCourse(input.courseSlug)
+  if (!course) throw AppError.notFound('Không có khoá này.')
+  const unit = course.plan.units.find((u) => u.lessons.some((l) => l.slug === input.lessonSlug))
+  const lesson = unit?.lessons.find((l) => l.slug === input.lessonSlug)
+  if (!unit || !lesson) throw AppError.notFound('Không có bài này trong khoá.')
 
   // CỔNG: kế hoạch UNIT phải DUYỆT trước (để bài có context tổng thể).
   if (!(await isApproved(input.courseSlug, 'unit', unit.slug)))
@@ -64,7 +59,7 @@ export async function generateLessonPlanInCourse(input: {
         message: `Chưa DUYỆT kế hoạch UNIT "${unit.slug}" — duyệt nó trước khi sinh kế hoạch bài (để có context).`,
         code: 'parent_not_approved',
       },
-    ]);
+    ])
 
   if (lesson.teaches.length === 0)
     throw AppError.validation([
@@ -73,12 +68,12 @@ export async function generateLessonPlanInCourse(input: {
         message: 'Bài chưa neo KC nào — đối chiếu bổ sung hoặc đổi stage.',
         code: 'unmapped',
       },
-    ]);
+    ])
 
   const [coursePlan, unitPlan] = await Promise.all([
     getPlan(input.courseSlug, 'course', input.courseSlug),
     getPlan(input.courseSlug, 'unit', unit.slug),
-  ]);
+  ])
 
   const plan = await generateLessonPlan({
     kcs: lesson.teaches,
@@ -88,10 +83,10 @@ export async function generateLessonPlanInCourse(input: {
     unitContext: JSON.stringify(unitPlan?.doc ?? {}),
     ...(input.aiKey ? { aiKey: input.aiKey } : {}),
     ...(input.signal ? { signal: input.signal } : {}),
-  });
+  })
   // Giữ slug bài theo vỏ khoá để ăn khớp khi duyệt/lấy lại.
-  const withSlug: LessonInstructionPlan = { ...plan, slug: input.lessonSlug };
-  const quality = qualityOf(await getSkillGraph(), withSlug);
+  const withSlug: LessonInstructionPlan = { ...plan, slug: input.lessonSlug }
+  const quality = qualityOf(await getSkillGraph(), withSlug)
 
   const stored = await savePlan({
     courseSlug: input.courseSlug,
@@ -100,8 +95,8 @@ export async function generateLessonPlanInCourse(input: {
     doc: withSlug,
     quality,
     createdBy: input.userId,
-  });
-  return { plan: withSlug, quality, stored };
+  })
+  return { plan: withSlug, quality, stored }
 }
 
 function qualityOf(
@@ -113,9 +108,7 @@ function qualityOf(
     slug: 'preview',
     title: plan.title,
     objectives: plan.teaches,
-    units: [
-      { slug: 'unit-1', version: 1, title: plan.title, concepts: plan.teaches, lessons: [plan] },
-    ],
-  };
-  return planQuality(course, graph);
+    units: [{ slug: 'unit-1', version: 1, title: plan.title, concepts: plan.teaches, lessons: [plan] }],
+  }
+  return planQuality(course, graph)
 }

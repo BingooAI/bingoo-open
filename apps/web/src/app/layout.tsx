@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 
 /**
  * Passthrough root layout. The real `<html>`/`<body>` live in
@@ -7,5 +7,5 @@ import type { ReactNode } from 'react';
  * that the app tree has a root layout — it must not add a second `<html>`.
  */
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return children;
+  return children
 }

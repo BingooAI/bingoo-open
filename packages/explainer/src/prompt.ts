@@ -12,16 +12,16 @@
  * budgets from the layout engine, the kit list from the live registry, the worked
  * examples from `examples.ts` (each re-checked against the gate before shipping).
  */
-import { MANIPULATIVES, KIT_DOCS } from '@bingoo/manipulatives';
-import { QUIZ_TYPES } from '@bingoo/core';
-import { quizGuide } from './quizdoc';
-import { arcGuide, planFor, DEFAULT_MINUTES, RICHNESS } from './arc';
-import { SFX_NAMES } from './sfx-catalog';
-import { AUDIENCE_PROFILES, type AudienceStage } from './brief';
-import { REFERENCE_DOC, REFERENCE_BUNDLE } from './reference';
-import { authoringGuide } from './authoring';
-import { templateCatalog } from './catalog';
-import { EXAMPLES } from './examples';
+import { MANIPULATIVES, KIT_DOCS } from '@bingoo/manipulatives'
+import { QUIZ_TYPES } from '@bingoo/core'
+import { quizGuide } from './quizdoc'
+import { arcGuide, planFor, DEFAULT_MINUTES, RICHNESS } from './arc'
+import { SFX_NAMES } from './sfx-catalog'
+import { AUDIENCE_PROFILES, type AudienceStage } from './brief'
+import { REFERENCE_DOC, REFERENCE_BUNDLE } from './reference'
+import { authoringGuide } from './authoring'
+import { templateCatalog } from './catalog'
+import { EXAMPLES } from './examples'
 
 /**
  * The message a human sends ALONGSIDE the file. The file is the contract; this is
@@ -32,7 +32,7 @@ import { EXAMPLES } from './examples';
  *  and the prompt can never offer different options. */
 export const AUDIENCES: { id: AudienceStage; label: string }[] = (
   Object.keys(AUDIENCE_PROFILES) as AudienceStage[]
-).map((id) => ({ id, label: AUDIENCE_PROFILES[id].label }));
+).map((id) => ({ id, label: AUDIENCE_PROFILES[id].label }))
 
 export function promptMessage(
   topic = '<CHỦ ĐỀ>',
@@ -40,7 +40,7 @@ export function promptMessage(
   minutes = DEFAULT_MINUTES,
   lang = 'tiếng Việt',
 ): string {
-  const plan = planFor(minutes);
+  const plan = planFor(minutes)
   return [
     'Đọc file đính kèm — đó là đặc tả định dạng JSON của bài giảng. Vài điểm cần lưu ý:',
     '- không viết toạ độ, chỉ dùng "region";',
@@ -58,7 +58,7 @@ export function promptMessage(
     '',
     'Trả kết quả dưới dạng MỘT FILE .json tải xuống được (không in JSON ra trong chat,',
     'không giải thích, không ```fence). Nội dung file là object { doc, bundle }.',
-  ].join('\n');
+  ].join('\n')
 }
 
 /**
@@ -84,17 +84,17 @@ export function promptMarkdown(minutes = DEFAULT_MINUTES, brief = false): string
   // 67 bare names is handing it nothing: it cannot tell a ten-frame from a bar
   // model, so it picks the one word it recognises and uses it four times.
   const kits = MANIPULATIVES.map((m) => {
-    const d = KIT_DOCS[m.kind];
-    const verbs = d?.verbs || Object.keys(m.verbs).join(' · ') || '—';
+    const d = KIT_DOCS[m.kind]
+    const verbs = d?.verbs || Object.keys(m.verbs).join(' · ') || '—'
     if (brief) {
       // one line per kit — enough to choose one and call its verbs
-      return `- \`${m.kind}\` — ${(d?.desc ?? '').slice(0, 90)} · verbs: ${verbs}`;
+      return `- \`${m.kind}\` — ${(d?.desc ?? '').slice(0, 90)} · verbs: ${verbs}`
     }
     const enums = d?.paramEnums
       ? Object.entries(d.paramEnums)
           .map(([k, v]) => `${k}: ${v.join(' | ')}`)
           .join('  ·  ')
-      : '';
+      : ''
     return [
       `### ${m.kind}`,
       d?.desc ?? '',
@@ -103,19 +103,19 @@ export function promptMarkdown(minutes = DEFAULT_MINUTES, brief = false): string
       `verbs:  ${verbs}`,
     ]
       .filter(Boolean)
-      .join('\n');
-  }).join(brief ? '\n' : '\n\n');
+      .join('\n')
+  }).join(brief ? '\n' : '\n\n')
   // In brief mode show a representative FEW — teach, sequence (with actions),
   // data (chart), practice (gate). Twenty inline JSON blocks is what bloats the
   // file and reads as an attack payload.
-  const exampleKeys = brief ? ['teach', 'sequence', 'data', 'practice'] : Object.keys(EXAMPLES);
+  const exampleKeys = brief ? ['teach', 'sequence', 'data', 'practice'] : Object.keys(EXAMPLES)
   const examples = exampleKeys
     .filter((tpl) => EXAMPLES[tpl as keyof typeof EXAMPLES])
     .map((tpl) => {
-      const ex = EXAMPLES[tpl as keyof typeof EXAMPLES]!;
-      return `### \`${tpl}\`\n> ${ex.why}\n\n\`\`\`json\n${JSON.stringify({ scene: ex.scene, strings: ex.strings }, null, 2)}\n\`\`\`\n`;
+      const ex = EXAMPLES[tpl as keyof typeof EXAMPLES]!
+      return `### \`${tpl}\`\n> ${ex.why}\n\n\`\`\`json\n${JSON.stringify({ scene: ex.scene, strings: ex.strings }, null, 2)}\n\`\`\`\n`
     })
-    .join('\n');
+    .join('\n')
 
   return `<!-- GENERATED từ engine đang chạy. Đừng sửa tay — sinh lại bằng:
      pnpm --filter @bingoo/explainer prompt   (hoặc tải từ trang /vi/explainer-import) -->
@@ -469,5 +469,5 @@ Soạn bài **"<CHỦ ĐỀ>"** cho **<ĐỐI TƯỢNG>**:
 - Lời giảng viết bằng **giọng nói với người học đó** (gọi "em", hỏi han, chỉ vào thứ đang hiện), không phải giọng sách giáo khoa. Mỗi câu một \`[[cue:...]]\`, mỗi cue một beat.
 
 Trả về **CHỈ** JSON \`{doc, bundle}\`.
-`;
+`
 }

@@ -17,7 +17,7 @@ export type {
   FrameworkDraft,
   IngestDraft,
   ExistingConcept,
-} from './model';
+} from './model'
 export type {
   ConceptCandidate,
   EdgeCandidate,
@@ -26,22 +26,22 @@ export type {
   EdgeProposerPort,
   EmbeddingPort,
   AuthoringPorts,
-} from './ports';
+} from './ports'
 
-export { slugify, mintSlug, canonicalTitle } from './slug';
-export { trigrams, diceSimilarity } from './trigram';
-export { dedupeConcepts, type DedupResult, type Merge } from './dedup';
-export { compileDraft, type CompiledFramework, type CompiledObjective } from './compile';
-export { validateDraft, hasBlockingIssue, type DraftIssue, type IssueSeverity } from './validate';
-export { applyReview, type ReviewDecision } from './review';
-export { runIngest } from './pipeline';
+export { slugify, mintSlug, canonicalTitle } from './slug'
+export { trigrams, diceSimilarity } from './trigram'
+export { dedupeConcepts, type DedupResult, type Merge } from './dedup'
+export { compileDraft, type CompiledFramework, type CompiledObjective } from './compile'
+export { validateDraft, hasBlockingIssue, type DraftIssue, type IssueSeverity } from './validate'
+export { applyReview, type ReviewDecision } from './review'
+export { runIngest } from './pipeline'
 export {
   checkInvariants,
   hasBlockingViolation,
   type Violation,
   type InvariantCode,
   type InvariantOpts,
-} from './invariants';
+} from './invariants'
 export {
   structuralVerdict,
   proposeAlignment,
@@ -52,4 +52,4 @@ export {
   type AlignProposal,
   type ExistingKc,
   type NewConcept,
-} from './alignment';
+} from './alignment'

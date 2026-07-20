@@ -1,21 +1,21 @@
-'use client';
+'use client'
 
-import { type ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { type ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export interface SegmentOption<T extends string> {
-  value: T;
-  label: ReactNode;
-  icon?: ReactNode;
+  value: T
+  label: ReactNode
+  icon?: ReactNode
 }
 
 export interface SegmentedControlProps<T extends string> {
-  options: SegmentOption<T>[];
-  value: T;
-  onChange: (value: T) => void;
-  className?: string;
-  size?: 'sm' | 'md';
-  'aria-label'?: string;
+  options: SegmentOption<T>[]
+  value: T
+  onChange: (value: T) => void
+  className?: string
+  size?: 'sm' | 'md'
+  'aria-label'?: string
 }
 
 export function SegmentedControl<T extends string>({
@@ -36,7 +36,7 @@ export function SegmentedControl<T extends string>({
       )}
     >
       {options.map((opt) => {
-        const active = opt.value === value;
+        const active = opt.value === value
         return (
           <button
             key={opt.value}
@@ -48,16 +48,14 @@ export function SegmentedControl<T extends string>({
               'inline-flex items-center justify-center gap-1.5 rounded-full font-semibold transition-all',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               size === 'sm' ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm',
-              active
-                ? 'bg-surface text-foreground shadow-sm'
-                : 'text-foreground-muted hover:text-foreground',
+              active ? 'bg-surface text-foreground shadow-sm' : 'text-foreground-muted hover:text-foreground',
             )}
           >
             {opt.icon}
             {opt.label}
           </button>
-        );
+        )
       })}
     </div>
-  );
+  )
 }

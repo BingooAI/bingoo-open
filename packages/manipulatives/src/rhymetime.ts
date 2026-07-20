@@ -8,21 +8,21 @@
  * Preschool / early primary English, ages 4–7.
  * verbs: build · buildAll · highlightRime · showOdd(word) · spotOdd · choose(word).
  */
-import type { Manipulative, ManipModel, ManipState, Prim, RenderCtx, VerbClip } from './types';
-import { tween, activeSegment } from './bake';
-import { lerp, clamp01, TOK } from './util';
+import type { Manipulative, ManipModel, ManipState, Prim, RenderCtx, VerbClip } from './types'
+import { tween, activeSegment } from './bake'
+import { lerp, clamp01, TOK } from './util'
 
 export type RhymeP = {
-  rime: string;
-  onsets: string[];
-  built: number;
-  odd: { word: string; present: boolean };
+  rime: string
+  onsets: string[]
+  built: number
+  odd: { word: string; present: boolean }
   /** X mark shown on the odd word (only ever true when it truly doesn't rhyme). */
-  oddMarked: boolean;
-  highlightRime: boolean;
+  oddMarked: boolean
+  highlightRime: boolean
   /** learner's picked word (grading: does it end with the rime?). */
-  choice: string | null;
-};
+  choice: string | null
+}
 
 const DEFAULT: RhymeP = {
   rime: 'at',
@@ -32,25 +32,25 @@ const DEFAULT: RhymeP = {
   oddMarked: false,
   highlightRime: false,
   choice: null,
-};
+}
 
 function num(v: unknown): number {
-  const n = typeof v === 'number' ? v : Number(v);
-  return Number.isFinite(n) ? n : 0;
+  const n = typeof v === 'number' ? v : Number(v)
+  return Number.isFinite(n) ? n : 0
 }
 function str(v: unknown, dflt: string): string {
-  return typeof v === 'string' && v.length > 0 ? v : dflt;
+  return typeof v === 'string' && v.length > 0 ? v : dflt
 }
 
 function normalize(raw: unknown): RhymeP {
-  const r = (raw ?? {}) as Partial<RhymeP>;
-  const rime = str(r.rime, DEFAULT.rime);
+  const r = (raw ?? {}) as Partial<RhymeP>
+  const rime = str(r.rime, DEFAULT.rime)
   let onsets = Array.isArray(r.onsets)
     ? r.onsets.filter((o): o is string => typeof o === 'string' && o.length > 0)
-    : [];
-  if (!onsets.length) onsets = [...DEFAULT.onsets];
-  const oddRaw = (r.odd ?? {}) as Partial<RhymeP['odd']>;
-  const odd = { word: str(oddRaw.word, 'dog'), present: !!oddRaw.present };
+    : []
+  if (!onsets.length) onsets = [...DEFAULT.onsets]
+  const oddRaw = (r.odd ?? {}) as Partial<RhymeP['odd']>
+  const odd = { word: str(oddRaw.word, 'dog'), present: !!oddRaw.present }
   return {
     rime,
     onsets,
@@ -60,18 +60,18 @@ function normalize(raw: unknown): RhymeP {
     oddMarked: !!r.oddMarked && odd.present && !odd.word.endsWith(rime),
     highlightRime: !!r.highlightRime,
     choice: typeof r.choice === 'string' ? r.choice : null,
-  };
+  }
 }
 
 const verbs: Manipulative<RhymeP>['verbs'] = {
   build(p): VerbClip<RhymeP> {
-    return tween(p, { ...p, built: Math.min(p.onsets.length, p.built + 1) }, 0.6, 'easeOutCubic');
+    return tween(p, { ...p, built: Math.min(p.onsets.length, p.built + 1) }, 0.6, 'easeOutCubic')
   },
   buildAll(p): VerbClip<RhymeP> {
-    return tween(p, { ...p, built: p.onsets.length }, 0.9, 'easeOutCubic');
+    return tween(p, { ...p, built: p.onsets.length }, 0.9, 'easeOutCubic')
   },
   highlightRime(p): VerbClip<RhymeP> {
-    return tween(p, { ...p, highlightRime: true }, 0.45, 'easeOutBack');
+    return tween(p, { ...p, highlightRime: true }, 0.45, 'easeOutBack')
   },
   showOdd(p, args): VerbClip<RhymeP> {
     const word =
@@ -79,13 +79,13 @@ const verbs: Manipulative<RhymeP>['verbs'] = {
         ? args.word
         : typeof args === 'string' && args
           ? args
-          : p.odd.word;
-    return tween(p, { ...p, odd: { word, present: true }, oddMarked: false }, 0.5, 'easeOutBack');
+          : p.odd.word
+    return tween(p, { ...p, odd: { word, present: true }, oddMarked: false }, 0.5, 'easeOutBack')
   },
   spotOdd(p): VerbClip<RhymeP> {
     // REAL logic: only mark when the word genuinely does not end with the rime
-    const trulyOdd = p.odd.present && !p.odd.word.endsWith(p.rime);
-    return tween(p, { ...p, oddMarked: trulyOdd }, 0.5, 'easeOutCubic');
+    const trulyOdd = p.odd.present && !p.odd.word.endsWith(p.rime)
+    return tween(p, { ...p, oddMarked: trulyOdd }, 0.5, 'easeOutCubic')
   },
   choose(p, args): VerbClip<RhymeP> {
     const word =
@@ -93,33 +93,33 @@ const verbs: Manipulative<RhymeP>['verbs'] = {
         ? args.word
         : typeof args === 'string' && args
           ? args
-          : p.choice;
-    return tween(p, { ...p, choice: word ?? null }, 0.35, 'easeOutBack');
+          : p.choice
+    return tween(p, { ...p, choice: word ?? null }, 0.35, 'easeOutBack')
   },
-};
+}
 
 function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: RenderCtx): ManipModel {
-  const { box } = ctx;
-  const seg = activeSegment(state, t);
-  const P = seg.to;
-  const prims: Prim[] = [];
-  const nOn = Math.max(1, P.onsets.length);
-  const building = seg.verb === 'build' || seg.verb === 'buildAll';
+  const { box } = ctx
+  const seg = activeSegment(state, t)
+  const P = seg.to
+  const prims: Prim[] = []
+  const nOn = Math.max(1, P.onsets.length)
+  const building = seg.verb === 'build' || seg.verb === 'buildAll'
 
   /* left onset queue */
-  const tile = Math.min(box.h * 0.1, box.w * 0.1);
-  const queueX = box.w * 0.12;
-  const queueY0 = box.h * 0.2;
-  const queueStep = Math.min(tile * 1.35, (box.h * 0.68) / nOn);
-  const queuePos = (slot: number) => ({ x: queueX, y: queueY0 + slot * queueStep });
+  const tile = Math.min(box.h * 0.1, box.w * 0.1)
+  const queueX = box.w * 0.12
+  const queueY0 = box.h * 0.2
+  const queueStep = Math.min(tile * 1.35, (box.h * 0.68) / nOn)
+  const queuePos = (slot: number) => ({ x: queueX, y: queueY0 + slot * queueStep })
 
   /* central rime box */
-  const rimeSize = Math.min(box.h * 0.075, box.w * 0.085);
-  const rimeText = '-' + P.rime;
-  const rimeW = rimeText.length * rimeSize * 0.62 + rimeSize;
+  const rimeSize = Math.min(box.h * 0.075, box.w * 0.085)
+  const rimeText = '-' + P.rime
+  const rimeW = rimeText.length * rimeSize * 0.62 + rimeSize
   const rimeCx = box.w * 0.55,
-    rimeCy = box.h * 0.15;
-  const hiP = seg.verb === 'highlightRime' ? seg.p : P.highlightRime ? 1 : 0;
+    rimeCy = box.h * 0.15
+  const hiP = seg.verb === 'highlightRime' ? seg.p : P.highlightRime ? 1 : 0
   prims.push({
     k: 'rect',
     x: rimeCx - rimeW / 2,
@@ -132,7 +132,7 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
     rx: rimeSize * 0.35,
     opacity: P.highlightRime ? 0.25 + 0.2 * hiP : 1,
     z: 2,
-  });
+  })
   if (hiP > 0)
     prims.push({
       k: 'rect',
@@ -146,7 +146,7 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
       rx: rimeSize * 0.45,
       opacity: hiP,
       z: 6,
-    });
+    })
   prims.push({
     k: 'label',
     x: rimeCx,
@@ -157,31 +157,31 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
     align: 'middle',
     baseline: 'middle',
     z: 3,
-  });
+  })
 
   /* built word rows */
-  const y0 = box.h * 0.34;
-  const rowStep = Math.min(box.h * 0.15, (box.h * 0.6) / nOn);
-  const wordSize = Math.min(rowStep * 0.6, box.w * 0.08);
-  const charW = wordSize * 0.62;
-  const mNew = Math.max(1, P.built - seg.from.built);
+  const y0 = box.h * 0.34
+  const rowStep = Math.min(box.h * 0.15, (box.h * 0.6) / nOn)
+  const wordSize = Math.min(rowStep * 0.6, box.w * 0.08)
+  const charW = wordSize * 0.62
+  const mNew = Math.max(1, P.built - seg.from.built)
 
   // words in flight or done
   for (let k = 0; k < P.built; k++) {
-    const onset = P.onsets[k]!;
-    const word = onset + P.rime;
-    const totalW = Math.max(1, word.length) * charW;
-    const startX = box.w * 0.5 - totalW / 2;
-    const yk = y0 + (k + 0.5) * rowStep;
-    let pk = 1;
+    const onset = P.onsets[k]!
+    const word = onset + P.rime
+    const totalW = Math.max(1, word.length) * charW
+    const startX = box.w * 0.5 - totalW / 2
+    const yk = y0 + (k + 0.5) * rowStep
+    let pk = 1
     if (building && seg.p < 1 && k >= seg.from.built) {
-      const idx = k - seg.from.built;
-      pk = mNew > 1 ? clamp01(seg.p * mNew - idx) : seg.p;
+      const idx = k - seg.from.built
+      pk = mNew > 1 ? clamp01(seg.p * mNew - idx) : seg.p
     }
-    const onsetTargetX = startX + (onset.length * charW) / 2;
-    const q = queuePos(k - seg.from.built); // its queue slot when the verb started
-    const ox = lerp(q.x, onsetTargetX, pk);
-    const oy = lerp(q.y, yk, pk);
+    const onsetTargetX = startX + (onset.length * charW) / 2
+    const q = queuePos(k - seg.from.built) // its queue slot when the verb started
+    const ox = lerp(q.x, onsetTargetX, pk)
+    const oy = lerp(q.y, yk, pk)
     // ghost tile carries the onset while it glides (fades as it snaps in)
     if (pk < 1)
       prims.push({
@@ -196,7 +196,7 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
         rx: tile * 0.2,
         opacity: (1 - pk) * 0.8,
         z: 4,
-      });
+      })
     prims.push({
       k: 'label',
       x: ox,
@@ -207,7 +207,7 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
       align: 'middle',
       baseline: 'middle',
       z: 5,
-    });
+    })
     // the rime part fades in as the onset arrives
     prims.push({
       k: 'label',
@@ -220,11 +220,11 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
       baseline: 'middle',
       opacity: pk,
       z: 5,
-    });
+    })
     if (P.highlightRime && pk > 0) {
-      const ux1 = startX + onset.length * charW;
-      const ux2 = startX + word.length * charW;
-      const uw = seg.verb === 'highlightRime' ? seg.p : 1;
+      const ux1 = startX + onset.length * charW
+      const ux2 = startX + word.length * charW
+      const uw = seg.verb === 'highlightRime' ? seg.p : 1
       prims.push({
         k: 'line',
         x1: ux1,
@@ -236,7 +236,7 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
         cap: 'round',
         opacity: pk,
         z: 6,
-      });
+      })
     }
     // learner's chosen word gets a ring
     if (P.choice === word)
@@ -251,16 +251,16 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
         weight: 'md',
         rx: wordSize * 0.35,
         z: 6,
-      });
+      })
   }
 
   // remaining queue tiles slide up as earlier onsets leave
-  const gp = building ? seg.p : 1;
+  const gp = building ? seg.p : 1
   for (let i = P.built; i < nOn; i++) {
-    const from = queuePos(i - seg.from.built);
-    const to = queuePos(i - P.built);
+    const from = queuePos(i - seg.from.built)
+    const to = queuePos(i - P.built)
     const x = lerp(from.x, to.x, gp),
-      y = lerp(from.y, to.y, gp);
+      y = lerp(from.y, to.y, gp)
     prims.push({
       k: 'rect',
       x: x - tile / 2,
@@ -272,7 +272,7 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
       weight: 'sm',
       rx: tile * 0.2,
       z: 3,
-    });
+    })
     prims.push({
       k: 'label',
       x,
@@ -283,20 +283,19 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
       align: 'middle',
       baseline: 'middle',
       z: 4,
-    });
+    })
   }
 
   /* odd one out */
   if (P.odd.present) {
-    const os = Math.min(box.h * 0.055, box.w * 0.055);
-    const ow = Math.max(1, P.odd.word.length) * os * 0.62 + os;
+    const os = Math.min(box.h * 0.055, box.w * 0.055)
+    const ow = Math.max(1, P.odd.word.length) * os * 0.62 + os
     const ocx = box.w * 0.85,
-      ocy = box.h * 0.5;
-    const appearing = seg.verb === 'showOdd' && !seg.from.odd.present;
-    const ap = appearing ? seg.p : 1;
-    const wob =
-      seg.verb === 'showOdd' ? Math.sin(seg.p * Math.PI * 4) * box.w * 0.015 * (1 - seg.p) : 0;
-    const x = ocx + wob;
+      ocy = box.h * 0.5
+    const appearing = seg.verb === 'showOdd' && !seg.from.odd.present
+    const ap = appearing ? seg.p : 1
+    const wob = seg.verb === 'showOdd' ? Math.sin(seg.p * Math.PI * 4) * box.w * 0.015 * (1 - seg.p) : 0
+    const x = ocx + wob
     prims.push({
       k: 'rect',
       x: x - ow / 2,
@@ -309,7 +308,7 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
       rx: os * 0.35,
       opacity: ap,
       z: 3,
-    });
+    })
     prims.push({
       k: 'label',
       x,
@@ -321,7 +320,7 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
       baseline: 'middle',
       opacity: ap,
       z: 4,
-    });
+    })
     if (P.choice === P.odd.word)
       prims.push({
         k: 'rect',
@@ -335,14 +334,14 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
         rx: os * 0.45,
         opacity: ap,
         z: 6,
-      });
+      })
     if (P.oddMarked) {
       // X draws on — it visibly does NOT share the rime
-      const mp = seg.verb === 'spotOdd' ? seg.p : 1;
+      const mp = seg.verb === 'spotOdd' ? seg.p : 1
       const x1 = x - ow / 2,
         x2 = x + ow / 2,
         yT = ocy - os * 0.95,
-        yB = ocy + os * 0.95;
+        yB = ocy + os * 0.95
       prims.push({
         k: 'line',
         x1,
@@ -353,9 +352,9 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
         weight: 'lg',
         cap: 'round',
         z: 7,
-      });
+      })
       if (mp > 0.5) {
-        const mp2 = (mp - 0.5) * 2;
+        const mp2 = (mp - 0.5) * 2
         prims.push({
           k: 'line',
           x1: x2,
@@ -366,12 +365,12 @@ function render(_params: RhymeP, state: ManipState<RhymeP>, t: number, ctx: Rend
           weight: 'lg',
           cap: 'round',
           z: 7,
-        });
+        })
       }
     }
   }
 
-  return { prims, view: box };
+  return { prims, view: box }
 }
 
 export const RhymeTime: Manipulative<RhymeP> = {
@@ -380,4 +379,4 @@ export const RhymeTime: Manipulative<RhymeP> = {
   normalize,
   render,
   verbs,
-};
+}

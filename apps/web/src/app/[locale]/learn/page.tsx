@@ -1,15 +1,15 @@
-'use client';
+'use client'
 
-import type { ExperienceDescriptor } from '@bingoo/learning-experience';
-import { LearnExperience, type ExperienceLabels } from '@bingoo/experiences';
-import { Avatar, BadgeTile, DailyGoalRing, StreakBadge, SubjectCard, XPBar } from '@bingoo/ui-web';
-import { BookOpen, Compass, Flame, Home, Palette, Star, Swords, Trophy, User } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import type { ReactNode } from 'react';
-import { useMemo, useState } from 'react';
-import { LocaleSwitcher } from '@/components/brand/locale-switcher';
-import { ThemeToggle } from '@/components/brand/theme-toggle';
-import { buildExperienceLabels } from '@/lib/experience-labels';
+import type { ExperienceDescriptor } from '@bingoo/learning-experience'
+import { LearnExperience, type ExperienceLabels } from '@bingoo/experiences'
+import { Avatar, BadgeTile, DailyGoalRing, StreakBadge, SubjectCard, XPBar } from '@bingoo/ui-web'
+import { BookOpen, Compass, Flame, Home, Palette, Star, Swords, Trophy, User } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import type { ReactNode } from 'react'
+import { useMemo, useState } from 'react'
+import { LocaleSwitcher } from '@/components/brand/locale-switcher'
+import { ThemeToggle } from '@/components/brand/theme-toggle'
+import { buildExperienceLabels } from '@/lib/experience-labels'
 import {
   buildArena,
   buildCourse,
@@ -19,9 +19,9 @@ import {
   buildRichSteps,
   buildTopics,
   makeRenderActivity,
-} from './content';
+} from './content'
 
-type TabId = 'home' | 'feed' | 'arena' | 'me';
+type TabId = 'home' | 'feed' | 'arena' | 'me'
 
 const DESCR: Record<Exclude<TabId, 'me'>, ExperienceDescriptor> = {
   home: {
@@ -39,31 +39,31 @@ const DESCR: Record<Exclude<TabId, 'me'>, ExperienceDescriptor> = {
     time: 'on-demand',
   },
   arena: { experience: 'arena', delivery: 'live', companion: 'peer', scale: 'class', time: 'live' },
-};
+}
 
 export default function LearnPage() {
-  const t = useTranslations('learn');
-  const exp = useTranslations('kitchenSink.experiences');
-  const [tab, setTab] = useState<TabId>('home');
+  const t = useTranslations('learn')
+  const exp = useTranslations('kitchenSink.experiences')
+  const [tab, setTab] = useState<TabId>('home')
 
-  const expLabels = useMemo(() => buildExperienceLabels(exp), [exp]);
-  const surfaceLabels = useMemo<ExperienceLabels>(() => buildSurfaceLabels(t), [t]);
+  const expLabels = useMemo(() => buildExperienceLabels(exp), [exp])
+  const surfaceLabels = useMemo<ExperienceLabels>(() => buildSurfaceLabels(t), [t])
 
-  const steps = useMemo(() => buildRichSteps(t), [t]);
-  const topics = useMemo(() => buildTopics(t), [t]);
-  const course = useMemo(() => buildCourse(t), [t]);
-  const quiz = useMemo(() => buildQuiz(t), [t]);
-  const arena = useMemo(() => buildArena(t), [t]);
-  const project = useMemo(() => buildProject(t), [t]);
-  const participants = useMemo(() => buildParticipants(t), [t]);
-  const renderActivity = useMemo(() => makeRenderActivity(t), [t]);
+  const steps = useMemo(() => buildRichSteps(t), [t])
+  const topics = useMemo(() => buildTopics(t), [t])
+  const course = useMemo(() => buildCourse(t), [t])
+  const quiz = useMemo(() => buildQuiz(t), [t])
+  const arena = useMemo(() => buildArena(t), [t])
+  const project = useMemo(() => buildProject(t), [t])
+  const participants = useMemo(() => buildParticipants(t), [t])
+  const renderActivity = useMemo(() => makeRenderActivity(t), [t])
 
   const TABS: { id: TabId; icon: typeof Home; label: string }[] = [
     { id: 'home', icon: Home, label: t('tabs.home') },
     { id: 'feed', icon: Compass, label: t('tabs.feed') },
     { id: 'arena', icon: Swords, label: t('tabs.arena') },
     { id: 'me', icon: User, label: t('tabs.me') },
-  ];
+  ]
 
   return (
     <div
@@ -92,9 +92,7 @@ export default function LearnPage() {
             modeLabel={expLabels.experience[DESCR[tab].experience]}
             renderActivity={renderActivity}
             hud={{ xp: 620, streak: 5, hearts: { left: 4, max: 5 } }}
-            companionSlot={
-              <p className="text-sm text-foreground-muted">{t('surface.companion')}</p>
-            }
+            companionSlot={<p className="text-sm text-foreground-muted">{t('surface.companion')}</p>}
           />
         )}
       </main>
@@ -105,7 +103,7 @@ export default function LearnPage() {
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         {TABS.map(({ id, icon: Icon, label }) => {
-          const on = tab === id;
+          const on = tab === id
           return (
             <button
               key={id}
@@ -122,25 +120,20 @@ export default function LearnPage() {
               >
                 <Icon className={cn('size-[22px]', on && 'scale-110')} strokeWidth={on ? 2.6 : 2} />
               </span>
-              <span
-                className={cn(
-                  'text-[10px] font-bold',
-                  on ? 'text-primary' : 'text-foreground-subtle',
-                )}
-              >
+              <span className={cn('text-[10px] font-bold', on ? 'text-primary' : 'text-foreground-subtle')}>
                 {label}
               </span>
             </button>
-          );
+          )
         })}
       </nav>
     </div>
-  );
+  )
 }
 
 /* ─────────────────────────── Profile (mobile) ─────────────────────────── */
 function ProfileScreen({ t }: { t: (k: string) => string }) {
-  const p = (k: string) => t(`profile.${k}`);
+  const p = (k: string) => t(`profile.${k}`)
   return (
     <div className="h-full overflow-y-auto" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       {/* Hero */}
@@ -176,11 +169,7 @@ function ProfileScreen({ t }: { t: (k: string) => string }) {
         {/* Badges */}
         <Section title={p('badges')}>
           <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <BadgeTile
-              icon={<Trophy className="size-5" />}
-              title={p('badgeMath')}
-              color="sunbeam"
-            />
+            <BadgeTile icon={<Trophy className="size-5" />} title={p('badgeMath')} color="sunbeam" />
             <BadgeTile icon={<Flame className="size-5" />} title={p('badgeStreak')} color="coral" />
             <BadgeTile icon={<BookOpen className="size-5" />} title={p('badgeRead')} color="teal" />
             <BadgeTile icon={<Star className="size-5" />} title={p('badgeLocked')} locked />
@@ -225,7 +214,7 @@ function ProfileScreen({ t }: { t: (k: string) => string }) {
         </Section>
       </div>
     </div>
-  );
+  )
 }
 
 function Stat({
@@ -234,24 +223,24 @@ function Stat({
   label,
   color,
 }: {
-  icon: ReactNode;
-  value: string;
-  label: string;
-  color: 'coral' | 'sunbeam' | 'primary' | 'teal';
+  icon: ReactNode
+  value: string
+  label: string
+  color: 'coral' | 'sunbeam' | 'primary' | 'teal'
 }) {
   const tint = {
     coral: 'bg-accent-coral-soft text-accent-coral',
     sunbeam: 'bg-accent-sunbeam-soft text-accent-sunbeam',
     primary: 'bg-primary-soft text-primary',
     teal: 'bg-accent-teal-soft text-accent-teal',
-  }[color];
+  }[color]
   return (
     <div className="flex flex-col items-center gap-1 rounded-2xl border border-border bg-surface py-3">
       <span className={cn('grid size-9 place-items-center rounded-xl', tint)}>{icon}</span>
       <span className="font-display text-lg font-extrabold text-foreground">{value}</span>
       <span className="text-[11px] text-foreground-muted">{label}</span>
     </div>
-  );
+  )
 }
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
@@ -260,7 +249,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
       <h2 className="font-display text-sm font-bold text-foreground">{title}</h2>
       {children}
     </section>
-  );
+  )
 }
 
 /* build ExperienceLabels từ i18n (giữ như cũ) */
@@ -335,9 +324,9 @@ function buildSurfaceLabels(t: (k: string) => string): ExperienceLabels {
       present: t('classroom.present'),
       reactions: t('classroom.reactions'),
     },
-  };
+  }
 }
 
 function cn(...a: (string | false | null | undefined)[]) {
-  return a.filter(Boolean).join(' ');
+  return a.filter(Boolean).join(' ')
 }

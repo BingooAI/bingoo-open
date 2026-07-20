@@ -3,28 +3,28 @@
  * (courseSlug, level, refSlug). Đây là nơi giữ CỔNG: cấp con chỉ sinh khi cấp cha đã APPROVED.
  */
 
-import { db, type Prisma } from '@bingoo/db';
+import { db, type Prisma } from '@bingoo/db'
 
-export type PlanLevel = 'course' | 'unit' | 'lesson';
+export type PlanLevel = 'course' | 'unit' | 'lesson'
 
 export interface StoredPlan {
-  readonly level: PlanLevel;
-  readonly refSlug: string;
-  readonly doc: unknown;
-  readonly status: string; // DRAFT | APPROVED | …
-  readonly version: number;
-  readonly quality: unknown;
-  readonly approvedBy: string | null;
+  readonly level: PlanLevel
+  readonly refSlug: string
+  readonly doc: unknown
+  readonly status: string // DRAFT | APPROVED | …
+  readonly version: number
+  readonly quality: unknown
+  readonly approvedBy: string | null
 }
 
 const toStored = (r: {
-  level: string;
-  refSlug: string;
-  doc: unknown;
-  status: string;
-  version: number;
-  quality: unknown;
-  approvedBy: string | null;
+  level: string
+  refSlug: string
+  doc: unknown
+  status: string
+  version: number
+  quality: unknown
+  approvedBy: string | null
 }): StoredPlan => ({
   level: r.level as PlanLevel,
   refSlug: r.refSlug,
@@ -33,16 +33,16 @@ const toStored = (r: {
   version: r.version,
   quality: r.quality ?? null,
   approvedBy: r.approvedBy,
-});
+})
 
 /** Lưu/ghi đè một kế hoạch (bump version, reset về DRAFT — sinh lại thì phải duyệt lại). */
 export async function savePlan(input: {
-  courseSlug: string;
-  level: PlanLevel;
-  refSlug: string;
-  doc: unknown;
-  quality: unknown;
-  createdBy: string;
+  courseSlug: string
+  level: PlanLevel
+  refSlug: string
+  doc: unknown
+  quality: unknown
+  createdBy: string
 }): Promise<StoredPlan> {
   const prev = await db.authoringPlan.findUnique({
     where: {
@@ -53,7 +53,7 @@ export async function savePlan(input: {
       },
     },
     select: { version: true },
-  });
+  })
   const r = await db.authoringPlan.upsert({
     where: {
       courseSlug_level_refSlug: {
@@ -87,8 +87,8 @@ export async function savePlan(input: {
       quality: true,
       approvedBy: true,
     },
-  });
-  return toStored(r);
+  })
+  return toStored(r)
 }
 
 export async function getPlan(
@@ -107,8 +107,8 @@ export async function getPlan(
       quality: true,
       approvedBy: true,
     },
-  });
-  return r ? toStored(r) : null;
+  })
+  return r ? toStored(r) : null
 }
 
 /** Mọi kế hoạch của một khoá (để UI dựng cây trạng thái). */
@@ -124,8 +124,8 @@ export async function listPlans(courseSlug: string): Promise<readonly StoredPlan
       quality: true,
       approvedBy: true,
     },
-  });
-  return rows.map(toStored);
+  })
+  return rows.map(toStored)
 }
 
 /** DUYỆT một kế hoạch. Trả null nếu chưa có bản nháp để duyệt. */
@@ -135,8 +135,8 @@ export async function approvePlan(
   refSlug: string,
   approvedBy: string,
 ): Promise<StoredPlan | null> {
-  const existing = await getPlan(courseSlug, level, refSlug);
-  if (!existing) return null;
+  const existing = await getPlan(courseSlug, level, refSlug)
+  if (!existing) return null
   const r = await db.authoringPlan.update({
     where: { courseSlug_level_refSlug: { courseSlug, level, refSlug } },
     data: { status: 'APPROVED', approvedBy, approvedAt: new Date() },
@@ -149,16 +149,12 @@ export async function approvePlan(
       quality: true,
       approvedBy: true,
     },
-  });
-  return toStored(r);
+  })
+  return toStored(r)
 }
 
 /** Cấp cha đã duyệt chưa — cổng chặn sinh cấp con. */
-export async function isApproved(
-  courseSlug: string,
-  level: PlanLevel,
-  refSlug: string,
-): Promise<boolean> {
-  const p = await getPlan(courseSlug, level, refSlug);
-  return p?.status === 'APPROVED';
+export async function isApproved(courseSlug: string, level: PlanLevel, refSlug: string): Promise<boolean> {
+  const p = await getPlan(courseSlug, level, refSlug)
+  return p?.status === 'APPROVED'
 }

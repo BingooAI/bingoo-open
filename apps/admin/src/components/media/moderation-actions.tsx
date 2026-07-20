@@ -1,12 +1,12 @@
-'use client';
+'use client'
 
-import { CheckCircle2, Flag, X, XCircle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useState, type ReactNode } from 'react';
-import { Button, Dialog, Field, Textarea, useToast } from '@bingoo/ui-web';
-import type { ModerationStatus } from '@bingoo/core';
-import { ApiError } from '@/lib/api-client';
-import { useModerateAsset, useModerateAssets, type ModerationDecision } from '@/lib/media-queries';
+import { CheckCircle2, Flag, X, XCircle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useState, type ReactNode } from 'react'
+import { Button, Dialog, Field, Textarea, useToast } from '@bingoo/ui-web'
+import type { ModerationStatus } from '@bingoo/core'
+import { ApiError } from '@/lib/api-client'
+import { useModerateAsset, useModerateAssets, type ModerationDecision } from '@/lib/media-queries'
 
 /**
  * The R5 decision surface: approve / reject / flag, for one asset (in the detail
@@ -21,7 +21,7 @@ const TOAST_KEY: Record<ModerationDecision, 'approvedToast' | 'rejectedToast' | 
   APPROVED: 'approvedToast',
   REJECTED: 'rejectedToast',
   FLAGGED: 'flaggedToast',
-};
+}
 
 /** Confirm + capture a reason. Resolves the dialog only when the call succeeded. */
 function ReasonDialog({
@@ -33,16 +33,16 @@ function ReasonDialog({
   pending,
   onConfirm,
 }: {
-  decision: Exclude<ModerationDecision, 'APPROVED'>;
-  label: string;
-  icon: ReactNode;
-  variant: 'danger' | 'coral';
-  title: string;
-  pending: boolean;
-  onConfirm: (reason: string) => Promise<boolean>;
+  decision: Exclude<ModerationDecision, 'APPROVED'>
+  label: string
+  icon: ReactNode
+  variant: 'danger' | 'coral'
+  title: string
+  pending: boolean
+  onConfirm: (reason: string) => Promise<boolean>
 }) {
-  const t = useTranslations('admin.moderation');
-  const [reason, setReason] = useState('');
+  const t = useTranslations('admin.moderation')
+  const [reason, setReason] = useState('')
 
   return (
     <Dialog
@@ -68,8 +68,8 @@ function ReasonDialog({
             disabled={!reason.trim()}
             onClick={async () => {
               if (await onConfirm(reason.trim())) {
-                setReason('');
-                close();
+                setReason('')
+                close()
               }
             }}
           >
@@ -87,7 +87,7 @@ function ReasonDialog({
         />
       </Field>
     </Dialog>
-  );
+  )
 }
 
 /** Approve / reject / flag one asset. The current state's own button is disabled. */
@@ -96,26 +96,26 @@ export function ModerationActions({
   moderation,
   moderationReason,
 }: {
-  assetId: string;
-  moderation: ModerationStatus;
-  moderationReason: string | null;
+  assetId: string
+  moderation: ModerationStatus
+  moderationReason: string | null
 }) {
-  const t = useTranslations('admin.moderation');
-  const { toast } = useToast();
-  const moderate = useModerateAsset();
+  const t = useTranslations('admin.moderation')
+  const { toast } = useToast()
+  const moderate = useModerateAsset()
 
   async function decide(decision: ModerationDecision, reason?: string): Promise<boolean> {
     try {
-      await moderate.mutateAsync({ id: assetId, decision, reason });
-      toast({ variant: 'success', title: t(TOAST_KEY[decision]) });
-      return true;
+      await moderate.mutateAsync({ id: assetId, decision, reason })
+      toast({ variant: 'success', title: t(TOAST_KEY[decision]) })
+      return true
     } catch (err) {
       toast({
         variant: 'danger',
         title: t('error'),
         description: err instanceof ApiError ? err.message : undefined,
-      });
-      return false;
+      })
+      return false
     }
   }
 
@@ -165,34 +165,28 @@ export function ModerationActions({
         )}
       </div>
     </section>
-  );
+  )
 }
 
 /** Sticky bar over the grid: one decision applied to every checked asset. */
-export function BulkModerationBar({
-  assetIds,
-  onClear,
-}: {
-  assetIds: string[];
-  onClear: () => void;
-}) {
-  const t = useTranslations('admin.moderation');
-  const { toast } = useToast();
-  const moderate = useModerateAssets();
+export function BulkModerationBar({ assetIds, onClear }: { assetIds: string[]; onClear: () => void }) {
+  const t = useTranslations('admin.moderation')
+  const { toast } = useToast()
+  const moderate = useModerateAssets()
 
   async function decide(decision: ModerationDecision, reason?: string): Promise<boolean> {
     try {
-      const res = await moderate.mutateAsync({ assetIds, decision, reason });
-      toast({ variant: 'success', title: t('bulkDone', { count: res.moderated }) });
-      onClear();
-      return true;
+      const res = await moderate.mutateAsync({ assetIds, decision, reason })
+      toast({ variant: 'success', title: t('bulkDone', { count: res.moderated }) })
+      onClear()
+      return true
     } catch (err) {
       toast({
         variant: 'danger',
         title: t('error'),
         description: err instanceof ApiError ? err.message : undefined,
-      });
-      return false;
+      })
+      return false
     }
   }
 
@@ -230,5 +224,5 @@ export function BulkModerationBar({
         {t('clearSelection')}
       </Button>
     </div>
-  );
+  )
 }

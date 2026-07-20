@@ -1,24 +1,24 @@
-'use client';
+'use client'
 
-import type { QuizItem, VennRegion } from '@bingoo/core';
-import { useQuizText } from './quiz-locale';
-import { Check, X } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
-import { cn } from './lib/cn';
-import { stagger, tile, tileState } from './lib/interactive';
+import type { QuizItem, VennRegion } from '@bingoo/core'
+import { useQuizText } from './quiz-locale'
+import { Check, X } from 'lucide-react'
+import { useState, type ReactNode } from 'react'
+import { cn } from './lib/cn'
+import { stagger, tile, tileState } from './lib/interactive'
 
 export interface VennBoardProps {
-  labelA: ReactNode;
-  labelB: ReactNode;
-  items: QuizItem[];
-  assignment: Record<string, VennRegion>;
-  onChange: (assignment: Record<string, VennRegion>) => void;
+  labelA: ReactNode
+  labelB: ReactNode
+  items: QuizItem[]
+  assignment: Record<string, VennRegion>
+  onChange: (assignment: Record<string, VennRegion>) => void
   /** After checking: itemId → correct. */
-  reveal?: Record<string, boolean>;
+  reveal?: Record<string, boolean>
   /** Localized label for the "neither / outside" area. */
-  neitherLabel?: ReactNode;
-  disabled?: boolean;
-  className?: string;
+  neitherLabel?: ReactNode
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -37,30 +37,30 @@ export function VennBoard({
   disabled,
   className,
 }: VennBoardProps) {
-  const t = useQuizText();
-  const [armed, setArmed] = useState<string | null>(null);
-  const locked = !!reveal || disabled;
+  const t = useQuizText()
+  const [armed, setArmed] = useState<string | null>(null)
+  const locked = !!reveal || disabled
 
   function tapItem(id: string) {
-    if (locked) return;
+    if (locked) return
     if (assignment[id]) {
-      const next = { ...assignment };
-      delete next[id];
-      onChange(next);
-      setArmed(null);
-      return;
+      const next = { ...assignment }
+      delete next[id]
+      onChange(next)
+      setArmed(null)
+      return
     }
-    setArmed((cur) => (cur === id ? null : id));
+    setArmed((cur) => (cur === id ? null : id))
   }
   function drop(region: VennRegion) {
-    if (locked || !armed) return;
-    onChange({ ...assignment, [armed]: region });
-    setArmed(null);
+    if (locked || !armed) return
+    onChange({ ...assignment, [armed]: region })
+    setArmed(null)
   }
 
-  const pool = items.filter((it) => !(it.id in assignment));
+  const pool = items.filter((it) => !(it.id in assignment))
   const chip = (item: QuizItem, i: number) => {
-    const ok = reveal?.[item.id];
+    const ok = reveal?.[item.id]
     return (
       <button
         key={item.id}
@@ -88,10 +88,10 @@ export function VennBoard({
         {ok === true ? <Check className="size-3" /> : null}
         {ok === false ? <X className="size-3" /> : null}
       </button>
-    );
-  };
+    )
+  }
   const zone = (region: VennRegion, extra: string) => {
-    const droppable = !!armed && !locked;
+    const droppable = !!armed && !locked
     return (
       <div
         role="button"
@@ -108,8 +108,8 @@ export function VennBoard({
       >
         {items.filter((it) => assignment[it.id] === region).map(chip)}
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>
@@ -122,10 +122,7 @@ export function VennBoard({
         <span className="absolute right-3 top-0 text-xs font-bold text-accent-teal">{labelB}</span>
         {/* Tap zones. */}
         {zone('a', 'absolute left-2 top-8 h-36 w-[30%] items-center justify-center')}
-        {zone(
-          'both',
-          'absolute left-1/2 top-8 h-36 w-[24%] -translate-x-1/2 items-center justify-center',
-        )}
+        {zone('both', 'absolute left-1/2 top-8 h-36 w-[24%] -translate-x-1/2 items-center justify-center')}
         {zone('b', 'absolute right-2 top-8 h-36 w-[30%] items-center justify-center')}
       </div>
       {/* Outside / neither. */}
@@ -135,11 +132,9 @@ export function VennBoard({
           'rounded-xl border-dashed border-border-strong p-1.5',
         )}
       >
-        <span className="px-1 text-2xs font-semibold uppercase text-foreground-muted">
-          {neitherLabel}
-        </span>
+        <span className="px-1 text-2xs font-semibold uppercase text-foreground-muted">{neitherLabel}</span>
         {zone('neither', 'min-h-9')}
       </div>
     </div>
-  );
+  )
 }

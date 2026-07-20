@@ -1,23 +1,23 @@
-'use client';
+'use client'
 
-import type { RubricCriterion } from '@bingoo/core';
-import { Check } from 'lucide-react';
-import { cn } from './lib/cn';
-import { stagger, tile } from './lib/interactive';
+import type { RubricCriterion } from '@bingoo/core'
+import { Check } from 'lucide-react'
+import { cn } from './lib/cn'
+import { stagger, tile } from './lib/interactive'
 
 export interface RubricListProps {
   /** The success criteria — shown BEFORE the learner starts, as the books do. */
-  criteria: RubricCriterion[];
+  criteria: RubricCriterion[]
   /** Controlled: ids of the criteria the learner says they met. */
-  met: string[];
-  onChange: (met: string[]) => void;
+  met: string[]
+  onChange: (met: string[]) => void
   /** Heading, e.g. "Bài của em cần có:" — the caller localizes it. */
-  title?: string;
+  title?: string
   /** How many must be met to pass; shown as "2 / 3" when the learner falls short. */
-  need?: number;
-  reveal?: { correct: boolean };
-  disabled?: boolean;
-  className?: string;
+  need?: number
+  reveal?: { correct: boolean }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -36,26 +36,18 @@ export function RubricList({
   disabled,
   className,
 }: RubricListProps) {
-  const locked = !!reveal || disabled;
+  const locked = !!reveal || disabled
   const toggle = (id: string) => {
-    if (locked) return;
-    onChange(met.includes(id) ? met.filter((m) => m !== id) : [...met, id]);
-  };
-  const hit = criteria.filter((c) => met.includes(c.id)).length;
+    if (locked) return
+    onChange(met.includes(id) ? met.filter((m) => m !== id) : [...met, id])
+  }
+  const hit = criteria.filter((c) => met.includes(c.id)).length
 
   return (
-    <div
-      className={cn(
-        tile({ state: 'quiet', size: 'none' }),
-        'flex w-full flex-col gap-2 p-3',
-        className,
-      )}
-    >
+    <div className={cn(tile({ state: 'quiet', size: 'none' }), 'flex w-full flex-col gap-2 p-3', className)}>
       {title ? (
         <div className="flex items-baseline justify-between">
-          <p className="text-xs font-bold uppercase tracking-wide text-foreground-subtle">
-            {title}
-          </p>
+          <p className="text-xs font-bold uppercase tracking-wide text-foreground-subtle">{title}</p>
           <p
             className={cn(
               'text-sm font-bold tabular-nums',
@@ -67,7 +59,7 @@ export function RubricList({
         </div>
       ) : null}
       {criteria.map((c, i) => {
-        const on = met.includes(c.id);
+        const on = met.includes(c.id)
         return (
           <button
             key={c.id}
@@ -93,8 +85,8 @@ export function RubricList({
             </span>
             <span className="text-sm font-medium text-foreground">{c.text}</span>
           </button>
-        );
+        )
       })}
     </div>
-  );
+  )
 }

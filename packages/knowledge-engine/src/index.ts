@@ -19,8 +19,8 @@ export type {
   AssessmentMode,
   DreyfusLevel,
   EvidenceActor,
-} from './domain';
-export { LEARNABLE_KINDS, ORDERING_RELS, EVIDENCE_ACTORS, isOrdering } from './domain';
+} from './domain'
+export { LEARNABLE_KINDS, ORDERING_RELS, EVIDENCE_ACTORS, isOrdering } from './domain'
 
 // Kiểu dữ liệu biên (data contracts)
 export type {
@@ -43,7 +43,7 @@ export type {
   CompetencyAnchor,
   RelevanceSeeds,
   ItemStat,
-} from './contracts';
+} from './contracts'
 
 // Cổng adapter (SPEC Phụ lục B + BỔ SUNG §3.2, §3.3)
 export type {
@@ -57,7 +57,7 @@ export type {
   RaterProfilePort,
   GraderPort,
   EnginePorts,
-} from './ports';
+} from './ports'
 
 // Policy (BỔ SUNG §4)
 export type {
@@ -75,14 +75,14 @@ export type {
   CertifyParams,
   EnginePolicy,
   DeepPartial,
-} from './policy';
+} from './policy'
 export {
   DEFAULT_POLICY,
   SEQUENCING_UNSEEN_PRIOR,
   REPORTING_UNSEEN_PRIOR,
   resolvePolicy,
   validatePolicy,
-} from './policy';
+} from './policy'
 
 // Mastery core (SPEC §3–§5, §8.1) — hàm thuần
 export {
@@ -105,7 +105,7 @@ export {
   dreyfusSignals,
   deriveLevel,
   reviewUrgency,
-} from './mastery/index';
+} from './mastery/index'
 export type {
   BktUpdateOpts,
   EloUpdateOpts,
@@ -119,7 +119,7 @@ export type {
   DreyfusObservation,
   DreyfusSignals,
   LevelInput,
-} from './mastery/index';
+} from './mastery/index'
 
 // Graph core (SPEC Phụ lục A, §6–§7) — hàm thuần
 export {
@@ -141,7 +141,7 @@ export {
   prereqGate,
   competencyMetFactory,
   expandRelevance,
-} from './graph/index';
+} from './graph/index'
 export type {
   BuildOpts,
   WeightedNode,
@@ -155,7 +155,7 @@ export type {
   Remediation,
   PrereqCheck,
   PrereqGateResult,
-} from './graph/index';
+} from './graph/index'
 
 // Evidence layer (BỔ SUNG §3) — cửa ghi có bảo vệ
 export {
@@ -166,7 +166,7 @@ export {
   shouldSnapshot,
   recordEvidence,
   dedupeAttempt,
-} from './evidence/index';
+} from './evidence/index'
 export type {
   EvidenceViolation,
   WriteCheck,
@@ -174,7 +174,7 @@ export type {
   EvidenceContext,
   FoldParams,
   RecordResult,
-} from './evidence/index';
+} from './evidence/index'
 
 // Sequencer (SPEC §8) — chọn hoạt động thích ứng
 export {
@@ -188,7 +188,7 @@ export {
   selectAdaptiveSession,
   declumpByKind,
   selectNextItem,
-} from './sequencer/index';
+} from './sequencer/index'
 export type {
   AbilityOf,
   DueItem,
@@ -196,7 +196,7 @@ export type {
   SessionOpts,
   NextItemContext,
   NextItemOpts,
-} from './sequencer/index';
+} from './sequencer/index'
 
 // Framework & migration (SPEC §9–§10) — change-set thuần
 export {
@@ -213,7 +213,7 @@ export {
   inheritState,
   splitFactor,
   mergeStates,
-} from './framework/index';
+} from './framework/index'
 export type {
   Semver,
   ForwardRelType,
@@ -225,7 +225,7 @@ export type {
   VersionObjective,
   Crosswalk,
   MigrationPolicy,
-} from './framework/index';
+} from './framework/index'
 
 // Certify (SPEC §12) — đo lường chứng chỉ
 export {
@@ -236,7 +236,7 @@ export {
   flagDIF,
   measuredStates,
   certifyFramework,
-} from './certify/index';
+} from './certify/index'
 export type {
   CutScoreResult,
   DifResult,
@@ -246,7 +246,7 @@ export type {
   ObjectiveResult,
   CertifyReport,
   CertifyOpts,
-} from './certify/index';
+} from './certify/index'
 
 // Views theo vai (BỔ SUNG §3.4) — query API thuần
 export {
@@ -259,7 +259,7 @@ export {
   teacherView,
   supporterView,
   assessorView,
-} from './views/index';
+} from './views/index'
 export type {
   CurvePoint,
   Distribution,
@@ -278,4 +278,4 @@ export type {
   AssessorView,
   DifInput,
   DifFlag,
-} from './views/index';
+} from './views/index'

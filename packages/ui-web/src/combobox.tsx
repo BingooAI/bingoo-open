@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import { ChevronDown } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { ChevronDown } from 'lucide-react'
+import type { ReactNode } from 'react'
 import {
   Button as AriaButton,
   ComboBox,
@@ -10,29 +10,23 @@ import {
   ListBox,
   ListBoxItem,
   Popover,
-} from 'react-aria-components';
+} from 'react-aria-components'
 
 export interface ComboboxOption {
-  id: string;
-  label: string;
+  id: string
+  label: string
 }
 
 export interface ComboboxProps {
-  label?: ReactNode;
-  options: ComboboxOption[];
-  placeholder?: string;
-  selectedKey?: string | null;
-  onSelectionChange?: (key: string | null) => void;
+  label?: ReactNode
+  options: ComboboxOption[]
+  placeholder?: string
+  selectedKey?: string | null
+  onSelectionChange?: (key: string | null) => void
 }
 
 /** Accessible combobox / autocomplete (filter, keyboard, ARIA) from React Aria. */
-export function Combobox({
-  label,
-  options,
-  placeholder,
-  selectedKey,
-  onSelectionChange,
-}: ComboboxProps) {
+export function Combobox({ label, options, placeholder, selectedKey, onSelectionChange }: ComboboxProps) {
   return (
     <ComboBox
       className="flex w-full flex-col gap-1.5"
@@ -67,5 +61,5 @@ export function Combobox({
         </ListBox>
       </Popover>
     </ComboBox>
-  );
+  )
 }

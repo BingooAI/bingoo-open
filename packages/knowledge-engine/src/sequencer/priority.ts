@@ -1,11 +1,11 @@
 /** Ưu tiên ôn theo mức nắm + đường cong quên. SPEC §8.1. */
 
-import type { Millis, Slug } from '../contracts';
-import type { EnginePolicy } from '../policy';
-import type { SkillMastery } from '../mastery/observe';
-import { reviewUrgency } from '../mastery/review-urgency';
-import { compositeMastery } from '../graph/composite';
-import type { SkillGraph } from '../graph/build';
+import type { Millis, Slug } from '../contracts'
+import type { EnginePolicy } from '../policy'
+import type { SkillMastery } from '../mastery/observe'
+import { reviewUrgency } from '../mastery/review-urgency'
+import { compositeMastery } from '../graph/composite'
+import type { SkillGraph } from '../graph/build'
 
 /**
  * SPEC §8.1 — chỉ slug ∈ relevant ∩ encountered.
@@ -21,20 +21,17 @@ export function buildPriority(
   nowMs: Millis,
   policy: EnginePolicy,
 ): Map<Slug, number> {
-  const memo = new Map<Slug, number>();
-  const out = new Map<Slug, number>();
+  const memo = new Map<Slug, number>()
+  const out = new Map<Slug, number>()
   for (const slug of relevant) {
-    if (!encountered.has(slug)) continue;
-    const m = compositeMastery(graph, states, slug, { memo });
+    if (!encountered.has(slug)) continue
+    const m = compositeMastery(graph, states, slug, { memo })
     if (m < policy.mastery.threshold) {
-      out.set(slug, policy.review.weakPriorityBase + (1 - m));
+      out.set(slug, policy.review.weakPriorityBase + (1 - m))
     } else {
-      const lastSeen = states.get(slug)?.lastSeenMs ?? null;
-      out.set(
-        slug,
-        policy.review.masteredPriorityBase + reviewUrgency(m, lastSeen, nowMs, policy.review),
-      );
+      const lastSeen = states.get(slug)?.lastSeenMs ?? null
+      out.set(slug, policy.review.masteredPriorityBase + reviewUrgency(m, lastSeen, nowMs, policy.review))
     }
   }
-  return out;
+  return out
 }

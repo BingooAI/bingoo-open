@@ -1,17 +1,17 @@
-'use client';
+'use client'
 
-import { Star } from 'lucide-react';
-import { useState } from 'react';
-import { cn } from './lib/cn';
+import { Star } from 'lucide-react'
+import { useState } from 'react'
+import { cn } from './lib/cn'
 
 export interface RatingProps {
-  value?: number;
-  defaultValue?: number;
-  onChange?: (value: number) => void;
-  max?: number;
-  readOnly?: boolean;
+  value?: number
+  defaultValue?: number
+  onChange?: (value: number) => void
+  max?: number
+  readOnly?: boolean
   /** Accessible group label. */
-  label?: string;
+  label?: string
 }
 
 /** Star rating — keyboard + screen-reader accessible (radiogroup semantics). */
@@ -23,15 +23,15 @@ export function Rating({
   readOnly,
   label = 'Rating',
 }: RatingProps) {
-  const [internal, setInternal] = useState(defaultValue);
-  const [hover, setHover] = useState<number | null>(null);
-  const current = value ?? internal;
-  const shown = hover ?? current;
+  const [internal, setInternal] = useState(defaultValue)
+  const [hover, setHover] = useState<number | null>(null)
+  const current = value ?? internal
+  const shown = hover ?? current
 
   function set(n: number) {
-    if (readOnly) return;
-    if (value === undefined) setInternal(n);
-    onChange?.(n);
+    if (readOnly) return
+    if (value === undefined) setInternal(n)
+    onChange?.(n)
   }
 
   return (
@@ -54,13 +54,11 @@ export function Rating({
           <Star
             className={cn(
               'size-6 transition-colors',
-              n <= shown
-                ? 'fill-accent-sunbeam text-accent-sunbeam'
-                : 'fill-transparent text-border-strong',
+              n <= shown ? 'fill-accent-sunbeam text-accent-sunbeam' : 'fill-transparent text-border-strong',
             )}
           />
         </button>
       ))}
     </div>
-  );
+  )
 }

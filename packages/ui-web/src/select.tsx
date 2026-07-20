@@ -1,10 +1,10 @@
-import { ChevronDown } from 'lucide-react';
-import { forwardRef, type SelectHTMLAttributes } from 'react';
-import { cn } from './lib/cn';
+import { ChevronDown } from 'lucide-react'
+import { forwardRef, type SelectHTMLAttributes } from 'react'
+import { cn } from './lib/cn'
 
 export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
-  invalid?: boolean;
-  selectSize?: 'md' | 'lg';
+  invalid?: boolean
+  selectSize?: 'md' | 'lg'
 }
 
 /** Styled native <select> — accessible, zero-JS, keyboard-friendly by default. */
@@ -12,7 +12,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
   { className, invalid, selectSize = 'md', children, ...props },
   ref,
 ) {
-  const height = selectSize === 'lg' ? 'h-13 text-base' : 'h-11 text-sm';
+  const height = selectSize === 'lg' ? 'h-13 text-base' : 'h-11 text-sm'
   return (
     <div className="relative">
       <select
@@ -35,5 +35,5 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         aria-hidden
       />
     </div>
-  );
-});
+  )
+})

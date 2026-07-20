@@ -1,21 +1,21 @@
-import type { ReactNode } from 'react';
-import { AvatarGroup, type AvatarGroupProps } from './avatar-group';
-import { cn } from './lib/cn';
-import { Progress } from './progress';
+import type { ReactNode } from 'react'
+import { AvatarGroup, type AvatarGroupProps } from './avatar-group'
+import { cn } from './lib/cn'
+import { Progress } from './progress'
 
 export interface ClassCardProps {
-  name: ReactNode;
+  name: ReactNode
   /** e.g. "28 học sinh · Toán" — pass localized text. */
-  meta?: ReactNode;
-  students?: AvatarGroupProps['avatars'];
+  meta?: ReactNode
+  students?: AvatarGroupProps['avatars']
   /** 0–100 average class progress. */
-  progress?: number;
+  progress?: number
   /** Caption under the bar, e.g. "Tiến độ trung bình 72%". */
-  progressLabel?: ReactNode;
+  progressLabel?: ReactNode
   /** Trailing slot (badge, menu…). */
-  trailing?: ReactNode;
-  onClick?: () => void;
-  className?: string;
+  trailing?: ReactNode
+  onClick?: () => void
+  className?: string
 }
 
 /** A teacher's class summary card: name, roster stack, average progress.
@@ -30,7 +30,7 @@ export function ClassCard({
   onClick,
   className,
 }: ClassCardProps) {
-  const Tag = onClick ? 'button' : 'div';
+  const Tag = onClick ? 'button' : 'div'
   return (
     <Tag
       type={onClick ? 'button' : undefined}
@@ -53,11 +53,9 @@ export function ClassCard({
       {progress != null ? (
         <div className="flex flex-col gap-1">
           <Progress value={progress} />
-          {progressLabel ? (
-            <span className="text-xs text-foreground-muted">{progressLabel}</span>
-          ) : null}
+          {progressLabel ? <span className="text-xs text-foreground-muted">{progressLabel}</span> : null}
         </div>
       ) : null}
     </Tag>
-  );
+  )
 }

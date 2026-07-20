@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import { pickText, type ContentBlock, type QuizQuestion } from '@bingoo/core';
+import { pickText, type ContentBlock, type QuizQuestion } from '@bingoo/core'
 import type {
   FeedTopic,
   LearnCourseData,
@@ -9,11 +9,11 @@ import type {
   LearnStep,
   Participant,
   TopicAccent,
-} from '@bingoo/experiences';
-import { defaultTheme, ExplainerPlayer, InteractiveManipulative } from '@bingoo/explainer-web';
-import '@bingoo/explainer-web/styles.css';
-import { ACCEPTANCE_BUNDLES, ACCEPTANCE_DOC } from '@/lib/explainerLesson';
-import { manipulativeKinds } from '@bingoo/manipulatives';
+} from '@bingoo/experiences'
+import { defaultTheme, ExplainerPlayer, InteractiveManipulative } from '@bingoo/explainer-web'
+import '@bingoo/explainer-web/styles.css'
+import { ACCEPTANCE_BUNDLES, ACCEPTANCE_DOC } from '@/lib/explainerLesson'
+import { manipulativeKinds } from '@bingoo/manipulatives'
 import {
   AnswerOption,
   Button,
@@ -23,15 +23,14 @@ import {
   SelfAssessment,
   type InteractiveBlock,
   type LeaderboardEntry,
-} from '@bingoo/ui-web';
-import type { ReactNode } from 'react';
-import { useEffect, useRef, useState } from 'react';
+} from '@bingoo/ui-web'
+import type { ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 /** Translator (next-intl) đã bound namespace `learn`. */
-type T = (key: string, values?: Record<string, string | number>) => string;
+type T = (key: string, values?: Record<string, string | number>) => string
 
-const DEMO_IMG =
-  'https://storage.bingoo.ai/media/global/global/cmrheen6y001jwo0cfsy1j746/original.png';
+const DEMO_IMG = 'https://storage.bingoo.ai/media/global/global/cmrheen6y001jwo0cfsy1j746/original.png'
 
 /* ───────── Wrappers cho block tương tác (giữ state cục bộ) ───────── */
 
@@ -42,14 +41,14 @@ function InlineQuiz({
   explanation,
   explainLabel,
 }: {
-  prompt: string;
-  choices: { id: string; label: string }[];
-  answerId: string;
-  explanation?: string;
-  explainLabel: string;
+  prompt: string
+  choices: { id: string; label: string }[]
+  answerId: string
+  explanation?: string
+  explainLabel: string
 }) {
-  const [picked, setPicked] = useState<string | null>(null);
-  const revealed = picked != null;
+  const [picked, setPicked] = useState<string | null>(null)
+  const revealed = picked != null
   return (
     <div className="flex flex-col gap-3">
       <p className="font-display font-bold text-foreground">{prompt}</p>
@@ -63,7 +62,7 @@ function InlineQuiz({
               ? 'correct'
               : picked === c.id
                 ? 'incorrect'
-                : 'default';
+                : 'default'
           return (
             <AnswerOption
               key={c.id}
@@ -73,7 +72,7 @@ function InlineQuiz({
               disabled={revealed}
               onClick={() => setPicked(c.id)}
             />
-          );
+          )
         })}
       </div>
       {revealed && explanation ? (
@@ -82,7 +81,7 @@ function InlineQuiz({
         </Callout>
       ) : null}
     </div>
-  );
+  )
 }
 
 function FlashcardsBlock({
@@ -90,14 +89,14 @@ function FlashcardsBlock({
   nextLabel,
   hint,
 }: {
-  cards: { id: string; front: string; back: string }[];
-  nextLabel: string;
-  hint: string;
+  cards: { id: string; front: string; back: string }[]
+  nextLabel: string
+  hint: string
 }) {
-  const [i, setI] = useState(0);
-  const last = i >= cards.length - 1;
-  const card = cards[i];
-  if (!card) return null;
+  const [i, setI] = useState(0)
+  const last = i >= cards.length - 1
+  const card = cards[i]
+  if (!card) return null
   return (
     <div className="flex flex-col items-center gap-3">
       <span className="text-sm font-semibold text-foreground-muted">
@@ -115,7 +114,7 @@ function FlashcardsBlock({
         {nextLabel}
       </Button>
     </div>
-  );
+  )
 }
 
 function SelfAssessmentBlock({
@@ -123,14 +122,12 @@ function SelfAssessmentBlock({
   items,
   levels,
 }: {
-  title?: string;
-  items: { id: string; label: string }[];
-  levels?: { emoji: string; label?: string }[];
+  title?: string
+  items: { id: string; label: string }[]
+  levels?: { emoji: string; label?: string }[]
 }) {
-  const [value, setValue] = useState<Record<string, number>>({});
-  return (
-    <SelfAssessment title={title} items={items} value={value} onChange={setValue} levels={levels} />
-  );
+  const [value, setValue] = useState<Record<string, number>>({})
+  return <SelfAssessment title={title} items={items} value={value} onChange={setValue} levels={levels} />
 }
 
 /** Bộ render block tương tác — host cắm component thật cho quiz/flashcards/experiment/selfAssessment. */
@@ -138,8 +135,8 @@ export function makeRenderActivity(t: T): (block: InteractiveBlock) => ReactNode
   return (block) => {
     switch (block.type) {
       case 'quiz': {
-        const q = block.question;
-        if (q.type !== 'single') return null;
+        const q = block.question
+        if (q.type !== 'single') return null
         return (
           <InlineQuiz
             prompt={pickText(q.prompt)}
@@ -148,7 +145,7 @@ export function makeRenderActivity(t: T): (block: InteractiveBlock) => ReactNode
             explanation={pickText(q.explanation)}
             explainLabel={t('ui.qExplain')}
           />
-        );
+        )
       }
       case 'flashcards':
         return (
@@ -157,7 +154,7 @@ export function makeRenderActivity(t: T): (block: InteractiveBlock) => ReactNode
             nextLabel={t('ui.fcNext')}
             hint={t('ui.fcHint')}
           />
-        );
+        )
       case 'experiment':
         return (
           <ExperimentFlow
@@ -176,21 +173,19 @@ export function makeRenderActivity(t: T): (block: InteractiveBlock) => ReactNode
               incorrect: t('ui.expIncorrect'),
             }}
           />
-        );
+        )
       case 'selfAssessment':
-        return (
-          <SelfAssessmentBlock title={block.title} items={block.items} levels={block.levels} />
-        );
+        return <SelfAssessmentBlock title={block.title} items={block.items} levels={block.levels} />
       default:
-        return null;
+        return null
     }
-  };
+  }
 }
 
 /* ───────── Nội dung MOCK — phủ ~28 loại content block ───────── */
 
 export function buildRichSteps(t: T): LearnStep[] {
-  const m = (k: string) => t(`rich.${k}`);
+  const m = (k: string) => t(`rich.${k}`)
   const quiz: QuizQuestion = {
     id: 'q1',
     type: 'single',
@@ -202,7 +197,7 @@ export function buildRichSteps(t: T): LearnStep[] {
     ],
     answerId: 'b',
     explanation: m('quizExplain'),
-  };
+  }
 
   return [
     {
@@ -442,13 +437,13 @@ export function buildRichSteps(t: T): LearnStep[] {
         },
       ] satisfies ContentBlock[],
     },
-  ];
+  ]
 }
 
 /** Ngân hàng câu hỏi drill — dùng cho practice + arena. */
 export function buildQuiz(t: T): LearnQuizItem[] {
-  const r = (k: string) => t(`rich.${k}`);
-  const p = (k: string) => t(`practice.${k}`);
+  const r = (k: string) => t(`rich.${k}`)
+  const p = (k: string) => t(`practice.${k}`)
   return [
     {
       id: 'q1',
@@ -480,14 +475,14 @@ export function buildQuiz(t: T): LearnQuizItem[] {
       ],
       answerId: 'b',
     },
-  ];
+  ]
 }
 
 export function buildArena(t: T): {
-  leaderboard: LeaderboardEntry[];
-  opponents: { name: string; src?: string | null }[];
+  leaderboard: LeaderboardEntry[]
+  opponents: { name: string; src?: string | null }[]
 } {
-  const a = (k: string) => t(`arena.${k}`);
+  const a = (k: string) => t(`arena.${k}`)
   return {
     leaderboard: [
       { rank: 1, name: a('o1'), score: 980 },
@@ -496,12 +491,12 @@ export function buildArena(t: T): {
       { rank: 4, name: a('o3'), score: 640 },
     ],
     opponents: [{ name: a('o1') }, { name: a('o2') }, { name: a('o3') }, { name: a('o4') }],
-  };
+  }
 }
 
 /** Danh sách người tham gia (chrome roster khi scale=class/group). */
 export function buildParticipants(t: T): Participant[] {
-  const a = (k: string) => t(`arena.${k}`);
+  const a = (k: string) => t(`arena.${k}`)
   // Dữ liệu roster + trạng thái (mock ở app; engine/API thật sẽ đổ cùng shape này vào).
   return [
     { name: t('classroom.teacher'), role: 'teacher', speaking: true },
@@ -510,11 +505,11 @@ export function buildParticipants(t: T): Participant[] {
     { name: a('o2'), role: 'student', handRaised: true },
     { name: a('o3'), role: 'student', muted: true },
     { name: a('o4'), role: 'student', muted: true },
-  ];
+  ]
 }
 
 export function buildProject(t: T): LearnProjectData {
-  const p = (k: string) => t(`project.${k}`);
+  const p = (k: string) => t(`project.${k}`)
   return {
     title: p('title'),
     brief: p('brief'),
@@ -525,10 +520,10 @@ export function buildProject(t: T): LearnProjectData {
       { id: 't4', label: p('t4') },
     ],
     workspaceLabel: p('workspace'),
-  };
+  }
 }
 
-const ACCENTS: TopicAccent[] = ['primary', 'teal', 'sunbeam', 'coral', 'success'];
+const ACCENTS: TopicAccent[] = ['primary', 'teal', 'sunbeam', 'coral', 'success']
 
 /** Seed TOÀN BỘ manipulative (41 kit) thành thẻ feed — mỗi primitive một trang, render thật qua explainer-web. */
 export function buildManipulativeSteps(): LearnStep[] {
@@ -543,23 +538,23 @@ export function buildManipulativeSteps(): LearnStep[] {
         <InteractiveManipulative kind={kind} theme={defaultTheme} aspect="16:9" />
       </div>
     ),
-  }));
+  }))
 }
 
 /** Player explainer bản FEED: full-bleed 9:16, tự PHÁT khi vào khung, tự DỪNG khi cuộn qua (IntersectionObserver). */
 function FeedExplainer() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(false);
+  const ref = useRef<HTMLDivElement>(null)
+  const [active, setActive] = useState(false)
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+    const el = ref.current
+    if (!el) return
     const io = new IntersectionObserver(
       (es) => setActive(!!es[0] && es[0].isIntersecting && es[0].intersectionRatio > 0.6),
       { threshold: [0, 0.6, 1] },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
   return (
     <div ref={ref} className="exw h-full w-full">
       <ExplainerPlayer
@@ -570,7 +565,7 @@ function FeedExplainer() {
         active={active}
       />
     </div>
-  );
+  )
 }
 
 /** Bài explainer mẫu (ACCEPTANCE_DOC trong DB/lib) — trong feed dùng khung DỌC 9:16, player tối giản. */
@@ -582,14 +577,14 @@ function explainerStep(t: T): LearnStep {
     eyebrow: t('rich.cHead'),
     blocks: [],
     node: <FeedExplainer />,
-  };
+  }
 }
 
 /** Feed 2 trục: 3 topic (Toán/Tiếng Việt/Khoa học); mỗi topic trộn explainer + nội dung + manipulative. */
 export function buildTopics(t: T): FeedTopic[] {
-  const rich = buildRichSteps(t);
-  const manip = buildManipulativeSteps();
-  const k = Math.ceil(manip.length / 3) || 1;
+  const rich = buildRichSteps(t)
+  const manip = buildManipulativeSteps()
+  const k = Math.ceil(manip.length / 3) || 1
   return [
     {
       id: 'math',
@@ -609,11 +604,11 @@ export function buildTopics(t: T): FeedTopic[] {
       accent: 'teal',
       steps: [...rich.slice(6), ...manip.slice(2 * k)],
     },
-  ];
+  ]
 }
 
 export function buildCourse(t: T): LearnCourseData {
-  const m = (k: string) => t(`mock.${k}`);
+  const m = (k: string) => t(`mock.${k}`)
   return {
     title: m('courseTitle'),
     subtitle: m('courseSubtitle'),
@@ -658,5 +653,5 @@ export function buildCourse(t: T): LearnCourseData {
         color: 'coral',
       },
     ],
-  };
+  }
 }

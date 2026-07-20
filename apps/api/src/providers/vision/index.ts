@@ -1,12 +1,10 @@
-import { readEnv } from '../core/config';
-import { createRegistry } from '../core/registry';
-import { claudeVisionAdapter } from './adapters/claude';
-import type { VisionPort } from './port';
+import { readEnv } from '../core/config'
+import { createRegistry } from '../core/registry'
+import { claudeVisionAdapter } from './adapters/claude'
+import type { VisionPort } from './port'
 
-export const visionRegistry = createRegistry<VisionPort>(
-  'vision',
-  readEnv('VISION_PROVIDER') ?? 'claude',
-  [claudeVisionAdapter],
-);
+export const visionRegistry = createRegistry<VisionPort>('vision', readEnv('VISION_PROVIDER') ?? 'claude', [
+  claudeVisionAdapter,
+])
 
-export type * from './port';
+export type * from './port'

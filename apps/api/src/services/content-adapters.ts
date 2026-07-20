@@ -4,7 +4,7 @@
  * registry — KHÔNG chế primitive mới. Bản hỏng schema bị loại thẳng.
  */
 
-import type { AuthoredItem } from '@bingoo/authored-item';
+import type { AuthoredItem } from '@bingoo/authored-item'
 import {
   QUIZ_PRIMITIVE_KINDS,
   blockKind,
@@ -13,8 +13,8 @@ import {
   manipKind,
   primitiveMeta,
   validateItem,
-} from '@bingoo/authored-item';
-import { KIT_DOCS, kitAnswerDoc } from '@bingoo/manipulatives';
+} from '@bingoo/authored-item'
+import { KIT_DOCS, kitAnswerDoc } from '@bingoo/manipulatives'
 import {
   ContentBlock,
   Flashcard,
@@ -22,30 +22,30 @@ import {
   contentJsonSchema,
   flashcardDeckJsonSchema,
   quizJsonSchema,
-} from '@bingoo/core';
-import type { ExpositionPort, FlashcardPort, GeneratorPort } from '@bingoo/content-gen';
-import type { Slug } from '@bingoo/knowledge-engine';
-import type { DifficultyBand, GenerationSpec } from '@bingoo/personalization';
-import { getAi } from '../providers';
-import { readEnv } from '../providers/core/config';
-import { renderPrompt } from '../prompts';
+} from '@bingoo/core'
+import type { ExpositionPort, FlashcardPort, GeneratorPort } from '@bingoo/content-gen'
+import type { Slug } from '@bingoo/knowledge-engine'
+import type { DifficultyBand, GenerationSpec } from '@bingoo/personalization'
+import { getAi } from '../providers'
+import { readEnv } from '../providers/core/config'
+import { renderPrompt } from '../prompts'
 
 /**
  * CHI PHÍ: tách model cho khâu sinh nội dung. Mặc định Sonnet (nội dung học cần chất lượng hơn
  * trích xuất, nhưng KHÔNG cần Opus). Đổi bằng env `CONTENT_MODEL`, không đụng code.
  */
-const CONTENT_MODEL = readEnv('CONTENT_MODEL') ?? 'claude-sonnet-5';
+const CONTENT_MODEL = readEnv('CONTENT_MODEL') ?? 'claude-sonnet-5'
 
-const BAND_ELO: Record<DifficultyBand, number> = { easy: 1300, core: 1500, stretch: 1700 };
+const BAND_ELO: Record<DifficultyBand, number> = { easy: 1300, core: 1500, stretch: 1700 }
 
 /** Locale sinh content: "en" (GỐC) luôn đứng đầu, + các ngôn ngữ yêu cầu, dedupe giữ thứ tự. */
 function localeList(languages: readonly string[] | undefined, fallback: string): string[] {
-  const out = ['en'];
+  const out = ['en']
   for (const l of languages && languages.length ? languages : [fallback]) {
-    const k = (l ?? '').trim();
-    if (k && !out.includes(k)) out.push(k);
+    const k = (l ?? '').trim()
+    if (k && !out.includes(k)) out.push(k)
   }
-  return out;
+  return out
 }
 
 /**
@@ -60,30 +60,30 @@ function localeList(languages: readonly string[] | undefined, fallback: string):
  * bằng một hằng số tình cờ. Câu hỏi đó chỉ trả lời được khi đã NHÌN THẤY kiến thức cụ thể — nên nó
  * thuộc về người/LLM lúc sinh, còn tầng này chỉ có một việc: đưa ra ĐỦ danh mục và ĐỦ ngữ cảnh.
  */
-const CATALOGUE = QUIZ_PRIMITIVE_KINDS.join(', ');
+const CATALOGUE = QUIZ_PRIMITIVE_KINDS.join(', ')
 
 /** Số item mỗi KC. Nhiều dạng khác nhau > nhiều item cùng một dạng. */
-const ITEMS_PER_KC = 4;
+const ITEMS_PER_KC = 4
 
 // Hợp đồng schema tĩnh — tính 1 lần, nhét vào prompt để model bám đúng union trên "type".
-const SCHEMA_JSON = JSON.stringify(quizJsonSchema());
-const CONTENT_SCHEMA_JSON = JSON.stringify(contentJsonSchema());
-const FLASHCARD_SCHEMA_JSON = JSON.stringify(flashcardDeckJsonSchema());
+const SCHEMA_JSON = JSON.stringify(quizJsonSchema())
+const CONTENT_SCHEMA_JSON = JSON.stringify(contentJsonSchema())
+const FLASHCARD_SCHEMA_JSON = JSON.stringify(flashcardDeckJsonSchema())
 
 function parseItems(text: string): unknown[] {
-  const m = text.match(/\{[\s\S]*\}/);
-  if (!m) return [];
+  const m = text.match(/\{[\s\S]*\}/)
+  if (!m) return []
   try {
-    const p = JSON.parse(m[0]) as { items?: unknown };
-    return Array.isArray(p.items) ? p.items : [];
+    const p = JSON.parse(m[0]) as { items?: unknown }
+    return Array.isArray(p.items) ? p.items : []
   } catch {
-    return [];
+    return []
   }
 }
 
 /** raw model → AuthoredItem; null nếu KHÔNG hợp schema core / primitive chưa đăng ký. */
 function toAuthoredItem(raw: unknown, kc: Slug, index: number, elo: number): AuthoredItem | null {
-  const parsed = QuizQuestion.safeParse(raw);
+  const parsed = QuizQuestion.safeParse(raw)
   if (!parsed.success) {
     if (process.env.DEBUG_GEN)
       console.error(
@@ -91,19 +91,19 @@ function toAuthoredItem(raw: unknown, kc: Slug, index: number, elo: number): Aut
         JSON.stringify(parsed.error.issues.slice(0, 4)),
         '\nraw=',
         JSON.stringify(raw).slice(0, 600),
-      );
-    return null;
+      )
+    return null
   }
-  const q = parsed.data;
+  const q = parsed.data
   if (!isKnownPrimitive(q.type)) {
-    if (process.env.DEBUG_GEN) console.error('[toAuthoredItem] primitive chưa đăng ký:', q.type);
-    return null;
+    if (process.env.DEBUG_GEN) console.error('[toAuthoredItem] primitive chưa đăng ký:', q.type)
+    return null
   }
-  const itemKey = `${kc}::${q.type}::${index}`;
+  const itemKey = `${kc}::${q.type}::${index}`
   // THANG HỖ TRỢ 4 level (hint/guide/instruction/teach, đa ngôn ngữ) — LLM sinh kèm nhưng `QuizQuestion`
   // schema core KHÔNG có field này nên safeParse STRIP mất; lấy lại từ raw để lưu SONG SONG như kit
   // (không đụng core; QuizShell không render, dùng cho TTS/chat sau). Xem [[content-authoring-spec]].
-  const support = (raw as { support?: unknown }).support;
+  const support = (raw as { support?: unknown }).support
   const item: AuthoredItem = {
     itemKey,
     skills: [kc],
@@ -111,37 +111,37 @@ function toAuthoredItem(raw: unknown, kc: Slug, index: number, elo: number): Aut
     mode: 'LEARN',
     primitiveKind: q.type,
     payload: { ...q, id: itemKey, ...(support && typeof support === 'object' ? { support } : {}) },
-  };
-  const errs = validateItem(item).filter((i) => i.severity === 'error');
+  }
+  const errs = validateItem(item).filter((i) => i.severity === 'error')
   if (errs.length && process.env.DEBUG_GEN)
-    console.error('[toAuthoredItem] validate FAIL', q.type, JSON.stringify(errs.slice(0, 4)));
-  return errs.length ? null : item;
+    console.error('[toAuthoredItem] validate FAIL', q.type, JSON.stringify(errs.slice(0, 4)))
+  return errs.length ? null : item
 }
 
 function parseBlocks(text: string): unknown[] {
-  const m = text.match(/\{[\s\S]*\}/);
-  if (!m) return [];
+  const m = text.match(/\{[\s\S]*\}/)
+  if (!m) return []
   try {
-    const p = JSON.parse(m[0]) as { blocks?: unknown };
-    return Array.isArray(p.blocks) ? p.blocks : [];
+    const p = JSON.parse(m[0]) as { blocks?: unknown }
+    return Array.isArray(p.blocks) ? p.blocks : []
   } catch {
-    return [];
+    return []
   }
 }
 
 // Content HỌC chỉ dùng block KHÔNG chấm được. Danh mục LẤY TỪ REGISTRY (nguồn sự thật về measurable),
 // không tự lọc `CONTENT_BLOCK_META` của core — để đường HỌC và đường ĐÁNH GIÁ cùng tin MỘT chỗ.
-const TEACHING_BLOCKS: readonly string[] = listBlockTypes({ graded: false });
+const TEACHING_BLOCKS: readonly string[] = listBlockTypes({ graded: false })
 
 /** raw model → AuthoredItem content HỌC (measurable=false); null nếu sai schema / là block chấm được. */
 function toBlockItem(raw: unknown, kc: Slug, index: number): AuthoredItem | null {
-  const parsed = ContentBlock.safeParse(raw);
-  if (!parsed.success) return null;
-  const b = parsed.data;
-  const kind = blockKind(b.type); // namespace: tránh va với quiz type trùng tên (vd "math")
-  const meta = primitiveMeta(kind);
-  if (!meta) return null; // block lạ, chưa đăng ký
-  if (meta.measurable) return null; // block CHẤM ĐƯỢC → thuộc luồng đánh giá, không lẫn vào phần dạy
+  const parsed = ContentBlock.safeParse(raw)
+  if (!parsed.success) return null
+  const b = parsed.data
+  const kind = blockKind(b.type) // namespace: tránh va với quiz type trùng tên (vd "math")
+  const meta = primitiveMeta(kind)
+  if (!meta) return null // block lạ, chưa đăng ký
+  if (meta.measurable) return null // block CHẤM ĐƯỢC → thuộc luồng đánh giá, không lẫn vào phần dạy
   const item: AuthoredItem = {
     itemKey: `${kc}::teach::${index}`,
     skills: [kc],
@@ -149,8 +149,8 @@ function toBlockItem(raw: unknown, kc: Slug, index: number): AuthoredItem | null
     measurable: false,
     primitiveKind: kind,
     payload: b,
-  };
-  return validateItem(item).some((i) => i.severity === 'error') ? null : item;
+  }
+  return validateItem(item).some((i) => i.severity === 'error') ? null : item
 }
 
 /** Dựng ExpositionPort (content HỌC) từ hạ tầng AI. Sinh content block phơi bày cho 1 KC. */
@@ -169,34 +169,34 @@ export function buildExpositionPort(opts?: { aiKey?: string }): ExpositionPort {
         messages: [{ role: 'user', content: `KC=${kc}` }],
         model: CONTENT_MODEL,
         maxTokens: 2000,
-      });
+      })
       if (res.finishReason === 'max_tokens') {
         // Cắt token → JSON dở → parse hỏng → trả RỖNG mà im lặng. Phải nổ (xem authoring-adapters).
-        throw new Error('Sinh nội dung bị CẮT vì hết token — giảm phạm vi yêu cầu.');
+        throw new Error('Sinh nội dung bị CẮT vì hết token — giảm phạm vi yêu cầu.')
       }
       return parseBlocks(res.text)
         .map((raw, i) => toBlockItem(raw, kc, i))
-        .filter((it): it is AuthoredItem => it !== null);
+        .filter((it): it is AuthoredItem => it !== null)
     },
-  };
+  }
 }
 
 function parseCards(text: string): unknown[] {
-  const m = text.match(/\{[\s\S]*\}/);
-  if (!m) return [];
+  const m = text.match(/\{[\s\S]*\}/)
+  if (!m) return []
   try {
-    const p = JSON.parse(m[0]) as { cards?: unknown };
-    return Array.isArray(p.cards) ? p.cards : [];
+    const p = JSON.parse(m[0]) as { cards?: unknown }
+    return Array.isArray(p.cards) ? p.cards : []
   } catch {
-    return [];
+    return []
   }
 }
 
 /** raw model → AuthoredItem flashcard ÔN TẬP (measurable=false); null nếu không hợp schema. */
 function toCardItem(raw: unknown, kc: Slug, index: number): AuthoredItem | null {
-  const parsed = Flashcard.safeParse(raw);
-  if (!parsed.success) return null;
-  const itemKey = `${kc}::card::${index}`;
+  const parsed = Flashcard.safeParse(raw)
+  if (!parsed.success) return null
+  const itemKey = `${kc}::card::${index}`
   const item: AuthoredItem = {
     itemKey,
     skills: [kc],
@@ -204,8 +204,8 @@ function toCardItem(raw: unknown, kc: Slug, index: number): AuthoredItem | null 
     measurable: false,
     primitiveKind: 'flashcard',
     payload: { ...parsed.data, id: itemKey },
-  };
-  return validateItem(item).some((i) => i.severity === 'error') ? null : item;
+  }
+  return validateItem(item).some((i) => i.severity === 'error') ? null : item
 }
 
 /** Dựng FlashcardPort (content ÔN TẬP). Sinh flashcard cho 1 KC. */
@@ -222,16 +222,16 @@ export function buildFlashcardPort(opts?: { aiKey?: string }): FlashcardPort {
         messages: [{ role: 'user', content: `KC=${kc}` }],
         model: CONTENT_MODEL,
         maxTokens: 1500,
-      });
+      })
       if (res.finishReason === 'max_tokens') {
         // Cắt token → JSON dở → parse hỏng → trả RỖNG mà im lặng. Phải nổ (xem authoring-adapters).
-        throw new Error('Sinh nội dung bị CẮT vì hết token — giảm phạm vi yêu cầu.');
+        throw new Error('Sinh nội dung bị CẮT vì hết token — giảm phạm vi yêu cầu.')
       }
       return parseCards(res.text)
         .map((raw, i) => toCardItem(raw, kc, i))
-        .filter((it): it is AuthoredItem => it !== null);
+        .filter((it): it is AuthoredItem => it !== null)
     },
-  };
+  }
 }
 
 /**
@@ -239,21 +239,21 @@ export function buildFlashcardPort(opts?: { aiKey?: string }): FlashcardPort {
  * dạng); bỏ trống → mở TOÀN BỘ danh mục và để bên sinh tự chọn dạng hợp với kiến thức.
  */
 export function buildGeneratorPort(opts?: {
-  aiKey?: string;
-  kinds?: readonly string[];
-  count?: number;
+  aiKey?: string
+  kinds?: readonly string[]
+  count?: number
   /** Brief step (grounding): item phải hiện thực hoá đúng ý đồ step, không sinh chung chung theo KC. */
-  brief?: string;
+  brief?: string
   /** Locale cho THANG HỖ TRỢ (đa ngôn ngữ, en gốc). Đề quiz vẫn theo spec.language (multi-locale text = pass sau). */
-  languages?: readonly string[];
+  languages?: readonly string[]
   /** Điểm sai thường gặp (đã render) — distractor NHẮM đúng hiểu-sai, không bịa ngẫu nhiên. */
-  misconceptions?: string;
+  misconceptions?: string
 }): GeneratorPort {
   return {
     async generate(spec: GenerationSpec, kc: Slug): Promise<readonly AuthoredItem[]> {
-      const catalogue = opts?.kinds?.length ? opts.kinds.join(', ') : CATALOGUE;
-      const count = opts?.count ?? opts?.kinds?.length ?? ITEMS_PER_KC;
-      const locales = localeList(opts?.languages, spec.language);
+      const catalogue = opts?.kinds?.length ? opts.kinds.join(', ') : CATALOGUE
+      const count = opts?.count ?? opts?.kinds?.length ?? ITEMS_PER_KC
+      const locales = localeList(opts?.languages, spec.language)
       const res = await getAi(opts?.aiKey).generateText({
         system: await renderPrompt('content.item.generate', {
           kc,
@@ -273,13 +273,13 @@ export function buildGeneratorPort(opts?: {
         // Đa-locale (prompt/label/explanation mỗi locale) + thang hỗ trợ 4 level (mỗi cấp đa-locale) → item
         // dài gấp ~3; trần thấp cắt JSON giữa chừng (nổ ở finishReason). Nới đủ cho vài item đa ngôn ngữ.
         maxTokens: 16000,
-      });
+      })
       if (res.finishReason === 'max_tokens') {
         // Cắt token → JSON dở → parse hỏng → trả RỖNG mà im lặng. Phải nổ (xem authoring-adapters).
-        throw new Error('Sinh nội dung bị CẮT vì hết token — giảm phạm vi yêu cầu.');
+        throw new Error('Sinh nội dung bị CẮT vì hết token — giảm phạm vi yêu cầu.')
       }
-      const elo = BAND_ELO[spec.difficultyBand];
-      const parsed = parseItems(res.text);
+      const elo = BAND_ELO[spec.difficultyBand]
+      const parsed = parseItems(res.text)
       if (process.env.DEBUG_GEN)
         console.error(
           '[quizPort]',
@@ -290,12 +290,12 @@ export function buildGeneratorPort(opts?: {
           'parsed=',
           parsed.length,
           parsed.length ? '' : `\ntextHead=${res.text.slice(0, 400)}`,
-        );
+        )
       return parsed
         .map((raw, i) => toAuthoredItem(raw, kc, i, elo))
-        .filter((it): it is AuthoredItem => it !== null);
+        .filter((it): it is AuthoredItem => it !== null)
     },
-  };
+  }
 }
 
 /**
@@ -303,36 +303,30 @@ export function buildGeneratorPort(opts?: {
  * (mọi khoá trong `answer.example`, đúng kiểu) → `manipGrader` mới chấm được. Sai hợp đồng → loại thẳng
  * (không lưu item không chấm được). `payload = { kind, target, prompt }` khớp thứ manipGrader đọc.
  */
-function toKitItem(
-  raw: unknown,
-  kc: Slug,
-  kind: string,
-  index: number,
-  elo: number,
-): AuthoredItem | null {
+function toKitItem(raw: unknown, kc: Slug, kind: string, index: number, elo: number): AuthoredItem | null {
   const r = (raw ?? {}) as {
-    prompt?: unknown;
-    target?: unknown;
-    support?: unknown;
-    params?: unknown;
-    objectLabel?: unknown;
-  };
-  const ans = kitAnswerDoc(kind);
+    prompt?: unknown
+    target?: unknown
+    support?: unknown
+    params?: unknown
+    objectLabel?: unknown
+  }
+  const ans = kitAnswerDoc(kind)
   if (!ans || !r.target || typeof r.target !== 'object') {
     if (process.env.DEBUG_GEN)
-      console.error('[toKitItem] no target/ans', kind, 'raw=', JSON.stringify(raw).slice(0, 500));
-    return null;
+      console.error('[toKitItem] no target/ans', kind, 'raw=', JSON.stringify(raw).slice(0, 500))
+    return null
   }
-  const tgt = r.target as Record<string, unknown>;
+  const tgt = r.target as Record<string, unknown>
   // Hợp đồng đáp án: mọi khoá mẫu phải có trong target, đúng kiểu (chống LLM tạo target sai hình dạng).
   for (const [k, v] of Object.entries(ans.example)) {
     if (!(k in tgt) || typeof tgt[k] !== typeof v) {
       if (process.env.DEBUG_GEN)
-        console.error('[toKitItem] target sai hợp đồng: khoá', k, 'target=', JSON.stringify(tgt));
-      return null;
+        console.error('[toKitItem] target sai hợp đồng: khoá', k, 'target=', JSON.stringify(tgt))
+      return null
     }
   }
-  const itemKey = `${kc}::${manipKind(kind)}::${index}`;
+  const itemKey = `${kc}::${manipKind(kind)}::${index}`
   const item: AuthoredItem = {
     itemKey,
     skills: [kc],
@@ -352,11 +346,11 @@ function toKitItem(
       ...(r.prompt ? { prompt: r.prompt } : {}),
       ...(r.support ? { support: r.support } : {}),
     },
-  };
-  const errs = validateItem(item).filter((i) => i.severity === 'error');
+  }
+  const errs = validateItem(item).filter((i) => i.severity === 'error')
   if (errs.length && process.env.DEBUG_GEN)
-    console.error('[toKitItem] validate FAIL', JSON.stringify(errs.slice(0, 4)));
-  return errs.length ? null : item;
+    console.error('[toKitItem] validate FAIL', JSON.stringify(errs.slice(0, 4)))
+  return errs.length ? null : item
 }
 
 /**
@@ -365,26 +359,26 @@ function toKitItem(
  * ép). Mỗi kit sinh `count` item cho KC. Item sai hợp đồng bị loại (không lưu rác không chấm được).
  */
 export function buildKitGeneratorPort(opts: {
-  kinds: readonly string[];
-  aiKey?: string;
-  count?: number;
+  kinds: readonly string[]
+  aiKey?: string
+  count?: number
   /** Đa ngôn ngữ: sinh text cho MỌI locale này (en luôn có, là gốc). Mặc định [en, spec.language]. */
-  languages?: readonly string[];
+  languages?: readonly string[]
   /** Brief step (grounding) — task phải bám đúng ý đồ step. */
-  brief?: string;
+  brief?: string
   /** Điểm sai thường gặp (đã render) — task/gợi ý nhắm đúng hiểu-sai. */
-  misconceptions?: string;
+  misconceptions?: string
 }): GeneratorPort {
   return {
     async generate(spec: GenerationSpec, kc: Slug): Promise<readonly AuthoredItem[]> {
-      const items: AuthoredItem[] = [];
-      const elo = BAND_ELO[spec.difficultyBand];
-      const count = opts.count ?? 2;
-      const locales = localeList(opts.languages, spec.language);
+      const items: AuthoredItem[] = []
+      const elo = BAND_ELO[spec.difficultyBand]
+      const count = opts.count ?? 2
+      const locales = localeList(opts.languages, spec.language)
       for (const kind of opts.kinds) {
-        const doc = KIT_DOCS[kind];
-        const ans = kitAnswerDoc(kind);
-        if (!doc || !ans) continue; // chỉ kit đã khai answer (chưa khai → không sinh bừa)
+        const doc = KIT_DOCS[kind]
+        const ans = kitAnswerDoc(kind)
+        if (!doc || !ans) continue // chỉ kit đã khai answer (chưa khai → không sinh bừa)
         const res = await getAi(opts.aiKey).generateText({
           system: await renderPrompt('content.kititem.generate', {
             kc,
@@ -404,10 +398,9 @@ export function buildKitGeneratorPort(opts: {
           model: CONTENT_MODEL,
           // Kit cũng đa-locale (prompt/support 4 level mỗi locale) → nới trần.
           maxTokens: 8000,
-        });
-        if (res.finishReason === 'max_tokens')
-          throw new Error('Sinh item kit bị CẮT — giảm count.');
-        const parsed = parseItems(res.text);
+        })
+        if (res.finishReason === 'max_tokens') throw new Error('Sinh item kit bị CẮT — giảm count.')
+        const parsed = parseItems(res.text)
         if (process.env.DEBUG_GEN)
           console.error(
             '[kitPort]',
@@ -419,13 +412,13 @@ export function buildKitGeneratorPort(opts: {
             'parsed=',
             parsed.length,
             parsed.length ? '' : `\ntextHead=${res.text.slice(0, 400)}`,
-          );
+          )
         parsed.forEach((raw, i) => {
-          const it = toKitItem(raw, kc, kind, i, elo);
-          if (it) items.push(it);
-        });
+          const it = toKitItem(raw, kc, kind, i, elo)
+          if (it) items.push(it)
+        })
       }
-      return items;
+      return items
     },
-  };
+  }
 }

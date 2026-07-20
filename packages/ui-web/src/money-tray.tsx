@@ -1,19 +1,19 @@
-'use client';
+'use client'
 
-import { formatMoney, type CurrencyCode, type MoneyItem } from '@bingoo/core';
-import { X } from 'lucide-react';
-import { cn } from './lib/cn';
-import { POP, stagger, tile } from './lib/interactive';
+import { formatMoney, type CurrencyCode, type MoneyItem } from '@bingoo/core'
+import { X } from 'lucide-react'
+import { cn } from './lib/cn'
+import { POP, stagger, tile } from './lib/interactive'
 
 export interface MoneyTrayProps {
-  denominations: MoneyItem[];
+  denominations: MoneyItem[]
   /** Controlled: denomination ids picked, in order (repeats allowed). */
-  picks: string[];
-  onChange: (picks: string[]) => void;
-  currency?: CurrencyCode;
-  reveal?: { correct: boolean; target: number; total: number };
-  disabled?: boolean;
-  className?: string;
+  picks: string[]
+  onChange: (picks: string[]) => void
+  currency?: CurrencyCode
+  reveal?: { correct: boolean; target: number; total: number }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -30,11 +30,11 @@ export function MoneyTray({
   disabled,
   className,
 }: MoneyTrayProps) {
-  const locked = !!reveal || disabled;
-  const byId = new Map(denominations.map((d) => [d.id, d]));
-  const total = picks.reduce((s, id) => s + (byId.get(id)?.value ?? 0), 0);
-  const fmt = (n: number) => formatMoney(n, currency);
-  const face = (d: MoneyItem) => d.emoji ?? d.label ?? fmt(d.value);
+  const locked = !!reveal || disabled
+  const byId = new Map(denominations.map((d) => [d.id, d]))
+  const total = picks.reduce((s, id) => s + (byId.get(id)?.value ?? 0), 0)
+  const fmt = (n: number) => formatMoney(n, currency)
+  const face = (d: MoneyItem) => d.emoji ?? d.label ?? fmt(d.value)
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>
@@ -66,8 +66,8 @@ export function MoneyTray({
           <span className="px-1 text-sm text-foreground-subtle">—</span>
         ) : (
           picks.map((id, i) => {
-            const d = byId.get(id);
-            if (!d) return null;
+            const d = byId.get(id)
+            if (!d) return null
             return (
               <button
                 key={`${id}-${i}`}
@@ -84,7 +84,7 @@ export function MoneyTray({
                 {face(d)}
                 {!locked ? <X className="size-3" /> : null}
               </button>
-            );
+            )
           })
         )}
       </div>
@@ -109,5 +109,5 @@ export function MoneyTray({
         ))}
       </div>
     </div>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsup'
 
 /**
  * Bundle the server for production. Workspace packages (@bingoo/*) ship as raw
@@ -14,4 +14,4 @@ export default defineConfig({
   clean: true,
   sourcemap: true,
   noExternal: [/^@bingoo\//],
-});
+})

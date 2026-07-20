@@ -1,42 +1,42 @@
-'use client';
+'use client'
 
-import { ArrowLeft, Mail, MailCheck } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { useState, type FormEvent } from 'react';
-import { AuthHeader } from '@/components/auth/auth-header';
-import { Button, Field, Input, IconChip } from '@bingoo/ui-web';
-import { Link } from '@/i18n/navigation';
-import { requestPasswordReset } from '@/lib/auth-client';
-import { authErrorKey } from '@/lib/auth-errors';
-import { isEmail } from '@bingoo/core';
+import { ArrowLeft, Mail, MailCheck } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
+import { useState, type FormEvent } from 'react'
+import { AuthHeader } from '@/components/auth/auth-header'
+import { Button, Field, Input, IconChip } from '@bingoo/ui-web'
+import { Link } from '@/i18n/navigation'
+import { requestPasswordReset } from '@/lib/auth-client'
+import { authErrorKey } from '@/lib/auth-errors'
+import { isEmail } from '@bingoo/core'
 
 export default function ForgotPasswordPage() {
-  const t = useTranslations('auth');
-  const tv = useTranslations('validation');
-  const locale = useLocale();
+  const t = useTranslations('auth')
+  const tv = useTranslations('validation')
+  const locale = useLocale()
 
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState<string>();
-  const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [email, setEmail] = useState('')
+  const [error, setError] = useState<string>()
+  const [loading, setLoading] = useState(false)
+  const [sent, setSent] = useState(false)
 
   async function onSubmit(e: FormEvent) {
-    e.preventDefault();
+    e.preventDefault()
     if (!isEmail(email)) {
-      setError(tv('email'));
-      return;
+      setError(tv('email'))
+      return
     }
-    setError(undefined);
-    setLoading(true);
+    setError(undefined)
+    setLoading(true)
     // The reset email links back to our /reset-password page (locale-aware).
-    const redirectTo = `${window.location.origin}/${locale}/reset-password`;
-    const res = await requestPasswordReset({ email, redirectTo }).catch(() => null);
-    setLoading(false);
+    const redirectTo = `${window.location.origin}/${locale}/reset-password`
+    const res = await requestPasswordReset({ email, redirectTo }).catch(() => null)
+    setLoading(false)
     if (!res || res.error) {
-      setError(t(`errors.${res ? authErrorKey(res.error?.code) : 'network'}`));
-      return;
+      setError(t(`errors.${res ? authErrorKey(res.error?.code) : 'network'}`))
+      return
     }
-    setSent(true);
+    setSent(true)
   }
 
   if (sent) {
@@ -69,7 +69,7 @@ export default function ForgotPasswordPage() {
           </Link>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -107,5 +107,5 @@ export default function ForgotPasswordPage() {
         </Link>
       </p>
     </div>
-  );
+  )
 }

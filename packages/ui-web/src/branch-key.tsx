@@ -1,29 +1,29 @@
-'use client';
+'use client'
 
-import type { BranchKeyNode } from '@bingoo/core';
-import { Check, RotateCcw, X } from 'lucide-react';
-import { cn } from './lib/cn';
-import { ENTER, stagger, tile } from './lib/interactive';
+import type { BranchKeyNode } from '@bingoo/core'
+import { Check, RotateCcw, X } from 'lucide-react'
+import { cn } from './lib/cn'
+import { ENTER, stagger, tile } from './lib/interactive'
 
 export interface BranchKeyLabels {
-  yes: string;
-  no: string;
-  back?: string;
+  yes: string
+  no: string
+  back?: string
 }
 
 export interface BranchKeyProps {
-  subject: string;
-  subjectEmoji?: string;
-  subjectImage?: string;
-  nodes: BranchKeyNode[];
-  root: string;
+  subject: string
+  subjectEmoji?: string
+  subjectImage?: string
+  nodes: BranchKeyNode[]
+  root: string
   /** Controlled: question node id → yes(true)/no(false). */
-  answers: Record<string, boolean>;
-  onChange: (answers: Record<string, boolean>) => void;
-  labels: BranchKeyLabels;
-  reveal?: { correct: boolean; reached: string | null; answer: string };
-  disabled?: boolean;
-  className?: string;
+  answers: Record<string, boolean>
+  onChange: (answers: Record<string, boolean>) => void
+  labels: BranchKeyLabels
+  reveal?: { correct: boolean; reached: string | null; answer: string }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -44,32 +44,32 @@ export function BranchKey({
   disabled,
   className,
 }: BranchKeyProps) {
-  const locked = !!reveal || disabled;
-  const byId = new Map(nodes.map((n) => [n.id, n]));
+  const locked = !!reveal || disabled
+  const byId = new Map(nodes.map((n) => [n.id, n]))
 
   // Walk the key with the current answers to find where we are.
-  const trail: Array<{ node: BranchKeyNode; answer: boolean }> = [];
-  let cur = byId.get(root);
+  const trail: Array<{ node: BranchKeyNode; answer: boolean }> = []
+  let cur = byId.get(root)
   while (cur && cur.result === undefined) {
-    const a = answers[cur.id];
-    if (a === undefined) break;
-    trail.push({ node: cur, answer: a });
-    const next = a ? cur.yes : cur.no;
-    cur = next ? byId.get(next) : undefined;
+    const a = answers[cur.id]
+    if (a === undefined) break
+    trail.push({ node: cur, answer: a })
+    const next = a ? cur.yes : cur.no
+    cur = next ? byId.get(next) : undefined
   }
-  const atLeaf = !!cur && cur.result !== undefined;
-  const answerNode = byId.get(reveal?.answer ?? '');
+  const atLeaf = !!cur && cur.result !== undefined
+  const answerNode = byId.get(reveal?.answer ?? '')
 
   const answer = (id: string, v: boolean) => {
-    if (locked) return;
-    onChange({ ...answers, [id]: v });
-  };
+    if (locked) return
+    onChange({ ...answers, [id]: v })
+  }
   const back = () => {
-    if (locked || trail.length === 0) return;
-    const next = { ...answers };
-    delete next[trail[trail.length - 1]!.node.id];
-    onChange(next);
-  };
+    if (locked || trail.length === 0) return
+    const next = { ...answers }
+    delete next[trail[trail.length - 1]!.node.id]
+    onChange(next)
+  }
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>
@@ -175,5 +175,5 @@ export function BranchKey({
         </button>
       ) : null}
     </div>
-  );
+  )
 }

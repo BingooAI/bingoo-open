@@ -1,23 +1,17 @@
-'use client';
+'use client'
 
-import type { ReactNode } from 'react';
-import {
-  Label,
-  Slider as AriaSlider,
-  SliderOutput,
-  SliderThumb,
-  SliderTrack,
-} from 'react-aria-components';
+import type { ReactNode } from 'react'
+import { Label, Slider as AriaSlider, SliderOutput, SliderThumb, SliderTrack } from 'react-aria-components'
 
 export interface SliderProps {
-  label?: ReactNode;
-  value?: number;
-  defaultValue?: number;
-  onChange?: (value: number) => void;
-  minValue?: number;
-  maxValue?: number;
-  step?: number;
-  formatOptions?: Intl.NumberFormatOptions;
+  label?: ReactNode
+  value?: number
+  defaultValue?: number
+  onChange?: (value: number) => void
+  minValue?: number
+  maxValue?: number
+  step?: number
+  formatOptions?: Intl.NumberFormatOptions
 }
 
 /** Accessible single-thumb slider (keyboard, ARIA, live output) from React Aria. */
@@ -59,5 +53,5 @@ export function Slider({
         )}
       </SliderTrack>
     </AriaSlider>
-  );
+  )
 }

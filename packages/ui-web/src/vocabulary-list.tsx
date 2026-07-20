@@ -1,24 +1,24 @@
-'use client';
+'use client'
 
-import { Volume2 } from 'lucide-react';
-import { useState } from 'react';
-import { cn } from './lib/cn';
-import { ENTER, stagger, tile } from './lib/interactive';
+import { Volume2 } from 'lucide-react'
+import { useState } from 'react'
+import { cn } from './lib/cn'
+import { ENTER, stagger, tile } from './lib/interactive'
 
 export interface VocabularyWord {
-  term: string;
-  definition: string;
-  example?: string;
-  emoji?: string;
-  audioSrc?: string;
+  term: string
+  definition: string
+  example?: string
+  emoji?: string
+  audioSrc?: string
 }
 
 export interface VocabularyListProps {
-  title?: string;
-  words: VocabularyWord[];
+  title?: string
+  words: VocabularyWord[]
   /** Play a pronunciation clip. The app owns playback. */
-  onPlayAudio?: (src: string) => void;
-  className?: string;
+  onPlayAudio?: (src: string) => void
+  className?: string
 }
 
 /**
@@ -26,20 +26,16 @@ export interface VocabularyListProps {
  * definition open; tap the speaker to hear it. i18n-free — all text comes from the data.
  */
 export function VocabularyList({ title, words, onPlayAudio, className }: VocabularyListProps) {
-  const [open, setOpen] = useState<string | null>(null);
+  const [open, setOpen] = useState<string | null>(null)
 
   return (
-    <section
-      className={cn('rounded-2xl border-2 border-primary/40 bg-primary-soft/40 p-4', className)}
-    >
+    <section className={cn('rounded-2xl border-2 border-primary/40 bg-primary-soft/40 p-4', className)}>
       {title ? (
-        <h4 className="mb-2 font-display text-sm font-bold uppercase tracking-wide text-primary">
-          {title}
-        </h4>
+        <h4 className="mb-2 font-display text-sm font-bold uppercase tracking-wide text-primary">{title}</h4>
       ) : null}
       <ul className="flex flex-col gap-1.5">
         {words.map((w, i) => {
-          const on = open === w.term;
+          const on = open === w.term
           return (
             <li key={w.term} className={ENTER} style={stagger(i)}>
               <div className="flex items-center gap-2">
@@ -78,9 +74,9 @@ export function VocabularyList({ title, words, onPlayAudio, className }: Vocabul
                 </div>
               ) : null}
             </li>
-          );
+          )
         })}
       </ul>
     </section>
-  );
+  )
 }

@@ -1,14 +1,14 @@
 /** Chấm điểm ứng viên & tính đủ điều kiện. SPEC §8.2. */
 
-import type { Candidate, Elo, Slug } from '../contracts';
-import type { SequencingParams } from '../policy';
-import type { SkillMastery } from '../mastery/observe';
+import type { Candidate, Elo, Slug } from '../contracts'
+import type { SequencingParams } from '../policy'
+import type { SkillMastery } from '../mastery/observe'
 
-export type AbilityOf = (slug: Slug) => Elo;
+export type AbilityOf = (slug: Slug) => Elo
 
 /** ability người học trên một kỹ năng; chưa có state → base Elo. */
 export function abilityFromStates(states: ReadonlyMap<Slug, SkillMastery>, base: Elo): AbilityOf {
-  return (slug) => states.get(slug)?.ability ?? base;
+  return (slug) => states.get(slug)?.ability ?? base
 }
 
 /** SPEC §8.2 — "luyện tập không dạy mới": bài đã bắt đầu, HOẶC mọi skill đã gặp. */
@@ -17,8 +17,8 @@ export function isEligible(
   started: ReadonlySet<Slug>,
   encountered: ReadonlySet<Slug>,
 ): boolean {
-  if (cand.lessonSlug !== undefined && started.has(cand.lessonSlug)) return true;
-  return cand.skills.every((s) => encountered.has(s));
+  if (cand.lessonSlug !== undefined && started.has(cand.lessonSlug)) return true
+  return cand.skills.every((s) => encountered.has(s))
 }
 
 /**
@@ -32,13 +32,13 @@ export function scoreItem(
   started: ReadonlySet<Slug>,
   seq: SequencingParams,
 ): number {
-  let best = 0;
+  let best = 0
   for (const t of cand.skills) {
-    const pr = priority.get(t);
-    if (pr == null) continue;
-    const match = 1 - Math.min(1, Math.abs(abilityOf(t) - cand.difficulty) / seq.matchWindow);
-    best = Math.max(best, pr * (seq.matchFloor + (1 - seq.matchFloor) * match));
+    const pr = priority.get(t)
+    if (pr == null) continue
+    const match = 1 - Math.min(1, Math.abs(abilityOf(t) - cand.difficulty) / seq.matchWindow)
+    best = Math.max(best, pr * (seq.matchFloor + (1 - seq.matchFloor) * match))
   }
-  if (cand.lessonSlug !== undefined && started.has(cand.lessonSlug)) best *= seq.startedBonus;
-  return best;
+  if (cand.lessonSlug !== undefined && started.has(cand.lessonSlug)) best *= seq.startedBonus
+  return best
 }

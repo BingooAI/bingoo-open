@@ -1,20 +1,20 @@
-import type { ReactNode } from 'react';
-import { BadgeTile } from './badge-tile';
-import type { IconChipColor } from './icon-chip';
-import { cn } from './lib/cn';
+import type { ReactNode } from 'react'
+import { BadgeTile } from './badge-tile'
+import type { IconChipColor } from './icon-chip'
+import { cn } from './lib/cn'
 
 export interface BadgeGridItem {
-  id: string;
-  icon: ReactNode;
-  title: ReactNode;
-  description?: ReactNode;
-  color?: IconChipColor;
-  locked?: boolean;
+  id: string
+  icon: ReactNode
+  title: ReactNode
+  description?: ReactNode
+  color?: IconChipColor
+  locked?: boolean
 }
 
 export interface BadgeGridProps {
-  badges: BadgeGridItem[];
-  className?: string;
+  badges: BadgeGridItem[]
+  className?: string
 }
 
 /** A collection wall of achievement badges (earned + locked). Reuses BadgeTile. */
@@ -32,5 +32,5 @@ export function BadgeGrid({ badges, className }: BadgeGridProps) {
         />
       ))}
     </div>
-  );
+  )
 }

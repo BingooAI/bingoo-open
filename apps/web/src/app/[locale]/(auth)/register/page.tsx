@@ -1,69 +1,61 @@
-'use client';
+'use client'
 
-import { Mail, User } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useState, type FormEvent } from 'react';
-import { AuthHeader } from '@/components/auth/auth-header';
-import { AuthDivider, SocialButtons } from '@/components/auth/social-buttons';
-import {
-  Button,
-  Checkbox,
-  Field,
-  Input,
-  PasswordInput,
-  SegmentedControl,
-  IconChip,
-} from '@bingoo/ui-web';
-import { ArrowLeft, MailCheck } from 'lucide-react';
-import { Link, useRouter } from '@/i18n/navigation';
-import { signUp } from '@/lib/auth-client';
-import { authErrorKey } from '@/lib/auth-errors';
-import { isEmail } from '@bingoo/core';
+import { Mail, User } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useState, type FormEvent } from 'react'
+import { AuthHeader } from '@/components/auth/auth-header'
+import { AuthDivider, SocialButtons } from '@/components/auth/social-buttons'
+import { Button, Checkbox, Field, Input, PasswordInput, SegmentedControl, IconChip } from '@bingoo/ui-web'
+import { ArrowLeft, MailCheck } from 'lucide-react'
+import { Link, useRouter } from '@/i18n/navigation'
+import { signUp } from '@/lib/auth-client'
+import { authErrorKey } from '@/lib/auth-errors'
+import { isEmail } from '@bingoo/core'
 
-type Role = 'parent' | 'student';
+type Role = 'parent' | 'student'
 
 export default function RegisterPage() {
-  const t = useTranslations('auth');
-  const tv = useTranslations('validation');
-  const router = useRouter();
+  const t = useTranslations('auth')
+  const tv = useTranslations('validation')
+  const router = useRouter()
 
-  const [role, setRole] = useState<Role>('parent');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [agreed, setAgreed] = useState(false);
+  const [role, setRole] = useState<Role>('parent')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [agreed, setAgreed] = useState(false)
   const [errors, setErrors] = useState<{
-    name?: string;
-    email?: string;
-    password?: string;
-    agreed?: string;
-  }>({});
-  const [formError, setFormError] = useState<string>();
-  const [verifySent, setVerifySent] = useState(false);
-  const [loading, setLoading] = useState(false);
+    name?: string
+    email?: string
+    password?: string
+    agreed?: string
+  }>({})
+  const [formError, setFormError] = useState<string>()
+  const [verifySent, setVerifySent] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   async function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    const next: typeof errors = {};
-    if (name.trim().length < 2) next.name = tv('required');
-    if (!isEmail(email)) next.email = tv('email');
-    if (password.length < 8) next.password = tv('passwordWeak');
-    if (!agreed) next.agreed = tv('agreeTerms');
-    setErrors(next);
-    if (Object.keys(next).length) return;
+    e.preventDefault()
+    const next: typeof errors = {}
+    if (name.trim().length < 2) next.name = tv('required')
+    if (!isEmail(email)) next.email = tv('email')
+    if (password.length < 8) next.password = tv('passwordWeak')
+    if (!agreed) next.agreed = tv('agreeTerms')
+    setErrors(next)
+    if (Object.keys(next).length) return
 
-    setFormError(undefined);
-    setLoading(true);
-    const res = await signUp.email({ name, email, password }).catch(() => null);
+    setFormError(undefined)
+    setLoading(true)
+    const res = await signUp.email({ name, email, password }).catch(() => null)
     if (!res || res.error) {
-      setLoading(false);
-      setFormError(t(`errors.${res ? authErrorKey(res.error?.code) : 'network'}`));
-      return;
+      setLoading(false)
+      setFormError(t(`errors.${res ? authErrorKey(res.error?.code) : 'network'}`))
+      return
     }
     // A session token means auto sign-in (email verification off) → onboard now;
     // otherwise the account awaits email verification.
-    if (res.data?.token) router.push('/onboarding');
-    else setVerifySent(true);
+    if (res.data?.token) router.push('/onboarding')
+    else setVerifySent(true)
   }
 
   if (verifySent) {
@@ -90,7 +82,7 @@ export default function RegisterPage() {
           {t('verify.backToLogin')}
         </Link>
       </div>
-    );
+    )
   }
 
   return (
@@ -145,11 +137,7 @@ export default function RegisterPage() {
           />
         </Field>
 
-        <Field
-          label={t('shared.password')}
-          error={errors.password}
-          hint={t('shared.passwordPlaceholder')}
-        >
+        <Field label={t('shared.password')} error={errors.password} hint={t('shared.passwordPlaceholder')}>
           <PasswordInput
             name="password"
             autoComplete="new-password"
@@ -187,10 +175,7 @@ export default function RegisterPage() {
         </div>
 
         {formError && (
-          <p
-            role="alert"
-            className="rounded-xl bg-danger-soft px-4 py-3 text-sm font-medium text-danger"
-          >
+          <p role="alert" className="rounded-xl bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
             {formError}
           </p>
         )}
@@ -207,5 +192,5 @@ export default function RegisterPage() {
         </Link>
       </p>
     </div>
-  );
+  )
 }

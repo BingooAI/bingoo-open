@@ -3,12 +3,6 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": [
-    "src/**/*.ts",
-    "scripts/**/*.ts",
-    "test/**/*.ts",
-    "tsup.config.ts",
-    "vitest.config.ts"
-  ],
+  "include": ["src/**/*.ts", "scripts/**/*.ts", "test/**/*.ts", "tsup.config.ts", "vitest.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

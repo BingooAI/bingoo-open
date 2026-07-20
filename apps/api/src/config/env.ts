@@ -1,9 +1,9 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 // Prisma 7 / 12-factor: load a local .env for dev if present; in prod the
 // environment provides the vars directly. Must run before we read process.env.
 try {
-  process.loadEnvFile();
+  process.loadEnvFile()
 } catch {
   // no local .env — rely on the ambient environment
 }
@@ -57,20 +57,20 @@ const EnvSchema = z
         code: 'custom',
         path: ['BETTER_AUTH_SECRET'],
         message: 'is required in production',
-      });
+      })
     }
-  });
+  })
 
-const parsed = EnvSchema.safeParse(process.env);
+const parsed = EnvSchema.safeParse(process.env)
 
 if (!parsed.success) {
   const details = parsed.error.issues
     .map((issue) => `  - ${issue.path.join('.') || '(root)'}: ${issue.message}`)
-    .join('\n');
+    .join('\n')
   // Never log the raw process.env — only the names/reasons of invalid vars.
-  console.error(`Invalid environment variables:\n${details}`);
-  process.exit(1);
+  console.error(`Invalid environment variables:\n${details}`)
+  process.exit(1)
 }
 
-export const env = parsed.data;
-export type Env = typeof env;
+export const env = parsed.data
+export type Env = typeof env

@@ -1,29 +1,29 @@
-'use client';
+'use client'
 
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
-import { stagger, tile } from './lib/interactive';
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
+import { stagger, tile } from './lib/interactive'
 
 export interface SelfAssessmentLevel {
-  emoji: string;
+  emoji: string
   /** A11y label for this rating, e.g. "not yet" / "confident". */
-  label?: string;
+  label?: string
 }
 
 export interface SelfAssessmentProps {
-  title?: ReactNode;
+  title?: ReactNode
   /** The "I can…" statements. */
-  items: { id: string; label: ReactNode }[];
+  items: { id: string; label: ReactNode }[]
   /** Controlled: statement id → chosen level index. */
-  value: Record<string, number>;
-  onChange: (value: Record<string, number>) => void;
+  value: Record<string, number>
+  onChange: (value: Record<string, number>) => void
   /** Rating faces, low → high. Defaults to 😐 / 😊. */
-  levels?: SelfAssessmentLevel[];
-  disabled?: boolean;
-  className?: string;
+  levels?: SelfAssessmentLevel[]
+  disabled?: boolean
+  className?: string
 }
 
-const DEFAULT_LEVELS: SelfAssessmentLevel[] = [{ emoji: '😐' }, { emoji: '😊' }];
+const DEFAULT_LEVELS: SelfAssessmentLevel[] = [{ emoji: '😐' }, { emoji: '😊' }]
 
 /**
  * "Look what I can do!" — the Cambridge self-assessment strip. Each objective gets
@@ -40,9 +40,9 @@ export function SelfAssessment({
   className,
 }: SelfAssessmentProps) {
   const pick = (id: string, level: number) => {
-    if (disabled) return;
-    onChange({ ...value, [id]: level });
-  };
+    if (disabled) return
+    onChange({ ...value, [id]: level })
+  }
 
   return (
     <div
@@ -52,9 +52,7 @@ export function SelfAssessment({
       )}
     >
       {title ? (
-        <h3 className="bg-accent-teal px-4 py-2 font-display text-base font-bold text-white">
-          {title}
-        </h3>
+        <h3 className="bg-accent-teal px-4 py-2 font-display text-base font-bold text-white">{title}</h3>
       ) : null}
       <div className="flex flex-col">
         {/* Column headers */}
@@ -74,7 +72,7 @@ export function SelfAssessment({
           >
             <span className="flex-1 text-sm text-foreground">{it.label}</span>
             {levels.map((lv, i) => {
-              const on = value[it.id] === i;
+              const on = value[it.id] === i
               return (
                 <button
                   key={i}
@@ -91,11 +89,11 @@ export function SelfAssessment({
                 >
                   <span className={cn(on ? 'opacity-100' : 'opacity-0')}>{lv.emoji}</span>
                 </button>
-              );
+              )
             })}
           </div>
         ))}
       </div>
     </div>
-  );
+  )
 }

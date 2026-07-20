@@ -1,11 +1,11 @@
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/cn'
 
 export interface LogoProps {
   /** `wordmark` = full logo (icon + text), `mark` = icon only. */
-  variant?: 'wordmark' | 'mark';
+  variant?: 'wordmark' | 'mark'
   /** Pixel height; width scales automatically. */
-  height?: number;
-  className?: string;
+  height?: number
+  className?: string
 }
 
 /**
@@ -24,7 +24,7 @@ export function Logo({ variant = 'wordmark', height = 32, className }: LogoProps
         style={{ height, width: 'auto' }}
         className={cn('block select-none', className)}
       />
-    );
+    )
   }
 
   return (
@@ -34,5 +34,5 @@ export function Logo({ variant = 'wordmark', height = 32, className }: LogoProps
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/brand/logo/logo.svg" alt="" style={{ height, width: 'auto' }} className="block" />
     </span>
-  );
+  )
 }

@@ -15,10 +15,10 @@
  *
  * Run: pnpm --filter @bingoo/explainer contract
  */
-import { writeFileSync, mkdirSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
-import { z } from 'zod';
+import { writeFileSync, mkdirSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { dirname, join } from 'node:path'
+import { z } from 'zod'
 import {
   authoringGuide,
   templateCatalog,
@@ -26,13 +26,13 @@ import {
   SceneDraft,
   TEMPLATES,
   SLOT_META,
-} from '../src/index.ts';
-import { EXAMPLES } from '../src/examples.ts';
+} from '../src/index.ts'
+import { EXAMPLES } from '../src/examples.ts'
 
-const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'contract');
-mkdirSync(OUT, { recursive: true });
+const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'contract')
+mkdirSync(OUT, { recursive: true })
 
-const catalog = templateCatalog();
+const catalog = templateCatalog()
 
 /* ── 1. the prompt block ─────────────────────────────────────────────────── */
 const md = [
@@ -46,7 +46,7 @@ const md = [
   '',
   'Mỗi ví dụ dưới đây đã CHẠY QUA GATE và đạt 0 lỗi. Copy hình dạng của chúng.',
   '',
-];
+]
 for (const [tpl, ex] of Object.entries(EXAMPLES)) {
   md.push(
     `## ${tpl}`,
@@ -56,9 +56,9 @@ for (const [tpl, ex] of Object.entries(EXAMPLES)) {
     JSON.stringify({ scene: ex.scene, strings: ex.strings }, null, 2),
     '```',
     '',
-  );
+  )
 }
-writeFileSync(join(OUT, 'AUTHORING.md'), md.join('\n'));
+writeFileSync(join(OUT, 'AUTHORING.md'), md.join('\n'))
 
 /* ── 2. machine-readable catalog ─────────────────────────────────────────── */
 writeFileSync(
@@ -78,27 +78,27 @@ writeFileSync(
     null,
     2,
   ),
-);
+)
 
 /* ── 3. JSON Schema for constrained decoding ─────────────────────────────── */
-const schema = z.toJSONSchema(SceneDraft, { io: 'input' });
+const schema = z.toJSONSchema(SceneDraft, { io: 'input' })
 schema.$comment =
-  'GENERATED. Note what is ABSENT: place, x, y, size, w, h, overrides. A model cannot emit a coordinate because there is nowhere to put one.';
-schema.properties.template.enum = catalog.map((t) => t.template);
-writeFileSync(join(OUT, 'scene-draft.schema.json'), JSON.stringify(schema, null, 2));
+  'GENERATED. Note what is ABSENT: place, x, y, size, w, h, overrides. A model cannot emit a coordinate because there is nowhere to put one.'
+schema.properties.template.enum = catalog.map((t) => t.template)
+writeFileSync(join(OUT, 'scene-draft.schema.json'), JSON.stringify(schema, null, 2))
 
 /* ── 4. examples — VERIFIED against the real gate before they are written ── */
-let bad = 0;
-const examples = {};
+let bad = 0
+const examples = {}
 for (const [tpl, ex] of Object.entries(EXAMPLES)) {
-  const errs = checkScene(ex.scene, ex.strings).filter((f) => f.level === 'error');
+  const errs = checkScene(ex.scene, ex.strings).filter((f) => f.level === 'error')
   if (errs.length) {
-    bad++;
-    console.error(`✗ ví dụ "${tpl}" KHÔNG qua gate:`);
-    for (const e of errs) console.error(`    ${e.code}: ${e.message}`);
-    continue;
+    bad++
+    console.error(`✗ ví dụ "${tpl}" KHÔNG qua gate:`)
+    for (const e of errs) console.error(`    ${e.code}: ${e.message}`)
+    continue
   }
-  examples[tpl] = { why: ex.why, scene: ex.scene, strings: ex.strings };
+  examples[tpl] = { why: ex.why, scene: ex.scene, strings: ex.strings }
 }
 writeFileSync(
   join(OUT, 'examples.json'),
@@ -110,16 +110,16 @@ writeFileSync(
     null,
     2,
   ),
-);
+)
 
 /* ── coverage: a template with no example is a template the model will guess at */
-const missing = TEMPLATES.filter((t) => !SLOT_META[t].use.startsWith('LEGACY') && !EXAMPLES[t]);
+const missing = TEMPLATES.filter((t) => !SLOT_META[t].use.startsWith('LEGACY') && !EXAMPLES[t])
 
 if (bad) {
-  console.error(`\n✗ ${bad} ví dụ không qua gate — sửa examples.ts`);
-  process.exit(1);
+  console.error(`\n✗ ${bad} ví dụ không qua gate — sửa examples.ts`)
+  process.exit(1)
 }
 console.log(
   `✓ contract/ đã xuất — ${catalog.length} template · ${Object.keys(examples).length} ví dụ, tất cả qua gate`,
-);
-if (missing.length) console.log(`  ⚠ chưa có ví dụ cho: ${missing.join(', ')}`);
+)
+if (missing.length) console.log(`  ⚠ chưa có ví dụ cho: ${missing.join(', ')}`)

@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import { X } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { X } from 'lucide-react'
+import type { ReactNode } from 'react'
 import {
   Button as AriaButton,
   Dialog as AriaDialog,
@@ -9,19 +9,19 @@ import {
   Heading,
   Modal,
   ModalOverlay,
-} from 'react-aria-components';
-import { buttonVariants, type ButtonProps } from './button';
-import { cn } from './lib/cn';
+} from 'react-aria-components'
+import { buttonVariants, type ButtonProps } from './button'
+import { cn } from './lib/cn'
 
 export interface SheetProps {
-  trigger: ReactNode;
-  triggerVariant?: ButtonProps['variant'];
-  side?: 'right' | 'left';
-  title: ReactNode;
-  description?: ReactNode;
-  children?: ReactNode;
-  footer?: (close: () => void) => ReactNode;
-  closeAriaLabel?: string;
+  trigger: ReactNode
+  triggerVariant?: ButtonProps['variant']
+  side?: 'right' | 'left'
+  title: ReactNode
+  description?: ReactNode
+  children?: ReactNode
+  footer?: (close: () => void) => ReactNode
+  closeAriaLabel?: string
 }
 
 // Static per-side classes so Tailwind can see the animation utilities.
@@ -29,7 +29,7 @@ const SIDE = {
   right:
     'right-0 rounded-l-2xl border-l data-[entering]:animate-[slide-in-right_.28s_var(--ease-out-soft)] data-[exiting]:animate-[slide-out-right_.24s_ease-in]',
   left: 'left-0 rounded-r-2xl border-r data-[entering]:animate-[slide-in-left_.28s_var(--ease-out-soft)] data-[exiting]:animate-[slide-out-left_.24s_ease-in]',
-} as const;
+} as const
 
 /** Side drawer / sheet — a modal that slides in from an edge (React Aria). */
 export function Sheet({
@@ -70,9 +70,7 @@ export function Sheet({
                   <Heading slot="title" className="font-display text-lg font-bold text-foreground">
                     {title}
                   </Heading>
-                  {description ? (
-                    <p className="text-sm text-foreground-muted">{description}</p>
-                  ) : null}
+                  {description ? <p className="text-sm text-foreground-muted">{description}</p> : null}
                 </div>
                 <div className="flex-1 overflow-y-auto">{children}</div>
                 {footer ? <div className="flex justify-end gap-2">{footer(close)}</div> : null}
@@ -82,5 +80,5 @@ export function Sheet({
         </Modal>
       </ModalOverlay>
     </DialogTrigger>
-  );
+  )
 }

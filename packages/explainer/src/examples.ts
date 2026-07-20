@@ -11,16 +11,16 @@
  * worse than none — it teaches the model to produce exactly the scene the gate
  * will then reject.
  */
-import type { Scene } from './schema';
-import type { Template } from './catalog';
+import type { Scene } from './schema'
+import type { Template } from './catalog'
 
 export type Example = {
-  scene: Scene;
+  scene: Scene
   /** the bundle strings this scene needs — prose never lives in the doc */
-  strings: Record<string, string>;
+  strings: Record<string, string>
   /** why this template was chosen here — teaches SELECTION, not just filling */
-  why: string;
-};
+  why: string
+}
 
 const sc = (
   id: string,
@@ -33,7 +33,7 @@ const sc = (
   layout: { template, regions: {} },
   elements,
   ...extra,
-});
+})
 
 const t = (id: string, region: string, rung: string) => ({
   id,
@@ -41,7 +41,7 @@ const t = (id: string, region: string, rung: string) => ({
   region,
   style: { fontSize: rung, align: 'center' },
   startVisible: true,
-});
+})
 
 export const EXAMPLES: Partial<Record<Template, Example>> = {
   'title-card': {
@@ -634,4 +634,4 @@ export const EXAMPLES: Partial<Record<Template, Example>> = {
     ]),
     strings: { ti: 'Em đã làm được gì?' },
   },
-};
+}

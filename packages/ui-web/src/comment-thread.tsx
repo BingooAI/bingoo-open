@@ -1,24 +1,24 @@
-import type { ReactNode } from 'react';
-import { Avatar } from './avatar';
-import { cn } from './lib/cn';
+import type { ReactNode } from 'react'
+import { Avatar } from './avatar'
+import { cn } from './lib/cn'
 
 export interface CommentData {
-  id: string;
-  authorName: string;
-  authorAvatarSrc?: string | null;
+  id: string
+  authorName: string
+  authorAvatarSrc?: string | null
   /** Pre-formatted relative time. */
-  time?: ReactNode;
+  time?: ReactNode
   /** Moderated text (§R5). */
-  text: ReactNode;
+  text: ReactNode
   /** One level of nested replies. */
-  replies?: CommentData[];
+  replies?: CommentData[]
 }
 
 export interface CommentThreadProps {
-  comments: CommentData[];
-  onReply?: (commentId: string) => void;
-  replyLabel?: ReactNode;
-  className?: string;
+  comments: CommentData[]
+  onReply?: (commentId: string) => void
+  replyLabel?: ReactNode
+  className?: string
 }
 
 /** A comment thread with one level of nested replies. i18n-free; content is
@@ -41,7 +41,7 @@ export function CommentThread({ comments, onReply, replyLabel, className }: Comm
         </li>
       ))}
     </ul>
-  );
+  )
 }
 
 function Comment({
@@ -49,9 +49,9 @@ function Comment({
   onReply,
   replyLabel,
 }: {
-  comment: CommentData;
-  onReply?: (id: string) => void;
-  replyLabel?: ReactNode;
+  comment: CommentData
+  onReply?: (id: string) => void
+  replyLabel?: ReactNode
 }) {
   return (
     <div className="flex items-start gap-2.5">
@@ -60,9 +60,7 @@ function Comment({
         <div className="rounded-2xl bg-surface-muted px-3.5 py-2.5">
           <div className="flex flex-wrap items-baseline gap-x-2">
             <span className="text-sm font-bold text-foreground">{comment.authorName}</span>
-            {comment.time ? (
-              <span className="text-xs text-foreground-subtle">{comment.time}</span>
-            ) : null}
+            {comment.time ? <span className="text-xs text-foreground-subtle">{comment.time}</span> : null}
           </div>
           <p className="mt-0.5 text-sm text-foreground">{comment.text}</p>
         </div>
@@ -77,5 +75,5 @@ function Comment({
         ) : null}
       </div>
     </div>
-  );
+  )
 }

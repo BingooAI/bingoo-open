@@ -1,4 +1,4 @@
-import type { MediaSearchMode, MediaSearchQuery, ModerationStatus } from '@bingoo/core';
+import type { MediaSearchMode, MediaSearchQuery, ModerationStatus } from '@bingoo/core'
 
 /**
  * Media search capability (docs/media-library-design.md §4). The default adapter
@@ -8,8 +8,8 @@ import type { MediaSearchMode, MediaSearchQuery, ModerationStatus } from '@bingo
  * hydrates the assets and re-checks fine-grained access (defense in depth).
  */
 export interface SearchHit {
-  assetId: string;
-  score: number;
+  assetId: string
+  score: number
 }
 
 /**
@@ -20,27 +20,27 @@ export interface SearchHit {
  * (matched by path prefix in the adapter), mirroring resolveMediaAccess.
  */
 export interface SearchFilter {
-  staff: boolean;
+  staff: boolean
   /** true when a real user is logged in (GLOBAL-scope + SCOPE visibility needs it). */
-  authenticated: boolean;
-  userId: string | null;
-  serviceKey: string | null;
+  authenticated: boolean
+  userId: string | null
+  serviceKey: string | null
   /** org/class/community ids the subject belongs to (for SCOPE visibility). */
-  accessibleScopeIds: string[];
+  accessibleScopeIds: string[]
   /** identity ids that a USER/ORG/TEAM grant may target (userId ∪ orgIds ∪ teamIds). */
-  grantSubjectIds: string[];
-  platformRoles: string[];
+  grantSubjectIds: string[]
+  platformRoles: string[]
   /** Allowed moderation states. Forced to ['APPROVED'] for non-staff (R5). */
-  moderation: ModerationStatus[];
+  moderation: ModerationStatus[]
 }
 
 export interface SearchResult {
-  hits: SearchHit[];
-  mode: MediaSearchMode;
+  hits: SearchHit[]
+  mode: MediaSearchMode
 }
 
 export interface SearchPort {
-  query(query: MediaSearchQuery, filter: SearchFilter): Promise<SearchResult>;
+  query(query: MediaSearchQuery, filter: SearchFilter): Promise<SearchResult>
   /** Whether semantic retrieval is available (an embedding provider is configured). */
-  readonly canEmbed: boolean;
+  readonly canEmbed: boolean
 }

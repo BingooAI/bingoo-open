@@ -1,38 +1,38 @@
-'use client';
+'use client'
 
-import type { ReactNode } from 'react';
-import { AnswerOption, type AnswerState } from './answer-option';
-import { cn } from './lib/cn';
-import { stagger } from './lib/interactive';
+import type { ReactNode } from 'react'
+import { AnswerOption, type AnswerState } from './answer-option'
+import { cn } from './lib/cn'
+import { stagger } from './lib/interactive'
 
 export interface Choice {
-  id: string;
-  label: ReactNode;
+  id: string
+  label: ReactNode
   /** Large emoji visual — picture choices without assets (preschool). */
-  emoji?: string;
+  emoji?: string
   /** Resolved image URL — picture choices. */
-  image?: string;
+  image?: string
   /** Resolved audio URL — listen-and-choose choices. */
-  audioSrc?: string;
+  audioSrc?: string
 }
 
-const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 export interface ChoiceListProps {
-  choices: Choice[];
+  choices: Choice[]
   /** `single` keeps one selected; `multiple` toggles a set. */
-  mode?: 'single' | 'multiple';
+  mode?: 'single' | 'multiple'
   /** Controlled selection (ids). Single = 0–1 ids. */
-  value: string[];
-  onChange: (ids: string[]) => void;
+  value: string[]
+  onChange: (ids: string[]) => void
   /** After checking, map choiceId → correct/incorrect to reveal grading. */
-  reveal?: Record<string, AnswerState>;
+  reveal?: Record<string, AnswerState>
   /** Prefix each option with A / B / C… */
-  letters?: boolean;
+  letters?: boolean
   /** A11y label for a choice's audio button (data). */
-  playLabel?: string;
-  disabled?: boolean;
-  className?: string;
+  playLabel?: string
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -51,20 +51,20 @@ export function ChoiceList({
   disabled,
   className,
 }: ChoiceListProps) {
-  const locked = !!reveal || disabled;
+  const locked = !!reveal || disabled
 
   function toggle(id: string) {
-    if (locked) return;
+    if (locked) return
     if (mode === 'single') {
-      onChange([id]);
+      onChange([id])
     } else {
-      onChange(value.includes(id) ? value.filter((x) => x !== id) : [...value, id]);
+      onChange(value.includes(id) ? value.filter((x) => x !== id) : [...value, id])
     }
   }
 
   // Picture choices read best as a grid (preschool-friendly tap targets).
-  const pictures = choices.some((c) => c.emoji || c.image);
-  const audioLabel = playLabel;
+  const pictures = choices.some((c) => c.emoji || c.image)
+  const audioLabel = playLabel
 
   return (
     <div
@@ -75,8 +75,8 @@ export function ChoiceList({
       )}
     >
       {choices.map((c, i) => {
-        const selected = value.includes(c.id);
-        const state: AnswerState = reveal?.[c.id] ?? (selected ? 'selected' : 'default');
+        const selected = value.includes(c.id)
+        const state: AnswerState = reveal?.[c.id] ?? (selected ? 'selected' : 'default')
         return (
           // Wrapped so the options can be staggered in without AnswerOption growing a `style` prop.
           <div key={c.id} className="motion-safe:animate-fade-up" style={stagger(i)}>
@@ -94,21 +94,21 @@ export function ChoiceList({
               className="h-full"
             />
           </div>
-        );
+        )
       })}
     </div>
-  );
+  )
 }
 
 export interface TrueFalseProps {
-  trueLabel: ReactNode;
-  falseLabel: ReactNode;
-  value: boolean | null;
-  onChange: (value: boolean) => void;
+  trueLabel: ReactNode
+  falseLabel: ReactNode
+  value: boolean | null
+  onChange: (value: boolean) => void
   /** After checking: the actual answer + whether the user was right. */
-  reveal?: { answer: boolean };
-  disabled?: boolean;
-  className?: string;
+  reveal?: { answer: boolean }
+  disabled?: boolean
+  className?: string
 }
 
 /** A two-option true/false control, laid out side by side. Labels are data. */
@@ -121,15 +121,15 @@ export function TrueFalse({
   disabled,
   className,
 }: TrueFalseProps) {
-  const locked = !!reveal || disabled;
+  const locked = !!reveal || disabled
 
   function stateFor(optionValue: boolean): AnswerState {
     if (reveal) {
-      if (optionValue === reveal.answer) return 'correct';
-      if (optionValue === value) return 'incorrect';
-      return 'default';
+      if (optionValue === reveal.answer) return 'correct'
+      if (optionValue === value) return 'incorrect'
+      return 'default'
     }
-    return value === optionValue ? 'selected' : 'default';
+    return value === optionValue ? 'selected' : 'default'
   }
 
   return (
@@ -147,5 +147,5 @@ export function TrueFalse({
         onClick={() => !locked && onChange(false)}
       />
     </div>
-  );
+  )
 }

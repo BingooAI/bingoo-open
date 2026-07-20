@@ -1,17 +1,17 @@
-import { Avatar, type AvatarProps } from './avatar';
-import { cn } from './lib/cn';
+import { Avatar, type AvatarProps } from './avatar'
+import { cn } from './lib/cn'
 
 export interface AvatarGroupProps {
-  avatars: { name: string; src?: string | null }[];
-  max?: number;
-  size?: AvatarProps['size'];
-  className?: string;
+  avatars: { name: string; src?: string | null }[]
+  max?: number
+  size?: AvatarProps['size']
+  className?: string
 }
 
 /** Overlapping stack of avatars with a `+N` overflow chip. */
 export function AvatarGroup({ avatars, max = 4, size = 'sm', className }: AvatarGroupProps) {
-  const shown = avatars.slice(0, max);
-  const extra = avatars.length - shown.length;
+  const shown = avatars.slice(0, max)
+  const extra = avatars.length - shown.length
   return (
     <div className={cn('flex items-center', className)}>
       {shown.map((a, i) => (
@@ -25,5 +25,5 @@ export function AvatarGroup({ avatars, max = 4, size = 'sm', className }: Avatar
         </div>
       ) : null}
     </div>
-  );
+  )
 }

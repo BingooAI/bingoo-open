@@ -1,14 +1,14 @@
-'use client';
+'use client'
 
-import { Menu, X } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
-import { Logo } from '@/components/brand/logo';
-import { LocaleSwitcher } from '@/components/brand/locale-switcher';
-import { ThemeToggle } from '@/components/brand/theme-toggle';
-import { buttonVariants, Container } from '@bingoo/ui-web';
-import { Link } from '@/i18n/navigation';
-import { cn } from '@/lib/cn';
+import { Menu, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
+import { Logo } from '@/components/brand/logo'
+import { LocaleSwitcher } from '@/components/brand/locale-switcher'
+import { ThemeToggle } from '@/components/brand/theme-toggle'
+import { buttonVariants, Container } from '@bingoo/ui-web'
+import { Link } from '@/i18n/navigation'
+import { cn } from '@/lib/cn'
 
 const NAV: { key: string; href: string; route?: boolean }[] = [
   { key: 'features', href: '#features' },
@@ -17,27 +17,25 @@ const NAV: { key: string; href: string; route?: boolean }[] = [
   { key: 'forParents', href: '#parents' },
   { key: 'pricing', href: '/pricing', route: true },
   { key: 'help', href: '/faq', route: true },
-];
+]
 
 export function SiteHeader() {
-  const t = useTranslations();
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
+  const t = useTranslations()
+  const [scrolled, setScrolled] = useState(false)
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
     <header
       className={cn(
         'sticky top-0 z-40 transition-colors',
-        scrolled
-          ? 'border-b border-border bg-background/80 backdrop-blur-lg'
-          : 'border-b border-transparent',
+        scrolled ? 'border-b border-border bg-background/80 backdrop-blur-lg' : 'border-b border-transparent',
       )}
     >
       <Container size="xl">
@@ -53,7 +51,7 @@ export function SiteHeader() {
           <nav className="hidden items-center gap-0.5 xl:flex" aria-label="Primary">
             {NAV.map((item) => {
               const cls =
-                'whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-foreground-muted transition-colors hover:bg-surface-muted hover:text-foreground';
+                'whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-foreground-muted transition-colors hover:bg-surface-muted hover:text-foreground'
               return item.route ? (
                 <Link key={item.key} href={item.href} className={cls}>
                   {t(`nav.${item.key}`)}
@@ -62,7 +60,7 @@ export function SiteHeader() {
                 <a key={item.key} href={item.href} className={cls}>
                   {t(`nav.${item.key}`)}
                 </a>
-              );
+              )
             })}
           </nav>
 
@@ -93,22 +91,16 @@ export function SiteHeader() {
         <div className="border-t border-border bg-background xl:hidden">
           <Container size="xl" className="flex flex-col gap-1 py-4">
             {NAV.map((item) => {
-              const cls =
-                'rounded-xl px-4 py-3 text-sm font-semibold text-foreground hover:bg-surface-muted';
+              const cls = 'rounded-xl px-4 py-3 text-sm font-semibold text-foreground hover:bg-surface-muted'
               return item.route ? (
-                <Link
-                  key={item.key}
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className={cls}
-                >
+                <Link key={item.key} href={item.href} onClick={() => setOpen(false)} className={cls}>
                   {t(`nav.${item.key}`)}
                 </Link>
               ) : (
                 <a key={item.key} href={item.href} onClick={() => setOpen(false)} className={cls}>
                   {t(`nav.${item.key}`)}
                 </a>
-              );
+              )
             })}
             <div className="mt-2 flex items-center justify-between">
               <LocaleSwitcher />
@@ -134,5 +126,5 @@ export function SiteHeader() {
         </div>
       )}
     </header>
-  );
+  )
 }

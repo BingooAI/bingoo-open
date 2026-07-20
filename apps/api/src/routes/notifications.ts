@@ -1,9 +1,9 @@
-import { Hono } from 'hono';
-import { z } from 'zod';
-import type { AppEnv } from '../lib/context';
-import { ok } from '../lib/response';
-import { validate } from '../lib/validate';
-import { getNotification } from '../providers';
+import { Hono } from 'hono'
+import { z } from 'zod'
+import type { AppEnv } from '../lib/context'
+import { ok } from '../lib/response'
+import { validate } from '../lib/validate'
+import { getNotification } from '../providers'
 
 /**
  * Send a push to explicit device tokens. NOTE: the Device token registry +
@@ -23,8 +23,8 @@ export const notifications = new Hono<AppEnv>().post(
     }),
   ),
   async (c) => {
-    const { tokens, ...message } = c.req.valid('json');
-    const result = await getNotification().sendToTokens(tokens, message);
-    return ok(c, result);
+    const { tokens, ...message } = c.req.valid('json')
+    const result = await getNotification().sendToTokens(tokens, message)
+    return ok(c, result)
   },
-);
+)

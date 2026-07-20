@@ -17,4 +17,4 @@ export {
   type Combatant,
   type RoundOutcome,
   type MatchState,
-} from '@bingoo/core';
+} from '@bingoo/core'

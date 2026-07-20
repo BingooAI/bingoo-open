@@ -1,25 +1,25 @@
-'use client';
+'use client'
 
-import { translateCells } from '@bingoo/core';
-import { cn } from './lib/cn';
-import { POP, SHAKE, tile } from './lib/interactive';
+import { translateCells } from '@bingoo/core'
+import { cn } from './lib/cn'
+import { POP, SHAKE, tile } from './lib/interactive'
 
 export interface TranslationGridProps {
-  rows: number;
-  cols: number;
+  rows: number
+  cols: number
   /** The original shape, as "row-col" cells. */
-  cells: string[];
+  cells: string[]
   /** move = shift the shape with the arrows. describe = both shapes are shown, say how far it went. */
-  task?: 'move' | 'describe';
+  task?: 'move' | 'describe'
   /** describe only: where the shape ended up (the shell translates it — that IS the picture). */
-  movedCells?: string[];
+  movedCells?: string[]
   /** Controlled: how far right / up the learner says (or has moved) the shape. */
-  dx: number | null;
-  dy: number | null;
-  onChange: (next: { dx: number | null; dy: number | null }) => void;
-  reveal?: { correct: boolean; dx: number; dy: number };
-  disabled?: boolean;
-  className?: string;
+  dx: number | null
+  dy: number | null
+  onChange: (next: { dx: number | null; dy: number | null }) => void
+  reveal?: { correct: boolean; dx: number; dy: number }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -40,29 +40,25 @@ export function TranslationGrid({
   disabled,
   className,
 }: TranslationGridProps) {
-  const locked = !!reveal || disabled;
-  const origin = new Set(cells);
-  const moved = new Set(
-    task === 'describe' ? (movedCells ?? []) : translateCells(cells, dx ?? 0, dy ?? 0),
-  );
-  const target = new Set(
-    reveal && task === 'move' ? translateCells(cells, reveal.dx, reveal.dy) : [],
-  );
+  const locked = !!reveal || disabled
+  const origin = new Set(cells)
+  const moved = new Set(task === 'describe' ? (movedCells ?? []) : translateCells(cells, dx ?? 0, dy ?? 0))
+  const target = new Set(reveal && task === 'move' ? translateCells(cells, reveal.dx, reveal.dy) : [])
 
   const bump = (ddx: number, ddy: number) => {
-    if (locked) return;
-    const nx = (dx ?? 0) + ddx;
-    const ny = (dy ?? 0) + ddy;
+    if (locked) return
+    const nx = (dx ?? 0) + ddx
+    const ny = (dy ?? 0) + ddy
     // The shape must never leave the grid.
     const off = translateCells(cells, nx, ny).some((k) => {
-      const seg = k.split('-').map(Number);
-      return seg[0]! < 0 || seg[0]! >= rows || seg[1]! < 0 || seg[1]! >= cols;
-    });
-    if (off) return;
-    onChange({ dx: nx, dy: ny });
-  };
+      const seg = k.split('-').map(Number)
+      return seg[0]! < 0 || seg[0]! >= rows || seg[1]! < 0 || seg[1]! >= cols
+    })
+    if (off) return
+    onChange({ dx: nx, dy: ny })
+  }
 
-  const tone = reveal ? (reveal.correct ? 'text-success' : 'text-danger') : 'text-foreground';
+  const tone = reveal ? (reveal.correct ? 'text-success' : 'text-danger') : 'text-foreground'
 
   return (
     <div className={cn('flex flex-col items-center gap-3', className)}>
@@ -74,11 +70,11 @@ export function TranslationGrid({
         style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
       >
         {Array.from({ length: rows * cols }, (_, i) => {
-          const r = Math.floor(i / cols);
-          const c = i % cols;
-          const key = `${r}-${c}`;
-          const isMoved = moved.has(key);
-          const isTarget = target.has(key) && !isMoved;
+          const r = Math.floor(i / cols)
+          const c = i % cols
+          const key = `${r}-${c}`
+          const isMoved = moved.has(key)
+          const isTarget = target.has(key) && !isMoved
           return (
             <div
               key={key}
@@ -89,7 +85,7 @@ export function TranslationGrid({
                 isTarget && 'bg-success/25 ring-2 ring-inset ring-success',
               )}
             />
-          );
+          )
         })}
       </div>
 
@@ -103,29 +99,13 @@ export function TranslationGrid({
           </>
         ) : (
           <>
-            <Stepper
-              glyph="→"
-              value={dx}
-              onChange={(v) => onChange({ dx: v, dy })}
-              disabled={locked}
-            />
-            <Stepper
-              glyph="↑"
-              value={dy}
-              onChange={(v) => onChange({ dx, dy: v })}
-              disabled={locked}
-            />
+            <Stepper glyph="→" value={dx} onChange={(v) => onChange({ dx: v, dy })} disabled={locked} />
+            <Stepper glyph="↑" value={dy} onChange={(v) => onChange({ dx, dy: v })} disabled={locked} />
           </>
         )}
       </div>
 
-      <p
-        className={cn(
-          'text-lg font-bold tabular-nums',
-          tone,
-          reveal && (reveal.correct ? POP : SHAKE),
-        )}
-      >
+      <p className={cn('text-lg font-bold tabular-nums', tone, reveal && (reveal.correct ? POP : SHAKE))}>
         {fmt(dx, '→', '←')}
         {'  '}
         {fmt(dy, '↑', '↓')}
@@ -137,37 +117,26 @@ export function TranslationGrid({
         </p>
       ) : null}
     </div>
-  );
+  )
 }
 
 function fmt(v: number | null, pos: string, neg: string) {
-  if (v == null || v === 0) return '0';
-  return `${Math.abs(v)} ${v > 0 ? pos : neg}`;
+  if (v == null || v === 0) return '0'
+  return `${Math.abs(v)} ${v > 0 ? pos : neg}`
 }
 
-function Arrow({
-  glyph,
-  onClick,
-  disabled,
-}: {
-  glyph: string;
-  onClick: () => void;
-  disabled?: boolean;
-}) {
+function Arrow({ glyph, onClick, disabled }: { glyph: string; onClick: () => void; disabled?: boolean }) {
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={onClick}
       aria-label={glyph}
-      className={cn(
-        tile({ state: 'idle', size: 'none' }),
-        'size-11 text-xl font-bold text-foreground',
-      )}
+      className={cn(tile({ state: 'idle', size: 'none' }), 'size-11 text-xl font-bold text-foreground')}
     >
       {glyph}
     </button>
-  );
+  )
 }
 
 function Stepper({
@@ -176,43 +145,33 @@ function Stepper({
   onChange,
   disabled,
 }: {
-  glyph: string;
-  value: number | null;
-  onChange: (v: number) => void;
-  disabled?: boolean;
+  glyph: string
+  value: number | null
+  onChange: (v: number) => void
+  disabled?: boolean
 }) {
   return (
-    <div
-      className={cn(tile({ state: 'quiet', size: 'none' }), 'flex items-center gap-1 px-2 py-1')}
-    >
+    <div className={cn(tile({ state: 'quiet', size: 'none' }), 'flex items-center gap-1 px-2 py-1')}>
       <span className="text-lg font-bold text-foreground-muted">{glyph}</span>
       <button
         type="button"
         disabled={disabled}
         aria-label={`${glyph} -1`}
         onClick={() => onChange((value ?? 0) - 1)}
-        className={cn(
-          tile({ state: 'idle', size: 'none' }),
-          'size-8 text-lg font-bold text-foreground',
-        )}
+        className={cn(tile({ state: 'idle', size: 'none' }), 'size-8 text-lg font-bold text-foreground')}
       >
         −
       </button>
-      <span className="w-6 text-center text-lg font-bold tabular-nums text-foreground">
-        {value ?? 0}
-      </span>
+      <span className="w-6 text-center text-lg font-bold tabular-nums text-foreground">{value ?? 0}</span>
       <button
         type="button"
         disabled={disabled}
         aria-label={`${glyph} +1`}
         onClick={() => onChange((value ?? 0) + 1)}
-        className={cn(
-          tile({ state: 'idle', size: 'none' }),
-          'size-8 text-lg font-bold text-foreground',
-        )}
+        className={cn(tile({ state: 'idle', size: 'none' }), 'size-8 text-lg font-bold text-foreground')}
       >
         +
       </button>
     </div>
-  );
+  )
 }

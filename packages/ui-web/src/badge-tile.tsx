@@ -1,15 +1,15 @@
-import { Lock } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { IconChip, type IconChipColor } from './icon-chip';
-import { cn } from './lib/cn';
+import { Lock } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { IconChip, type IconChipColor } from './icon-chip'
+import { cn } from './lib/cn'
 
 export interface BadgeTileProps {
-  icon: ReactNode;
-  title: ReactNode;
-  description?: ReactNode;
-  color?: IconChipColor;
-  locked?: boolean;
-  className?: string;
+  icon: ReactNode
+  title: ReactNode
+  description?: ReactNode
+  color?: IconChipColor
+  locked?: boolean
+  className?: string
 }
 
 /** Achievement badge tile — locked or unlocked. */
@@ -35,5 +35,5 @@ export function BadgeTile({
       <span className="font-display text-sm font-bold text-foreground">{title}</span>
       {description ? <span className="text-xs text-foreground-muted">{description}</span> : null}
     </div>
-  );
+  )
 }

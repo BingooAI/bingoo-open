@@ -9,15 +9,15 @@
  * Returns the label (the grant subjectId), or null when the token is unknown.
  */
 export function resolveServiceToken(token: string | null | undefined): string | null {
-  if (!token) return null;
-  const raw = process.env.MEDIA_SERVICE_TOKENS;
-  if (!raw) return null;
+  if (!token) return null
+  const raw = process.env.MEDIA_SERVICE_TOKENS
+  if (!raw) return null
   for (const pair of raw.split(',')) {
-    const idx = pair.indexOf(':');
-    if (idx <= 0) continue;
-    const t = pair.slice(0, idx).trim();
-    const label = pair.slice(idx + 1).trim();
-    if (t && label && t === token) return label;
+    const idx = pair.indexOf(':')
+    if (idx <= 0) continue
+    const t = pair.slice(0, idx).trim()
+    const label = pair.slice(idx + 1).trim()
+    if (t && label && t === token) return label
   }
-  return null;
+  return null
 }

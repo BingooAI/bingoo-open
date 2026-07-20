@@ -20,21 +20,17 @@ import {
   type LocalizedText,
   type ObjectiveDraft,
   type RawSource,
-} from '@bingoo/authoring';
-import type { CompetencyKind, FrameworkKind, PrereqMode, RelType } from '@bingoo/knowledge-engine';
-import { getAi, getVision } from '../providers';
-import { readEnv } from '../providers/core/config';
-import { renderPrompt } from '../prompts';
-import {
-  loadDomainProfiles,
-  loadExistingConcepts,
-  loadExistingNodes,
-} from '../repos/authoring.repo';
-import { buildAuthoringPorts } from './authoring-adapters';
-import type { IngestResult } from './authoring-ingest.service';
+} from '@bingoo/authoring'
+import type { CompetencyKind, FrameworkKind, PrereqMode, RelType } from '@bingoo/knowledge-engine'
+import { getAi, getVision } from '../providers'
+import { readEnv } from '../providers/core/config'
+import { renderPrompt } from '../prompts'
+import { loadDomainProfiles, loadExistingConcepts, loadExistingNodes } from '../repos/authoring.repo'
+import { buildAuthoringPorts } from './authoring-adapters'
+import type { IngestResult } from './authoring-ingest.service'
 
 // Model RẺ cho trích xuất có cấu trúc (xem authoring-adapters). Đổi bằng env, không đụng code.
-const AUTHORING_MODEL = readEnv('AUTHORING_MODEL') ?? 'claude-haiku-4-5-20251001';
+const AUTHORING_MODEL = readEnv('AUTHORING_MODEL') ?? 'claude-haiku-4-5-20251001'
 
 const KINDS: readonly CompetencyKind[] = [
   'OBJECTIVE',
@@ -45,88 +41,86 @@ const KINDS: readonly CompetencyKind[] = [
   'BEHAVIOR',
   'ATTITUDE',
   'DISPOSITION',
-];
-const RELS: readonly RelType[] = ['PREREQUISITE', 'ENABLES', 'COMPOSES'];
-const MODES: readonly PrereqMode[] = ['REQUIRED', 'RECOMMENDED'];
-const FKINDS: readonly FrameworkKind[] = ['CURRICULUM', 'CREDENTIAL', 'JOB_PROFILE'];
+]
+const RELS: readonly RelType[] = ['PREREQUISITE', 'ENABLES', 'COMPOSES']
+const MODES: readonly PrereqMode[] = ['REQUIRED', 'RECOMMENDED']
+const FKINDS: readonly FrameworkKind[] = ['CURRICULUM', 'CREDENTIAL', 'JOB_PROFILE']
 
 const rec = (v: unknown): Record<string, unknown> =>
-  v && typeof v === 'object' ? (v as Record<string, unknown>) : {};
-const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
-const str = (v: unknown): string | undefined =>
-  typeof v === 'string' && v.trim() ? v.trim() : undefined;
+  v && typeof v === 'object' ? (v as Record<string, unknown>) : {}
+const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : [])
+const str = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() ? v.trim() : undefined)
 const strArr = (v: unknown): string[] =>
   arr(v)
     .map(str)
-    .filter((s): s is string => s !== undefined);
+    .filter((s): s is string => s !== undefined)
 
 function loc(v: unknown): LocalizedText {
-  const o = rec(v);
-  const out: Record<string, string> = {};
-  for (const [k, val] of Object.entries(o))
-    if (typeof val === 'string' && val.trim()) out[k] = val.trim();
-  return Object.keys(out).length ? out : { en: '', vi: '' };
+  const o = rec(v)
+  const out: Record<string, string> = {}
+  for (const [k, val] of Object.entries(o)) if (typeof val === 'string' && val.trim()) out[k] = val.trim()
+  return Object.keys(out).length ? out : { en: '', vi: '' }
 }
 
 function firstJson(text: string): Record<string, unknown> {
-  const m = text.match(/\{[\s\S]*\}/);
-  if (!m) return {};
+  const m = text.match(/\{[\s\S]*\}/)
+  if (!m) return {}
   try {
-    return rec(JSON.parse(m[0]));
+    return rec(JSON.parse(m[0]))
   } catch {
-    return {};
+    return {}
   }
 }
 
 /** LLM output → IngestDraft (evidence rỗng vì sinh từ chủ đề, không từ nguồn trích). */
 function sanitizeDraft(o: Record<string, unknown>, locale: string): IngestDraft {
   const concepts: ConceptDraft[] = arr(o.concepts).map((c, i) => {
-    const co = rec(c);
+    const co = rec(c)
     return {
       tempId: str(co.tempId) ?? `c${i}`,
       title: loc(co.title),
       kind: KINDS.includes(co.kind as CompetencyKind) ? (co.kind as CompetencyKind) : 'KNOWLEDGE',
       evidence: [],
       ...(co.description ? { description: loc(co.description) } : {}),
-    };
-  });
-  const tempIds = new Set(concepts.map((c) => c.tempId));
+    }
+  })
+  const tempIds = new Set(concepts.map((c) => c.tempId))
 
   const edges: EdgeDraft[] = arr(o.edges)
     .map((e): EdgeDraft | undefined => {
-      const eo = rec(e);
-      const from = str(eo.fromTempId);
-      const to = str(eo.toTempId);
-      if (!from || !to || from === to || !tempIds.has(from) || !tempIds.has(to)) return undefined;
+      const eo = rec(e)
+      const from = str(eo.fromTempId)
+      const to = str(eo.toTempId)
+      if (!from || !to || from === to || !tempIds.has(from) || !tempIds.has(to)) return undefined
       return {
         fromTempId: from,
         toTempId: to,
         relType: RELS.includes(eo.relType as RelType) ? (eo.relType as RelType) : 'PREREQUISITE',
         mode: MODES.includes(eo.mode as PrereqMode) ? (eo.mode as PrereqMode) : 'REQUIRED',
-      };
+      }
     })
-    .filter((e): e is EdgeDraft => e !== undefined);
+    .filter((e): e is EdgeDraft => e !== undefined)
 
   const objectives: ObjectiveDraft[] = arr(o.objectives).map((ob, i) => {
-    const oo = rec(ob);
+    const oo = rec(ob)
     return {
       tempId: str(oo.tempId) ?? `o${i}`,
       title: loc(oo.title),
       ...(str(oo.code) ? { code: str(oo.code) } : {}),
       mapsToTempIds: strArr(oo.mapsToTempIds).filter((t) => tempIds.has(t)),
-    };
-  });
+    }
+  })
 
-  const fo = rec(o.framework);
+  const fo = rec(o.framework)
   const framework: FrameworkDraft = {
     slug: str(fo.slug) ?? 'framework',
     name: loc(fo.name),
     kind: FKINDS.includes(fo.kind as FrameworkKind) ? (fo.kind as FrameworkKind) : 'CURRICULUM',
     locale,
     objectives,
-  };
+  }
 
-  return { concepts, edges, framework, warnings: [] };
+  return { concepts, edges, framework, warnings: [] }
 }
 
 /** Sinh framework TỪ CHỦ ĐỀ/PROMPT (generative). */
@@ -140,13 +134,13 @@ export async function frameworkFromPrompt(
     messages: [{ role: 'user', content: topic }],
     model: AUTHORING_MODEL,
     maxTokens: 4000,
-  });
-  const draft = sanitizeDraft(firstJson(res.text), locale);
-  const existing = await loadExistingConcepts();
-  const compiled = compileDraft(draft, existing);
-  const issues = validateDraft(compiled);
-  const [profiles, existingNodes] = await Promise.all([loadDomainProfiles(), loadExistingNodes()]);
-  const violations = checkInvariants(compiled.graph, { profiles, existing: existingNodes });
+  })
+  const draft = sanitizeDraft(firstJson(res.text), locale)
+  const existing = await loadExistingConcepts()
+  const compiled = compileDraft(draft, existing)
+  const issues = validateDraft(compiled)
+  const [profiles, existingNodes] = await Promise.all([loadDomainProfiles(), loadExistingNodes()])
+  const violations = checkInvariants(compiled.graph, { profiles, existing: existingNodes })
   return {
     compiled,
     issues,
@@ -158,12 +152,12 @@ export async function frameworkFromPrompt(
       slugs: [...v.slugs],
     })),
     blocking: hasBlockingIssue(issues) || hasBlockingViolation(violations),
-  };
+  }
 }
 
 /** Nhãn hiển thị của một khái niệm (khoá để objective trỏ vào). */
 function titleKey(t: LocalizedText): string {
-  return t.en ?? t.vi ?? Object.values(t)[0] ?? '';
+  return t.en ?? t.vi ?? Object.values(t)[0] ?? ''
 }
 
 /**
@@ -175,15 +169,15 @@ async function extractObjectives(
   concepts: readonly ConceptDraft[],
   aiKey?: string,
 ): Promise<ObjectiveDraft[]> {
-  if (concepts.length === 0) return [];
+  if (concepts.length === 0) return []
   // Danh sách khái niệm là TOÀN CỤC (objective ở chunk này có thể neo vào KC trích từ chunk khác).
-  const byTitle = new Map(concepts.map((c) => [titleKey(c.title), c.tempId]));
+  const byTitle = new Map(concepts.map((c) => [titleKey(c.title), c.tempId]))
   const system = await renderPrompt('authoring.objective.extract', {
     concepts: JSON.stringify([...byTitle.keys()]),
-  });
+  })
 
-  const out: ObjectiveDraft[] = [];
-  let n = 0;
+  const out: ObjectiveDraft[] = []
+  let n = 0
 
   // TỰ CHIA ĐÔI khi bị cắt — cùng luật với trích khái niệm: output tỉ lệ với MẬT ĐỘ kiến thức,
   // không phải với độ dài input, nên chunk theo ký tự không bao giờ đủ.
@@ -197,28 +191,28 @@ async function extractObjectives(
       messages: [{ role: 'user', content: text }],
       model: AUTHORING_MODEL,
       maxTokens: 8000,
-    });
-    if (res.finishReason !== 'max_tokens') return arr(firstJson(res.text).objectives).map(rec);
+    })
+    if (res.finishReason !== 'max_tokens') return arr(firstJson(res.text).objectives).map(rec)
 
-    const lines = text.split('\n');
+    const lines = text.split('\n')
     if (depth >= 4 || lines.length < 2) {
-      throw new Error(`Trích objective bị CẮT dù đã chia tới đáy (${tag}, ${text.length} ký tự).`);
+      throw new Error(`Trích objective bị CẮT dù đã chia tới đáy (${tag}, ${text.length} ký tự).`)
     }
-    const mid = Math.floor(lines.length / 2);
+    const mid = Math.floor(lines.length / 2)
     const [a, b] = await Promise.all([
       askObjectives(lines.slice(0, mid).join('\n'), `${tag}·a`, depth + 1),
       askObjectives(lines.slice(mid).join('\n'), `${tag}·b`, depth + 1),
-    ]);
-    return [...a, ...b];
-  };
+    ])
+    return [...a, ...b]
+  }
 
   for (const [ci, text] of chunks.entries()) {
     for (const raw of await askObjectives(text, `chunk${ci}`, 0)) {
-      const ob = rec(raw);
+      const ob = rec(raw)
       const mapsToTempIds = strArr(ob.mapsToTitles)
         .map((tt) => byTitle.get(tt))
-        .filter((id): id is string => id !== undefined);
-      if (mapsToTempIds.length === 0) continue; // không neo được → bỏ (tránh mục tiêu mồ côi, I5)
+        .filter((id): id is string => id !== undefined)
+      if (mapsToTempIds.length === 0) continue // không neo được → bỏ (tránh mục tiêu mồ côi, I5)
       out.push({
         tempId: `o${n++}`,
         title: loc(ob.title),
@@ -226,7 +220,7 @@ async function extractObjectives(
         ...(str(ob.stage) ? { stage: str(ob.stage) } : {}),
         ...(str(ob.strand) ? { strand: str(ob.strand) } : {}),
         mapsToTempIds,
-      });
+      })
     }
   }
 
@@ -237,18 +231,18 @@ async function extractObjectives(
    * objective → slug dài, rác, và làm bẩn khung. Luật chắc chắn: nếu tài liệu CÓ dùng mã thì mục
    * KHÔNG mã là văn xuôi, không phải objective → loại. (Tài liệu không dùng mã thì giữ nguyên.)
    */
-  const coded = out.filter((o) => o.code !== undefined);
+  const coded = out.filter((o) => o.code !== undefined)
   if (coded.length > 0 && coded.length < out.length) {
-    return coded.map((o, i) => ({ ...o, tempId: `o${i}` }));
+    return coded.map((o, i) => ({ ...o, tempId: `o${i}` }))
   }
-  return out;
+  return out
 }
 
 export interface SourceFrameworkOpts {
-  readonly slug?: string;
-  readonly name?: LocalizedText;
-  readonly kind?: FrameworkKind;
-  readonly aiKey?: string;
+  readonly slug?: string
+  readonly name?: LocalizedText
+  readonly kind?: FrameworkKind
+  readonly aiKey?: string
 }
 
 /** Nguồn (text/PDF) → khái niệm + cạnh (pipeline) + OBJECTIVES → FrameworkDraft → compile/validate. */
@@ -257,14 +251,14 @@ async function frameworkFromSource(
   locale: string,
   opts?: SourceFrameworkOpts,
 ): Promise<IngestResult> {
-  const ports = buildAuthoringPorts(opts?.aiKey !== undefined ? { aiKey: opts.aiKey } : undefined);
-  const base = await runIngest(source, ports);
+  const ports = buildAuthoringPorts(opts?.aiKey !== undefined ? { aiKey: opts.aiKey } : undefined)
+  const base = await runIngest(source, ports)
 
   const objectives = await extractObjectives(
     source.chunks.map((c) => c.text ?? '').filter((t) => t.length > 0),
     base.concepts,
     opts?.aiKey,
-  );
+  )
 
   const framework: FrameworkDraft = {
     slug: opts?.slug ?? 'framework',
@@ -272,14 +266,14 @@ async function frameworkFromSource(
     kind: opts?.kind ?? 'CURRICULUM',
     locale,
     objectives,
-  };
+  }
 
-  const draft: IngestDraft = { ...base, framework };
-  const existing = await loadExistingConcepts();
-  const compiled = compileDraft(draft, existing);
-  const issues = validateDraft(compiled);
-  const [profiles, existingNodes] = await Promise.all([loadDomainProfiles(), loadExistingNodes()]);
-  const violations = checkInvariants(compiled.graph, { profiles, existing: existingNodes });
+  const draft: IngestDraft = { ...base, framework }
+  const existing = await loadExistingConcepts()
+  const compiled = compileDraft(draft, existing)
+  const issues = validateDraft(compiled)
+  const [profiles, existingNodes] = await Promise.all([loadDomainProfiles(), loadExistingNodes()])
+  const violations = checkInvariants(compiled.graph, { profiles, existing: existingNodes })
   return {
     compiled,
     issues,
@@ -291,7 +285,7 @@ async function frameworkFromSource(
       slugs: [...v.slugs],
     })),
     blocking: hasBlockingIssue(issues) || hasBlockingViolation(violations),
-  };
+  }
 }
 
 /**
@@ -303,14 +297,14 @@ export async function frameworkFromPdf(
   locale: string,
   opts?: SourceFrameworkOpts,
 ): Promise<IngestResult> {
-  const { text } = await extractSourceText(pdf);
-  return frameworkFromText(text, locale, opts);
+  const { text } = await extractSourceText(pdf)
+  return frameworkFromText(text, locale, opts)
 }
 
 /** BƯỚC RIÊNG (để UI thấy tiến trình): PDF/ảnh → văn bản. Người soạn xem/sửa trước khi trích khái niệm. */
 export async function extractSourceText(pdf: string): Promise<{ text: string; chars: number }> {
-  const res = await getVision().extractText({ image: pdf });
-  return { text: res.text, chars: res.text.length };
+  const res = await getVision().extractText({ image: pdf })
+  return { text: res.text, chars: res.text.length }
 }
 
 /**
@@ -322,44 +316,44 @@ export async function extractSourceText(pdf: string): Promise<{ text: string; ch
  *
  * Cắt ưu tiên ranh giới đoạn/tiêu đề để không xé một mục giữa chừng (mất ngữ cảnh trích).
  */
-const CHUNK_CHARS = 1500;
+const CHUNK_CHARS = 1500
 
 export function chunkText(text: string, target = CHUNK_CHARS): string[] {
-  const blocks = text.split(/\n\s*\n/); // ranh giới đoạn
-  const out: string[] = [];
-  let cur = '';
+  const blocks = text.split(/\n\s*\n/) // ranh giới đoạn
+  const out: string[] = []
+  let cur = ''
   for (const b of blocks) {
-    const piece = b.trim();
-    if (!piece) continue;
+    const piece = b.trim()
+    if (!piece) continue
     if (cur && cur.length + piece.length + 2 > target) {
-      out.push(cur);
-      cur = piece;
+      out.push(cur)
+      cur = piece
     } else {
-      cur = cur ? `${cur}\n\n${piece}` : piece;
+      cur = cur ? `${cur}\n\n${piece}` : piece
     }
   }
-  if (cur) out.push(cur);
+  if (cur) out.push(cur)
 
   // Đoạn đơn lẻ vẫn quá dài → cắt cứng theo dòng (không để một chunk vượt trần).
-  const safe: string[] = [];
+  const safe: string[] = []
   for (const c of out) {
     if (c.length <= target * 1.6) {
-      safe.push(c);
-      continue;
+      safe.push(c)
+      continue
     }
-    const lines = c.split('\n');
-    let acc = '';
+    const lines = c.split('\n')
+    let acc = ''
     for (const ln of lines) {
       if (acc && acc.length + ln.length + 1 > target) {
-        safe.push(acc);
-        acc = ln;
+        safe.push(acc)
+        acc = ln
       } else {
-        acc = acc ? `${acc}\n${ln}` : ln;
+        acc = acc ? `${acc}\n${ln}` : ln
       }
     }
-    if (acc) safe.push(acc);
+    if (acc) safe.push(acc)
   }
-  return safe;
+  return safe
 }
 
 /** BƯỚC RIÊNG: văn bản (đã xem/sửa) → khái niệm + cạnh + OBJECTIVES → compile/validate. */
@@ -368,6 +362,6 @@ export async function frameworkFromText(
   locale: string,
   opts?: SourceFrameworkOpts,
 ): Promise<IngestResult> {
-  const chunks = chunkText(text).map((t, i) => ({ id: `c${i}`, order: i, text: t }));
-  return frameworkFromSource({ id: 'text-source', kind: 'text', locale, chunks }, locale, opts);
+  const chunks = chunkText(text).map((t, i) => ({ id: `c${i}`, order: i, text: t }))
+  return frameworkFromSource({ id: 'text-source', kind: 'text', locale, chunks }, locale, opts)
 }

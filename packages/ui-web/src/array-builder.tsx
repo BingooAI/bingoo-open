@@ -1,19 +1,19 @@
-'use client';
+'use client'
 
-import { cn } from './lib/cn';
-import { tile, tileState } from './lib/interactive';
+import { cn } from './lib/cn'
+import { tile, tileState } from './lib/interactive'
 
 export interface ArrayBuilderProps {
-  maxRows: number;
-  maxCols: number;
-  emoji?: string;
+  maxRows: number
+  maxCols: number
+  emoji?: string
   /** Controlled selection (0 = none). */
-  rows: number;
-  cols: number;
-  onChange: (rows: number, cols: number) => void;
-  reveal?: { correct: boolean; rows: number; cols: number };
-  disabled?: boolean;
-  className?: string;
+  rows: number
+  cols: number
+  onChange: (rows: number, cols: number) => void
+  reveal?: { correct: boolean; rows: number; cols: number }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -32,19 +32,16 @@ export function ArrayBuilder({
   disabled,
   className,
 }: ArrayBuilderProps) {
-  const locked = !!reveal || disabled;
-  const dot = emoji ?? '⬤';
-  const tone = reveal ? (reveal.correct ? 'text-success' : 'text-danger') : 'text-primary';
+  const locked = !!reveal || disabled
+  const dot = emoji ?? '⬤'
+  const tone = reveal ? (reveal.correct ? 'text-success' : 'text-danger') : 'text-primary'
 
   return (
     <div className={cn('flex flex-col items-center gap-3', className)}>
-      <div
-        className="grid w-fit gap-1"
-        style={{ gridTemplateColumns: `repeat(${maxCols}, minmax(0, 1fr))` }}
-      >
+      <div className="grid w-fit gap-1" style={{ gridTemplateColumns: `repeat(${maxCols}, minmax(0, 1fr))` }}>
         {Array.from({ length: maxRows }, (_, r) =>
           Array.from({ length: maxCols }, (_, c) => {
-            const on = r < rows && c < cols;
+            const on = r < rows && c < cols
             return (
               <button
                 key={`${r}-${c}`}
@@ -68,7 +65,7 @@ export function ArrayBuilder({
               >
                 {on ? dot : '·'}
               </button>
-            );
+            )
           }),
         )}
       </div>
@@ -81,5 +78,5 @@ export function ArrayBuilder({
         ) : null}
       </span>
     </div>
-  );
+  )
 }

@@ -1,9 +1,9 @@
-'use client';
+'use client'
 
-import { X } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { Dialog, Heading, Modal, ModalOverlay } from 'react-aria-components';
-import { cn } from '@/lib/cn';
+import { X } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { Dialog, Heading, Modal, ModalOverlay } from 'react-aria-components'
+import { cn } from '@/lib/cn'
 
 /**
  * Controlled right-side drawer (React Aria Modal) — focus-trap, ESC, scroll-lock,
@@ -23,21 +23,21 @@ export function Drawer({
   isDismissable = false,
   width = 'max-w-md',
 }: {
-  isOpen: boolean;
-  onClose: () => void;
-  title: ReactNode;
-  description?: ReactNode;
-  children?: ReactNode;
-  footer?: ReactNode;
-  closeAriaLabel?: string;
-  isDismissable?: boolean;
-  width?: string;
+  isOpen: boolean
+  onClose: () => void
+  title: ReactNode
+  description?: ReactNode
+  children?: ReactNode
+  footer?: ReactNode
+  closeAriaLabel?: string
+  isDismissable?: boolean
+  width?: string
 }) {
   return (
     <ModalOverlay
       isOpen={isOpen}
       onOpenChange={(open) => {
-        if (!open) onClose();
+        if (!open) onClose()
       }}
       isDismissable={isDismissable}
       isKeyboardDismissDisabled={false}
@@ -54,10 +54,7 @@ export function Drawer({
         <Dialog className="flex h-full flex-col outline-none">
           <div className="flex items-start justify-between gap-3 border-b border-border px-5 py-4">
             <div className="min-w-0">
-              <Heading
-                slot="title"
-                className="truncate font-display text-lg font-bold text-foreground"
-              >
+              <Heading slot="title" className="truncate font-display text-lg font-bold text-foreground">
                 {title}
               </Heading>
               {description ? (
@@ -80,5 +77,5 @@ export function Drawer({
         </Dialog>
       </Modal>
     </ModalOverlay>
-  );
+  )
 }

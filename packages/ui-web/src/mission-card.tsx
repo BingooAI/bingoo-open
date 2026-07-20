@@ -1,23 +1,23 @@
-import { missionProgress } from '@bingoo/core';
-import { Check } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { IconChip, type IconChipColor } from './icon-chip';
-import { cn } from './lib/cn';
-import { Progress } from './progress';
+import { missionProgress } from '@bingoo/core'
+import { Check } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { IconChip, type IconChipColor } from './icon-chip'
+import { cn } from './lib/cn'
+import { Progress } from './progress'
 
 export interface MissionCardProps {
-  icon: ReactNode;
-  title: ReactNode;
-  description?: ReactNode;
-  current: number;
-  goal: number;
-  color?: IconChipColor;
+  icon: ReactNode
+  title: ReactNode
+  description?: ReactNode
+  current: number
+  goal: number
+  color?: IconChipColor
   /** Reward chip (e.g. "+50 XP") shown on the right. */
-  reward?: ReactNode;
+  reward?: ReactNode
   /** Progress readout, e.g. "3/5"; defaults to `current/goal`. */
-  progressText?: ReactNode;
-  label?: string;
-  className?: string;
+  progressText?: ReactNode
+  label?: string
+  className?: string
 }
 
 /**
@@ -37,7 +37,7 @@ export function MissionCard({
   label,
   className,
 }: MissionCardProps) {
-  const p = missionProgress(current, goal);
+  const p = missionProgress(current, goal)
   return (
     <div
       aria-label={label}
@@ -59,9 +59,7 @@ export function MissionCard({
             </span>
           ) : null}
         </div>
-        {description ? (
-          <span className="truncate text-xs text-foreground-muted">{description}</span>
-        ) : null}
+        {description ? <span className="truncate text-xs text-foreground-muted">{description}</span> : null}
         <div className="flex items-center gap-2">
           <Progress value={p.ratio * 100} className="flex-1" />
           <span className="shrink-0 text-xs font-semibold tabular-nums text-foreground-muted">
@@ -70,5 +68,5 @@ export function MissionCard({
         </div>
       </div>
     </div>
-  );
+  )
 }

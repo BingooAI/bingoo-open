@@ -1,6 +1,6 @@
-import { randomUUID } from 'node:crypto';
-import { createMiddleware } from 'hono/factory';
-import type { AppEnv } from '../lib/context';
+import { randomUUID } from 'node:crypto'
+import { createMiddleware } from 'hono/factory'
+import type { AppEnv } from '../lib/context'
 
 /**
  * Assigns a request id (honoring an inbound `x-request-id`, else a fresh UUID),
@@ -9,9 +9,9 @@ import type { AppEnv } from '../lib/context';
  * carries the id.
  */
 export const requestId = createMiddleware<AppEnv>(async (c, next) => {
-  const inbound = c.req.header('x-request-id');
-  const id = inbound && inbound.length <= 128 ? inbound : randomUUID();
-  c.set('requestId', id);
-  c.header('x-request-id', id);
-  await next();
-});
+  const inbound = c.req.header('x-request-id')
+  const id = inbound && inbound.length <= 128 ? inbound : randomUUID()
+  c.set('requestId', id)
+  c.header('x-request-id', id)
+  await next()
+})

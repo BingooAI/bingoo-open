@@ -1,7 +1,7 @@
-import { setRequestLocale } from 'next-intl/server';
-import { AdminShell } from '@/components/shell/admin-shell';
-import { resolveCapabilities } from '@/lib/roles';
-import { requireStaff } from '@/lib/session';
+import { setRequestLocale } from 'next-intl/server'
+import { AdminShell } from '@/components/shell/admin-shell'
+import { resolveCapabilities } from '@/lib/roles'
+import { requireStaff } from '@/lib/session'
 
 /**
  * Staff gate for the whole admin area. Unauthenticated → /login; authenticated
@@ -14,13 +14,13 @@ export default async function AdminLayout({
   children,
   params,
 }: {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const { user } = await requireStaff(locale);
-  const caps = resolveCapabilities(user.role);
+  const { locale } = await params
+  setRequestLocale(locale)
+  const { user } = await requireStaff(locale)
+  const caps = resolveCapabilities(user.role)
 
   return (
     <AdminShell
@@ -34,5 +34,5 @@ export default async function AdminLayout({
     >
       {children}
     </AdminShell>
-  );
+  )
 }

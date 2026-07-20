@@ -1,4 +1,4 @@
-import type { CSSProperties, HTMLAttributes } from 'react';
+import type { CSSProperties, HTMLAttributes } from 'react'
 
 /**
  * A theme "world" (§3B) — a skin overlay that re-hues the primary family and
@@ -7,11 +7,11 @@ import type { CSSProperties, HTMLAttributes } from 'react';
  * are unchanged: they read the same semantic tokens, which the world overrides.
  */
 export interface ThemeWorld {
-  id: string;
-  name: string;
-  emoji: string;
+  id: string
+  name: string
+  emoji: string
   /** CSS custom-property overrides applied to the subtree. */
-  vars: Record<string, string>;
+  vars: Record<string, string>
 }
 
 export const THEME_WORLDS: ThemeWorld[] = [
@@ -77,20 +77,20 @@ export const THEME_WORLDS: ThemeWorld[] = [
       '--on-scene': '#fff2ec',
     },
   },
-];
+]
 
 export interface ThemeWorldScopeProps extends HTMLAttributes<HTMLDivElement> {
-  world?: ThemeWorld;
+  world?: ThemeWorld
 }
 
 /** Applies a theme world to its subtree (token overrides + `data-theme-pack`). */
 export function ThemeWorldScope({ world, style, ...props }: ThemeWorldScopeProps) {
-  const vars = (world?.vars ?? {}) as CSSProperties;
+  const vars = (world?.vars ?? {}) as CSSProperties
   return (
     <div
       data-theme-pack={world && world.id !== 'default' ? world.id : undefined}
       style={{ ...vars, ...style }}
       {...props}
     />
-  );
+  )
 }

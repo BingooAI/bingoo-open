@@ -13,16 +13,16 @@
  */
 
 /** Trục 2 — mức nhận thức. Bloom: phổ quát mọi môn (nêu ≠ giải thích ≠ thiết kế). */
-export const BLOOM = ['recall', 'understand', 'apply', 'analyse', 'evaluate', 'create'] as const;
-export type Bloom = (typeof BLOOM)[number];
+export const BLOOM = ['recall', 'understand', 'apply', 'analyse', 'evaluate', 'create'] as const
+export type Bloom = (typeof BLOOM)[number]
 
 /** Trục 5 — khoảng cách chuyển giao. Engine đã có tín hiệu `transfer` (Dreyfus). */
-export const TRANSFER = ['familiar', 'near', 'far'] as const;
-export type Transfer = (typeof TRANSFER)[number];
+export const TRANSFER = ['familiar', 'near', 'far'] as const
+export type Transfer = (typeof TRANSFER)[number]
 
 /** Trục 6 — ngưỡng thuần thục. Engine đã có tín hiệu `fluency`. */
-export const FLUENCY = ['emerging', 'accurate', 'fluent', 'automatic'] as const;
-export type Fluency = (typeof FLUENCY)[number];
+export const FLUENCY = ['emerging', 'accurate', 'fluent', 'automatic'] as const
+export type Fluency = (typeof FLUENCY)[number]
 
 /**
  * 6 trục phân biệt. Trục MỞ (channel/scope/representation) dùng chuỗi/record tự do — từ vựng của
@@ -41,22 +41,22 @@ export interface Facets {
    * chuẩn hoá. Chính trục này làm cho "Add within 20" (Cambridge) và "Cộng trong phạm vi 20" (VN)
    * ra CÙNG một KC.
    */
-  readonly object?: string;
+  readonly object?: string
   /** ① Kênh/cách thể hiện: read|write|listen|speak (ngôn ngữ), perceive|produce|notate (nhạc)… MỞ. */
-  readonly channel?: string;
+  readonly channel?: string
   /** ② Mức nhận thức — phổ quát. */
-  readonly bloom?: Bloom;
+  readonly bloom?: Bloom
   /**
    * ③ Ngưỡng phạm vi/độ phức tạp. Hình dạng khác nhau theo môn: {max:100} · {lexis:2000} ·
    * {tempoBpm:120} · {variables:3}. So sánh theo CẤU TRÚC (cùng khoá + cùng giá trị).
    */
-  readonly scope?: Readonly<Record<string, string | number>>;
+  readonly scope?: Readonly<Record<string, string | number>>
   /** ④ Biểu diễn: concrete|pictorial|abstract · staff|tab · equation|model… MỞ. */
-  readonly representation?: string;
+  readonly representation?: string
   /** ⑤ Khoảng cách chuyển giao — phổ quát. */
-  readonly transfer?: Transfer;
+  readonly transfer?: Transfer
   /** ⑥ Ngưỡng thuần thục — phổ quát. */
-  readonly fluency?: Fluency;
+  readonly fluency?: Fluency
 }
 
 export const FACET_AXES = [
@@ -67,8 +67,8 @@ export const FACET_AXES = [
   'representation',
   'transfer',
   'fluency',
-] as const;
-export type FacetAxis = (typeof FACET_AXES)[number];
+] as const
+export type FacetAxis = (typeof FACET_AXES)[number]
 
 /**
  * Hồ sơ một MÔN/NGÀNH — DỮ LIỆU, không phải code. Sửa trong admin, thêm môn không cần deploy.
@@ -77,8 +77,8 @@ export type FacetAxis = (typeof FACET_AXES)[number];
  * `aliases`: chuẩn hoá đồng nghĩa ("listening"→"listen") — cũng là dữ liệu.
  */
 export interface DomainProfile {
-  readonly domain: string;
-  readonly requiredAxes: readonly FacetAxis[];
+  readonly domain: string
+  readonly requiredAxes: readonly FacetAxis[]
   /**
    * Trục ĐỊNH DANH — chỉ những trục này mới được dùng để kết luận "KHÁC KC".
    *
@@ -93,7 +93,7 @@ export interface DomainProfile {
    * phân xử, vì có thể là khác biệt thật, mà cũng có thể chỉ là nhiễu trích xuất.
    * Mặc định khi hồ sơ môn không khai: ['object', 'scope'].
    */
-  readonly identityAxes?: readonly FacetAxis[];
+  readonly identityAxes?: readonly FacetAxis[]
   /** axis → { biến thể: giá trị chuẩn }. */
-  readonly aliases?: Readonly<Record<string, Readonly<Record<string, string>>>>;
+  readonly aliases?: Readonly<Record<string, Readonly<Record<string, string>>>>
 }

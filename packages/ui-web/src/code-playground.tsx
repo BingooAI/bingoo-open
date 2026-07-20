@@ -1,23 +1,23 @@
-'use client';
+'use client'
 
-import { Play } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { Button } from './button';
-import { cn } from './lib/cn';
+import { Play } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { Button } from './button'
+import { cn } from './lib/cn'
 
 export interface CodePlaygroundProps {
-  code: string;
-  onChange?: (code: string) => void;
-  language?: string;
-  onRun?: () => void;
-  running?: boolean;
+  code: string
+  onChange?: (code: string) => void
+  language?: string
+  onRun?: () => void
+  running?: boolean
   /** Program output (from an injected runner). */
-  output?: ReactNode;
-  runLabel: string;
-  outputLabel?: ReactNode;
-  editable?: boolean;
-  rows?: number;
-  className?: string;
+  output?: ReactNode
+  runLabel: string
+  outputLabel?: ReactNode
+  editable?: boolean
+  rows?: number
+  className?: string
 }
 
 /**
@@ -46,12 +46,7 @@ export function CodePlayground({
           {language ?? 'code'}
         </span>
         {onRun ? (
-          <Button
-            size="sm"
-            onClick={onRun}
-            loading={running}
-            leftIcon={<Play className="size-3.5" />}
-          >
+          <Button size="sm" onClick={onRun} loading={running} leftIcon={<Play className="size-3.5" />}>
             {runLabel}
           </Button>
         ) : null}
@@ -77,5 +72,5 @@ export function CodePlayground({
         </div>
       ) : null}
     </div>
-  );
+  )
 }

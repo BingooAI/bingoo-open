@@ -1,8 +1,8 @@
-import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { PageHeader } from '@bingoo/ui-web';
-import { MediaBrowser } from '@/components/media/media-browser';
-import { resolveCapabilities } from '@/lib/roles';
-import { getServerSession } from '@/lib/session';
+import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { PageHeader } from '@bingoo/ui-web'
+import { MediaBrowser } from '@/components/media/media-browser'
+import { resolveCapabilities } from '@/lib/roles'
+import { getServerSession } from '@/lib/session'
 
 /**
  * Media library — the browser (folder tree, faceted search, asset grid, detail
@@ -11,16 +11,16 @@ import { getServerSession } from '@/lib/session';
  * re-enforces every one).
  */
 export default async function MediaPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: 'admin' });
-  const session = await getServerSession();
-  const caps = resolveCapabilities(session?.user.role);
+  const { locale } = await params
+  setRequestLocale(locale)
+  const t = await getTranslations({ locale, namespace: 'admin' })
+  const session = await getServerSession()
+  const caps = resolveCapabilities(session?.user.role)
 
   return (
     <div className="space-y-6">
       <PageHeader title={t('library.title')} description={t('library.description')} />
       <MediaBrowser caps={caps} />
     </div>
-  );
+  )
 }

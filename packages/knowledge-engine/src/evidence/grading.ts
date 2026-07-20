@@ -6,22 +6,22 @@ import type {
   EvidenceActor,
   EvidenceSource,
   ObservationSubject,
-} from '../domain';
-import type { EvidenceInput, RaterProfile, Submission, Verdict } from '../contracts';
-import type { EnginePolicy } from '../policy';
-import { interpolateConfidence, type ConfidenceInput } from '../mastery/confidence';
-import { raterWeight, raterWeightParams } from './rater';
+} from '../domain'
+import type { EvidenceInput, RaterProfile, Submission, Verdict } from '../contracts'
+import type { EnginePolicy } from '../policy'
+import { interpolateConfidence, type ConfidenceInput } from '../mastery/confidence'
+import { raterWeight, raterWeightParams } from './rater'
 
 /** Ngữ cảnh ghi bằng chứng do host cấp (source/mode/actor…). */
 export interface EvidenceContext {
-  readonly actor: EvidenceActor;
-  readonly source?: EvidenceSource;
-  readonly mode?: AssessmentMode;
-  readonly kind?: CompetencyKind;
-  readonly subjectType?: ObservationSubject;
-  readonly raterId?: string;
-  readonly raterProfile?: RaterProfile | null;
-  readonly proctored?: boolean;
+  readonly actor: EvidenceActor
+  readonly source?: EvidenceSource
+  readonly mode?: AssessmentMode
+  readonly kind?: CompetencyKind
+  readonly subjectType?: ObservationSubject
+  readonly raterId?: string
+  readonly raterProfile?: RaterProfile | null
+  readonly proctored?: boolean
 }
 
 /**
@@ -35,16 +35,16 @@ export function toObservations(
   ctx: EvidenceContext,
   policy: EnginePolicy,
 ): EvidenceInput[] {
-  const rw = raterWeight(ctx.raterProfile ?? null, ctx.actor, raterWeightParams(policy));
+  const rw = raterWeight(ctx.raterProfile ?? null, ctx.actor, raterWeightParams(policy))
 
   const confInput: ConfidenceInput = {
     rater: rw,
     expectedMs: policy.dreyfus.expectedMs,
     ...(submission.latencyMs !== undefined ? { latencyMs: submission.latencyMs } : {}),
     ...(submission.hintsUsed !== undefined ? { hintsUsed: submission.hintsUsed } : {}),
-  };
-  const penalty = interpolateConfidence(confInput, policy.confidence);
-  const confidence = verdict.confidence * penalty;
+  }
+  const penalty = interpolateConfidence(confInput, policy.confidence)
+  const confidence = verdict.confidence * penalty
 
   return submission.skills.map((skill) => ({
     skill,
@@ -63,5 +63,5 @@ export function toObservations(
     ...(submission.hintsUsed !== undefined ? { hintsUsed: submission.hintsUsed } : {}),
     ...(submission.lang !== undefined ? { lang: submission.lang } : {}),
     ...(submission.atMs !== undefined ? { atMs: submission.atMs } : {}),
-  }));
+  }))
 }

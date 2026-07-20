@@ -1,5 +1,5 @@
-import { setRequestLocale } from 'next-intl/server';
-import { Hero } from '@/components/marketing/hero';
+import { setRequestLocale } from 'next-intl/server'
+import { Hero } from '@/components/marketing/hero'
 import {
   CtaBand,
   Features,
@@ -8,13 +8,13 @@ import {
   Stats,
   Subjects,
   Testimonials,
-} from '@/components/marketing/sections';
-import { SiteFooter } from '@/components/marketing/site-footer';
-import { SiteHeader } from '@/components/marketing/site-header';
+} from '@/components/marketing/sections'
+import { SiteFooter } from '@/components/marketing/site-footer'
+import { SiteHeader } from '@/components/marketing/site-header'
 
 export default async function LandingPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
+  const { locale } = await params
+  setRequestLocale(locale)
 
   return (
     // Marketing runs in the Playful pack → filled buttons get the chunky 3D depth.
@@ -32,5 +32,5 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
       </main>
       <SiteFooter />
     </div>
-  );
+  )
 }

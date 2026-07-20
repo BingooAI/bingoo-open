@@ -4,9 +4,9 @@
  * are read straight from the registry, so adding a kit never touches this file's
  * logic. Used by the Library (insert) and the Inspector (configure + schedule).
  */
-import { MANIPULATIVES } from '@bingoo/manipulatives';
+import { MANIPULATIVES } from '@bingoo/manipulatives'
 
-export type Subject = 'math' | 'english' | 'science';
+export type Subject = 'math' | 'english' | 'science'
 
 const META: Record<string, { label: string; subject: Subject; note?: string }> = {
   numberline: { label: 'Trục số', subject: 'math' },
@@ -200,27 +200,27 @@ const META: Record<string, { label: string; subject: Subject; note?: string }> =
     subject: 'english',
     note: "Formality register scale for business English (informal / neutral / formal): equivalent sentences are placed onto a 3-zone scale, each placement graded against the variant's true level, with formality-marker phrases underlined on focus. Key params: variants ({text, level 0-2}), markers (per-variant phrases), labels (zone names), placed (learner state).",
   },
-};
+}
 
 export const SUBJECTS: { id: Subject; label: string }[] = [
   { id: 'math', label: 'Toán' },
   { id: 'english', label: 'Tiếng Anh' },
   { id: 'science', label: 'Khoa học' },
-];
+]
 
 export type ManipInfo = {
-  kind: string;
-  label: string;
-  subject: Subject;
+  kind: string
+  label: string
+  subject: Subject
   /** 1-2 EN sentences for the AI manifest: when to use this kit + key params. */
-  note?: string;
-  verbs: string[];
-  defaultParams: unknown;
-};
+  note?: string
+  verbs: string[]
+  defaultParams: unknown
+}
 
-let cache: ManipInfo[] | null = null;
+let cache: ManipInfo[] | null = null
 export function manipCatalog(): ManipInfo[] {
-  if (cache) return cache;
+  if (cache) return cache
   cache = MANIPULATIVES.map((m) => ({
     kind: m.kind,
     label: META[m.kind]?.label ?? m.kind,
@@ -228,10 +228,10 @@ export function manipCatalog(): ManipInfo[] {
     note: META[m.kind]?.note,
     verbs: Object.keys(m.verbs),
     defaultParams: m.defaultParams,
-  }));
-  return cache;
+  }))
+  return cache
 }
 
 export function manipInfo(kind: string): ManipInfo | undefined {
-  return manipCatalog().find((m) => m.kind === kind);
+  return manipCatalog().find((m) => m.kind === kind)
 }

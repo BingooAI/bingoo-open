@@ -11,86 +11,86 @@
  */
 
 /* ------------------------------------------------------------------ shared */
-export type Word = { word: string; start: number; end: number };
-export type CueMark = { cue: string; t: number };
+export type Word = { word: string; start: number; end: number }
+export type CueMark = { cue: string; t: number }
 
 /** A provider that isn't configured is not an error — it just reports `false`,
  *  and callers fall back (mock voice, skip image, offline mock lesson). */
 export interface Provider {
   /** stable id, e.g. "openai", "elevenlabs", "anthropic", "media-library". */
-  readonly id: string;
+  readonly id: string
   /** true when the adapter has what it needs (key/endpoint) to run for real. */
-  available(): boolean;
+  available(): boolean
 }
 
 /* --------------------------------------------------------------------- llm */
-export type LlmMessage = { role: 'user' | 'assistant'; content: string };
+export type LlmMessage = { role: 'user' | 'assistant'; content: string }
 export type LlmRequest = {
-  system: string;
-  messages: LlmMessage[];
-  maxTokens?: number;
+  system: string
+  messages: LlmMessage[]
+  maxTokens?: number
   /** provider-specific model override; falls back to the adapter default. */
-  model?: string;
-};
+  model?: string
+}
 export interface LlmProvider extends Provider {
   /** the model this call will use (for reporting). */
-  model(override?: string): string;
-  complete(req: LlmRequest): Promise<string>;
+  model(override?: string): string
+  complete(req: LlmRequest): Promise<string>
 }
 
 /* ------------------------------------------------------------------- voice */
 export type VoiceRequest = {
   /** raw script — MAY contain `[[cue:cN]]` markers; the adapter strips them for
    *  speech and re-times the cues onto the produced audio. */
-  text: string;
-  locale?: string;
-  voiceId?: string;
-  modelId?: string;
-};
+  text: string
+  locale?: string
+  voiceId?: string
+  modelId?: string
+}
 export type VoiceResult = {
-  audioUrl: string | null; // data-URI or hosted URL; null → caller speaks it live
-  words: Word[];
-  duration: number;
-  cueMarks: CueMark[];
-  provider: string;
-  model?: string;
-  mock?: boolean;
-  error?: string;
-};
+  audioUrl: string | null // data-URI or hosted URL; null → caller speaks it live
+  words: Word[]
+  duration: number
+  cueMarks: CueMark[]
+  provider: string
+  model?: string
+  mock?: boolean
+  error?: string
+}
 export interface VoiceProvider extends Provider {
-  speak(req: VoiceRequest): Promise<VoiceResult>;
+  speak(req: VoiceRequest): Promise<VoiceResult>
 }
 
 /* ------------------------------------------------------------------- image */
 export type ImageRequest = {
   /** what to draw (short description) — used as the GENERATION prompt / fallback. */
-  prompt: string;
+  prompt: string
   /** semantic description to SEARCH the media library for first (illustration-
    *  first). Falls back to `prompt` when absent. */
-  query?: string;
+  query?: string
   /** routing tags for the library search (e.g. ["animal","duck"]). */
-  tags?: string[];
+  tags?: string[]
   /** bump to force a FRESH generation instead of the cached one for this prompt. */
-  variant?: number;
+  variant?: number
   /** catalog style id (see lib/imageStyles) — the adapter decides how to use it
    *  (prompt suffix for a generator, a tag/filter for a media library). */
-  style?: string;
+  style?: string
   /** ready-made style hint for generator adapters. */
-  styleSuffix?: string;
-  alt?: string;
-  size?: string;
+  styleSuffix?: string
+  alt?: string
+  size?: string
   /** free-form routing hints for library/database adapters (subject, grade…). */
-  hints?: Record<string, unknown>;
-};
+  hints?: Record<string, unknown>
+}
 export type ImageResult = {
   /** data-URI, R2/HTTP URL, or project-relative path — whatever the adapter
    *  produced or found. The engine renders it verbatim. */
-  url: string;
-  provider: string;
-  meta?: Record<string, unknown>;
-};
+  url: string
+  provider: string
+  meta?: Record<string, unknown>
+}
 export interface ImageProvider extends Provider {
-  generate(req: ImageRequest): Promise<ImageResult>;
+  generate(req: ImageRequest): Promise<ImageResult>
 }
 
 /* ------------------------------------------------------- media search (library) */
@@ -103,24 +103,24 @@ export interface ImageProvider extends Provider {
  */
 export type MediaSearchRequest = {
   /** natural-language description of the wanted illustration. */
-  query: string;
-  tags?: string[];
+  query: string
+  tags?: string[]
   /** "image" (png/jpg) | "svg" | "any" — the renderer handles all. */
-  kind?: 'image' | 'svg' | 'any';
-  limit?: number;
-  hints?: Record<string, unknown>;
-};
+  kind?: 'image' | 'svg' | 'any'
+  limit?: number
+  hints?: Record<string, unknown>
+}
 export type MediaHit = {
-  url: string;
-  label?: string;
-  kind?: 'image' | 'svg';
-  tags?: string[];
+  url: string
+  label?: string
+  kind?: 'image' | 'svg'
+  tags?: string[]
   /** relevance 0..1; the resolver keeps a hit only above its threshold. */
-  score: number;
-};
-export type MediaSearchResult = { items: MediaHit[]; provider: string };
+  score: number
+}
+export type MediaSearchResult = { items: MediaHit[]; provider: string }
 export interface MediaSearchProvider extends Provider {
-  search(req: MediaSearchRequest): Promise<MediaSearchResult>;
+  search(req: MediaSearchRequest): Promise<MediaSearchResult>
 }
 
 /* ------------------------------------------------------------- translation */
@@ -133,37 +133,37 @@ export interface MediaSearchProvider extends Provider {
  * this; the default adapter drives the configured `LlmProvider`.
  */
 export type TranslateRequest = {
-  from: string;
-  to: string;
+  from: string
+  to: string
   /** keyed UI/label strings — translate values, keep keys. */
-  strings: Record<string, string>;
+  strings: Record<string, string>
   /** keyed narration scripts — keep every `[[cue:cN]]` marker in place. */
-  scripts: Record<string, string>;
+  scripts: Record<string, string>
   /** who the text is for ("a preschool child…", "an adult professional…") —
    *  drives register/vocabulary of the translation. Never hardcode an audience
    *  in an adapter. */
-  audience?: string;
-};
+  audience?: string
+}
 export type TranslateResult = {
-  strings: Record<string, string>;
-  scripts: Record<string, string>;
-  provider: string;
-};
+  strings: Record<string, string>
+  scripts: Record<string, string>
+  provider: string
+}
 export interface TranslationProvider extends Provider {
-  translate(req: TranslateRequest): Promise<TranslateResult>;
+  translate(req: TranslateRequest): Promise<TranslateResult>
 }
 
 /* --------------------------------------------------------------------- sfx */
-export type SfxRequest = { prompt: string; duration?: number };
+export type SfxRequest = { prompt: string; duration?: number }
 export type SfxResult = {
-  audioUrl: string | null;
-  duration: number;
-  provider: string;
-  mock?: boolean;
-  error?: string;
-};
+  audioUrl: string | null
+  duration: number
+  provider: string
+  mock?: boolean
+  error?: string
+}
 export interface SfxProvider extends Provider {
-  generate(req: SfxRequest): Promise<SfxResult>;
+  generate(req: SfxRequest): Promise<SfxResult>
 }
 
 /* -------------------------------------------------------------- media store */
@@ -173,12 +173,12 @@ export interface SfxProvider extends Provider {
  * & images are stored once and referenced by URL — the engine renders any URL.
  */
 export type MediaPutRequest = {
-  bytes: ArrayBuffer | Uint8Array;
-  contentType: string;
-  key?: string;
-};
+  bytes: ArrayBuffer | Uint8Array
+  contentType: string
+  key?: string
+}
 export interface MediaStore extends Provider {
-  put(req: MediaPutRequest): Promise<{ url: string }>;
+  put(req: MediaPutRequest): Promise<{ url: string }>
 }
 
 /* ------------------------------------------------------- questions / gates */
@@ -188,32 +188,31 @@ export interface MediaStore extends Provider {
  * aligned items. Both return GateSpec-shaped items the engine validates and
  * drops into a `gate` scene — same contract, swappable source.
  */
-export type QuestionKind =
-  'predict-check' | 'sequence' | 'select' | 'hotspot' | 'input' | 'manipulate';
+export type QuestionKind = 'predict-check' | 'sequence' | 'select' | 'hotspot' | 'input' | 'manipulate'
 export type QuestionRequest = {
-  topic: string;
-  locale?: string;
-  kinds?: QuestionKind[]; // desired gate kinds (default: select / predict-check / manipulate)
-  count?: number;
-  grade?: string | number;
-  skill?: string; // curriculum skill / objective statements
+  topic: string
+  locale?: string
+  kinds?: QuestionKind[] // desired gate kinds (default: select / predict-check / manipulate)
+  count?: number
+  grade?: string | number
+  skill?: string // curriculum skill / objective statements
   /** who the learner is ("a middle-school student…") — drives tone + difficulty. */
-  audience?: string;
+  audience?: string
   /** the WRITTEN lesson content (narration + strings). When present, questions
    *  must test ONLY material contained here — never untaught topic knowledge. */
-  context?: string;
-  hints?: Record<string, unknown>;
-};
+  context?: string
+  hints?: Record<string, unknown>
+}
 /** A single gate, GateSpec-shaped (validated against the engine schema on use). */
 export type QuestionItem = {
-  kind: QuestionKind;
-  prompt: string;
-  options?: { id: string; label: string }[];
-  answer?: string | string[];
-  manip?: { kind: string; params?: unknown; target: unknown };
-  feedback?: { correct: string; wrong: string };
-};
-export type QuestionResult = { items: QuestionItem[]; provider: string };
+  kind: QuestionKind
+  prompt: string
+  options?: { id: string; label: string }[]
+  answer?: string | string[]
+  manip?: { kind: string; params?: unknown; target: unknown }
+  feedback?: { correct: string; wrong: string }
+}
+export type QuestionResult = { items: QuestionItem[]; provider: string }
 export interface QuestionProvider extends Provider {
-  fetch(req: QuestionRequest): Promise<QuestionResult>;
+  fetch(req: QuestionRequest): Promise<QuestionResult>
 }

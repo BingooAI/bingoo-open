@@ -1,28 +1,28 @@
-'use client';
+'use client'
 
-import { comboMultiplier } from '@bingoo/core';
-import { Flame } from 'lucide-react';
-import { cn } from './lib/cn';
-import { hudSurfaceClass } from './lib/hud';
+import { comboMultiplier } from '@bingoo/core'
+import { Flame } from 'lucide-react'
+import { cn } from './lib/cn'
+import { hudSurfaceClass } from './lib/hud'
 
 export interface ComboMeterProps {
   /** Run of consecutive correct answers. */
-  streak: number;
+  streak: number
   /** Override the multiplier (defaults to `comboMultiplier(streak)` from core). */
-  multiplier?: number;
+  multiplier?: number
   /** Max flames to show. */
-  maxFlames?: number;
-  onMedia?: boolean;
-  size?: 'sm' | 'md' | 'lg';
-  label?: string;
-  className?: string;
+  maxFlames?: number
+  onMedia?: boolean
+  size?: 'sm' | 'md' | 'lg'
+  label?: string
+  className?: string
 }
 
 const SIZE = {
   sm: 'h-7 gap-1 px-2.5 text-sm [&_svg]:size-3.5',
   md: 'h-9 gap-1.5 px-3 text-base [&_svg]:size-4',
   lg: 'h-11 gap-2 px-4 text-lg [&_svg]:size-5',
-} as const;
+} as const
 
 /**
  * A combo/multiplier meter (flames + ×N) for streak feedback — reused in games,
@@ -37,9 +37,9 @@ export function ComboMeter({
   label,
   className,
 }: ComboMeterProps) {
-  const mult = multiplier ?? comboMultiplier(streak);
-  const lit = Math.max(0, Math.min(maxFlames, streak));
-  const active = streak > 0;
+  const mult = multiplier ?? comboMultiplier(streak)
+  const lit = Math.max(0, Math.min(maxFlames, streak))
+  const active = streak > 0
   return (
     <span
       aria-label={label}
@@ -80,5 +80,5 @@ export function ComboMeter({
         ×{mult % 1 === 0 ? mult : mult.toFixed(1)}
       </span>
     </span>
-  );
+  )
 }

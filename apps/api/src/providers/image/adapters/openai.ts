@@ -1,22 +1,22 @@
-import OpenAI from 'openai';
-import { readEnv, requireEnv } from '../../core/config';
-import type { ProviderAdapter } from '../../core/registry';
-import type { ImagePort } from '../port';
+import OpenAI from 'openai'
+import { readEnv, requireEnv } from '../../core/config'
+import type { ProviderAdapter } from '../../core/registry'
+import type { ImagePort } from '../port'
 
-const REQUIRED = ['OPENAI_API_KEY'] as const;
+const REQUIRED = ['OPENAI_API_KEY'] as const
 
 export const openaiImageAdapter: ProviderAdapter<ImagePort> = {
   key: 'openai',
   requiredEnv: REQUIRED,
   create(): ImagePort {
-    const env = requireEnv('image', 'openai', REQUIRED);
-    const client = new OpenAI({ apiKey: env.OPENAI_API_KEY, baseURL: readEnv('OPENAI_BASE_URL') });
-    const defaultModel = readEnv('OPENAI_IMAGE_MODEL') ?? 'gpt-image-1';
-    const defaultSize = readEnv('OPENAI_IMAGE_SIZE') ?? '1024x1024';
+    const env = requireEnv('image', 'openai', REQUIRED)
+    const client = new OpenAI({ apiKey: env.OPENAI_API_KEY, baseURL: readEnv('OPENAI_BASE_URL') })
+    const defaultModel = readEnv('OPENAI_IMAGE_MODEL') ?? 'gpt-image-1'
+    const defaultSize = readEnv('OPENAI_IMAGE_SIZE') ?? '1024x1024'
 
     return {
       async generate(input) {
-        const model = input.model ?? defaultModel;
+        const model = input.model ?? defaultModel
         const res = await client.images.generate(
           {
             model,
@@ -30,10 +30,10 @@ export const openaiImageAdapter: ProviderAdapter<ImagePort> = {
               : {}),
           },
           input.signal ? { signal: input.signal } : {},
-        );
-        const images = (res.data ?? []).map((d) => ({ b64: d.b64_json, url: d.url }));
-        return { images, model };
+        )
+        const images = (res.data ?? []).map((d) => ({ b64: d.b64_json, url: d.url }))
+        return { images, model }
       },
-    };
+    }
   },
-};
+}

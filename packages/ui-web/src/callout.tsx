@@ -1,14 +1,14 @@
-import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react';
-import type { ComponentType, ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react'
+import type { ComponentType, ReactNode } from 'react'
+import { cn } from './lib/cn'
 
-export type CalloutVariant = 'info' | 'success' | 'warning' | 'danger';
+export type CalloutVariant = 'info' | 'success' | 'warning' | 'danger'
 
 export interface CalloutProps {
-  variant?: CalloutVariant;
-  title?: ReactNode;
-  children?: ReactNode;
-  className?: string;
+  variant?: CalloutVariant
+  title?: ReactNode
+  children?: ReactNode
+  className?: string
 }
 
 const MAP: Record<CalloutVariant, { cls: string; Icon: ComponentType<{ className?: string }> }> = {
@@ -19,11 +19,11 @@ const MAP: Record<CalloutVariant, { cls: string; Icon: ComponentType<{ className
     Icon: AlertTriangle,
   },
   danger: { cls: 'border-danger/30 bg-danger-soft text-danger', Icon: XCircle },
-};
+}
 
 /** Inline alert / callout with semantic variant + icon. */
 export function Callout({ variant = 'info', title, children, className }: CalloutProps) {
-  const { cls, Icon } = MAP[variant];
+  const { cls, Icon } = MAP[variant]
   return (
     <div role="note" className={cn('flex gap-3 rounded-2xl border p-4', cls, className)}>
       <Icon className="mt-0.5 size-5 shrink-0" />
@@ -32,5 +32,5 @@ export function Callout({ variant = 'info', title, children, className }: Callou
         {children ? <div className="text-sm opacity-90">{children}</div> : null}
       </div>
     </div>
-  );
+  )
 }

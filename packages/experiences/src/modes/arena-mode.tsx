@@ -1,12 +1,4 @@
-import {
-  AnswerOption,
-  AvatarGroup,
-  Button,
-  cn,
-  Confetti,
-  IconChip,
-  Leaderboard,
-} from '@bingoo/ui-web';
+import { AnswerOption, AvatarGroup, Button, cn, Confetti, IconChip, Leaderboard } from '@bingoo/ui-web'
 import {
   Crown,
   GraduationCap,
@@ -19,8 +11,8 @@ import {
   Volume2,
   VolumeX,
   Zap,
-} from 'lucide-react';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+} from 'lucide-react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import {
   initMatch,
   MAX_HEARTS,
@@ -30,17 +22,17 @@ import {
   type ArenaMode as ArenaModeKind,
   type Difficulty,
   type MatchState,
-} from '../arena/engine';
-import { playSfx, startBgm, stopBgm } from '../arena/sfx';
-import { EmptyState } from '../shared';
-import type { ArenaConfig, ExperienceLabels, LearnQuizItem, Participant } from '../types';
-import type { LeaderboardEntry } from '@bingoo/ui-web';
+} from '../arena/engine'
+import { playSfx, startBgm, stopBgm } from '../arena/sfx'
+import { EmptyState } from '../shared'
+import type { ArenaConfig, ExperienceLabels, LearnQuizItem, Participant } from '../types'
+import type { LeaderboardEntry } from '@bingoo/ui-web'
 
-const MODES: ArenaModeKind[] = ['practice', 'coop', 'solo', 'vsAI'];
-const MODE_ICON = { practice: GraduationCap, coop: Users, solo: HeartPulse, vsAI: Swords } as const;
-const FOE_EMOJI: Record<ArenaModeKind, string> = { vsAI: '🤖', coop: '🐲', solo: '', practice: '' };
-const isPlay = (m: ArenaModeKind) => m === 'solo' || m === 'vsAI';
-const ROUND_MS = 12_000;
+const MODES: ArenaModeKind[] = ['practice', 'coop', 'solo', 'vsAI']
+const MODE_ICON = { practice: GraduationCap, coop: Users, solo: HeartPulse, vsAI: Swords } as const
+const FOE_EMOJI: Record<ArenaModeKind, string> = { vsAI: '🤖', coop: '🐲', solo: '', practice: '' }
+const isPlay = (m: ArenaModeKind) => m === 'solo' || m === 'vsAI'
+const ROUND_MS = 12_000
 
 // Keyframes cho FX — inject 1 lần, chạy được cả dark/light (không phụ thuộc màu).
 const FX_CSS = `
@@ -50,7 +42,7 @@ const FX_CSS = `
 @keyframes exp-flash{0%{opacity:.55}100%{opacity:0}}
 @keyframes exp-banner{0%{transform:scale(.6) translateY(8px);opacity:0}25%{transform:scale(1.05);opacity:1}70%{transform:scale(1);opacity:1}100%{transform:scale(1.1);opacity:0}}
 @keyframes exp-pop{0%{transform:scale(.4);opacity:0}55%{transform:scale(1.25)}100%{transform:scale(1);opacity:1}}
-`;
+`
 
 export function ArenaMode({
   quiz = [],
@@ -59,19 +51,17 @@ export function ArenaMode({
   labels,
   config,
 }: {
-  quiz?: LearnQuizItem[];
-  leaderboard?: LeaderboardEntry[];
-  opponents?: Participant[];
-  labels: ExperienceLabels;
-  config?: ArenaConfig;
+  quiz?: LearnQuizItem[]
+  leaderboard?: LeaderboardEntry[]
+  opponents?: Participant[]
+  labels: ExperienceLabels
+  config?: ArenaConfig
 }) {
-  const [started, setStarted] = useState<{ mode: ArenaModeKind; difficulty: Difficulty } | null>(
-    null,
-  );
-  const [difficulty, setDifficulty] = useState<Difficulty>('mid');
-  const a = labels.arena;
+  const [started, setStarted] = useState<{ mode: ArenaModeKind; difficulty: Difficulty } | null>(null)
+  const [difficulty, setDifficulty] = useState<Difficulty>('mid')
+  const a = labels.arena
 
-  if (quiz.length === 0) return <EmptyState>{labels.empty}</EmptyState>;
+  if (quiz.length === 0) return <EmptyState>{labels.empty}</EmptyState>
   if (started)
     return (
       <ArenaBattle
@@ -82,7 +72,7 @@ export function ArenaMode({
         config={config}
         onExit={() => setStarted(null)}
       />
-    );
+    )
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-y-auto bg-[radial-gradient(130%_90%_at_50%_-20%,color-mix(in_srgb,var(--color-accent-coral),transparent_84%),transparent)]">
@@ -95,7 +85,7 @@ export function ArenaMode({
         </div>
         <div className="mb-4 grid grid-cols-2 gap-2.5">
           {MODES.map((md) => {
-            const Icon = MODE_ICON[md];
+            const Icon = MODE_ICON[md]
             return (
               <div
                 key={md}
@@ -112,9 +102,7 @@ export function ArenaMode({
                 <span className="font-display font-bold leading-tight text-foreground">
                   {a.modes[md].title}
                 </span>
-                <span className="text-[11px] leading-snug text-foreground-muted">
-                  {a.modes[md].desc}
-                </span>
+                <span className="text-[11px] leading-snug text-foreground-muted">{a.modes[md].desc}</span>
                 <button
                   type="button"
                   onClick={() => setStarted({ mode: md, difficulty })}
@@ -123,7 +111,7 @@ export function ArenaMode({
                   {a.start}
                 </button>
               </div>
-            );
+            )
           })}
         </div>
         <div className="mb-2 text-xs font-bold uppercase tracking-wide text-foreground-muted">
@@ -156,7 +144,7 @@ export function ArenaMode({
         ) : null}
       </div>
     </div>
-  );
+  )
 }
 
 /** Practice = battle mode 'practice', tự khởi động lại khi xong (không có màn chọn mode). */
@@ -165,12 +153,12 @@ export function PracticeBattle({
   labels,
   config,
 }: {
-  quiz?: LearnQuizItem[];
-  labels: ExperienceLabels;
-  config?: ArenaConfig;
+  quiz?: LearnQuizItem[]
+  labels: ExperienceLabels
+  config?: ArenaConfig
 }) {
-  const [n, setN] = useState(0);
-  if (quiz.length === 0) return <EmptyState>{labels.empty}</EmptyState>;
+  const [n, setN] = useState(0)
+  if (quiz.length === 0) return <EmptyState>{labels.empty}</EmptyState>
   return (
     <ArenaBattle
       key={n}
@@ -181,15 +169,15 @@ export function PracticeBattle({
       config={config}
       onExit={() => setN((x) => x + 1)}
     />
-  );
+  )
 }
 
 /* ─────────────────────────── BATTLE ─────────────────────────── */
 interface Fx {
-  id: number;
-  side: 'you' | 'foe';
-  text: string;
-  tone: 'good' | 'bad' | 'combo';
+  id: number
+  side: 'you' | 'foe'
+  text: string
+  tone: 'good' | 'bad' | 'combo'
 }
 
 function HpBar({
@@ -198,12 +186,12 @@ function HpBar({
   tone,
   shake,
 }: {
-  value: number;
-  max: number;
-  tone: 'you' | 'foe';
-  shake?: number;
+  value: number
+  max: number
+  tone: 'you' | 'foe'
+  shake?: number
 }) {
-  const pct = Math.max(0, Math.min(100, max > 0 ? (value / max) * 100 : 0));
+  const pct = Math.max(0, Math.min(100, max > 0 ? (value / max) * 100 : 0))
   return (
     <div
       key={shake}
@@ -220,25 +208,18 @@ function HpBar({
         style={{ width: `${pct}%` }}
       />
     </div>
-  );
+  )
 }
 
 function CountRing({ ms, index }: { ms: number; index: number }) {
-  const pct = Math.max(0, Math.min(1, ms / ROUND_MS));
-  const r = 16;
-  const circ = 2 * Math.PI * r;
-  const low = ms <= 3000;
+  const pct = Math.max(0, Math.min(1, ms / ROUND_MS))
+  const r = 16
+  const circ = 2 * Math.PI * r
+  const low = ms <= 3000
   return (
     <div className="relative grid size-11 place-items-center" title={String(Math.ceil(ms / 1000))}>
       <svg viewBox="0 0 40 40" className="size-11 -rotate-90">
-        <circle
-          cx="20"
-          cy="20"
-          r={r}
-          fill="none"
-          stroke="var(--color-surface-muted)"
-          strokeWidth="4"
-        />
+        <circle cx="20" cy="20" r={r} fill="none" stroke="var(--color-surface-muted)" strokeWidth="4" />
         <circle
           cx="20"
           cy="20"
@@ -261,7 +242,7 @@ function CountRing({ ms, index }: { ms: number; index: number }) {
         {index + 1}
       </span>
     </div>
-  );
+  )
 }
 
 function Fighter({
@@ -273,13 +254,13 @@ function Fighter({
   attackKey,
   fx,
 }: {
-  emoji: string;
-  label: ReactNode;
-  color: string;
-  boss?: boolean;
-  hitKey: number;
-  attackKey: number;
-  fx: Fx[];
+  emoji: string
+  label: ReactNode
+  color: string
+  boss?: boolean
+  hitKey: number
+  attackKey: number
+  fx: Fx[]
 }) {
   return (
     <div className="relative flex flex-col items-center gap-1">
@@ -291,11 +272,7 @@ function Fighter({
           color,
         )}
         style={
-          attackKey
-            ? { animation: 'exp-lunge .4s' }
-            : hitKey
-              ? { animation: 'exp-shake .4s' }
-              : undefined
+          attackKey ? { animation: 'exp-lunge .4s' } : hitKey ? { animation: 'exp-shake .4s' } : undefined
         }
       >
         {emoji}
@@ -308,11 +285,7 @@ function Fighter({
             key={f.id}
             className={cn(
               'absolute font-display text-xl font-extrabold drop-shadow',
-              f.tone === 'good'
-                ? 'text-success'
-                : f.tone === 'combo'
-                  ? 'text-accent-sunbeam'
-                  : 'text-danger',
+              f.tone === 'good' ? 'text-success' : f.tone === 'combo' ? 'text-accent-sunbeam' : 'text-danger',
             )}
             style={{ animation: 'exp-float .9s forwards' }}
           >
@@ -321,7 +294,7 @@ function Fighter({
         ))}
       </div>
     </div>
-  );
+  )
 }
 
 export function ArenaBattle({
@@ -332,134 +305,134 @@ export function ArenaBattle({
   config,
   onExit,
 }: {
-  mode: ArenaModeKind;
-  difficulty: Difficulty;
-  quiz: LearnQuizItem[];
-  leaderboard?: LeaderboardEntry[];
-  labels: ExperienceLabels;
-  config?: ArenaConfig;
-  onExit: () => void;
+  mode: ArenaModeKind
+  difficulty: Difficulty
+  quiz: LearnQuizItem[]
+  leaderboard?: LeaderboardEntry[]
+  labels: ExperienceLabels
+  config?: ArenaConfig
+  onExit: () => void
 }) {
-  const a = labels.arena;
-  const versus = mode === 'vsAI' || mode === 'coop';
-  const youEmoji = config?.youEmoji ?? '🧑‍🎓';
-  const allyEmoji = config?.allyEmoji ?? '🐣';
+  const a = labels.arena
+  const versus = mode === 'vsAI' || mode === 'coop'
+  const youEmoji = config?.youEmoji ?? '🧑‍🎓'
+  const allyEmoji = config?.allyEmoji ?? '🐣'
   const foeEmoji =
-    mode === 'coop' ? (config?.bossEmoji ?? '🐲') : (config?.enemyEmoji ?? FOE_EMOJI[mode] ?? '🤖');
+    mode === 'coop' ? (config?.bossEmoji ?? '🐲') : (config?.enemyEmoji ?? FOE_EMOJI[mode] ?? '🤖')
   const [match, setMatch] = useState<MatchState>(() =>
     initMatch({ mode, difficulty, totalRounds: config?.rounds ?? Math.max(quiz.length, 6) }),
-  );
-  const [qIndex, setQIndex] = useState(0);
-  const [picked, setPicked] = useState<string | null>(null);
-  const [timeLeft, setTimeLeft] = useState(ROUND_MS);
-  const [fx, setFx] = useState<Fx[]>([]);
-  const [foeHit, setFoeHit] = useState(0);
-  const [foeAtk, setFoeAtk] = useState(0);
-  const [youHit, setYouHit] = useState(0);
-  const [flash, setFlash] = useState<{ k: number; tone: 'good' | 'bad' } | null>(null);
-  const [soundOn, setSoundOn] = useState(true);
-  const [musicOn, setMusicOn] = useState(true);
-  const fxId = useRef(0);
-  const soundRef = useRef(soundOn);
-  soundRef.current = soundOn;
+  )
+  const [qIndex, setQIndex] = useState(0)
+  const [picked, setPicked] = useState<string | null>(null)
+  const [timeLeft, setTimeLeft] = useState(ROUND_MS)
+  const [fx, setFx] = useState<Fx[]>([])
+  const [foeHit, setFoeHit] = useState(0)
+  const [foeAtk, setFoeAtk] = useState(0)
+  const [youHit, setYouHit] = useState(0)
+  const [flash, setFlash] = useState<{ k: number; tone: 'good' | 'bad' } | null>(null)
+  const [soundOn, setSoundOn] = useState(true)
+  const [musicOn, setMusicOn] = useState(true)
+  const fxId = useRef(0)
+  const soundRef = useRef(soundOn)
+  soundRef.current = soundOn
 
-  const question = quiz[qIndex % quiz.length]!;
-  const revealed = picked != null;
-  const done = match.status !== 'playing';
+  const question = quiz[qIndex % quiz.length]!
+  const revealed = picked != null
+  const done = match.status !== 'playing'
   const sfx = (k: Parameters<typeof playSfx>[0]) => {
-    if (soundRef.current) playSfx(k);
-  };
+    if (soundRef.current) playSfx(k)
+  }
 
   // Nhạc nền
   useEffect(() => {
-    if (musicOn) startBgm();
-    else stopBgm();
-    return () => stopBgm();
-  }, [musicOn]);
+    if (musicOn) startBgm()
+    else stopBgm()
+    return () => stopBgm()
+  }, [musicOn])
 
   // Beat vòng mới: banner + reset đồng hồ
   useEffect(() => {
-    setTimeLeft(ROUND_MS);
-    sfx('round');
-  }, [qIndex]);
+    setTimeLeft(ROUND_MS)
+    sfx('round')
+  }, [qIndex])
 
   // Đồng hồ đếm ngược mỗi vòng
   useEffect(() => {
-    if (revealed || done) return;
+    if (revealed || done) return
     if (timeLeft <= 0) {
-      answer(null);
-      return;
+      answer(null)
+      return
     }
-    const id = setTimeout(() => setTimeLeft((t) => Math.max(0, t - 100)), 100);
-    return () => clearTimeout(id);
-  }, [timeLeft, revealed, done]);
+    const id = setTimeout(() => setTimeLeft((t) => Math.max(0, t - 100)), 100)
+    return () => clearTimeout(id)
+  }, [timeLeft, revealed, done])
 
   // Kết thúc: nhạc thắng/thua
   useEffect(() => {
     if (done) {
-      stopBgm();
-      sfx(match.status === 'won' ? 'win' : match.status === 'lost' ? 'lose' : 'win');
+      stopBgm()
+      sfx(match.status === 'won' ? 'win' : match.status === 'lost' ? 'lose' : 'win')
     }
-  }, [done]);
+  }, [done])
 
   function pushFx(side: 'you' | 'foe', text: string, tone: Fx['tone']) {
-    const id = ++fxId.current;
-    setFx((f) => [...f, { id, side, text, tone }]);
-    setTimeout(() => setFx((f) => f.filter((x) => x.id !== id)), 900);
+    const id = ++fxId.current
+    setFx((f) => [...f, { id, side, text, tone }])
+    setTimeout(() => setFx((f) => f.filter((x) => x.id !== id)), 900)
   }
 
   function answer(choiceId: string | null) {
-    if (revealed || done) return;
-    const correct = choiceId === question.answerId;
-    setPicked(choiceId ?? '__timeout__');
-    const before = match;
-    const after = resolveRound(before, { correct, timeMs: ROUND_MS - timeLeft });
-    setMatch(after);
-    const foeDmg = before.foe.hp - after.foe.hp;
-    const youDmg = before.you.hp - after.you.hp;
-    setFlash({ k: Date.now(), tone: correct ? 'good' : 'bad' });
+    if (revealed || done) return
+    const correct = choiceId === question.answerId
+    setPicked(choiceId ?? '__timeout__')
+    const before = match
+    const after = resolveRound(before, { correct, timeMs: ROUND_MS - timeLeft })
+    setMatch(after)
+    const foeDmg = before.foe.hp - after.foe.hp
+    const youDmg = before.you.hp - after.you.hp
+    setFlash({ k: Date.now(), tone: correct ? 'good' : 'bad' })
     if (correct) {
-      sfx('correct');
+      sfx('correct')
       if (foeDmg > 0) {
-        pushFx('foe', `-${foeDmg}`, 'good');
-        setFoeHit((n) => n + 1);
-        sfx('hit');
+        pushFx('foe', `-${foeDmg}`, 'good')
+        setFoeHit((n) => n + 1)
+        sfx('hit')
       }
       if (after.you.combo >= 2) {
-        pushFx('you', `x${after.you.combo}`, 'combo');
-        sfx('combo');
+        pushFx('you', `x${after.you.combo}`, 'combo')
+        sfx('combo')
       }
     } else {
-      sfx('wrong');
+      sfx('wrong')
     }
     if (youDmg > 0) {
-      pushFx('you', `-${youDmg}`, 'bad');
-      setYouHit((n) => n + 1);
-      setFoeAtk((n) => n + 1);
+      pushFx('you', `-${youDmg}`, 'bad')
+      setYouHit((n) => n + 1)
+      setFoeAtk((n) => n + 1)
     }
-    if (mode === 'solo' && !correct) setYouHit((n) => n + 1);
+    if (mode === 'solo' && !correct) setYouHit((n) => n + 1)
     // Tự chuyển vòng sau khi lộ đáp án (nhịp)
     window.setTimeout(() => {
-      setPicked(null);
-      setQIndex((i) => i + 1);
-    }, 1300);
+      setPicked(null)
+      setQIndex((i) => i + 1)
+    }, 1300)
   }
 
   function special() {
-    if (!specialReady(match) || done) return;
-    const before = match;
-    const after = useSpecial(before);
-    setMatch(after);
-    sfx('special');
-    const foeDmg = before.foe.hp - after.foe.hp;
+    if (!specialReady(match) || done) return
+    const before = match
+    const after = useSpecial(before)
+    setMatch(after)
+    sfx('special')
+    const foeDmg = before.foe.hp - after.foe.hp
     if (foeDmg > 0) {
-      pushFx('foe', `-${foeDmg}`, 'good');
-      setFoeHit((n) => n + 1);
+      pushFx('foe', `-${foeDmg}`, 'good')
+      setFoeHit((n) => n + 1)
     }
   }
 
   if (done) {
-    const won = match.status === 'won' || match.status === 'done';
+    const won = match.status === 'won' || match.status === 'done'
     return (
       <div className="relative grid h-full place-items-center overflow-hidden bg-[radial-gradient(120%_90%_at_50%_-10%,color-mix(in_srgb,var(--color-accent-coral),transparent_84%),transparent)] p-6">
         <style>{FX_CSS}</style>
@@ -480,11 +453,11 @@ export function ArenaBattle({
           <Button onClick={onExit}>{labels.restart}</Button>
         </div>
       </div>
-    );
+    )
   }
 
-  const youFx = fx.filter((f) => f.side === 'you');
-  const foeFx = fx.filter((f) => f.side === 'foe');
+  const youFx = fx.filter((f) => f.side === 'you')
+  const foeFx = fx.filter((f) => f.side === 'foe')
 
   return (
     <div className="relative flex h-full min-h-0 flex-col overflow-hidden bg-[radial-gradient(130%_80%_at_50%_-15%,color-mix(in_srgb,var(--color-accent-coral),transparent_86%),transparent)]">
@@ -503,10 +476,7 @@ export function ArenaBattle({
       ) : null}
 
       {/* Banner vòng (beat) */}
-      <div
-        key={qIndex}
-        className="pointer-events-none absolute inset-x-0 top-16 z-20 flex justify-center"
-      >
+      <div key={qIndex} className="pointer-events-none absolute inset-x-0 top-16 z-20 flex justify-center">
         <span
           className="rounded-full bg-foreground/85 px-5 py-1.5 font-display text-lg font-extrabold text-background"
           style={{ animation: 'exp-banner 1.1s forwards' }}
@@ -637,7 +607,7 @@ export function ArenaBattle({
                   ? 'correct'
                   : picked === c.id
                     ? 'incorrect'
-                    : 'default';
+                    : 'default'
               return (
                 <AnswerOption
                   key={c.id}
@@ -647,7 +617,7 @@ export function ArenaBattle({
                   disabled={revealed}
                   onClick={() => answer(c.id)}
                 />
-              );
+              )
             })}
           </div>
         </div>
@@ -683,5 +653,5 @@ export function ArenaBattle({
         </Button>
       </footer>
     </div>
-  );
+  )
 }

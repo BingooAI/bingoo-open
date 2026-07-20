@@ -3,16 +3,16 @@
  * Repo THUẦN lưu trạng thái; chuyển trạng thái/lan STALE do service gọi package thuần.
  */
 
-import { db, type Prisma } from '@bingoo/db';
-import type { PipelineStep, Stage } from '@bingoo/authoring-workflow';
+import { db, type Prisma } from '@bingoo/db'
+import type { PipelineStep, Stage } from '@bingoo/authoring-workflow'
 
 function rowToStep(r: {
-  stepKey: string;
-  stage: string;
-  status: string;
-  version: number;
-  parents: string[];
-  builtFrom: unknown;
+  stepKey: string
+  stage: string
+  status: string
+  version: number
+  parents: string[]
+  builtFrom: unknown
 }): PipelineStep {
   return {
     id: r.stepKey,
@@ -20,11 +20,8 @@ function rowToStep(r: {
     status: r.status as PipelineStep['status'],
     version: r.version,
     parents: r.parents,
-    builtFrom: (r.builtFrom && typeof r.builtFrom === 'object' ? r.builtFrom : {}) as Record<
-      string,
-      number
-    >,
-  };
+    builtFrom: (r.builtFrom && typeof r.builtFrom === 'object' ? r.builtFrom : {}) as Record<string, number>,
+  }
 }
 
 export async function createPipeline(
@@ -32,7 +29,7 @@ export async function createPipeline(
   createdBy: string,
   steps: readonly PipelineStep[],
 ): Promise<string> {
-  const pipeline = await db.authoringPipeline.create({ data: { title, createdBy } });
+  const pipeline = await db.authoringPipeline.create({ data: { title, createdBy } })
   await db.authoringStep.createMany({
     data: steps.map((s) => ({
       pipelineId: pipeline.id,
@@ -43,8 +40,8 @@ export async function createPipeline(
       parents: [...s.parents],
       builtFrom: s.builtFrom as Prisma.InputJsonValue,
     })),
-  });
-  return pipeline.id;
+  })
+  return pipeline.id
 }
 
 export async function loadSteps(pipelineId: string): Promise<PipelineStep[]> {
@@ -58,12 +55,12 @@ export async function loadSteps(pipelineId: string): Promise<PipelineStep[]> {
       parents: true,
       builtFrom: true,
     },
-  });
-  return rows.map(rowToStep);
+  })
+  return rows.map(rowToStep)
 }
 
 export async function pipelineExists(pipelineId: string): Promise<boolean> {
-  return (await db.authoringPipeline.count({ where: { id: pipelineId } })) > 0;
+  return (await db.authoringPipeline.count({ where: { id: pipelineId } })) > 0
 }
 
 /** Ghi đè trạng thái các bước (sau chuyển trạng thái + lan STALE). */
@@ -77,6 +74,6 @@ export async function saveSteps(pipelineId: string, steps: readonly PipelineStep
         parents: [...s.parents],
         builtFrom: s.builtFrom as Prisma.InputJsonValue,
       },
-    });
+    })
   }
 }

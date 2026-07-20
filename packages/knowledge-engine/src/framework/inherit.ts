@@ -1,7 +1,7 @@
 /** Di trú SkillState khi chuẩn/node đổi — primitive thuần. SPEC §10. */
 
-import type { Slug } from '../contracts';
-import type { SkillMastery } from '../mastery/observe';
+import type { Slug } from '../contracts'
+import type { SkillMastery } from '../mastery/observe'
 
 /**
  * SPEC §10 — nguyên tắc: KHÔNG đè bằng chứng mới của node kế nhiệm.
@@ -14,7 +14,7 @@ export function inheritState(
   toSlug: Slug,
   factor = 1,
 ): SkillMastery | null {
-  if (existingTarget !== undefined) return null; // đã có state riêng → giữ nguyên
+  if (existingTarget !== undefined) return null // đã có state riêng → giữ nguyên
   return {
     skill: toSlug,
     pKnown: source.pKnown,
@@ -22,12 +22,12 @@ export function inheritState(
     attempts: Math.round(source.attempts * factor),
     correct: Math.round(source.correct * factor),
     lastSeenMs: source.lastSeenMs,
-  };
+  }
 }
 
 /** Hệ số chia đều cho split 1→n. SPEC §10. */
 export function splitFactor(n: number): number {
-  return n > 0 ? 1 / n : 1;
+  return n > 0 ? 1 / n : 1
 }
 
 /**
@@ -36,21 +36,21 @@ export function splitFactor(n: number): number {
  */
 export function mergeStates(sources: readonly SkillMastery[], toSlug: Slug): SkillMastery {
   if (sources.length === 0) {
-    return { skill: toSlug, pKnown: 0, ability: 1000, attempts: 0, correct: 0, lastSeenMs: null };
+    return { skill: toSlug, pKnown: 0, ability: 1000, attempts: 0, correct: 0, lastSeenMs: null }
   }
-  let pKnown = 0;
-  let ability = -Infinity;
-  let attempts = 0;
-  let correct = 0;
-  let lastSeenMs: number | null = null;
+  let pKnown = 0
+  let ability = -Infinity
+  let attempts = 0
+  let correct = 0
+  let lastSeenMs: number | null = null
   for (const s of sources) {
-    pKnown = Math.max(pKnown, s.pKnown);
-    ability = Math.max(ability, s.ability);
-    attempts += s.attempts;
-    correct += s.correct;
+    pKnown = Math.max(pKnown, s.pKnown)
+    ability = Math.max(ability, s.ability)
+    attempts += s.attempts
+    correct += s.correct
     if (s.lastSeenMs != null) {
-      lastSeenMs = lastSeenMs == null ? s.lastSeenMs : Math.max(lastSeenMs, s.lastSeenMs);
+      lastSeenMs = lastSeenMs == null ? s.lastSeenMs : Math.max(lastSeenMs, s.lastSeenMs)
     }
   }
-  return { skill: toSlug, pKnown, ability, attempts, correct, lastSeenMs };
+  return { skill: toSlug, pKnown, ability, attempts, correct, lastSeenMs }
 }

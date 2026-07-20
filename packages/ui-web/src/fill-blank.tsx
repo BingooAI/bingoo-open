@@ -1,21 +1,21 @@
-'use client';
+'use client'
 
-import type { FillSegment } from '@bingoo/core';
-import { Check, X } from 'lucide-react';
-import { cn } from './lib/cn';
-import { tile } from './lib/interactive';
+import type { FillSegment } from '@bingoo/core'
+import { Check, X } from 'lucide-react'
+import { cn } from './lib/cn'
+import { tile } from './lib/interactive'
 
 export interface FillBlankProps {
   /** Interleaved text + blank segments (from `@bingoo/core`). */
-  segments: FillSegment[];
+  segments: FillSegment[]
   /** Controlled value per blank. */
-  values: string[];
-  onChange: (values: string[]) => void;
+  values: string[]
+  onChange: (values: string[]) => void
   /** After checking: per-blank correctness (index-aligned with blanks). */
-  reveal?: boolean[];
-  disabled?: boolean;
-  placeholder?: string;
-  className?: string;
+  reveal?: boolean[]
+  disabled?: boolean
+  placeholder?: string
+  className?: string
 }
 
 /**
@@ -31,13 +31,13 @@ export function FillBlank({
   placeholder,
   className,
 }: FillBlankProps) {
-  const locked = !!reveal || disabled;
-  let blankIndex = -1;
+  const locked = !!reveal || disabled
+  let blankIndex = -1
 
   function setBlank(i: number, next: string) {
-    const copy = values.slice();
-    copy[i] = next;
-    onChange(copy);
+    const copy = values.slice()
+    copy[i] = next
+    onChange(copy)
   }
 
   return (
@@ -49,13 +49,13 @@ export function FillBlank({
     >
       {segments.map((seg, i) => {
         if ('text' in seg) {
-          return <span key={i}>{seg.text}</span>;
+          return <span key={i}>{seg.text}</span>
         }
-        blankIndex += 1;
-        const bi = blankIndex;
-        const value = values[bi] ?? '';
-        const ok = reveal?.[bi];
-        const width = Math.max(4, value.length + 1);
+        blankIndex += 1
+        const bi = blankIndex
+        const value = values[bi] ?? ''
+        const ok = reveal?.[bi]
+        const width = Math.max(4, value.length + 1)
         return (
           <span key={i} className="inline-flex items-center gap-1 align-middle">
             <input
@@ -80,8 +80,8 @@ export function FillBlank({
             {ok === true ? <Check className="size-4 text-success" /> : null}
             {ok === false ? <X className="size-4 text-danger" /> : null}
           </span>
-        );
+        )
       })}
     </p>
-  );
+  )
 }

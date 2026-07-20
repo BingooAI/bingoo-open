@@ -1,20 +1,20 @@
-import { Hono } from 'hono';
-import { z } from 'zod';
-import { db } from '@bingoo/db';
-import { RELATIONSHIP_TYPES } from '@bingoo/core';
-import type { AppEnv } from '../lib/context';
-import { AppError } from '../lib/errors';
-import { ok } from '../lib/response';
-import { validate } from '../lib/validate';
-import { requireAuth } from '../auth';
-import { writeAudit } from '../repos/audit.repo';
+import { Hono } from 'hono'
+import { z } from 'zod'
+import { db } from '@bingoo/db'
+import { RELATIONSHIP_TYPES } from '@bingoo/core'
+import type { AppEnv } from '../lib/context'
+import { AppError } from '../lib/errors'
+import { ok } from '../lib/response'
+import { validate } from '../lib/validate'
+import { requireAuth } from '../auth'
+import { writeAudit } from '../repos/audit.repo'
 import {
   approveRelationship,
   blockRelationship,
   listRelationships,
   requestRelationship,
   respondToRelationship,
-} from '../repos/relationship.repo';
+} from '../repos/relationship.repo'
 
 const RequestSchema = z
   .object({
@@ -22,7 +22,7 @@ const RequestSchema = z
     toUserId: z.string().optional(),
     type: z.enum(RELATIONSHIP_TYPES),
   })
-  .refine((b) => Boolean(b.toPublicId) || Boolean(b.toUserId), 'provide toPublicId or toUserId');
+  .refine((b) => Boolean(b.toPublicId) || Boolean(b.toUserId), 'provide toPublicId or toUserId')
 
 /**
  * Family + social relationships (§6). Display/connection only — NOT account
@@ -31,80 +31,80 @@ const RequestSchema = z
  */
 export const relationships = new Hono<AppEnv>()
   .get('/', requireAuth, async (c) => {
-    const user = c.get('user');
-    if (!user) throw AppError.unauthorized();
-    return ok(c, await listRelationships(user.id));
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    return ok(c, await listRelationships(user.id))
   })
   .post('/', requireAuth, validate('json', RequestSchema), async (c) => {
-    const user = c.get('user');
-    if (!user) throw AppError.unauthorized();
-    const body = c.req.valid('json');
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    const body = c.req.valid('json')
 
     const target = await db.user.findFirst({
       where: body.toPublicId ? { publicId: body.toPublicId } : { id: body.toUserId },
       select: { id: true },
-    });
-    if (!target) throw AppError.notFound('User not found');
+    })
+    if (!target) throw AppError.notFound('User not found')
 
     const rel = await requestRelationship({
       requester: { id: user.id, accountType: user.accountType },
       toUserId: target.id,
       type: body.type,
-    });
+    })
     await writeAudit({
       action: 'relationship.requested',
       actorUserId: user.id,
       targetType: 'user',
       targetId: target.id,
       metadata: { type: body.type },
-    });
-    return ok(c, rel, 201);
+    })
+    return ok(c, rel, 201)
   })
   .post('/:id/accept', requireAuth, async (c) => {
-    const user = c.get('user');
-    if (!user) throw AppError.unauthorized();
-    const rel = await respondToRelationship(user.id, c.req.param('id'), 'accept');
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    const rel = await respondToRelationship(user.id, c.req.param('id'), 'accept')
     await writeAudit({
       action: 'relationship.accepted',
       actorUserId: user.id,
       targetType: 'relationship',
       targetId: c.req.param('id'),
-    });
-    return ok(c, rel);
+    })
+    return ok(c, rel)
   })
   .post('/:id/decline', requireAuth, async (c) => {
-    const user = c.get('user');
-    if (!user) throw AppError.unauthorized();
-    const rel = await respondToRelationship(user.id, c.req.param('id'), 'decline');
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    const rel = await respondToRelationship(user.id, c.req.param('id'), 'decline')
     await writeAudit({
       action: 'relationship.declined',
       actorUserId: user.id,
       targetType: 'relationship',
       targetId: c.req.param('id'),
-    });
-    return ok(c, rel);
+    })
+    return ok(c, rel)
   })
   .post('/:id/approve', requireAuth, async (c) => {
-    const user = c.get('user');
-    if (!user) throw AppError.unauthorized();
-    const rel = await approveRelationship(user.id, c.req.param('id'));
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    const rel = await approveRelationship(user.id, c.req.param('id'))
     await writeAudit({
       action: 'relationship.guardian_approved',
       actorUserId: user.id,
       targetType: 'relationship',
       targetId: c.req.param('id'),
-    });
-    return ok(c, rel);
+    })
+    return ok(c, rel)
   })
   .post('/:id/block', requireAuth, async (c) => {
-    const user = c.get('user');
-    if (!user) throw AppError.unauthorized();
-    const rel = await blockRelationship(user.id, c.req.param('id'));
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    const rel = await blockRelationship(user.id, c.req.param('id'))
     await writeAudit({
       action: 'relationship.blocked',
       actorUserId: user.id,
       targetType: 'relationship',
       targetId: c.req.param('id'),
-    });
-    return ok(c, rel);
-  });
+    })
+    return ok(c, rel)
+  })

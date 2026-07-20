@@ -1,46 +1,41 @@
-'use client';
+'use client'
 
-import { ChevronDown } from 'lucide-react';
-import { useId, useState, type ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { ChevronDown } from 'lucide-react'
+import { useId, useState, type ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export interface AccordionItemData {
-  id: string;
-  title: ReactNode;
-  content: ReactNode;
+  id: string
+  title: ReactNode
+  content: ReactNode
 }
 
 export interface AccordionProps {
-  items: AccordionItemData[];
+  items: AccordionItemData[]
   /** `single` = one open at a time; `multiple` = independent. */
-  type?: 'single' | 'multiple';
-  defaultOpen?: string[];
+  type?: 'single' | 'multiple'
+  defaultOpen?: string[]
 }
 
 /** Accessible accordion (button + region, aria-expanded/controls). */
 export function Accordion({ items, type = 'single', defaultOpen = [] }: AccordionProps) {
-  const [open, setOpen] = useState<string[]>(defaultOpen);
+  const [open, setOpen] = useState<string[]>(defaultOpen)
 
   function toggle(id: string) {
     setOpen((prev) => {
-      const isOpen = prev.includes(id);
-      if (type === 'single') return isOpen ? [] : [id];
-      return isOpen ? prev.filter((x) => x !== id) : [...prev, id];
-    });
+      const isOpen = prev.includes(id)
+      if (type === 'single') return isOpen ? [] : [id]
+      return isOpen ? prev.filter((x) => x !== id) : [...prev, id]
+    })
   }
 
   return (
     <div className="w-full divide-y divide-border overflow-hidden rounded-2xl border border-border">
       {items.map((it) => (
-        <AccordionRow
-          key={it.id}
-          item={it}
-          isOpen={open.includes(it.id)}
-          onToggle={() => toggle(it.id)}
-        />
+        <AccordionRow key={it.id} item={it} isOpen={open.includes(it.id)} onToggle={() => toggle(it.id)} />
       ))}
     </div>
-  );
+  )
 }
 
 function AccordionRow({
@@ -48,12 +43,12 @@ function AccordionRow({
   isOpen,
   onToggle,
 }: {
-  item: AccordionItemData;
-  isOpen: boolean;
-  onToggle: () => void;
+  item: AccordionItemData
+  isOpen: boolean
+  onToggle: () => void
 }) {
-  const panelId = useId();
-  const btnId = useId();
+  const panelId = useId()
+  const btnId = useId()
   return (
     <div>
       <h3 className="m-0">
@@ -86,5 +81,5 @@ function AccordionRow({
         </div>
       ) : null}
     </div>
-  );
+  )
 }

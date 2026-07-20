@@ -1,30 +1,30 @@
-'use client';
+'use client'
 
-import { gridArea, gridPerimeter } from '@bingoo/core';
-import { cn } from './lib/cn';
-import { stagger, tile } from './lib/interactive';
+import { gridArea, gridPerimeter } from '@bingoo/core'
+import { cn } from './lib/cn'
+import { stagger, tile } from './lib/interactive'
 
 export interface GridShapeTarget {
-  area?: number;
-  perimeter?: number;
-  cells?: string[];
+  area?: number
+  perimeter?: number
+  cells?: string[]
 }
 
 export interface GridShapeBoardProps {
-  rows: number;
-  cols: number;
+  rows: number
+  cols: number
   /** Cells already shaded and locked. */
-  given?: string[];
+  given?: string[]
   /** Controlled: cells the learner has shaded. */
-  cells: string[];
-  onChange: (cells: string[]) => void;
-  target: GridShapeTarget;
-  unitLabel?: string;
+  cells: string[]
+  onChange: (cells: string[]) => void
+  target: GridShapeTarget
+  unitLabel?: string
   /** Localized readout labels. */
-  labels?: { area: string; perimeter: string };
-  reveal?: { correct: boolean; area: number; perimeter: number; target: GridShapeTarget };
-  disabled?: boolean;
-  className?: string;
+  labels?: { area: string; perimeter: string }
+  reveal?: { correct: boolean; area: number; perimeter: number; target: GridShapeTarget }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -46,36 +46,33 @@ export function GridShapeBoard({
   disabled,
   className,
 }: GridShapeBoardProps) {
-  const locked = !!reveal || disabled;
-  const givenSet = new Set(given);
-  const userSet = new Set(cells);
-  const all = [...new Set([...given, ...cells])];
-  const area = gridArea(all);
-  const perimeter = gridPerimeter(all);
-  const tone = reveal ? (reveal.correct ? 'text-success' : 'text-danger') : 'text-foreground';
-  const fill = reveal ? (reveal.correct ? 'bg-success' : 'bg-danger') : 'bg-primary';
+  const locked = !!reveal || disabled
+  const givenSet = new Set(given)
+  const userSet = new Set(cells)
+  const all = [...new Set([...given, ...cells])]
+  const area = gridArea(all)
+  const perimeter = gridPerimeter(all)
+  const tone = reveal ? (reveal.correct ? 'text-success' : 'text-danger') : 'text-foreground'
+  const fill = reveal ? (reveal.correct ? 'bg-success' : 'bg-danger') : 'bg-primary'
   // A big grid should simply BE there — only a small one is worth staggering in.
-  const entrance = rows * cols <= 40;
+  const entrance = rows * cols <= 40
 
   const toggle = (key: string) => {
-    if (locked || givenSet.has(key)) return;
-    if (userSet.has(key)) onChange(cells.filter((k) => k !== key));
-    else onChange([...cells, key]);
-  };
+    if (locked || givenSet.has(key)) return
+    if (userSet.has(key)) onChange(cells.filter((k) => k !== key))
+    else onChange([...cells, key])
+  }
 
-  const unit = unitLabel ? ` ${unitLabel}` : '';
+  const unit = unitLabel ? ` ${unitLabel}` : ''
 
   return (
     <div className={cn('flex flex-col items-center gap-3', className)}>
-      <div
-        className="grid gap-0.5"
-        style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-      >
+      <div className="grid gap-0.5" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
         {Array.from({ length: rows }, (_, r) =>
           Array.from({ length: cols }, (_, c) => {
-            const key = `${r}-${c}`;
-            const isGiven = givenSet.has(key);
-            const on = isGiven || userSet.has(key);
+            const key = `${r}-${c}`
+            const isGiven = givenSet.has(key)
+            const on = isGiven || userSet.has(key)
             return (
               <button
                 key={key}
@@ -94,7 +91,7 @@ export function GridShapeBoard({
                 )}
                 style={entrance ? stagger(r * cols + c) : undefined}
               />
-            );
+            )
           }),
         )}
       </div>
@@ -117,5 +114,5 @@ export function GridShapeBoard({
         </span>
       </div>
     </div>
-  );
+  )
 }

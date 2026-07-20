@@ -8,13 +8,13 @@
  * (`chromeOf`), so no element can ever collide with them — the header is not
  * decoration painted on top, it is territory the composition never owned.
  */
-import * as React from 'react';
-import type { ThemeTokens, Rect } from '@bingoo/explainer';
-import { resolveColor } from '../theme/tokens';
-import { wrapText } from './util';
+import * as React from 'react'
+import type { ThemeTokens, Rect } from '@bingoo/explainer'
+import { resolveColor } from '../theme/tokens'
+import { wrapText } from './util'
 
 /** Same single colour path as Backdrop — see the note there. */
-const c = (theme: ThemeTokens, id: string, _fb: string) => resolveColor(theme, id, id);
+const c = (theme: ThemeTokens, id: string, _fb: string) => resolveColor(theme, id, id)
 
 export function Header({
   rect,
@@ -24,26 +24,26 @@ export function Header({
   theme,
   unit,
 }: {
-  rect: Rect;
-  title: string;
-  index: number;
-  count: number;
-  theme: ThemeTokens;
+  rect: Rect
+  title: string
+  index: number
+  count: number
+  theme: ThemeTokens
   /** the type unit (canvas short side) — keeps chrome type on the lesson's scale */
-  unit: number;
+  unit: number
 }) {
-  const size = unit * 0.032;
-  const ink = c(theme, 'inkSoft', '#7d736a');
-  const off = c(theme, 'faint', '#d8cfc2');
-  const font = theme.fonts?.sans ?? 'system-ui, sans-serif';
+  const size = unit * 0.032
+  const ink = c(theme, 'inkSoft', '#7d736a')
+  const off = c(theme, 'faint', '#d8cfc2')
+  const font = theme.fonts?.sans ?? 'system-ui, sans-serif'
 
   // The scene progress is intentionally NOT drawn here: in the player the
   // transport scrub already shows position + gate checkpoints, so a second
   // progress row on the slide was redundant clutter. The header keeps just the
   // lesson title + the divider rule. (`index`/`count` stay in the API for hosts
   // that render chrome without a transport.)
-  void index;
-  void count;
+  void index
+  void count
 
   return (
     <g aria-hidden>
@@ -67,7 +67,7 @@ export function Header({
         opacity={0.7}
       />
     </g>
-  );
+  )
 }
 
 export function CaptionBand({
@@ -76,39 +76,31 @@ export function CaptionBand({
   theme,
   unit,
 }: {
-  rect: Rect;
-  text: string | null;
-  theme: ThemeTokens;
-  unit: number;
+  rect: Rect
+  text: string | null
+  theme: ThemeTokens
+  unit: number
 }) {
-  if (!text) return null;
-  const size = unit * 0.042;
+  if (!text) return null
+  const size = unit * 0.042
   // A FLOATING PILL, not a band. The caption overlays the bottom of the content
   // (like a video subtitle) and is only as wide as the text — it must not read as
   // a reserved strip of the layout, because it no longer is one.
-  const maxW = rect.w * 0.86;
-  const lines = wrapText(text, size, maxW);
-  const lineH = size * 1.28;
-  const boxH = lines.length * lineH + size * 0.7;
-  const longest = lines.reduce((m, l) => Math.max(m, l.length), 0);
-  const boxW = Math.min(maxW + size, longest * size * 0.56 + size * 1.6);
-  const boxX = rect.x + rect.w / 2 - boxW / 2;
-  const boxY = rect.y + rect.h - boxH; // sits at the very bottom of the frame
-  const startY = boxY + boxH / 2 - (lines.length * lineH) / 2 + size * 0.82;
-  const cx = rect.x + rect.w / 2;
-  const font = theme.fonts?.sans ?? 'system-ui, sans-serif';
+  const maxW = rect.w * 0.86
+  const lines = wrapText(text, size, maxW)
+  const lineH = size * 1.28
+  const boxH = lines.length * lineH + size * 0.7
+  const longest = lines.reduce((m, l) => Math.max(m, l.length), 0)
+  const boxW = Math.min(maxW + size, longest * size * 0.56 + size * 1.6)
+  const boxX = rect.x + rect.w / 2 - boxW / 2
+  const boxY = rect.y + rect.h - boxH // sits at the very bottom of the frame
+  const startY = boxY + boxH / 2 - (lines.length * lineH) / 2 + size * 0.82
+  const cx = rect.x + rect.w / 2
+  const font = theme.fonts?.sans ?? 'system-ui, sans-serif'
 
   return (
     <g aria-hidden>
-      <rect
-        x={boxX}
-        y={boxY}
-        width={boxW}
-        height={boxH}
-        rx={boxH * 0.3}
-        fill="#2b2724"
-        opacity={0.82}
-      />
+      <rect x={boxX} y={boxY} width={boxW} height={boxH} rx={boxH * 0.3} fill="#2b2724" opacity={0.82} />
       <text
         x={cx}
         y={startY}
@@ -125,7 +117,7 @@ export function CaptionBand({
         ))}
       </text>
     </g>
-  );
+  )
 }
 
 /** A card behind an object's CELL — what turns floating shapes into a layout. */
@@ -143,5 +135,5 @@ export function SlotCard({ cell, theme }: { cell: Rect; theme: ThemeTokens }) {
       opacity={0.85}
       aria-hidden
     />
-  );
+  )
 }

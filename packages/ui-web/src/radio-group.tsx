@@ -1,24 +1,24 @@
-'use client';
+'use client'
 
-import type { ReactNode } from 'react';
-import { Label, Radio, RadioGroup as AriaRadioGroup } from 'react-aria-components';
+import type { ReactNode } from 'react'
+import { Label, Radio, RadioGroup as AriaRadioGroup } from 'react-aria-components'
 
 export interface RadioOption {
-  value: string;
-  label: ReactNode;
-  description?: ReactNode;
-  isDisabled?: boolean;
+  value: string
+  label: ReactNode
+  description?: ReactNode
+  isDisabled?: boolean
 }
 
 export interface RadioGroupProps {
-  label?: ReactNode;
-  options: RadioOption[];
-  value?: string;
-  defaultValue?: string;
-  onChange?: (value: string) => void;
-  name?: string;
-  orientation?: 'vertical' | 'horizontal';
-  isDisabled?: boolean;
+  label?: ReactNode
+  options: RadioOption[]
+  value?: string
+  defaultValue?: string
+  onChange?: (value: string) => void
+  name?: string
+  orientation?: 'vertical' | 'horizontal'
+  isDisabled?: boolean
 }
 
 /** Accessible radio group (arrow-key nav, single selection) from React Aria. */
@@ -55,12 +55,10 @@ export function RadioGroup({
           </span>
           <span className="flex flex-col">
             <span>{o.label}</span>
-            {o.description ? (
-              <span className="text-xs text-foreground-muted">{o.description}</span>
-            ) : null}
+            {o.description ? <span className="text-xs text-foreground-muted">{o.description}</span> : null}
           </span>
         </Radio>
       ))}
     </AriaRadioGroup>
-  );
+  )
 }

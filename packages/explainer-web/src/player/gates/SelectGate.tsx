@@ -5,31 +5,31 @@
  * The choices render with @bingoo/ui-web's <AnswerOption> so the activity beat
  * uses the bingoo design system (states + a11y); grading stays in the engine.
  */
-'use client';
-import { useState } from 'react';
-import type { GateSpec } from '@bingoo/explainer';
-import { AnswerOption, type AnswerState } from '@bingoo/ui-web';
+'use client'
+import { useState } from 'react'
+import type { GateSpec } from '@bingoo/explainer'
+import { AnswerOption, type AnswerState } from '@bingoo/ui-web'
 
 export function SelectGate({
   gate,
   onPass,
   onSkip,
 }: {
-  gate: GateSpec;
-  onPass: () => void;
-  onSkip?: () => void;
+  gate: GateSpec
+  onPass: () => void
+  onSkip?: () => void
 }) {
-  const [picked, setPicked] = useState<string | null>(null);
-  const [status, setStatus] = useState<'idle' | 'correct' | 'wrong'>('idle');
-  const answers = Array.isArray(gate.answer) ? gate.answer : [gate.answer];
+  const [picked, setPicked] = useState<string | null>(null)
+  const [status, setStatus] = useState<'idle' | 'correct' | 'wrong'>('idle')
+  const answers = Array.isArray(gate.answer) ? gate.answer : [gate.answer]
 
   function choose(id: string) {
-    setPicked(id);
+    setPicked(id)
     if (answers.includes(id)) {
-      setStatus('correct');
-      window.setTimeout(onPass, 900);
+      setStatus('correct')
+      window.setTimeout(onPass, 900)
     } else {
-      setStatus('wrong');
+      setStatus('wrong')
     }
   }
 
@@ -40,7 +40,7 @@ export function SelectGate({
         <h2 className="gate-prompt">{gate.prompt}</h2>
         <div className="gate-options">
           {(gate.options ?? []).map((o, i) => {
-            const isPicked = picked === o.id;
+            const isPicked = picked === o.id
             const state: AnswerState =
               status !== 'idle' && isPicked
                 ? status === 'correct'
@@ -48,7 +48,7 @@ export function SelectGate({
                   : 'incorrect'
                 : isPicked
                   ? 'selected'
-                  : 'default';
+                  : 'default'
             return (
               <AnswerOption
                 key={o.id}
@@ -58,7 +58,7 @@ export function SelectGate({
                 disabled={status === 'correct'}
                 onClick={() => status !== 'correct' && choose(o.id)}
               />
-            );
+            )
           })}
         </div>
         {status === 'correct' && (
@@ -79,5 +79,5 @@ export function SelectGate({
         )}
       </div>
     </div>
-  );
+  )
 }

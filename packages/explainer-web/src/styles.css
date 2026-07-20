@@ -445,24 +445,14 @@ h3,
   flex-direction: row;
   justify-content: flex-end;
   align-items: stretch;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    transparent 46%,
-    rgba(20, 17, 15, 0.26) 100%
-  );
+  background: linear-gradient(to right, transparent 0%, transparent 46%, rgba(20, 17, 15, 0.26) 100%);
 }
 /* 9:16 — bottom sheet */
 .stage-wrap.portrait .gate {
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    transparent 38%,
-    rgba(20, 17, 15, 0.3) 100%
-  );
+  background: linear-gradient(to bottom, transparent 0%, transparent 38%, rgba(20, 17, 15, 0.3) 100%);
 }
 /* SelectGate builds its own card here (badge + prompt + options). */
 .gate-card {

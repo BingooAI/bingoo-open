@@ -1,25 +1,25 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { cn } from './lib/cn';
-import { ENTER, stagger, tile } from './lib/interactive';
+import { useState } from 'react'
+import { cn } from './lib/cn'
+import { ENTER, stagger, tile } from './lib/interactive'
 
-export type ConfidenceFace = 'sad' | 'ok' | 'happy';
+export type ConfidenceFace = 'sad' | 'ok' | 'happy'
 const FACES: Array<{ id: ConfidenceFace; glyph: string }> = [
   { id: 'sad', glyph: '🙁' },
   { id: 'ok', glyph: '😐' },
   { id: 'happy', glyph: '🙂' },
-];
+]
 
 export interface ReflectionPromptProps {
-  title?: string;
-  prompts: string[];
+  title?: string
+  prompts: string[]
   /** Show the 3-face confidence scale the books use. */
-  faces?: boolean;
+  faces?: boolean
   /** Controlled: prompt index → how confident the learner feels. Uncontrolled if omitted. */
-  value?: Record<number, ConfidenceFace>;
-  onChange?: (value: Record<number, ConfidenceFace>) => void;
-  className?: string;
+  value?: Record<number, ConfidenceFace>
+  onChange?: (value: Record<number, ConfidenceFace>) => void
+  className?: string
 }
 
 /**
@@ -35,32 +35,25 @@ export function ReflectionPrompt({
   onChange,
   className,
 }: ReflectionPromptProps) {
-  const [own, setOwn] = useState<Record<number, ConfidenceFace>>({});
-  const picked = value ?? own;
+  const [own, setOwn] = useState<Record<number, ConfidenceFace>>({})
+  const picked = value ?? own
   const set = (i: number, f: ConfidenceFace) => {
-    const next = { ...picked, [i]: f };
-    if (onChange) onChange(next);
-    else setOwn(next);
-  };
+    const next = { ...picked, [i]: f }
+    if (onChange) onChange(next)
+    else setOwn(next)
+  }
 
   return (
-    <section
-      className={cn('rounded-2xl border-2 border-success/40 bg-success-soft/40 p-4', className)}
-    >
+    <section className={cn('rounded-2xl border-2 border-success/40 bg-success-soft/40 p-4', className)}>
       {title ? (
-        <h4 className="mb-2 font-display text-sm font-bold uppercase tracking-wide text-success">
-          {title}
-        </h4>
+        <h4 className="mb-2 font-display text-sm font-bold uppercase tracking-wide text-success">{title}</h4>
       ) : null}
       <ul className="flex flex-col gap-2">
         {prompts.map((p, i) => (
           <li
             key={i}
             style={stagger(i)}
-            className={cn(
-              'flex items-center justify-between gap-3 rounded-xl bg-surface px-3 py-2',
-              ENTER,
-            )}
+            className={cn('flex items-center justify-between gap-3 rounded-xl bg-surface px-3 py-2', ENTER)}
           >
             <span className="text-sm text-foreground">{p}</span>
             {faces ? (
@@ -91,5 +84,5 @@ export function ReflectionPrompt({
         ))}
       </ul>
     </section>
-  );
+  )
 }

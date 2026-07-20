@@ -1,26 +1,20 @@
-'use client';
+'use client'
 
-import type { ReactNode } from 'react';
-import {
-  Button as AriaButton,
-  Menu as AriaMenu,
-  MenuItem,
-  MenuTrigger,
-  Popover,
-} from 'react-aria-components';
-import { buttonVariants, type ButtonProps } from './button';
+import type { ReactNode } from 'react'
+import { Button as AriaButton, Menu as AriaMenu, MenuItem, MenuTrigger, Popover } from 'react-aria-components'
+import { buttonVariants, type ButtonProps } from './button'
 
 export interface MenuOption {
-  id: string;
-  label: ReactNode;
-  onAction?: () => void;
-  isDisabled?: boolean;
+  id: string
+  label: ReactNode
+  onAction?: () => void
+  isDisabled?: boolean
 }
 
 export interface MenuProps {
-  trigger: ReactNode;
-  triggerVariant?: ButtonProps['variant'];
-  items: MenuOption[];
+  trigger: ReactNode
+  triggerVariant?: ButtonProps['variant']
+  items: MenuOption[]
 }
 
 /** Accessible dropdown menu (keyboard nav, typeahead, ARIA) from React Aria. */
@@ -44,5 +38,5 @@ export function Menu({ trigger, triggerVariant = 'secondary', items }: MenuProps
         </AriaMenu>
       </Popover>
     </MenuTrigger>
-  );
+  )
 }

@@ -1,17 +1,13 @@
-'use client';
+'use client'
 
-import type { ReactNode } from 'react';
-import {
-  Button as AriaButton,
-  Tooltip as AriaTooltip,
-  TooltipTrigger,
-} from 'react-aria-components';
+import type { ReactNode } from 'react'
+import { Button as AriaButton, Tooltip as AriaTooltip, TooltipTrigger } from 'react-aria-components'
 
 export interface TooltipProps {
-  content: ReactNode;
-  children: ReactNode;
+  content: ReactNode
+  children: ReactNode
   /** Open delay in ms. */
-  delay?: number;
+  delay?: number
 }
 
 /**
@@ -28,5 +24,5 @@ export function Tooltip({ content, children, delay = 400 }: TooltipProps) {
         {content}
       </AriaTooltip>
     </TooltipTrigger>
-  );
+  )
 }

@@ -1,24 +1,24 @@
-import { streakCalendar, type StreakCell } from '@bingoo/core';
-import { cn } from './lib/cn';
+import { streakCalendar, type StreakCell } from '@bingoo/core'
+import { cn } from './lib/cn'
 
 export interface StreakCalendarProps {
   /** ISO `yyyy-mm-dd` dates the learner was active. */
-  activeDates: string[];
+  activeDates: string[]
   /** How many days back to show (default 12 weeks). */
-  days?: number;
+  days?: number
   /** Reference "today" (defaults to now). */
-  today?: Date;
+  today?: Date
   /** Glass/light styling for overlaying on feed or arena media. */
-  onMedia?: boolean;
-  label?: string;
-  className?: string;
+  onMedia?: boolean
+  label?: string
+  className?: string
 }
 
 /** Chunk cells into weeks (columns of 7), oldest → newest. */
 function toWeeks(cells: StreakCell[]): StreakCell[][] {
-  const weeks: StreakCell[][] = [];
-  for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
-  return weeks;
+  const weeks: StreakCell[][] = []
+  for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7))
+  return weeks
 }
 
 /**
@@ -34,7 +34,7 @@ export function StreakCalendar({
   label,
   className,
 }: StreakCalendarProps) {
-  const weeks = toWeeks(streakCalendar(activeDates, days, today));
+  const weeks = toWeeks(streakCalendar(activeDates, days, today))
   return (
     <div className={cn('max-w-full overflow-x-auto', className)} role="img" aria-label={label}>
       <div className="flex gap-1">
@@ -61,5 +61,5 @@ export function StreakCalendar({
         ))}
       </div>
     </div>
-  );
+  )
 }

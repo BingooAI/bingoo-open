@@ -4,10 +4,10 @@
  * sau khi người học chọn trục: đầu vào lỏng, đầu ra đủ để dựng trải nghiệm.
  */
 
-import { BLUEPRINTS, type Blueprint } from './blueprints';
-import { deriveCapabilities, type Capability } from './capabilities';
-import { checkCompatibility, type CompatibilityResult } from './compatibility';
-import { descriptorsEqual, type ExperienceDescriptor, type PartialDescriptor } from './descriptor';
+import { BLUEPRINTS, type Blueprint } from './blueprints'
+import { deriveCapabilities, type Capability } from './capabilities'
+import { checkCompatibility, type CompatibilityResult } from './compatibility'
+import { descriptorsEqual, type ExperienceDescriptor, type PartialDescriptor } from './descriptor'
 
 /** Nền mặc định an toàn nhất: gia sư AI, tự học, một mình, bất cứ lúc nào. Điền vào trục còn trống. */
 export const DEFAULT_DESCRIPTOR: ExperienceDescriptor = {
@@ -16,19 +16,19 @@ export const DEFAULT_DESCRIPTOR: ExperienceDescriptor = {
   companion: 'ai',
   scale: 'solo',
   time: 'on-demand',
-};
+}
 
 export interface ResolveResult {
-  readonly descriptor: ExperienceDescriptor;
-  readonly compatibility: CompatibilityResult;
-  readonly capabilities: readonly Capability[];
+  readonly descriptor: ExperienceDescriptor
+  readonly compatibility: CompatibilityResult
+  readonly capabilities: readonly Capability[]
   /** Blueprint trùng khít descriptor (nếu có) — để hiển thị tên/icon đặt sẵn. */
-  readonly blueprint: Blueprint | undefined;
+  readonly blueprint: Blueprint | undefined
 }
 
 /** Blueprint có descriptor trùng khít điểm 5 trục này. */
 export function matchBlueprint(d: ExperienceDescriptor): Blueprint | undefined {
-  return BLUEPRINTS.find((b) => descriptorsEqual(b.descriptor, d));
+  return BLUEPRINTS.find((b) => descriptorsEqual(b.descriptor, d))
 }
 
 /**
@@ -46,11 +46,11 @@ export function resolveDescriptor(
     companion: partial.companion ?? base.companion,
     scale: partial.scale ?? base.scale,
     time: partial.time ?? base.time,
-  };
+  }
   return {
     descriptor,
     compatibility: checkCompatibility(descriptor),
     capabilities: deriveCapabilities(descriptor),
     blueprint: matchBlueprint(descriptor),
-  };
+  }
 }

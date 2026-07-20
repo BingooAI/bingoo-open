@@ -1,30 +1,30 @@
-'use client';
+'use client'
 
-import { cn } from './lib/cn';
-import { POP, SHAKE } from './lib/interactive';
+import { cn } from './lib/cn'
+import { POP, SHAKE } from './lib/interactive'
 
 export interface FractionBarProps {
   /** Number of equal parts (denominator). */
-  parts: number;
+  parts: number
   /** Controlled: indexes of the shaded parts. */
-  shaded: number[];
-  onChange: (shaded: number[]) => void;
-  shape?: 'bar' | 'circle';
+  shaded: number[]
+  onChange: (shaded: number[]) => void
+  shape?: 'bar' | 'circle'
   /** After checking. */
-  reveal?: { correct: boolean; answer: number; parts: number };
-  disabled?: boolean;
-  className?: string;
+  reveal?: { correct: boolean; answer: number; parts: number }
+  disabled?: boolean
+  className?: string
 }
 
 function slicePath(i: number, n: number, r = 46) {
-  const a0 = (i / n) * 2 * Math.PI - Math.PI / 2;
-  const a1 = ((i + 1) / n) * 2 * Math.PI - Math.PI / 2;
-  const x0 = 50 + r * Math.cos(a0);
-  const y0 = 50 + r * Math.sin(a0);
-  const x1 = 50 + r * Math.cos(a1);
-  const y1 = 50 + r * Math.sin(a1);
-  const large = a1 - a0 > Math.PI ? 1 : 0;
-  return `M50,50 L${x0.toFixed(2)},${y0.toFixed(2)} A${r},${r} 0 ${large} 1 ${x1.toFixed(2)},${y1.toFixed(2)} Z`;
+  const a0 = (i / n) * 2 * Math.PI - Math.PI / 2
+  const a1 = ((i + 1) / n) * 2 * Math.PI - Math.PI / 2
+  const x0 = 50 + r * Math.cos(a0)
+  const y0 = 50 + r * Math.sin(a0)
+  const x1 = 50 + r * Math.cos(a1)
+  const y1 = 50 + r * Math.sin(a1)
+  const large = a1 - a0 > Math.PI ? 1 : 0
+  return `M50,50 L${x0.toFixed(2)},${y0.toFixed(2)} A${r},${r} 0 ${large} 1 ${x1.toFixed(2)},${y1.toFixed(2)} Z`
 }
 
 /**
@@ -41,17 +41,17 @@ export function FractionBar({
   disabled,
   className,
 }: FractionBarProps) {
-  const locked = !!reveal || disabled;
-  const on = new Set(shaded);
+  const locked = !!reveal || disabled
+  const on = new Set(shaded)
   const toggle = (i: number) => {
-    if (locked) return;
-    const next = new Set(on);
-    if (next.has(i)) next.delete(i);
-    else next.add(i);
-    onChange([...next].sort((a, b) => a - b));
-  };
-  const fillClass = reveal ? (reveal.correct ? 'fill-success' : 'fill-danger') : 'fill-primary';
-  const cellShaded = reveal ? (reveal.correct ? 'bg-success' : 'bg-danger') : 'bg-primary';
+    if (locked) return
+    const next = new Set(on)
+    if (next.has(i)) next.delete(i)
+    else next.add(i)
+    onChange([...next].sort((a, b) => a - b))
+  }
+  const fillClass = reveal ? (reveal.correct ? 'fill-success' : 'fill-danger') : 'fill-primary'
+  const cellShaded = reveal ? (reveal.correct ? 'bg-success' : 'bg-danger') : 'bg-primary'
 
   return (
     <div className={cn('flex flex-col items-center gap-3', className)}>
@@ -108,5 +108,5 @@ export function FractionBar({
         ) : null}
       </span>
     </div>
-  );
+  )
 }

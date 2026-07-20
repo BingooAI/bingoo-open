@@ -15,15 +15,15 @@
  * read yet could only offer buttons to press — the two activities that actually
  * suit that learner were sitting there unused.
  */
-'use client';
-import { useState } from 'react';
-import type { GateSpec, ThemeTokens, Aspect } from '@bingoo/explainer';
-import type { QuizQuestion, TracingGlyph, ColoringPicture } from '@bingoo/core';
-import { coloringScore } from '@bingoo/core';
-import { checkAnswer, getInteractions } from '@bingoo/manipulatives';
-import { QuizShell, TracingBoard, ColoringBoard } from '@bingoo/ui-web';
-import { InteractiveManipulative } from '../InteractiveManipulative';
-import { VI_QUIZ_LABELS } from './quizLabels';
+'use client'
+import { useState } from 'react'
+import type { GateSpec, ThemeTokens, Aspect } from '@bingoo/explainer'
+import type { QuizQuestion, TracingGlyph, ColoringPicture } from '@bingoo/core'
+import { coloringScore } from '@bingoo/core'
+import { checkAnswer, getInteractions } from '@bingoo/manipulatives'
+import { QuizShell, TracingBoard, ColoringBoard } from '@bingoo/ui-web'
+import { InteractiveManipulative } from '../InteractiveManipulative'
+import { VI_QUIZ_LABELS } from './quizLabels'
 
 export function ActivityGate({
   gate,
@@ -32,24 +32,17 @@ export function ActivityGate({
   onPass,
   onSkip,
 }: {
-  gate: GateSpec;
-  theme: ThemeTokens;
-  aspect?: Aspect;
-  onPass: () => void;
-  onSkip?: () => void;
+  gate: GateSpec
+  theme: ThemeTokens
+  aspect?: Aspect
+  onPass: () => void
+  onSkip?: () => void
 }) {
-  const act = gate.activity;
+  const act = gate.activity
 
   // ── tracing — the child WRITES it; every stroke scored against the guide ──
   if (act?.tracing) {
-    return (
-      <TracingActivity
-        glyph={act.tracing as TracingGlyph}
-        gate={gate}
-        onPass={onPass}
-        onSkip={onSkip}
-      />
-    );
+    return <TracingActivity glyph={act.tracing as TracingGlyph} gate={gate} onPass={onPass} onSkip={onSkip} />
   }
 
   // ── colouring — graded against each region's targetColor ──
@@ -61,7 +54,7 @@ export function ActivityGate({
         onPass={onPass}
         onSkip={onSkip}
       />
-    );
+    )
   }
 
   // ── manipulative activity — any kit, graded by checkAnswer ──
@@ -75,7 +68,7 @@ export function ActivityGate({
         onPass={onPass}
         onSkip={onSkip}
       />
-    );
+    )
   }
 
   // ── quiz activity — any of the ~40 core question types via QuizShell ──
@@ -89,13 +82,13 @@ export function ActivityGate({
             labels={VI_QUIZ_LABELS}
             passMark={1}
             onComplete={(s) => {
-              if (s.passed) onPass();
+              if (s.passed) onPass()
             }}
             onContinue={onPass}
           />
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -110,7 +103,7 @@ export function ActivityGate({
         )}
       </div>
     </div>
-  );
+  )
 }
 
 /** A manipulative made interactive as a checkpoint (same shape as ManipulateGate,
@@ -123,25 +116,25 @@ function ManipActivity({
   onPass,
   onSkip,
 }: {
-  manip: NonNullable<NonNullable<GateSpec['activity']>['manip']>;
-  theme: ThemeTokens;
-  aspect: Aspect;
-  gate: GateSpec;
-  onPass: () => void;
-  onSkip?: () => void;
+  manip: NonNullable<NonNullable<GateSpec['activity']>['manip']>
+  theme: ThemeTokens
+  aspect: Aspect
+  gate: GateSpec
+  onPass: () => void
+  onSkip?: () => void
 }) {
-  const hint = getInteractions(manip.kind)?.hint;
-  const [params, setParams] = useState<unknown>(null);
-  const [status, setStatus] = useState<'idle' | 'correct' | 'wrong'>('idle');
+  const hint = getInteractions(manip.kind)?.hint
+  const [params, setParams] = useState<unknown>(null)
+  const [status, setStatus] = useState<'idle' | 'correct' | 'wrong'>('idle')
 
   const submit = () => {
     if (checkAnswer(manip.kind, params, manip.target)) {
-      setStatus('correct');
-      window.setTimeout(onPass, 1100);
+      setStatus('correct')
+      window.setTimeout(onPass, 1100)
     } else {
-      setStatus('wrong');
+      setStatus('wrong')
     }
-  };
+  }
 
   return (
     <div className={`manip-inline ${status}`}>
@@ -158,8 +151,8 @@ function ManipActivity({
         variant="stage"
         hideHint
         onParams={(p) => {
-          setParams(p);
-          if (status !== 'correct') setStatus('idle');
+          setParams(p)
+          if (status !== 'correct') setStatus('idle')
         }}
         extra={
           <>
@@ -174,9 +167,7 @@ function ManipActivity({
               <span className="mg-fb good">🎉 {gate.feedback?.correct ?? 'Chính xác!'}</span>
             )}
             {status === 'wrong' && (
-              <span className="mg-fb bad">
-                {gate.feedback?.wrong ?? 'Chưa đúng — thử lại nhé.'}
-              </span>
+              <span className="mg-fb bad">{gate.feedback?.wrong ?? 'Chưa đúng — thử lại nhé.'}</span>
             )}
             {onSkip && status !== 'correct' && (
               <button className="mg-skip" onClick={onSkip}>
@@ -187,7 +178,7 @@ function ManipActivity({
         }
       />
     </div>
-  );
+  )
 }
 
 /* ─────────────────────────────────────────────────────────── tracing / coloring */
@@ -198,12 +189,12 @@ function TracingActivity({
   onPass,
   onSkip,
 }: {
-  glyph: TracingGlyph;
-  gate: GateSpec;
-  onPass: () => void;
-  onSkip?: () => void;
+  glyph: TracingGlyph
+  gate: GateSpec
+  onPass: () => void
+  onSkip?: () => void
 }) {
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState(false)
   return (
     <div className="gate">
       <p className="gate-prompt">{gate.prompt}</p>
@@ -226,15 +217,13 @@ function TracingActivity({
           {VI_QUIZ_LABELS.check}
         </button>
       </div>
-      {done && gate.feedback?.correct ? (
-        <p className="gate-feedback good">{gate.feedback.correct}</p>
-      ) : null}
+      {done && gate.feedback?.correct ? <p className="gate-feedback good">{gate.feedback.correct}</p> : null}
     </div>
-  );
+  )
 }
 
 /** Pass when this share of the target regions are the right colour. */
-const COLORING_PASS = 0.8;
+const COLORING_PASS = 0.8
 
 function ColoringActivity({
   picture,
@@ -242,17 +231,15 @@ function ColoringActivity({
   onPass,
   onSkip,
 }: {
-  picture: ColoringPicture;
-  gate: GateSpec;
-  onPass: () => void;
-  onSkip?: () => void;
+  picture: ColoringPicture
+  gate: GateSpec
+  onPass: () => void
+  onSkip?: () => void
 }) {
-  const palette = [
-    ...new Set(picture.regions.map((r) => r.targetColor).filter(Boolean)),
-  ] as string[];
-  const [color, setColor] = useState(palette[0] ?? '#e07a42');
-  const [fills, setFills] = useState<Record<string, string>>({});
-  const [verdict, setVerdict] = useState<null | boolean>(null);
+  const palette = [...new Set(picture.regions.map((r) => r.targetColor).filter(Boolean))] as string[]
+  const [color, setColor] = useState(palette[0] ?? '#e07a42')
+  const [fills, setFills] = useState<Record<string, string>>({})
+  const [verdict, setVerdict] = useState<null | boolean>(null)
 
   return (
     <div className="gate">
@@ -289,18 +276,16 @@ function ColoringActivity({
           className="gate-check"
           onClick={() => {
             // graded BY CODE against each region's targetColor — not by opinion
-            const pass = coloringScore(picture, fills) >= COLORING_PASS;
-            setVerdict(pass);
-            if (pass) onPass();
+            const pass = coloringScore(picture, fills) >= COLORING_PASS
+            setVerdict(pass)
+            if (pass) onPass()
           }}
         >
           {VI_QUIZ_LABELS.check}
         </button>
       </div>
-      {verdict === true ? (
-        <p className="gate-feedback good">{gate.feedback?.correct ?? ''}</p>
-      ) : null}
+      {verdict === true ? <p className="gate-feedback good">{gate.feedback?.correct ?? ''}</p> : null}
       {verdict === false ? <p className="gate-feedback bad">{gate.feedback?.wrong ?? ''}</p> : null}
     </div>
-  );
+  )
 }

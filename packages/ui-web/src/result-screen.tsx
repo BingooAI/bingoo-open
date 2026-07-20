@@ -1,60 +1,45 @@
-'use client';
+'use client'
 
-import type { QuizSummary } from '@bingoo/core';
-import { RotateCcw } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { Button } from './button';
-import { Card } from './card';
-import { Confetti } from './celebration';
-import { cn } from './lib/cn';
-import { ProgressRing } from './progress-ring';
+import type { QuizSummary } from '@bingoo/core'
+import { RotateCcw } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { Button } from './button'
+import { Card } from './card'
+import { Confetti } from './celebration'
+import { cn } from './lib/cn'
+import { ProgressRing } from './progress-ring'
 
 export interface ResultLabels {
   /** Headline — the caller picks it (e.g. praise vs. encouragement) by `passed`. */
-  title: ReactNode;
-  subtitle?: ReactNode;
-  accuracyLabel: ReactNode;
+  title: ReactNode
+  subtitle?: ReactNode
+  accuracyLabel: ReactNode
   /** Pre-formatted "8 / 10" style correct-count (data). */
-  correctText: ReactNode;
-  correctLabel: ReactNode;
-  retry: ReactNode;
-  continueLabel: ReactNode;
+  correctText: ReactNode
+  correctLabel: ReactNode
+  retry: ReactNode
+  continueLabel: ReactNode
 }
 
 export interface ResultScreenProps {
-  summary: QuizSummary;
-  labels: ResultLabels;
-  onRetry?: () => void;
-  onContinue?: () => void;
-  className?: string;
+  summary: QuizSummary
+  labels: ResultLabels
+  onRetry?: () => void
+  onContinue?: () => void
+  className?: string
 }
 
 /** End-of-quiz summary: accuracy ring, correct count, per-question review, actions. */
-export function ResultScreen({
-  summary,
-  labels,
-  onRetry,
-  onContinue,
-  className,
-}: ResultScreenProps) {
-  const ringColor = summary.passed ? 'success' : 'primary';
+export function ResultScreen({ summary, labels, onRetry, onContinue, className }: ResultScreenProps) {
+  const ringColor = summary.passed ? 'success' : 'primary'
   return (
     <Card
-      className={cn(
-        'relative flex flex-col items-center gap-6 overflow-hidden p-8 text-center',
-        className,
-      )}
+      className={cn('relative flex flex-col items-center gap-6 overflow-hidden p-8 text-center', className)}
     >
       {/* Passing is the moment worth celebrating — anything less would be hollow praise. */}
       {summary.passed ? <Confetti className="pointer-events-none absolute inset-0" /> : null}
       <div className="motion-safe:animate-pop-in">
-        <ProgressRing
-          value={summary.accuracy}
-          max={100}
-          size={132}
-          strokeWidth={12}
-          color={ringColor}
-        >
+        <ProgressRing value={summary.accuracy} max={100} size={132} strokeWidth={12} color={ringColor}>
           <span className="flex flex-col leading-none">
             <span className="font-display text-4xl font-extrabold text-foreground">
               {summary.accuracy}
@@ -99,5 +84,5 @@ export function ResultScreen({
         {onContinue ? <Button onClick={onContinue}>{labels.continueLabel}</Button> : null}
       </div>
     </Card>
-  );
+  )
 }

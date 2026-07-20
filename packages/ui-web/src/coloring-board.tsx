@@ -1,18 +1,18 @@
-'use client';
+'use client'
 
-import type { ColoringPicture } from '@bingoo/core';
-import { cn } from './lib/cn';
+import type { ColoringPicture } from '@bingoo/core'
+import { cn } from './lib/cn'
 
 export interface ColoringBoardProps {
-  picture: ColoringPicture;
+  picture: ColoringPicture
   /** Controlled fills: regionId → color. */
-  fills: Record<string, string>;
-  onChange: (fills: Record<string, string>) => void;
+  fills: Record<string, string>
+  onChange: (fills: Record<string, string>) => void
   /** The color applied on tap (from a ColorPalette). */
-  activeColor: string;
-  disabled?: boolean;
-  label?: string;
-  className?: string;
+  activeColor: string
+  disabled?: boolean
+  label?: string
+  className?: string
 }
 
 /**
@@ -30,12 +30,12 @@ export function ColoringBoard({
   className,
 }: ColoringBoardProps) {
   function tap(regionId: string) {
-    if (disabled) return;
-    const same = (fills[regionId] ?? '').toLowerCase() === activeColor.toLowerCase();
-    const next = { ...fills };
-    if (same) delete next[regionId];
-    else next[regionId] = activeColor;
-    onChange(next);
+    if (disabled) return
+    const same = (fills[regionId] ?? '').toLowerCase() === activeColor.toLowerCase()
+    const next = { ...fills }
+    if (same) delete next[regionId]
+    else next[regionId] = activeColor
+    onChange(next)
   }
 
   return (
@@ -75,5 +75,5 @@ export function ColoringBoard({
         />
       ) : null}
     </svg>
-  );
+  )
 }

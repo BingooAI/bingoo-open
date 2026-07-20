@@ -19,9 +19,9 @@
  * DIRECTLY on it, full-bleed. That choice runs through `insetOf()` in the engine,
  * so it reflows the layout — it is not a paint job over a fixed composition.
  */
-import * as React from 'react';
-import type { Background, ThemeTokens, Aspect, Rect } from '@bingoo/explainer';
-import { resolveColor } from '../theme/tokens';
+import * as React from 'react'
+import type { Background, ThemeTokens, Aspect, Rect } from '@bingoo/explainer'
+import { resolveColor } from '../theme/tokens'
 
 /**
  * ONE colour path. `resolveColor` maps a token to `var(--foreground, #2b2724)`,
@@ -30,8 +30,7 @@ import { resolveColor } from '../theme/tokens';
  * the CSS var) while the PAPER stayed cream (via the hex), and the whole lesson
  * rendered white-on-cream: invisible. The two systems must never disagree.
  */
-const c = (theme: ThemeTokens, id: string | undefined, fb: string) =>
-  id ? resolveColor(theme, id, id) : fb;
+const c = (theme: ThemeTokens, id: string | undefined, fb: string) => (id ? resolveColor(theme, id, id) : fb)
 
 export function Backdrop({
   bg,
@@ -40,23 +39,23 @@ export function Backdrop({
   canvas,
   frame,
 }: {
-  bg: Background | null;
-  theme: ThemeTokens;
-  aspect: Aspect;
-  canvas: { w: number; h: number };
-  frame: Rect;
+  bg: Background | null
+  theme: ThemeTokens
+  aspect: Aspect
+  canvas: { w: number; h: number }
+  frame: Rect
 }) {
   // A page shows many Stages at once; a hard-coded <defs> id would make every
   // SVG on the page share (and clobber) one gradient. useId keeps them distinct.
-  const uid = React.useId().replace(/:/g, '');
-  const paper = c(theme, 'paper', '#f7f2e9');
-  const kind = bg?.kind ?? 'paper';
-  const src = aspect === '9:16' ? (bg?.srcPortrait ?? bg?.src) : bg?.src;
-  const wantsPanel = bg?.panel ?? !src; // framed art already contains its panel
+  const uid = React.useId().replace(/:/g, '')
+  const paper = c(theme, 'paper', '#f7f2e9')
+  const kind = bg?.kind ?? 'paper'
+  const src = aspect === '9:16' ? (bg?.srcPortrait ?? bg?.src) : bg?.src
+  const wantsPanel = bg?.panel ?? !src // framed art already contains its panel
 
   // the card = the frame, grown back out by the safe gutter (and nothing more)
-  const g = Math.min(frame.w, frame.h) * 0.03;
-  const pad = { x: frame.x - g, y: frame.y - g, w: frame.w + 2 * g, h: frame.h + 2 * g };
+  const g = Math.min(frame.w, frame.h) * 0.03
+  const pad = { x: frame.x - g, y: frame.y - g, w: frame.w + 2 * g, h: frame.h + 2 * g }
 
   return (
     <g aria-hidden>
@@ -98,7 +97,7 @@ export function Backdrop({
         />
       ) : null}
     </g>
-  );
+  )
 }
 
 /* ------------------------------------------------------------------ built-ins */
@@ -110,17 +109,17 @@ function Gradient({
   canvas,
   uid,
 }: {
-  bg: Background;
-  theme: ThemeTokens;
-  canvas: { w: number; h: number };
-  uid: string;
+  bg: Background
+  theme: ThemeTokens
+  canvas: { w: number; h: number }
+  uid: string
 }) {
-  const rad = ((bg.angle ?? 0) - 90) * (Math.PI / 180);
-  const x1 = 0.5 - Math.cos(rad) / 2;
-  const y1 = 0.5 - Math.sin(rad) / 2;
-  const x2 = 0.5 + Math.cos(rad) / 2;
-  const y2 = 0.5 + Math.sin(rad) / 2;
-  const id = `expl-grad-${uid}`;
+  const rad = ((bg.angle ?? 0) - 90) * (Math.PI / 180)
+  const x1 = 0.5 - Math.cos(rad) / 2
+  const y1 = 0.5 - Math.sin(rad) / 2
+  const x2 = 0.5 + Math.cos(rad) / 2
+  const y2 = 0.5 + Math.sin(rad) / 2
+  const id = `expl-grad-${uid}`
   return (
     <>
       <defs>
@@ -131,12 +130,12 @@ function Gradient({
       </defs>
       <rect x={0} y={0} width={canvas.w} height={canvas.h} fill={`url(#${id})`} />
     </>
-  );
+  )
 }
 
 function Meadow({ theme, canvas }: { theme: ThemeTokens; canvas: { w: number; h: number } }) {
-  const { w, h } = canvas;
-  const gy = h * 0.78;
+  const { w, h } = canvas
+  const gy = h * 0.78
   return (
     <>
       <rect x={0} y={0} width={w} height={gy} fill={c(theme, 'cloudFill', '#f2f8ee')} />
@@ -150,20 +149,12 @@ function Meadow({ theme, canvas }: { theme: ThemeTokens; canvas: { w: number; h:
         opacity={0.5}
       />
     </>
-  );
+  )
 }
 
-function Sky({
-  theme,
-  canvas,
-  uid,
-}: {
-  theme: ThemeTokens;
-  canvas: { w: number; h: number };
-  uid: string;
-}) {
-  const { w, h } = canvas;
-  const id = `expl-sky-${uid}`;
+function Sky({ theme, canvas, uid }: { theme: ThemeTokens; canvas: { w: number; h: number }; uid: string }) {
+  const { w, h } = canvas
+  const id = `expl-sky-${uid}`
   return (
     <>
       <defs>
@@ -174,39 +165,21 @@ function Sky({
       </defs>
       <rect x={0} y={0} width={w} height={h} fill={`url(#${id})`} />
     </>
-  );
+  )
 }
 
 function GridPaper({ theme, canvas }: { theme: ThemeTokens; canvas: { w: number; h: number } }) {
-  const { w, h } = canvas;
-  const step = 50;
-  const stroke = c(theme, 'faint', '#d8cfc2');
-  const lines: React.ReactElement[] = [];
+  const { w, h } = canvas
+  const step = 50
+  const stroke = c(theme, 'faint', '#d8cfc2')
+  const lines: React.ReactElement[] = []
   for (let x = step; x < w; x += step)
     lines.push(
-      <line
-        key={`v${x}`}
-        x1={x}
-        y1={0}
-        x2={x}
-        y2={h}
-        stroke={stroke}
-        strokeWidth={1}
-        opacity={0.35}
-      />,
-    );
+      <line key={`v${x}`} x1={x} y1={0} x2={x} y2={h} stroke={stroke} strokeWidth={1} opacity={0.35} />,
+    )
   for (let y = step; y < h; y += step)
     lines.push(
-      <line
-        key={`h${y}`}
-        x1={0}
-        y1={y}
-        x2={w}
-        y2={y}
-        stroke={stroke}
-        strokeWidth={1}
-        opacity={0.35}
-      />,
-    );
-  return <>{lines}</>;
+      <line key={`h${y}`} x1={0} y1={y} x2={w} y2={y} stroke={stroke} strokeWidth={1} opacity={0.35} />,
+    )
+  return <>{lines}</>
 }

@@ -1,28 +1,28 @@
-'use client';
+'use client'
 
-import { cn } from './lib/cn';
-import { stagger, tile, tileState } from './lib/interactive';
+import { cn } from './lib/cn'
+import { stagger, tile, tileState } from './lib/interactive'
 
-export type BalanceChoice = 'lt' | 'eq' | 'gt';
+export type BalanceChoice = 'lt' | 'eq' | 'gt'
 
 export interface BalanceScaleProps {
-  left: number;
-  right: number;
-  leftLabel?: string;
-  rightLabel?: string;
-  leftEmoji?: string;
-  rightEmoji?: string;
+  left: number
+  right: number
+  leftLabel?: string
+  rightLabel?: string
+  leftEmoji?: string
+  rightEmoji?: string
   /** Controlled: the learner's chosen relation. */
-  choice: BalanceChoice | null;
-  onChange: (choice: BalanceChoice) => void;
-  reveal?: { correct: boolean; answer: BalanceChoice };
+  choice: BalanceChoice | null
+  onChange: (choice: BalanceChoice) => void
+  reveal?: { correct: boolean; answer: BalanceChoice }
   /** Labels for the three relation buttons (defaults to symbols). */
-  labels?: { lt: string; eq: string; gt: string };
-  disabled?: boolean;
-  className?: string;
+  labels?: { lt: string; eq: string; gt: string }
+  disabled?: boolean
+  className?: string
 }
 
-const SYMBOL: Record<BalanceChoice, string> = { lt: '<', eq: '=', gt: '>' };
+const SYMBOL: Record<BalanceChoice, string> = { lt: '<', eq: '=', gt: '>' }
 
 /**
  * Balance scale — a beam that tilts toward the heavier pan, so the learner reads
@@ -43,9 +43,9 @@ export function BalanceScale({
   disabled,
   className,
 }: BalanceScaleProps) {
-  const locked = !!reveal || disabled;
+  const locked = !!reveal || disabled
   // Beam tilts toward the heavier side (the manipulative the learner reads).
-  const tilt = left === right ? 0 : left > right ? -9 : 9;
+  const tilt = left === right ? 0 : left > right ? -9 : 9
   const pan = (value: number, emoji?: string, label?: string, side: 'l' | 'r' = 'l') => (
     <div className="flex flex-col items-center gap-1">
       <div
@@ -55,9 +55,7 @@ export function BalanceScale({
         )}
       >
         {emoji ? (
-          <span className="text-lg leading-tight">
-            {emoji.repeat(Math.max(0, Math.min(value, 12)))}
-          </span>
+          <span className="text-lg leading-tight">{emoji.repeat(Math.max(0, Math.min(value, 12)))}</span>
         ) : (
           <span className="text-xl font-bold text-foreground">{value}</span>
         )}
@@ -65,7 +63,7 @@ export function BalanceScale({
       {label ? <span className="text-xs font-semibold text-foreground-muted">{label}</span> : null}
       <span className="sr-only">{side === 'l' ? 'left' : 'right'}</span>
     </div>
-  );
+  )
 
   return (
     <div className={cn('flex flex-col items-center gap-4', className)}>
@@ -111,5 +109,5 @@ export function BalanceScale({
         ))}
       </div>
     </div>
-  );
+  )
 }

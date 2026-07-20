@@ -5,12 +5,12 @@
  * stage, and a control bar (verbs + "Kiểm tra") overlays the bottom. Grading is
  * by code (checkAnswer vs the goal) — correct resumes the lesson, wrong hints.
  */
-'use client';
-import * as React from 'react';
-import { useState } from 'react';
-import type { GateSpec, ThemeTokens, Aspect } from '@bingoo/explainer';
-import { checkAnswer, getInteractions } from '@bingoo/manipulatives';
-import { InteractiveManipulative } from '../InteractiveManipulative';
+'use client'
+import * as React from 'react'
+import { useState } from 'react'
+import type { GateSpec, ThemeTokens, Aspect } from '@bingoo/explainer'
+import { checkAnswer, getInteractions } from '@bingoo/manipulatives'
+import { InteractiveManipulative } from '../InteractiveManipulative'
 
 export function ManipulateGate({
   gate,
@@ -19,25 +19,25 @@ export function ManipulateGate({
   onPass,
   onSkip,
 }: {
-  gate: GateSpec;
-  theme: ThemeTokens;
-  aspect?: Aspect;
-  onPass: () => void;
-  onSkip?: () => void;
+  gate: GateSpec
+  theme: ThemeTokens
+  aspect?: Aspect
+  onPass: () => void
+  onSkip?: () => void
 }) {
-  const manip = gate.manip!;
-  const hint = getInteractions(manip.kind)?.hint;
-  const [params, setParams] = useState<unknown>(null);
-  const [status, setStatus] = useState<'idle' | 'correct' | 'wrong'>('idle');
+  const manip = gate.manip!
+  const hint = getInteractions(manip.kind)?.hint
+  const [params, setParams] = useState<unknown>(null)
+  const [status, setStatus] = useState<'idle' | 'correct' | 'wrong'>('idle')
 
   const submit = () => {
     if (checkAnswer(manip.kind, params, manip.target)) {
-      setStatus('correct');
-      window.setTimeout(onPass, 1100);
+      setStatus('correct')
+      window.setTimeout(onPass, 1100)
     } else {
-      setStatus('wrong');
+      setStatus('wrong')
     }
-  };
+  }
 
   return (
     <div className={`manip-inline ${status}`}>
@@ -54,8 +54,8 @@ export function ManipulateGate({
         variant="stage"
         hideHint
         onParams={(p) => {
-          setParams(p);
-          if (status !== 'correct') setStatus('idle');
+          setParams(p)
+          if (status !== 'correct') setStatus('idle')
         }}
         extra={
           <>
@@ -70,9 +70,7 @@ export function ManipulateGate({
               <span className="mg-fb good">🎉 {gate.feedback?.correct ?? 'Chính xác!'}</span>
             )}
             {status === 'wrong' && (
-              <span className="mg-fb bad">
-                {gate.feedback?.wrong ?? 'Chưa đúng — thử lại nhé.'}
-              </span>
+              <span className="mg-fb bad">{gate.feedback?.wrong ?? 'Chưa đúng — thử lại nhé.'}</span>
             )}
             {onSkip && status !== 'correct' && (
               <button className="mg-skip" onClick={onSkip}>
@@ -83,5 +81,5 @@ export function ManipulateGate({
         }
       />
     </div>
-  );
+  )
 }

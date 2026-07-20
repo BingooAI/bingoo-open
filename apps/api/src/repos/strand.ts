@@ -11,13 +11,13 @@
  */
 
 export interface StrandObjective {
-  readonly id: string;
-  readonly strand: string | null;
+  readonly id: string
+  readonly strand: string | null
 }
 
 export interface MapsToEdge {
-  readonly fromId: string; // objective
-  readonly toId: string; // KC
+  readonly fromId: string // objective
+  readonly toId: string // KC
 }
 
 /**
@@ -29,37 +29,37 @@ export function deriveKcStrands(
   objectives: readonly StrandObjective[],
   mapsTo: readonly MapsToEdge[],
 ): Map<string, string> {
-  const strandByObj = new Map<string, string>();
+  const strandByObj = new Map<string, string>()
   for (const o of objectives) {
-    const s = o.strand?.trim();
-    if (s) strandByObj.set(o.id, s);
+    const s = o.strand?.trim()
+    if (s) strandByObj.set(o.id, s)
   }
 
   // kcId → { strand → số objective của mạch đó map vào KC }
-  const counts = new Map<string, Map<string, number>>();
+  const counts = new Map<string, Map<string, number>>()
   for (const e of mapsTo) {
-    const s = strandByObj.get(e.fromId);
-    if (!s) continue;
-    let m = counts.get(e.toId);
+    const s = strandByObj.get(e.fromId)
+    if (!s) continue
+    let m = counts.get(e.toId)
     if (!m) {
-      m = new Map();
-      counts.set(e.toId, m);
+      m = new Map()
+      counts.set(e.toId, m)
     }
-    m.set(s, (m.get(s) ?? 0) + 1);
+    m.set(s, (m.get(s) ?? 0) + 1)
   }
 
-  const out = new Map<string, string>();
+  const out = new Map<string, string>()
   for (const [kcId, m] of counts) {
-    let best: string | undefined;
-    let bestN = -1;
+    let best: string | undefined
+    let bestN = -1
     // Duyệt theo alphabet trước → khi số phiếu bằng nhau, cái đứng trước alphabet thắng (tất định).
     for (const [strand, n] of [...m.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
       if (n > bestN) {
-        bestN = n;
-        best = strand;
+        bestN = n
+        best = strand
       }
     }
-    if (best) out.set(kcId, best);
+    if (best) out.set(kcId, best)
   }
-  return out;
+  return out
 }

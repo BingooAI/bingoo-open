@@ -1,23 +1,23 @@
-'use client';
+'use client'
 
-import type { QuizItem } from '@bingoo/core';
-import { useQuizText } from './quiz-locale';
-import { Check, X } from 'lucide-react';
-import { useState } from 'react';
-import { cn } from './lib/cn';
-import { tile } from './lib/interactive';
+import type { QuizItem } from '@bingoo/core'
+import { useQuizText } from './quiz-locale'
+import { Check, X } from 'lucide-react'
+import { useState } from 'react'
+import { cn } from './lib/cn'
+import { tile } from './lib/interactive'
 
 export interface CarrollGridProps {
-  rows: string[];
-  cols: string[];
-  items: QuizItem[];
+  rows: string[]
+  cols: string[]
+  items: QuizItem[]
   /** Controlled: itemId → cell "row-col". */
-  assignment: Record<string, string>;
-  onChange: (assignment: Record<string, string>) => void;
+  assignment: Record<string, string>
+  onChange: (assignment: Record<string, string>) => void
   /** After checking: itemId → correct. */
-  reveal?: { items: Record<string, boolean>; answer: Record<string, string> };
-  disabled?: boolean;
-  className?: string;
+  reveal?: { items: Record<string, boolean>; answer: Record<string, string> }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -35,30 +35,30 @@ export function CarrollGrid({
   disabled,
   className,
 }: CarrollGridProps) {
-  const t = useQuizText();
-  const [armed, setArmed] = useState<string | null>(null);
-  const locked = !!reveal || disabled;
+  const t = useQuizText()
+  const [armed, setArmed] = useState<string | null>(null)
+  const locked = !!reveal || disabled
 
   function tapItem(id: string) {
-    if (locked) return;
+    if (locked) return
     if (assignment[id]) {
-      const next = { ...assignment };
-      delete next[id];
-      onChange(next);
-      setArmed(null);
-      return;
+      const next = { ...assignment }
+      delete next[id]
+      onChange(next)
+      setArmed(null)
+      return
     }
-    setArmed((cur) => (cur === id ? null : id));
+    setArmed((cur) => (cur === id ? null : id))
   }
   function drop(cell: string) {
-    if (locked || !armed) return;
-    onChange({ ...assignment, [armed]: cell });
-    setArmed(null);
+    if (locked || !armed) return
+    onChange({ ...assignment, [armed]: cell })
+    setArmed(null)
   }
 
-  const pool = items.filter((it) => !(it.id in assignment));
+  const pool = items.filter((it) => !(it.id in assignment))
   const chip = (item: QuizItem) => {
-    const ok = reveal?.items[item.id];
+    const ok = reveal?.items[item.id]
     return (
       <button
         key={item.id}
@@ -68,14 +68,7 @@ export function CarrollGrid({
         onClick={() => tapItem(item.id)}
         className={cn(
           tile({
-            state:
-              ok === true
-                ? 'correct'
-                : ok === false
-                  ? 'wrong'
-                  : armed === item.id
-                    ? 'selected'
-                    : 'idle',
+            state: ok === true ? 'correct' : ok === false ? 'wrong' : armed === item.id ? 'selected' : 'idle',
             size: 'none',
           }),
           'inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold',
@@ -86,8 +79,8 @@ export function CarrollGrid({
         {ok === true ? <Check className="size-3" /> : null}
         {ok === false ? <X className="size-3" /> : null}
       </button>
-    );
-  };
+    )
+  }
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>
@@ -114,9 +107,9 @@ export function CarrollGrid({
                   {rowLabel}
                 </th>
                 {cols.map((_, c) => {
-                  const cell = `${r}-${c}`;
-                  const droppable = !!armed && !locked;
-                  const inCell = items.filter((it) => assignment[it.id] === cell);
+                  const cell = `${r}-${c}`
+                  const droppable = !!armed && !locked
+                  const inCell = items.filter((it) => assignment[it.id] === cell)
                   return (
                     <td
                       key={cell}
@@ -124,9 +117,7 @@ export function CarrollGrid({
                       tabIndex={droppable ? 0 : -1}
                       onClick={() => drop(cell)}
                       onKeyDown={(e) =>
-                        droppable &&
-                        (e.key === 'Enter' || e.key === ' ') &&
-                        (e.preventDefault(), drop(cell))
+                        droppable && (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), drop(cell))
                       }
                       className={cn(
                         tile({ state: droppable ? 'selected' : 'quiet', size: 'none' }),
@@ -136,7 +127,7 @@ export function CarrollGrid({
                     >
                       <div className="flex flex-wrap gap-1">{inCell.map(chip)}</div>
                     </td>
-                  );
+                  )
                 })}
               </tr>
             ))}
@@ -144,5 +135,5 @@ export function CarrollGrid({
         </table>
       </div>
     </div>
-  );
+  )
 }

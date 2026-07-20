@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 /**
  * StudioView — the editor, opened ON A LESSON.
@@ -12,36 +12,36 @@
  * fetched — showing a stale copy without the pictures and narration you paid for,
  * and then saving that stale copy back over the good one on the first keystroke.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import type { ExplainerDoc, LocaleBundle } from '@bingoo/explainer';
-import { ExplainerStudio } from '@bingoo/explainer-web';
-import '@bingoo/explainer-web/styles.css';
-import { getLesson, saveLesson, type LessonFull } from '@/lib/explainerLessons';
-import { ACCEPTANCE_DOC, ACCEPTANCE_BUNDLES } from '@/lib/explainerLesson';
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import type { ExplainerDoc, LocaleBundle } from '@bingoo/explainer'
+import { ExplainerStudio } from '@bingoo/explainer-web'
+import '@bingoo/explainer-web/styles.css'
+import { getLesson, saveLesson, type LessonFull } from '@/lib/explainerLessons'
+import { ACCEPTANCE_DOC, ACCEPTANCE_BUNDLES } from '@/lib/explainerLesson'
 
 type Loaded = {
-  doc: ExplainerDoc;
-  bundles: Record<string, LocaleBundle>;
-  lesson: LessonFull | null;
-};
+  doc: ExplainerDoc
+  bundles: Record<string, LocaleBundle>
+  lesson: LessonFull | null
+}
 
 export function StudioView() {
-  const lessonId = useSearchParams().get('lesson');
-  const [state, setState] = useState<Loaded | null>(null);
-  const [saved, setSaved] = useState('');
-  const [savingNow, setSavingNow] = useState(false);
-  const latest = useRef<{ doc: ExplainerDoc; bundles: Record<string, LocaleBundle> } | null>(null);
+  const lessonId = useSearchParams().get('lesson')
+  const [state, setState] = useState<Loaded | null>(null)
+  const [saved, setSaved] = useState('')
+  const [savingNow, setSavingNow] = useState(false)
+  const latest = useRef<{ doc: ExplainerDoc; bundles: Record<string, LocaleBundle> } | null>(null)
 
   const persist = useCallback((doc: ExplainerDoc, bundles: Record<string, LocaleBundle>) => {
-    setSavingNow(true);
-    const bundle = Object.values(bundles)[0];
-    const els = doc.scenes.flatMap((s) => s.elements);
-    const totalImgs = els.filter((e) => e.type === 'image').length;
+    setSavingNow(true)
+    const bundle = Object.values(bundles)[0]
+    const els = doc.scenes.flatMap((s) => s.elements)
+    const totalImgs = els.filter((e) => e.type === 'image').length
     const doneImgs = els.filter(
       (e) => e.type === 'image' && !!(e.content as { src?: string } | undefined)?.src,
-    ).length;
-    const narr = bundle?.narration ?? {};
+    ).length
+    const narr = bundle?.narration ?? {}
     return saveLesson({
       doc,
       bundles,
@@ -53,40 +53,40 @@ export function StudioView() {
     })
       .then(() => setSaved(new Date().toLocaleTimeString('vi')))
       .catch(() => setSaved('lỗi lưu'))
-      .finally(() => setSavingNow(false));
-  }, []);
+      .finally(() => setSavingNow(false))
+  }, [])
 
   /** the topbar "Lưu" button — save the latest edit immediately, no debounce */
   const onSave = useCallback(() => {
-    if (!lessonId || !latest.current) return;
-    if (timer.current) clearTimeout(timer.current);
-    void persist(latest.current.doc, latest.current.bundles);
-  }, [lessonId, persist]);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    if (!lessonId || !latest.current) return
+    if (timer.current) clearTimeout(timer.current)
+    void persist(latest.current.doc, latest.current.bundles)
+  }, [lessonId, persist])
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (!lessonId) {
       // no lesson named — the sample, so the editor is still explorable
-      setState({ doc: ACCEPTANCE_DOC, bundles: ACCEPTANCE_BUNDLES, lesson: null });
-      return;
+      setState({ doc: ACCEPTANCE_DOC, bundles: ACCEPTANCE_BUNDLES, lesson: null })
+      return
     }
     void getLesson(lessonId)
       .then((l) => setState({ doc: l.doc, bundles: l.bundles, lesson: l }))
-      .catch(() => setState({ doc: ACCEPTANCE_DOC, bundles: ACCEPTANCE_BUNDLES, lesson: null }));
-  }, [lessonId]);
+      .catch(() => setState({ doc: ACCEPTANCE_DOC, bundles: ACCEPTANCE_BUNDLES, lesson: null }))
+  }, [lessonId])
 
   /** Autosave — debounced; the editor fires on every keystroke. */
   const onChange = useCallback(
     (doc: ExplainerDoc, bundles: Record<string, LocaleBundle>) => {
-      latest.current = { doc, bundles };
-      if (!lessonId) return; // editing the sample — nothing to save it over
-      if (timer.current) clearTimeout(timer.current);
-      timer.current = setTimeout(() => void persist(doc, bundles), 900);
+      latest.current = { doc, bundles }
+      if (!lessonId) return // editing the sample — nothing to save it over
+      if (timer.current) clearTimeout(timer.current)
+      timer.current = setTimeout(() => void persist(doc, bundles), 900)
     },
     [lessonId, persist],
-  );
+  )
 
-  if (!state) return <div style={{ padding: 24 }}>Đang tải bài…</div>;
+  if (!state) return <div style={{ padding: 24 }}>Đang tải bài…</div>
 
   return (
     <div className="exw" style={{ position: 'relative' }}>
@@ -104,11 +104,7 @@ export function StudioView() {
             color: '#fff',
           }}
         >
-          {saved === 'lỗi lưu'
-            ? '⚠ chưa lưu được'
-            : saved
-              ? `✓ đã lưu ${saved}`
-              : 'đã mở từ server'}
+          {saved === 'lỗi lưu' ? '⚠ chưa lưu được' : saved ? `✓ đã lưu ${saved}` : 'đã mở từ server'}
         </span>
       )}
       <ExplainerStudio
@@ -130,5 +126,5 @@ export function StudioView() {
         }
       />
     </div>
-  );
+  )
 }

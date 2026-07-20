@@ -172,10 +172,10 @@ export const SFX_CATALOG: Record<string, string> = {
   xp_gain: 'https://storage.bingoo.ai/sfx/xp_gain.mp3',
   zoom_in: 'https://storage.bingoo.ai/sfx/zoom_in.mp3',
   zoom_out: 'https://storage.bingoo.ai/sfx/zoom_out.mp3',
-};
+}
 
-export const SFX_NAMES = Object.keys(SFX_CATALOG);
-export const sfxUrl = (name: string): string | undefined => SFX_CATALOG[name];
+export const SFX_NAMES = Object.keys(SFX_CATALOG)
+export const sfxUrl = (name: string): string | undefined => SFX_CATALOG[name]
 
 /* ── grouping + Vietnamese labels ────────────────────────────────────────────
  * The catalog names are English slugs ("whoosh_move") — unreadable to a Viet
@@ -192,7 +192,7 @@ export type SfxGroup =
   | 'Phương tiện'
   | 'Đồ vật'
   | 'AI · hệ thống'
-  | 'Khác';
+  | 'Khác'
 
 /** Vietnamese labels for the common ones; the rest are prettified from the slug. */
 const SFX_LABEL: Record<string, string> = {
@@ -268,60 +268,55 @@ const SFX_LABEL: Record<string, string> = {
   alarm_clock: 'Đồng hồ báo thức',
   clock_tick: 'Tích tắc',
   timer_tick: 'Đếm giờ',
-};
+}
 
 function sfxGroup(name: string): SfxGroup {
-  if (name.startsWith('animal_')) return 'Động vật';
+  if (name.startsWith('animal_')) return 'Động vật'
   if (
     name.startsWith('ai_') ||
     /robot|participant|chat|save_success|activate|deactivate|lock|unlock/.test(name)
   )
-    return 'AI · hệ thống';
+    return 'AI · hệ thống'
   if (
     /correct|incorrect|confirm|cancel|submit|hint|retry|pass|error|warning|click|hover|drag|drop|ding|close|open$/.test(
       name,
     )
   )
-    return 'Phản hồi';
+    return 'Phản hồi'
   if (
     /achievement|celebrate|level_up|coin|star|treasure|xp|badge|graduation|reward|streak|surprise|complete|score|unlock/.test(
       name,
     )
   )
-    return 'Khen thưởng';
+    return 'Khen thưởng'
   if (
     /whoosh|pop_|zoom|slide|bounce|jump|land|snap|spark|swipe|rotate|magnet|puzzle|shape|block|tile|fraction|card_flip/.test(
       name,
     )
   )
-    return 'Chuyển động';
+    return 'Chuyển động'
   if (
     /chalk|pencil|eraser|school_bell|book|page|scissors|abacus|bead|classroom|quiz|lesson|assignment|next_question|course|unit/.test(
       name,
     )
   )
-    return 'Lớp học';
-  if (
-    /rain|wind|thunder|ocean|river|forest|fire|volcano|splash|water|shower|kettle|microwave/.test(
-      name,
-    )
-  )
-    return 'Thiên nhiên';
-  if (/airplane|train|helicopter|rocket|car_|bus|bicycle|motorbike|ship/.test(name))
-    return 'Phương tiện';
-  if (/door|phone|alarm|clock|timer|cup|bell/.test(name)) return 'Đồ vật';
-  return 'Khác';
+    return 'Lớp học'
+  if (/rain|wind|thunder|ocean|river|forest|fire|volcano|splash|water|shower|kettle|microwave/.test(name))
+    return 'Thiên nhiên'
+  if (/airplane|train|helicopter|rocket|car_|bus|bicycle|motorbike|ship/.test(name)) return 'Phương tiện'
+  if (/door|phone|alarm|clock|timer|cup|bell/.test(name)) return 'Đồ vật'
+  return 'Khác'
 }
 
-const prettify = (n: string) => n.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
+const prettify = (n: string) => n.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase())
 
-export type SfxMeta = { name: string; group: SfxGroup; label: string; url: string };
+export type SfxMeta = { name: string; group: SfxGroup; label: string; url: string }
 
 export const SFX_META: SfxMeta[] = SFX_NAMES.map((name) => ({
   name,
   group: sfxGroup(name),
   label: SFX_LABEL[name] ?? prettify(name.replace(/^animal_/, '')),
   url: SFX_CATALOG[name]!,
-}));
+}))
 
-export const SFX_GROUPS = [...new Set(SFX_META.map((m) => m.group))];
+export const SFX_GROUPS = [...new Set(SFX_META.map((m) => m.group))]

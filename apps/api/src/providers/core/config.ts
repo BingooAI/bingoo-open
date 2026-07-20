@@ -1,14 +1,14 @@
-import { ProviderNotConfiguredError } from './errors';
+import { ProviderNotConfiguredError } from './errors'
 
 /** Read an env var, treating empty/whitespace as absent. */
 export function readEnv(name: string): string | undefined {
-  const value = process.env[name];
-  return value && value.trim().length > 0 ? value : undefined;
+  const value = process.env[name]
+  return value && value.trim().length > 0 ? value : undefined
 }
 
 /** True only if every named env var is present — used for readiness introspection. */
 export function hasEnv(names: readonly string[]): boolean {
-  return names.every((name) => readEnv(name) !== undefined);
+  return names.every((name) => readEnv(name) !== undefined)
 }
 
 /**
@@ -21,14 +21,14 @@ export function requireEnv<const N extends readonly string[]>(
   provider: string,
   names: N,
 ): Record<N[number], string> {
-  const out: Record<string, string> = {};
-  const missing: string[] = [];
+  const out: Record<string, string> = {}
+  const missing: string[] = []
   for (const name of names) {
-    const value = readEnv(name);
-    if (value === undefined) missing.push(name);
-    else out[name] = value;
+    const value = readEnv(name)
+    if (value === undefined) missing.push(name)
+    else out[name] = value
   }
-  if (missing.length > 0) throw new ProviderNotConfiguredError(capability, provider, missing);
+  if (missing.length > 0) throw new ProviderNotConfiguredError(capability, provider, missing)
   // Known-key record: accessing a listed name yields `string`, not `string | undefined`.
-  return out as Record<N[number], string>;
+  return out as Record<N[number], string>
 }

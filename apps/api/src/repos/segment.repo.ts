@@ -1,6 +1,6 @@
-import { db } from '@bingoo/db';
-import type { Prisma } from '@bingoo/db';
-import { evalRule, type SegmentRule } from '@bingoo/core';
+import { db } from '@bingoo/db'
+import type { Prisma } from '@bingoo/db'
+import { evalRule, type SegmentRule } from '@bingoo/core'
 
 /**
  * Dynamic segmentation (§3.8). A Segment holds a typed rule; recompute evaluates
@@ -10,10 +10,10 @@ import { evalRule, type SegmentRule } from '@bingoo/core';
  */
 
 export interface CreateSegmentInput {
-  key: string;
-  name: string;
-  description?: string | null;
-  rule: SegmentRule;
+  key: string
+  name: string
+  description?: string | null
+  rule: SegmentRule
 }
 
 export function createSegment(input: CreateSegmentInput) {
@@ -24,18 +24,18 @@ export function createSegment(input: CreateSegmentInput) {
       description: input.description ?? null,
       rule: input.rule as unknown as Prisma.InputJsonValue,
     },
-  });
+  })
 }
 
 export function listSegments() {
-  return db.segment.findMany({ orderBy: { createdAt: 'desc' } });
+  return db.segment.findMany({ orderBy: { createdAt: 'desc' } })
 }
 
 /** Re-evaluate a segment's rule and replace its membership. Returns the count. */
 export async function recomputeSegment(key: string): Promise<number> {
-  const segment = await db.segment.findUnique({ where: { key } });
-  if (!segment) return 0;
-  const rule = segment.rule as unknown as SegmentRule;
+  const segment = await db.segment.findUnique({ where: { key } })
+  if (!segment) return 0
+  const rule = segment.rule as unknown as SegmentRule
 
   const [users, childCounts, activity] = await Promise.all([
     db.user.findMany({
@@ -47,11 +47,11 @@ export async function recomputeSegment(key: string): Promise<number> {
       _count: { _all: true },
     }),
     db.activityEvent.groupBy({ by: ['userId'], _max: { createdAt: true } }),
-  ]);
+  ])
 
-  const children = new Map(childCounts.map((g) => [g.guardianId, g._count._all]));
-  const lastActive = new Map(activity.map((a) => [a.userId, a._max.createdAt]));
-  const now = Date.now();
+  const children = new Map(childCounts.map((g) => [g.guardianId, g._count._all]))
+  const lastActive = new Map(activity.map((a) => [a.userId, a._max.createdAt]))
+  const now = Date.now()
 
   const matching = users.filter((u) =>
     evalRule(
@@ -66,7 +66,7 @@ export async function recomputeSegment(key: string): Promise<number> {
       },
       now,
     ),
-  );
+  )
 
   await db.$transaction([
     db.userSegment.deleteMany({ where: { segmentId: segment.id } }),
@@ -74,19 +74,19 @@ export async function recomputeSegment(key: string): Promise<number> {
       data: matching.map((u) => ({ segmentId: segment.id, userId: u.id })),
     }),
     db.segment.update({ where: { id: segment.id }, data: { computedAt: new Date() } }),
-  ]);
+  ])
 
-  return matching.length;
+  return matching.length
 }
 
 export async function segmentMembers(key: string) {
-  const segment = await db.segment.findUnique({ where: { key }, select: { id: true } });
-  if (!segment) return [];
+  const segment = await db.segment.findUnique({ where: { key }, select: { id: true } })
+  if (!segment) return []
   const rows = await db.userSegment.findMany({
     where: { segmentId: segment.id },
     select: { user: { select: { id: true, publicId: true, name: true } } },
-  });
-  return rows.map((r) => r.user);
+  })
+  return rows.map((r) => r.user)
 }
 
 /** Segment keys a user currently belongs to — surfaced in the 360° (§3.8). */
@@ -94,6 +94,6 @@ export async function userSegmentKeys(userId: string): Promise<string[]> {
   const rows = await db.userSegment.findMany({
     where: { userId },
     select: { segment: { select: { key: true } } },
-  });
-  return rows.map((r) => r.segment.key);
+  })
+  return rows.map((r) => r.segment.key)
 }

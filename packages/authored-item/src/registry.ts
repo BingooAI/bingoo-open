@@ -6,15 +6,15 @@
  * draw.ts (tracingGlyph/coloringPicture), flashcard.ts. Khi core thêm loại → cập nhật ở đây.
  */
 
-import { CONTENT_BLOCK_META, CONTENT_BLOCK_TYPES, QuizQuestion } from '@bingoo/core';
-import { INTERACTIVE_KITS } from '@bingoo/manipulatives';
-import type { GraderKind } from './model';
+import { CONTENT_BLOCK_META, CONTENT_BLOCK_TYPES, QuizQuestion } from '@bingoo/core'
+import { INTERACTIVE_KITS } from '@bingoo/manipulatives'
+import type { GraderKind } from './model'
 
 export interface PrimitiveMeta {
-  readonly measurable: boolean;
-  readonly graderKind?: GraderKind;
+  readonly measurable: boolean
+  readonly graderKind?: GraderKind
   /** Độ tin cậy cơ sở của cách chấm (auto-key chắc hơn LLM/peer). */
-  readonly baseConfidence: number;
+  readonly baseConfidence: number
 }
 
 // Baseline phòng khi cấu trúc Zod đổi — vẫn chạy được (KHÔNG bao giờ rỗng).
@@ -39,7 +39,7 @@ const QUIZ_FALLBACK = [
   'pattern',
   'label',
   'hotspot',
-];
+]
 
 /**
  * TỰ dẫn xuất mọi literal `type` của union QuizQuestion (@bingoo/core) LÚC CHẠY — core thêm loại
@@ -48,34 +48,34 @@ const QUIZ_FALLBACK = [
  */
 function deriveQuizTypes(): string[] {
   try {
-    const eff = QuizQuestion as unknown as { _def?: { schema?: unknown } };
-    const inner = (eff._def?.schema ?? QuizQuestion) as { options?: readonly unknown[] };
+    const eff = QuizQuestion as unknown as { _def?: { schema?: unknown } }
+    const inner = (eff._def?.schema ?? QuizQuestion) as { options?: readonly unknown[] }
     const types = (inner.options ?? [])
       .map((o) => (o as { shape?: { type?: { value?: unknown } } }).shape?.type?.value)
-      .filter((v): v is string => typeof v === 'string');
-    return types.length ? types : QUIZ_FALLBACK;
+      .filter((v): v is string => typeof v === 'string')
+    return types.length ? types : QUIZ_FALLBACK
   } catch {
-    return QUIZ_FALLBACK;
+    return QUIZ_FALLBACK
   }
 }
 
 // quiz.ts — auto-key qua gradeQuestion (đo được). Dẫn xuất → tự cập nhật.
-const QUIZ_TYPES = deriveQuizTypes();
+const QUIZ_TYPES = deriveQuizTypes()
 
 /**
  * Tiền tố NAMESPACE cho content block. BẮT BUỘC vì keyspace va nhau: `math` vừa là quiz type
  * (chấm được) vừa là content block (text tĩnh). Không namespace thì registry nhập nhằng.
  */
-export const BLOCK_PREFIX = 'block:';
-export const blockKind = (type: string): string => `${BLOCK_PREFIX}${type}`;
+export const BLOCK_PREFIX = 'block:'
+export const blockKind = (type: string): string => `${BLOCK_PREFIX}${type}`
 
 /**
  * Tiền tố NAMESPACE cho manipulative kit — BẮT BUỘC vì kit VA TÊN với quiz type: `tenframe`,
  * `numberline`, `clock`, `partwhole`… vừa là loại câu hỏi (auto-key) vừa là kit thao tác (chấm bằng
  * checkAnswer). Không namespace thì kit đè lên quiz type trong registry, chấm sai luôn.
  */
-export const MANIP_PREFIX = 'manip:';
-export const manipKind = (kind: string): string => `${MANIP_PREFIX}${kind}`;
+export const MANIP_PREFIX = 'manip:'
+export const manipKind = (kind: string): string => `${MANIP_PREFIX}${kind}`
 
 /**
  * Đăng ký kit là primitive CHẤM ĐƯỢC — ĐỘNG từ `INTERACTIVE_KITS` của @bingoo/manipulatives (chính là
@@ -87,14 +87,14 @@ export const manipKind = (kind: string): string => `${MANIP_PREFIX}${kind}`;
 const MANIP_ENTRIES: [string, PrimitiveMeta][] = INTERACTIVE_KITS.map((k) => [
   manipKind(k),
   { measurable: true, graderKind: 'manip', baseConfidence: 0.9 },
-]);
+])
 
 /** Grader cho block CHẤM ĐƯỢC (core khai gradeable): quiz→auto-key, tracing/coloring→coverage. */
 function blockGrader(type: string): GraderKind | undefined {
   // experiment carries hypothesis.correctId — an answer key, same as a quiz.
-  if (type === 'quiz' || type === 'experiment') return 'auto-key';
-  if (type === 'tracing' || type === 'coloring') return 'coverage';
-  return undefined;
+  if (type === 'quiz' || type === 'experiment') return 'auto-key'
+  if (type === 'tracing' || type === 'coloring') return 'coverage'
+  return undefined
 }
 
 /**
@@ -102,9 +102,9 @@ function blockGrader(type: string): GraderKind | undefined {
  * không đoán). Core thêm block gradeable mới → registry tự biết.
  */
 const CONTENT_ENTRIES = CONTENT_BLOCK_TYPES.map((t): [string, PrimitiveMeta] => {
-  const gradeable = CONTENT_BLOCK_META[t].gradeable;
-  if (!gradeable) return [blockKind(t), { measurable: false, baseConfidence: 0 }];
-  const gk = blockGrader(t);
+  const gradeable = CONTENT_BLOCK_META[t].gradeable
+  if (!gradeable) return [blockKind(t), { measurable: false, baseConfidence: 0 }]
+  const gk = blockGrader(t)
   return [
     blockKind(t),
     {
@@ -112,8 +112,8 @@ const CONTENT_ENTRIES = CONTENT_BLOCK_TYPES.map((t): [string, PrimitiveMeta] => 
       ...(gk ? { graderKind: gk } : {}),
       baseConfidence: gk === 'coverage' ? 0.9 : 1,
     },
-  ];
-});
+  ]
+})
 
 const REGISTRY: Record<string, PrimitiveMeta> = {
   ...Object.fromEntries(
@@ -132,7 +132,7 @@ const REGISTRY: Record<string, PrimitiveMeta> = {
   'code-task': { measurable: true, graderKind: 'code', baseConfidence: 1 },
   observation: { measurable: true, graderKind: 'observation', baseConfidence: 0.6 },
   explainer: { measurable: false, baseConfidence: 0 },
-};
+}
 
 /**
  * DANH MỤC primitive cho bộ SINH NỘI DUNG — dẫn xuất, không gõ tay.
@@ -146,11 +146,11 @@ const REGISTRY: Record<string, PrimitiveMeta> = {
 export function listPrimitives(pred?: (m: PrimitiveMeta, kind: string) => boolean): string[] {
   return Object.entries(REGISTRY)
     .filter(([kind, meta]) => (pred ? pred(meta, kind) : true))
-    .map(([kind]) => kind);
+    .map(([kind]) => kind)
 }
 
 /** Mọi loại quiz auto-key của core (55 và còn tăng) — union Zod là nguồn sự thật duy nhất. */
-export const QUIZ_PRIMITIVE_KINDS: readonly string[] = QUIZ_TYPES;
+export const QUIZ_PRIMITIVE_KINDS: readonly string[] = QUIZ_TYPES
 
 /**
  * CONTENT BLOCK theo phân loại chấm-được — LẤY TỪ REGISTRY, không lọc lại `CONTENT_BLOCK_META` của core.
@@ -165,14 +165,14 @@ export const QUIZ_PRIMITIVE_KINDS: readonly string[] = QUIZ_TYPES;
 export function listBlockTypes(opts: { graded: boolean }): string[] {
   return Object.entries(REGISTRY)
     .filter(([kind, meta]) => kind.startsWith(BLOCK_PREFIX) && meta.measurable === opts.graded)
-    .map(([kind]) => kind.slice(BLOCK_PREFIX.length));
+    .map(([kind]) => kind.slice(BLOCK_PREFIX.length))
 }
 
 /** Metadata cho một primitiveKind; null nếu chưa đăng ký. */
 export function primitiveMeta(kind: string): PrimitiveMeta | null {
-  return REGISTRY[kind] ?? null;
+  return REGISTRY[kind] ?? null
 }
 
 export function isKnownPrimitive(kind: string): boolean {
-  return kind in REGISTRY;
+  return kind in REGISTRY
 }

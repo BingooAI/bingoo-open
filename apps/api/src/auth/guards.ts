@@ -1,10 +1,10 @@
-import { createMiddleware } from 'hono/factory';
-import { db } from '@bingoo/db';
-import type { AppEnv } from '../lib/context';
-import { AppError } from '../lib/errors';
-import { resolveOrgRole, type OrgRole } from '../repos/org.repo';
-import { getCommunityRole, type CommunityRole } from '../repos/community.repo';
-import { hasAnyRole, type PlatformRole } from './roles';
+import { createMiddleware } from 'hono/factory'
+import { db } from '@bingoo/db'
+import type { AppEnv } from '../lib/context'
+import { AppError } from '../lib/errors'
+import { resolveOrgRole, type OrgRole } from '../repos/org.repo'
+import { getCommunityRole, type CommunityRole } from '../repos/community.repo'
+import { hasAnyRole, type PlatformRole } from './roles'
 
 /**
  * Authorization guards (§6). All authz is enforced HERE, on the server (R6) —
@@ -15,9 +15,9 @@ import { hasAnyRole, type PlatformRole } from './roles';
 
 /** 401 unless a session is present. */
 export const requireAuth = createMiddleware<AppEnv>(async (c, next) => {
-  if (!c.get('user')) throw AppError.unauthorized();
-  await next();
-});
+  if (!c.get('user')) throw AppError.unauthorized()
+  await next()
+})
 
 /**
  * Platform has-role guard: passes when the user carries ANY of `roles` in their
@@ -25,11 +25,11 @@ export const requireAuth = createMiddleware<AppEnv>(async (c, next) => {
  */
 export function requireRole(...roles: PlatformRole[]) {
   return createMiddleware<AppEnv>(async (c, next) => {
-    const user = c.get('user');
-    if (!user) throw AppError.unauthorized();
-    if (!hasAnyRole(user.role, roles)) throw AppError.forbidden();
-    await next();
-  });
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    if (!hasAnyRole(user.role, roles)) throw AppError.forbidden()
+    await next()
+  })
 }
 
 /**
@@ -40,21 +40,21 @@ export function requireRole(...roles: PlatformRole[]) {
  */
 export function requireOrgRole(...roles: string[]) {
   return createMiddleware<AppEnv>(async (c, next) => {
-    const user = c.get('user');
-    const session = c.get('session');
-    if (!user || !session) throw AppError.unauthorized();
+    const user = c.get('user')
+    const session = c.get('session')
+    if (!user || !session) throw AppError.unauthorized()
 
-    const organizationId = session.activeOrganizationId;
-    if (!organizationId) throw AppError.forbidden('No active organization');
+    const organizationId = session.activeOrganizationId
+    if (!organizationId) throw AppError.forbidden('No active organization')
 
     const member = await db.member.findUnique({
       where: { organizationId_userId: { organizationId, userId: user.id } },
       select: { role: true },
-    });
-    if (!member || !roles.includes(member.role)) throw AppError.forbidden();
+    })
+    if (!member || !roles.includes(member.role)) throw AppError.forbidden()
 
-    await next();
-  });
+    await next()
+  })
 }
 
 /**
@@ -65,22 +65,22 @@ export function requireOrgRole(...roles: string[]) {
  */
 export function requireClassRole(...roles: string[]) {
   return createMiddleware<AppEnv>(async (c, next) => {
-    const user = c.get('user');
-    if (!user) throw AppError.unauthorized();
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
 
-    const classId = c.req.param('classId');
-    if (!classId) throw AppError.badRequest('Missing class id');
+    const classId = c.req.param('classId')
+    if (!classId) throw AppError.badRequest('Missing class id')
 
     const member = await db.classMember.findUnique({
       where: { classId_userId: { classId, userId: user.id } },
       select: { role: true, status: true },
-    });
+    })
     if (!member || member.status !== 'active' || !roles.includes(member.role)) {
-      throw AppError.forbidden();
+      throw AppError.forbidden()
     }
 
-    await next();
-  });
+    await next()
+  })
 }
 
 /**
@@ -91,17 +91,17 @@ export function requireClassRole(...roles: string[]) {
  */
 export function requireOrgAccess(...roles: OrgRole[]) {
   return createMiddleware<AppEnv>(async (c, next) => {
-    const user = c.get('user');
-    if (!user) throw AppError.unauthorized();
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
 
-    const orgId = c.req.param('orgId');
-    if (!orgId) throw AppError.badRequest('Missing organization id');
+    const orgId = c.req.param('orgId')
+    if (!orgId) throw AppError.badRequest('Missing organization id')
 
-    const role = await resolveOrgRole(user.id, orgId);
-    if (!role || !roles.includes(role)) throw AppError.forbidden();
+    const role = await resolveOrgRole(user.id, orgId)
+    if (!role || !roles.includes(role)) throw AppError.forbidden()
 
-    await next();
-  });
+    await next()
+  })
 }
 
 /**
@@ -110,15 +110,15 @@ export function requireOrgAccess(...roles: OrgRole[]) {
  */
 export function requireCommunityRole(...roles: CommunityRole[]) {
   return createMiddleware<AppEnv>(async (c, next) => {
-    const user = c.get('user');
-    if (!user) throw AppError.unauthorized();
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
 
-    const communityId = c.req.param('communityId');
-    if (!communityId) throw AppError.badRequest('Missing community id');
+    const communityId = c.req.param('communityId')
+    if (!communityId) throw AppError.badRequest('Missing community id')
 
-    const role = await getCommunityRole(communityId, user.id);
-    if (!role || !roles.includes(role)) throw AppError.forbidden();
+    const role = await getCommunityRole(communityId, user.id)
+    if (!role || !roles.includes(role)) throw AppError.forbidden()
 
-    await next();
-  });
+    await next()
+  })
 }

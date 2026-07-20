@@ -1,18 +1,18 @@
-import type { ReactNode } from 'react';
-import { IconChip, type IconChipColor } from './icon-chip';
-import { cn } from './lib/cn';
-import { Progress } from './progress';
+import type { ReactNode } from 'react'
+import { IconChip, type IconChipColor } from './icon-chip'
+import { cn } from './lib/cn'
+import { Progress } from './progress'
 
 export interface LessonHeaderProps {
-  title: ReactNode;
-  subtitle?: ReactNode;
-  icon?: ReactNode;
-  color?: IconChipColor;
+  title: ReactNode
+  subtitle?: ReactNode
+  icon?: ReactNode
+  color?: IconChipColor
   /** 0–100 completion of the lesson. */
-  progress?: number;
+  progress?: number
   /** Right-aligned meta, e.g. "còn 6 phút". */
-  meta?: ReactNode;
-  className?: string;
+  meta?: ReactNode
+  className?: string
 }
 
 /** Lesson header: title + optional icon, progress bar, and time/meta. Reuses
@@ -38,11 +38,9 @@ export function LessonHeader({
           <h2 className="truncate font-display text-lg font-bold text-foreground">{title}</h2>
           {subtitle ? <p className="truncate text-sm text-foreground-muted">{subtitle}</p> : null}
         </div>
-        {meta ? (
-          <span className="shrink-0 text-sm font-semibold text-foreground-muted">{meta}</span>
-        ) : null}
+        {meta ? <span className="shrink-0 text-sm font-semibold text-foreground-muted">{meta}</span> : null}
       </div>
       {progress != null ? <Progress value={progress} /> : null}
     </div>
-  );
+  )
 }

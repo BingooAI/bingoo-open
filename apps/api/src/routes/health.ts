@@ -1,8 +1,8 @@
-import { Hono } from 'hono';
-import type { AppEnv } from '../lib/context';
-import { env } from '../config/env';
-import { pingDatabase } from '../repos/health.repo';
-import { providersHealth } from '../providers';
+import { Hono } from 'hono'
+import type { AppEnv } from '../lib/context'
+import { env } from '../config/env'
+import { pingDatabase } from '../repos/health.repo'
+import { providersHealth } from '../providers'
 
 /**
  * Health probes. `/health` is liveness (process is up, needs no DB); `/health/db`
@@ -19,12 +19,12 @@ export const health = new Hono<AppEnv>()
     }),
   )
   .get('/db', async (c) => {
-    const up = await pingDatabase();
-    return c.json({ status: up ? 'ok' : 'down', dependency: 'database' }, up ? 200 : 503);
+    const up = await pingDatabase()
+    return c.json({ status: up ? 'ok' : 'down', dependency: 'database' }, up ? 200 : 503)
   })
   .get('/providers', (c) => {
-    const providers = providersHealth();
+    const providers = providersHealth()
     // "degraded" when the active provider of any capability is missing its config.
-    const activeReady = providers.filter((p) => p.active).every((p) => p.configured);
-    return c.json({ status: activeReady ? 'ok' : 'degraded', providers });
-  });
+    const activeReady = providers.filter((p) => p.active).every((p) => p.configured)
+    return c.json({ status: activeReady ? 'ok' : 'degraded', providers })
+  })

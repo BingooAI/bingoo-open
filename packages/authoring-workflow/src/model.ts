@@ -5,8 +5,7 @@
  */
 
 /** 7 chặng của nhà máy: nhập liệu → khung → vỏ khoá → giáo án → nội dung → đề đo → phát hành. */
-export type Stage =
-  'ingest' | 'framework' | 'course_shell' | 'plans' | 'content' | 'assessment' | 'publish';
+export type Stage = 'ingest' | 'framework' | 'course_shell' | 'plans' | 'content' | 'assessment' | 'publish'
 
 export const STAGE_ORDER: readonly Stage[] = [
   'ingest',
@@ -16,7 +15,7 @@ export const STAGE_ORDER: readonly Stage[] = [
   'content',
   'assessment',
   'publish',
-];
+]
 
 export type StepStatus =
   | 'draft' // chưa sinh
@@ -24,7 +23,7 @@ export type StepStatus =
   | 'needs_review' // đã sinh, chờ người duyệt
   | 'approved' // đã duyệt — nguồn tin cho hạ nguồn
   | 'stale' // thượng nguồn đã đổi, cần tái sinh
-  | 'failed'; // sinh lỗi
+  | 'failed' // sinh lỗi
 
 export type StepEvent =
   | 'generate' // bắt đầu/tái chạy sinh
@@ -33,16 +32,16 @@ export type StepEvent =
   | 'approve' // duyệt (bump version)
   | 'reject' // trả về draft
   | 'regenerate' // duyệt rồi vẫn muốn làm lại
-  | 'invalidate'; // đánh dấu stale (do thượng nguồn)
+  | 'invalidate' // đánh dấu stale (do thượng nguồn)
 
 export interface PipelineStep {
-  readonly id: string;
-  readonly stage: Stage;
-  readonly status: StepStatus;
+  readonly id: string
+  readonly stage: Stage
+  readonly status: StepStatus
   /** Tăng mỗi lần approve — hạ nguồn ghim theo số này để phát hiện lệch. */
-  readonly version: number;
+  readonly version: number
   /** Các step thượng nguồn mà step này tiêu thụ. */
-  readonly parents: readonly string[];
+  readonly parents: readonly string[]
   /** parentId → version đã dùng khi sinh step này. */
-  readonly builtFrom: Readonly<Record<string, number>>;
+  readonly builtFrom: Readonly<Record<string, number>>
 }

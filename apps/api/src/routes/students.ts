@@ -1,10 +1,10 @@
-import { Hono } from 'hono';
-import { db } from '@bingoo/db';
-import type { AppEnv } from '../lib/context';
-import { AppError } from '../lib/errors';
-import { ok } from '../lib/response';
-import { requireAuth } from '../auth';
-import { canAccessStudent } from '../repos/class.repo';
+import { Hono } from 'hono'
+import { db } from '@bingoo/db'
+import type { AppEnv } from '../lib/context'
+import { AppError } from '../lib/errors'
+import { ok } from '../lib/response'
+import { requireAuth } from '../auth'
+import { canAccessStudent } from '../repos/class.repo'
 
 /**
  * Student access through the union of valid relations (§6): a caller may read a
@@ -13,11 +13,11 @@ import { canAccessStudent } from '../repos/class.repo';
  * student outside their classes, enforced entirely server-side (R6).
  */
 export const students = new Hono<AppEnv>().get('/:id', requireAuth, async (c) => {
-  const requester = c.get('user');
-  if (!requester) throw AppError.unauthorized();
-  const studentId = c.req.param('id');
+  const requester = c.get('user')
+  if (!requester) throw AppError.unauthorized()
+  const studentId = c.req.param('id')
 
-  if (!(await canAccessStudent(requester, studentId))) throw AppError.forbidden();
+  if (!(await canAccessStudent(requester, studentId))) throw AppError.forbidden()
 
   const student = await db.user.findUnique({
     where: { id: studentId },
@@ -29,7 +29,7 @@ export const students = new Hono<AppEnv>().get('/:id', requireAuth, async (c) =>
       accountType: true,
       status: true,
     },
-  });
-  if (!student) throw AppError.notFound();
-  return ok(c, student);
-});
+  })
+  if (!student) throw AppError.notFound()
+  return ok(c, student)
+})

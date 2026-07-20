@@ -1,4 +1,4 @@
-import { db } from '@bingoo/db';
+import { db } from '@bingoo/db'
 
 /**
  * Lightweight DB connectivity probe. Uses a raw `SELECT 1` so it needs no domain
@@ -7,9 +7,9 @@ import { db } from '@bingoo/db';
  */
 export async function pingDatabase(): Promise<boolean> {
   try {
-    await db.$queryRaw`SELECT 1`;
-    return true;
+    await db.$queryRaw`SELECT 1`
+    return true
   } catch {
-    return false;
+    return false
   }
 }

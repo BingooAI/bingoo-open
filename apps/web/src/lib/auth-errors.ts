@@ -6,17 +6,17 @@
 export function authErrorKey(code?: string | null): string {
   switch (code) {
     case 'INVALID_EMAIL_OR_PASSWORD':
-      return 'invalidCredentials';
+      return 'invalidCredentials'
     case 'USER_ALREADY_EXISTS':
-      return 'emailTaken';
+      return 'emailTaken'
     case 'EMAIL_NOT_VERIFIED':
-      return 'emailNotVerified';
+      return 'emailNotVerified'
     case 'INVALID_TOKEN':
     case 'INVALID_OR_EXPIRED_TOKEN':
-      return 'invalidToken';
+      return 'invalidToken'
     case 'PASSWORD_TOO_SHORT':
-      return 'weakPassword';
+      return 'weakPassword'
     default:
-      return 'generic';
+      return 'generic'
   }
 }

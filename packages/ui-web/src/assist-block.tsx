@@ -1,16 +1,16 @@
-'use client';
+'use client'
 
-import type { Assist } from '@bingoo/core';
-import { cn } from './lib/cn';
-import { SoundButton } from './sound-button';
+import type { Assist } from '@bingoo/core'
+import { cn } from './lib/cn'
+import { SoundButton } from './sound-button'
 
 export interface AssistBlockProps {
-  assist: Assist;
+  assist: Assist
   /** Visual weight: guide (plain) vs instruction (muted, smaller). */
-  tone?: 'guide' | 'instruction';
+  tone?: 'guide' | 'instruction'
   /** A11y label for the audio play button (data). */
-  playLabel?: string;
-  className?: string;
+  playLabel?: string
+  className?: string
 }
 
 /**
@@ -19,8 +19,8 @@ export interface AssistBlockProps {
  * listen instead of reading. Reused by quiz and lesson surfaces. i18n-free.
  */
 export function AssistBlock({ assist, tone = 'guide', playLabel, className }: AssistBlockProps) {
-  const audio = assist.audioSrc;
-  if (!assist.text && !audio) return null;
+  const audio = assist.audioSrc
+  if (!assist.text && !audio) return null
   return (
     <div className={cn('flex items-center gap-2.5', className)}>
       {audio ? <SoundButton src={audio} label={playLabel ?? ''} size="sm" /> : null}
@@ -34,5 +34,5 @@ export function AssistBlock({ assist, tone = 'guide', playLabel, className }: As
         </p>
       ) : null}
     </div>
-  );
+  )
 }

@@ -15,11 +15,11 @@
  * (`safeParseContent`) to verify + repair output before render.
  */
 
-import { z } from 'zod';
-import { ColoringPicture, TracingGlyph } from './draw';
-import { FlashcardDeck } from './flashcard';
-import { QuizQuestion } from './quiz';
-import { SOLID_NAMES } from './solid3d';
+import { z } from 'zod'
+import { ColoringPicture, TracingGlyph } from './draw'
+import { FlashcardDeck } from './flashcard'
+import { QuizQuestion } from './quiz'
+import { SOLID_NAMES } from './solid3d'
 
 /** The block kinds a lesson/feed/article can be built from — the complete set. */
 export const CONTENT_BLOCK_TYPES = [
@@ -63,25 +63,25 @@ export const CONTENT_BLOCK_TYPES = [
   'tracing',
   'coloring',
   'spinner',
-] as const;
+] as const
 
-export type ContentBlockType = (typeof CONTENT_BLOCK_TYPES)[number];
+export type ContentBlockType = (typeof CONTENT_BLOCK_TYPES)[number]
 
 /** Per-block metadata so authors/LLMs/consumers can filter by context. */
-export type ContentBlockCategory = 'text' | 'media' | 'layout' | 'learning' | 'interactive';
+export type ContentBlockCategory = 'text' | 'media' | 'layout' | 'learning' | 'interactive'
 export interface ContentBlockMeta {
-  category: ContentBlockCategory;
+  category: ContentBlockCategory
   /** true = the learner acts on it (has state), false = passive display. */
-  interactive: boolean;
+  interactive: boolean
   /** true = a machine can mark it right or wrong (quiz, tracing, coloring, experiment). */
-  gradeable: boolean;
+  gradeable: boolean
   /**
    * true = the learner judges their OWN work — a flashcard's again/good/easy, a rubric
    * tick-list, a confidence face. It produces a signal but never a right/wrong verdict,
    * so it is NOT `gradeable`. Kept apart because an authoring UI must be able to tell
    * "nothing is assessed here" from "assessed, but only by the learner".
    */
-  selfAssessed: boolean;
+  selfAssessed: boolean
 }
 
 export const CONTENT_BLOCK_META: Record<ContentBlockType, ContentBlockMeta> = {
@@ -129,27 +129,19 @@ export const CONTENT_BLOCK_META: Record<ContentBlockType, ContentBlockMeta> = {
   tracing: { category: 'interactive', interactive: true, gradeable: true, selfAssessed: false },
   coloring: { category: 'interactive', interactive: true, gradeable: true, selfAssessed: false },
   spinner: { category: 'interactive', interactive: true, gradeable: false, selfAssessed: false },
-};
+}
 
 /** Block types filtered by a flag — helpers for authoring UIs / LLM tool specs. */
-export const INTERACTIVE_BLOCK_TYPES = CONTENT_BLOCK_TYPES.filter(
-  (t) => CONTENT_BLOCK_META[t].interactive,
-);
-export const PASSIVE_BLOCK_TYPES = CONTENT_BLOCK_TYPES.filter(
-  (t) => !CONTENT_BLOCK_META[t].interactive,
-);
+export const INTERACTIVE_BLOCK_TYPES = CONTENT_BLOCK_TYPES.filter((t) => CONTENT_BLOCK_META[t].interactive)
+export const PASSIVE_BLOCK_TYPES = CONTENT_BLOCK_TYPES.filter((t) => !CONTENT_BLOCK_META[t].interactive)
 /** Blocks a machine can mark right or wrong. */
-export const GRADEABLE_BLOCK_TYPES = CONTENT_BLOCK_TYPES.filter(
-  (t) => CONTENT_BLOCK_META[t].gradeable,
-);
+export const GRADEABLE_BLOCK_TYPES = CONTENT_BLOCK_TYPES.filter((t) => CONTENT_BLOCK_META[t].gradeable)
 /** Blocks the learner assesses themselves (rubric, SRS rating, confidence face). */
-export const SELF_ASSESSED_BLOCK_TYPES = CONTENT_BLOCK_TYPES.filter(
-  (t) => CONTENT_BLOCK_META[t].selfAssessed,
-);
+export const SELF_ASSESSED_BLOCK_TYPES = CONTENT_BLOCK_TYPES.filter((t) => CONTENT_BLOCK_META[t].selfAssessed)
 /** Everything that yields ANY signal on how the learner did — marked or self-judged. */
 export const ASSESSED_BLOCK_TYPES = CONTENT_BLOCK_TYPES.filter(
   (t) => CONTENT_BLOCK_META[t].gradeable || CONTENT_BLOCK_META[t].selfAssessed,
-);
+)
 
 const ContentBlockShape = z.discriminatedUnion('type', [
   z
@@ -190,10 +182,7 @@ const ContentBlockShape = z.discriminatedUnion('type', [
   z
     .object({
       type: z.literal('math'),
-      expr: z
-        .string()
-        .min(1)
-        .describe('A maths expression in linear form ("3/4", "x^2", "pi*r^2").'),
+      expr: z.string().min(1).describe('A maths expression in linear form ("3/4", "x^2", "pi*r^2").'),
       caption: z.string().optional().describe('Optional caption under the formula.'),
     })
     .describe('A display maths formula (shown, not answered).'),
@@ -250,23 +239,11 @@ const ContentBlockShape = z.discriminatedUnion('type', [
       type: z.literal('shape'),
       kind: z.enum(['2d', '3d']).describe('2D polygon or 3D solid.'),
       name: z
-        .enum([
-          'triangle',
-          'square',
-          'rectangle',
-          'pentagon',
-          'hexagon',
-          'octagon',
-          'circle',
-          ...SOLID_NAMES,
-        ])
+        .enum(['triangle', 'square', 'rectangle', 'pentagon', 'hexagon', 'octagon', 'circle', ...SOLID_NAMES])
         .describe('Which shape to draw. 2D: triangle→circle. 3D: every solid in SOLID_NAMES.'),
       color: z.string().optional().describe('Fill colour (hex).'),
       label: z.string().optional().describe('Caption under the figure.'),
-      rotatable: z
-        .boolean()
-        .default(true)
-        .describe('3D only: the learner can drag to turn the solid.'),
+      rotatable: z.boolean().default(true).describe('3D only: the learner can drag to turn the solid.'),
     })
     .describe('A 2D or 3D geometric figure to display.'),
 
@@ -389,9 +366,7 @@ const ContentBlockShape = z.discriminatedUnion('type', [
   z
     .object({
       type: z.literal('quiz'),
-      question: QuizQuestion.describe(
-        'An embedded quiz question — any of the ~40 interaction types.',
-      ),
+      question: QuizQuestion.describe('An embedded quiz question — any of the ~40 interaction types.'),
     })
     .describe('An embedded, gradeable quiz question (any question type).'),
   z
@@ -441,11 +416,7 @@ const ContentBlockShape = z.discriminatedUnion('type', [
             definition: z.string().min(1).describe('A concise, kid-safe definition.'),
             example: z.string().optional().describe('The word used in a sentence.'),
             emoji: z.string().optional(),
-            audioSrc: z
-              .string()
-              .url()
-              .optional()
-              .describe('Pronunciation — tap the word to hear it.'),
+            audioSrc: z.string().url().optional().describe('Pronunciation — tap the word to hear it.'),
           }),
         )
         .min(1),
@@ -462,17 +433,11 @@ const ContentBlockShape = z.discriminatedUnion('type', [
             text: z.string().min(1),
             emoji: z.string().optional().describe('Stands in for the character\u2019s face.'),
             avatarSrc: z.string().url().optional(),
-            side: z
-              .enum(['left', 'right'])
-              .default('left')
-              .describe('Which side the bubble sits on.'),
+            side: z.enum(['left', 'right']).default('left').describe('Which side the bubble sits on.'),
           }),
         )
         .min(1),
-      question: z
-        .string()
-        .optional()
-        .describe('What the learner should decide, e.g. "Who is right?".'),
+      question: z.string().optional().describe('What the learner should decide, e.g. "Who is right?".'),
     })
     .describe('Characters speaking in bubbles to introduce an idea.'),
   z
@@ -494,10 +459,7 @@ const ContentBlockShape = z.discriminatedUnion('type', [
       type: z.literal('reflection'),
       title: z.string().optional().describe('Heading, e.g. "Look what I can do".'),
       prompts: z.array(z.string().min(1)).min(1).describe('What to think back on.'),
-      faces: z
-        .boolean()
-        .default(true)
-        .describe('Show the 3-face confidence scale the books use (🙂 😐 🙁).'),
+      faces: z.boolean().default(true).describe('Show the 3-face confidence scale the books use (🙂 😐 🙁).'),
     })
     .describe('A look-what-I-can-do self-reflection with confidence faces.'),
   z
@@ -528,7 +490,7 @@ const ContentBlockShape = z.discriminatedUnion('type', [
         .min(1),
     })
     .describe('A song or chant with words and optional karaoke timing.'),
-]);
+])
 
 /** Media blocks must carry a library `assetId` or a resolved/external `src`. */
 export const ContentBlock = ContentBlockShape.superRefine((block, ctx) => {
@@ -537,14 +499,14 @@ export const ContentBlock = ContentBlockShape.superRefine((block, ctx) => {
       ctx.addIssue({
         code: 'custom',
         message: `${block.type} block needs assetId (media library) or src (external) — at least one`,
-      });
+      })
   }
-});
+})
 
 /** An ordered list of blocks — a lesson section, feed post, or article body. */
 export const Content = z
   .array(ContentBlock)
-  .describe('Ordered content blocks making up a lesson section, feed post, or article.');
+  .describe('Ordered content blocks making up a lesson section, feed post, or article.')
 
 /** A titled lesson made of content blocks. */
 export const Lesson = z.object({
@@ -552,11 +514,11 @@ export const Lesson = z.object({
   title: z.string().min(1).describe('Lesson title.'),
   summary: z.string().optional().describe('One-sentence summary / learning objective.'),
   blocks: Content,
-});
+})
 
-export type ContentBlock = z.infer<typeof ContentBlock>;
-export type Content = z.infer<typeof Content>;
-export type Lesson = z.infer<typeof Lesson>;
+export type ContentBlock = z.infer<typeof ContentBlock>
+export type Content = z.infer<typeof Content>
+export type Lesson = z.infer<typeof Lesson>
 
 /**
  * One-line description of every content block, read straight from each block schema's
@@ -565,38 +527,38 @@ export type Lesson = z.infer<typeof Lesson>;
 export const CONTENT_BLOCK_DESCRIPTIONS: Record<ContentBlockType, string> = (() => {
   const d = (
     ContentBlock as unknown as {
-      def: { options?: unknown[]; innerType?: { def: { options: unknown[] } } };
+      def: { options?: unknown[]; innerType?: { def: { options: unknown[] } } }
     }
-  ).def;
+  ).def
   const opts = (d.options ?? d.innerType?.def.options ?? []) as Array<{
-    description?: string;
-    def: { shape: { type: { value: ContentBlockType } } };
-  }>;
-  const out = {} as Record<ContentBlockType, string>;
-  for (const o of opts) out[o.def.shape.type.value] = o.description ?? '';
-  return out;
-})();
+    description?: string
+    def: { shape: { type: { value: ContentBlockType } } }
+  }>
+  const out = {} as Record<ContentBlockType, string>
+  for (const o of opts) out[o.def.shape.type.value] = o.description ?? ''
+  return out
+})()
 
 /** Validate unknown data (e.g. LLM output) as Content — returns a typed result. */
 export function safeParseContent(data: unknown) {
-  return Content.safeParse(data);
+  return Content.safeParse(data)
 }
 
 /** Parse Content, throwing on invalid data. */
 export function parseContent(data: unknown): Content {
-  return Content.parse(data);
+  return Content.parse(data)
 }
 
 export function safeParseLesson(data: unknown) {
-  return Lesson.safeParse(data);
+  return Lesson.safeParse(data)
 }
 
 /** JSON Schema for the Content array — feed to an LLM as a structured-output spec. */
 export function contentJsonSchema(): unknown {
-  return z.toJSONSchema(Content);
+  return z.toJSONSchema(Content)
 }
 
 /** JSON Schema for a full Lesson. */
 export function lessonJsonSchema(): unknown {
-  return z.toJSONSchema(Lesson);
+  return z.toJSONSchema(Lesson)
 }

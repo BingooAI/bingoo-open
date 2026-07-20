@@ -1,41 +1,41 @@
-'use client';
+'use client'
 
-import { Check, Globe } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useRef, useState, useTransition } from 'react';
-import { cn } from '@/lib/cn';
-import { usePathname, useRouter } from '@/i18n/navigation';
-import { localeMeta, routing, type Locale } from '@/i18n/routing';
+import { Check, Globe } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
+import { useEffect, useRef, useState, useTransition } from 'react'
+import { cn } from '@/lib/cn'
+import { usePathname, useRouter } from '@/i18n/navigation'
+import { localeMeta, routing, type Locale } from '@/i18n/routing'
 
 /** Locale dropdown that preserves the current path (scales to N locales). */
 export function LocaleSwitcher({ className }: { className?: string }) {
-  const t = useTranslations('locale');
-  const locale = useLocale() as Locale;
-  const router = useRouter();
-  const pathname = usePathname();
-  const [open, setOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
-  const ref = useRef<HTMLDivElement>(null);
+  const t = useTranslations('locale')
+  const locale = useLocale() as Locale
+  const router = useRouter()
+  const pathname = usePathname()
+  const [open, setOpen] = useState(false)
+  const [isPending, startTransition] = useTransition()
+  const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) return
     const onClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
-    document.addEventListener('mousedown', onClick);
-    document.addEventListener('keydown', onKey);
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
+    document.addEventListener('mousedown', onClick)
+    document.addEventListener('keydown', onKey)
     return () => {
-      document.removeEventListener('mousedown', onClick);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [open]);
+      document.removeEventListener('mousedown', onClick)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
 
   const select = (next: Locale) => {
-    setOpen(false);
-    if (next === locale) return;
-    startTransition(() => router.replace(pathname, { locale: next }));
-  };
+    setOpen(false)
+    if (next === locale) return
+    startTransition(() => router.replace(pathname, { locale: next }))
+  }
 
   return (
     <div ref={ref} className={cn('relative', className)}>
@@ -59,7 +59,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
           className="absolute right-0 z-50 mt-2 min-w-44 animate-pop-in overflow-hidden rounded-2xl border border-border bg-surface p-1.5 shadow-lg"
         >
           {routing.locales.map((code) => {
-            const active = code === locale;
+            const active = code === locale
             return (
               <li key={code}>
                 <button
@@ -78,10 +78,10 @@ export function LocaleSwitcher({ className }: { className?: string }) {
                   {active && <Check className="size-4" />}
                 </button>
               </li>
-            );
+            )
           })}
         </ul>
       )}
     </div>
-  );
+  )
 }

@@ -1,38 +1,31 @@
-'use client';
+'use client'
 
-import { Heart } from 'lucide-react';
-import { cn } from './lib/cn';
+import { Heart } from 'lucide-react'
+import { cn } from './lib/cn'
 
-export type QuizSegmentStatus = 'pending' | 'correct' | 'incorrect';
+export type QuizSegmentStatus = 'pending' | 'correct' | 'incorrect'
 
 export interface QuizProgressProps {
-  total: number;
+  total: number
   /** Index of the current question (highlighted). */
-  index: number;
+  index: number
   /** Per-question status; unset entries render as pending. */
-  statuses?: QuizSegmentStatus[];
+  statuses?: QuizSegmentStatus[]
   /** Optional lives display (hearts). */
-  lives?: { left: number; max: number };
+  lives?: { left: number; max: number }
   /** A11y label for the progress track (data). */
-  label?: string;
-  className?: string;
+  label?: string
+  className?: string
 }
 
 const SEG: Record<QuizSegmentStatus, string> = {
   pending: 'bg-surface-muted',
   correct: 'bg-success',
   incorrect: 'bg-danger',
-};
+}
 
 /** A per-question segmented progress track, with optional lives (hearts). */
-export function QuizProgress({
-  total,
-  index,
-  statuses,
-  lives,
-  label,
-  className,
-}: QuizProgressProps) {
+export function QuizProgress({ total, index, statuses, lives, label, className }: QuizProgressProps) {
   return (
     <div className={cn('flex items-center gap-3', className)}>
       <div
@@ -44,8 +37,8 @@ export function QuizProgress({
         aria-valuenow={index + 1}
       >
         {Array.from({ length: total }, (_, i) => {
-          const status = statuses?.[i] ?? 'pending';
-          const current = i === index;
+          const status = statuses?.[i] ?? 'pending'
+          const current = i === index
           return (
             <span
               key={i}
@@ -56,7 +49,7 @@ export function QuizProgress({
                 current && 'h-2.5 ring-2 ring-ring/40',
               )}
             />
-          );
+          )
         })}
       </div>
       {lives ? (
@@ -74,5 +67,5 @@ export function QuizProgress({
         </div>
       ) : null}
     </div>
-  );
+  )
 }

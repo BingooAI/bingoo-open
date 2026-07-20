@@ -1,9 +1,9 @@
-'use client';
+'use client'
 
-import { useState, type ReactNode } from 'react';
-import { ChevronDown, Plus } from 'lucide-react';
-import { Card, CardContent } from '@bingoo/ui-web';
-import { cn } from '@/lib/cn';
+import { useState, type ReactNode } from 'react'
+import { ChevronDown, Plus } from 'lucide-react'
+import { Card, CardContent } from '@bingoo/ui-web'
+import { cn } from '@/lib/cn'
 
 /**
  * Khối "sinh mới" THU GỌN đặt trên danh sách.
@@ -17,12 +17,12 @@ export function GenerateSection({
   children,
   defaultOpen = false,
 }: {
-  title: string;
-  hint: string;
-  children: ReactNode;
-  defaultOpen?: boolean;
+  title: string
+  hint: string
+  children: ReactNode
+  defaultOpen?: boolean
 }) {
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = useState(defaultOpen)
   return (
     <Card>
       <button
@@ -43,5 +43,5 @@ export function GenerateSection({
       </button>
       {open ? <CardContent className="border-t border-border pt-4">{children}</CardContent> : null}
     </Card>
-  );
+  )
 }

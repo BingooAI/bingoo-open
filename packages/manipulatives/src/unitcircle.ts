@@ -9,18 +9,18 @@
  * sin/cos signs shown faintly, current quadrant emphasised.
  * verbs: setAngle(deg) · showSin() · showCos() · showTan() · toRadians() · toDegrees()
  */
-import type { Manipulative, ManipModel, ManipState, Prim, RenderCtx, VerbClip } from './types';
-import { tween, activeSegment } from './bake';
-import { fmt, lerp, TOK } from './util';
+import type { Manipulative, ManipModel, ManipState, Prim, RenderCtx, VerbClip } from './types'
+import { tween, activeSegment } from './bake'
+import { fmt, lerp, TOK } from './util'
 
 export type UnitCircleP = {
-  angle: number; // degrees, counterclockwise from the positive x-axis
-  showSin: boolean;
-  showCos: boolean;
-  showTan: boolean;
-  radians: boolean; // label mode: multiples of π instead of degrees
-  sweep: boolean; // show the angle arc swept from 0°
-};
+  angle: number // degrees, counterclockwise from the positive x-axis
+  showSin: boolean
+  showCos: boolean
+  showTan: boolean
+  radians: boolean // label mode: multiples of π instead of degrees
+  sweep: boolean // show the angle arc swept from 0°
+}
 
 const DEFAULT: UnitCircleP = {
   angle: 45,
@@ -29,16 +29,16 @@ const DEFAULT: UnitCircleP = {
   showTan: false,
   radians: false,
   sweep: true,
-};
+}
 
 function num(v: unknown): number {
-  const n = typeof v === 'number' ? v : Number(v);
-  return Number.isFinite(n) ? n : 0;
+  const n = typeof v === 'number' ? v : Number(v)
+  return Number.isFinite(n) ? n : 0
 }
-const clampDeg = (d: number) => Math.max(-1080, Math.min(1080, d));
+const clampDeg = (d: number) => Math.max(-1080, Math.min(1080, d))
 
 function normalize(raw: unknown): UnitCircleP {
-  const r = (raw ?? {}) as Partial<UnitCircleP>;
+  const r = (raw ?? {}) as Partial<UnitCircleP>
   return {
     angle: clampDeg(r.angle == null ? 45 : num(r.angle)),
     showSin: r.showSin == null ? true : !!r.showSin,
@@ -46,116 +46,111 @@ function normalize(raw: unknown): UnitCircleP {
     showTan: !!r.showTan,
     radians: !!r.radians,
     sweep: r.sweep == null ? true : !!r.sweep,
-  };
+  }
 }
 
 /** deg from args that may be {deg}, bare number/string, or garbage. */
 function argDeg(args: unknown, fallback: number): number {
-  const o = args && typeof args === 'object' ? (args as Record<string, unknown>) : null;
-  if (o && o.deg != null) return num(o.deg);
-  if (typeof args === 'number' || typeof args === 'string') return num(args);
-  return fallback;
+  const o = args && typeof args === 'object' ? (args as Record<string, unknown>) : null
+  if (o && o.deg != null) return num(o.deg)
+  if (typeof args === 'number' || typeof args === 'string') return num(args)
+  return fallback
 }
 function argOn(args: unknown, current: boolean): boolean {
-  const o = args && typeof args === 'object' ? (args as Record<string, unknown>) : null;
-  if (o && o.on != null) return !!o.on;
-  return !current; // default: toggle
+  const o = args && typeof args === 'object' ? (args as Record<string, unknown>) : null
+  if (o && o.on != null) return !!o.on
+  return !current // default: toggle
 }
 
 const verbs: Manipulative<UnitCircleP>['verbs'] = {
   setAngle(p, args): VerbClip<UnitCircleP> {
-    return tween(p, { ...p, angle: clampDeg(argDeg(args, p.angle)) }, 0.7, 'easeInOutCubic');
+    return tween(p, { ...p, angle: clampDeg(argDeg(args, p.angle)) }, 0.7, 'easeInOutCubic')
   },
   showSin(p, args): VerbClip<UnitCircleP> {
-    return tween(p, { ...p, showSin: argOn(args, p.showSin) }, 0.35, 'easeOutCubic');
+    return tween(p, { ...p, showSin: argOn(args, p.showSin) }, 0.35, 'easeOutCubic')
   },
   showCos(p, args): VerbClip<UnitCircleP> {
-    return tween(p, { ...p, showCos: argOn(args, p.showCos) }, 0.35, 'easeOutCubic');
+    return tween(p, { ...p, showCos: argOn(args, p.showCos) }, 0.35, 'easeOutCubic')
   },
   showTan(p, args): VerbClip<UnitCircleP> {
-    return tween(p, { ...p, showTan: argOn(args, p.showTan) }, 0.35, 'easeOutCubic');
+    return tween(p, { ...p, showTan: argOn(args, p.showTan) }, 0.35, 'easeOutCubic')
   },
   toRadians(p): VerbClip<UnitCircleP> {
-    return tween(p, { ...p, radians: true }, 0.3, 'easeOutCubic');
+    return tween(p, { ...p, radians: true }, 0.3, 'easeOutCubic')
   },
   toDegrees(p): VerbClip<UnitCircleP> {
-    return tween(p, { ...p, radians: false }, 0.3, 'easeOutCubic');
+    return tween(p, { ...p, radians: false }, 0.3, 'easeOutCubic')
   },
-};
+}
 
 /* ------------------------------------------------------------------ helpers */
 
 function gcd(a: number, b: number): number {
-  a = Math.abs(Math.round(a));
-  b = Math.abs(Math.round(b));
+  a = Math.abs(Math.round(a))
+  b = Math.abs(Math.round(b))
   while (b) {
-    const t = a % b;
-    a = b;
-    b = t;
+    const t = a % b
+    a = b
+    b = t
   }
-  return a || 1;
+  return a || 1
 }
 
 /** "45°" or clean π-fraction ("π/4", "2π/3", "-π/2"); decimal ×π fallback. */
 export function angleLabel(deg: number, radians: boolean): string {
-  if (!radians) return `${Math.round(deg)}°`;
-  const n = Math.round(deg);
+  if (!radians) return `${Math.round(deg)}°`
+  const n = Math.round(deg)
   if (Math.abs(deg - n) < 1e-6 && n !== 0) {
-    const g = gcd(n, 180);
+    const g = gcd(n, 180)
     const nu = n / g,
-      de = 180 / g;
+      de = 180 / g
     if (de <= 12) {
-      const core = de === 1 ? 'π' : `π/${de}`;
-      if (nu === 1) return core;
-      if (nu === -1) return `-${core}`;
-      return de === 1 ? `${nu}π` : `${nu}π/${de}`;
+      const core = de === 1 ? 'π' : `π/${de}`
+      if (nu === 1) return core
+      if (nu === -1) return `-${core}`
+      return de === 1 ? `${nu}π` : `${nu}π/${de}`
     }
   }
-  if (Math.abs(deg) < 1e-6) return '0';
-  return `${fmt(deg / 180)}π`;
+  if (Math.abs(deg) < 1e-6) return '0'
+  return `${fmt(deg / 180)}π`
 }
 
 /** Circle geometry — keep in sync with the "unitcircle" onDrag in interactions. */
 function geom(box: { w: number; h: number }) {
-  const portrait = box.h > box.w;
-  const cx = portrait ? box.w * 0.5 : box.w * 0.34;
-  const cy = portrait ? box.h * 0.3 : box.h * 0.5;
-  const r = portrait ? Math.min(box.w * 0.38, box.h * 0.26) : Math.min(box.w * 0.26, box.h * 0.4);
-  return { portrait, cx, cy, r };
+  const portrait = box.h > box.w
+  const cx = portrait ? box.w * 0.5 : box.w * 0.34
+  const cy = portrait ? box.h * 0.3 : box.h * 0.5
+  const r = portrait ? Math.min(box.w * 0.38, box.h * 0.26) : Math.min(box.w * 0.26, box.h * 0.4)
+  return { portrait, cx, cy, r }
 }
 
 /* ------------------------------------------------------------------- render */
 
-function render(
-  _params: UnitCircleP,
-  state: ManipState<UnitCircleP>,
-  t: number,
-  ctx: RenderCtx,
-): ManipModel {
-  const { box } = ctx;
-  const seg = activeSegment(state, t);
+function render(_params: UnitCircleP, state: ManipState<UnitCircleP>, t: number, ctx: RenderCtx): ManipModel {
+  const { box } = ctx
+  const seg = activeSegment(state, t)
   const A = seg.from,
     B = seg.to,
-    p = seg.p;
-  const { portrait, cx, cy, r } = geom(box);
-  const S = Math.min(box.w, box.h);
-  const prims: Prim[] = [];
+    p = seg.p
+  const { portrait, cx, cy, r } = geom(box)
+  const S = Math.min(box.w, box.h)
+  const prims: Prim[] = []
 
   // live interpolated angle → every value below derives from it
-  const deg = lerp(A.angle, B.angle, p);
-  const rad = (deg * Math.PI) / 180;
-  const sinv = Math.sin(rad);
-  const cosv = Math.cos(rad);
-  const tanRaw = cosv === 0 ? (sinv >= 0 ? Infinity : -Infinity) : sinv / cosv;
-  const tanFin = Number.isFinite(tanRaw) ? tanRaw : sinv >= 0 ? 1e6 : -1e6;
-  const px = cx + r * cosv;
-  const py = cy - r * sinv; // SVG y-axis is DOWN: counterclockwise ⇒ y = cy − r·sin
+  const deg = lerp(A.angle, B.angle, p)
+  const rad = (deg * Math.PI) / 180
+  const sinv = Math.sin(rad)
+  const cosv = Math.cos(rad)
+  const tanRaw = cosv === 0 ? (sinv >= 0 ? Infinity : -Infinity) : sinv / cosv
+  const tanFin = Number.isFinite(tanRaw) ? tanRaw : sinv >= 0 ? 1e6 : -1e6
+  const px = cx + r * cosv
+  const py = cy - r * sinv // SVG y-axis is DOWN: counterclockwise ⇒ y = cy − r·sin
 
-  const flag = (a: boolean, b: boolean) => (a === b ? (b ? 1 : 0) : b ? p : 1 - p);
-  const sinOp = flag(A.showSin, B.showSin);
-  const cosOp = flag(A.showCos, B.showCos);
-  const tanOp = flag(A.showTan, B.showTan);
-  const sweepOp = flag(A.sweep, B.sweep);
+  const flag = (a: boolean, b: boolean) => (a === b ? (b ? 1 : 0) : b ? p : 1 - p)
+  const sinOp = flag(A.showSin, B.showSin)
+  const cosOp = flag(A.showCos, B.showCos)
+  const tanOp = flag(A.showTan, B.showTan)
+  const sweepOp = flag(A.sweep, B.sweep)
 
   // axes + unit ticks
   prims.push({
@@ -167,7 +162,7 @@ function render(
     color: TOK.soft,
     weight: 'sm',
     z: 1,
-  });
+  })
   prims.push({
     k: 'line',
     x1: cx,
@@ -177,8 +172,8 @@ function render(
     color: TOK.soft,
     weight: 'sm',
     z: 1,
-  });
-  const tick = S * 0.012;
+  })
+  const tick = S * 0.012
   for (const [tx, ty, lbl, lx, ly] of [
     [cx + r, cy, '1', cx + r, cy + S * 0.045],
     [cx - r, cy, '-1', cx - r, cy + S * 0.045],
@@ -194,7 +189,7 @@ function render(
       color: TOK.soft,
       weight: 'sm',
       z: 1,
-    });
+    })
     prims.push({
       k: 'label',
       x: lx,
@@ -205,25 +200,25 @@ function render(
       align: 'middle',
       baseline: 'middle',
       z: 2,
-    });
+    })
   }
 
   // the circle
-  prims.push({ k: 'circle', cx, cy, r, fill: 'none', color: TOK.ink, weight: 'sm', z: 2 });
+  prims.push({ k: 'circle', cx, cy, r, fill: 'none', color: TOK.ink, weight: 'sm', z: 2 })
 
   // quadrant sin/cos signs (faint; current quadrant emphasised)
-  const qNow = Math.floor((((deg % 360) + 360) % 360) / 90) % 4;
+  const qNow = Math.floor((((deg % 360) + 360) % 360) / 90) % 4
   const QS: [number, number][] = [
     [1, 1],
     [-1, 1],
     [-1, -1],
     [1, -1],
-  ];
+  ]
   QS.forEach(([qx, qy], i) => {
-    const active = i === qNow;
-    const bx = cx + qx * r * 0.55;
-    const by = cy - qy * r * 0.55;
-    const op = active ? 0.85 : 0.25;
+    const active = i === qNow
+    const bx = cx + qx * r * 0.55
+    const by = cy - qy * r * 0.55
+    const op = active ? 0.85 : 0.25
     prims.push({
       k: 'label',
       x: bx - S * 0.02,
@@ -235,7 +230,7 @@ function render(
       baseline: 'middle',
       opacity: op,
       z: 2,
-    });
+    })
     prims.push({
       k: 'label',
       x: bx + S * 0.02,
@@ -247,17 +242,17 @@ function render(
       baseline: 'middle',
       opacity: op,
       z: 2,
-    });
-  });
+    })
+  })
 
   // swept angle arc from 0° to the live angle (handles negatives + >360)
   if (sweepOp > 0.01 && Math.abs(deg) > 0.5) {
-    const rA = r * 0.24;
-    const N = Math.max(16, Math.min(256, Math.ceil(Math.abs(deg) / 4)));
-    let d = '';
+    const rA = r * 0.24
+    const N = Math.max(16, Math.min(256, Math.ceil(Math.abs(deg) / 4)))
+    let d = ''
     for (let i = 0; i <= N; i++) {
-      const a = (rad * i) / N;
-      d += `${i === 0 ? 'M' : 'L'} ${(cx + Math.cos(a) * rA).toFixed(2)} ${(cy - Math.sin(a) * rA).toFixed(2)} `;
+      const a = (rad * i) / N
+      d += `${i === 0 ? 'M' : 'L'} ${(cx + Math.cos(a) * rA).toFixed(2)} ${(cy - Math.sin(a) * rA).toFixed(2)} `
     }
     prims.push({
       k: 'path',
@@ -267,10 +262,10 @@ function render(
       weight: 'md',
       opacity: sweepOp,
       z: 4,
-    });
+    })
   }
   // angle value label near the mid-sweep
-  const midA = rad / 2;
+  const midA = rad / 2
   prims.push({
     k: 'label',
     x: cx + Math.cos(midA) * r * 0.45,
@@ -281,7 +276,7 @@ function render(
     align: 'middle',
     baseline: 'middle',
     z: 6,
-  });
+  })
 
   // cos: horizontal run along the axis (drawn under the sin drop)
   if (cosOp > 0.01) {
@@ -296,7 +291,7 @@ function render(
       cap: 'round',
       opacity: cosOp,
       z: 3,
-    });
+    })
     if (Math.abs(cosv) > 0.05) {
       prims.push({
         k: 'label',
@@ -309,7 +304,7 @@ function render(
         baseline: 'middle',
         opacity: cosOp,
         z: 6,
-      });
+      })
     }
   }
   // sin: vertical drop from the point to the x-axis
@@ -325,7 +320,7 @@ function render(
       cap: 'round',
       opacity: sinOp,
       z: 4,
-    });
+    })
     if (Math.abs(sinv) > 0.05) {
       prims.push({
         k: 'label',
@@ -338,16 +333,16 @@ function render(
         baseline: 'middle',
         opacity: sinOp,
         z: 6,
-      });
+      })
     }
   }
 
   // tan: the vertical tangent line at x = 1 and the segment it cuts
   if (tanOp > 0.01) {
-    const tanC = Math.max(-3, Math.min(3, tanFin)); // clamp the DRAWN segment
-    let tanY = cy - r * tanC;
-    tanY = Math.max(box.h * 0.03, Math.min(box.h * 0.97, tanY));
-    const far = Math.abs(tanFin) > 3;
+    const tanC = Math.max(-3, Math.min(3, tanFin)) // clamp the DRAWN segment
+    let tanY = cy - r * tanC
+    tanY = Math.max(box.h * 0.03, Math.min(box.h * 0.97, tanY))
+    const far = Math.abs(tanFin) > 3
     prims.push({
       k: 'line',
       x1: cx + r,
@@ -359,7 +354,7 @@ function render(
       dash: 5,
       opacity: tanOp,
       z: 2,
-    });
+    })
     // extended diameter through the point meets the tangent line at y = −tan
     prims.push({
       k: 'line',
@@ -372,7 +367,7 @@ function render(
       dash: 6,
       opacity: tanOp * 0.55,
       z: 3,
-    });
+    })
     prims.push({
       k: 'line',
       x1: cx + r,
@@ -385,8 +380,8 @@ function render(
       dash: far ? 8 : undefined,
       opacity: tanOp,
       z: 4,
-    });
-    const tanTxt = Math.abs(tanFin) > 99.5 ? (tanFin > 0 ? '∞' : '-∞') : fmt(tanFin);
+    })
+    const tanTxt = Math.abs(tanFin) > 99.5 ? (tanFin > 0 ? '∞' : '-∞') : fmt(tanFin)
     prims.push({
       k: 'label',
       x: cx + r,
@@ -398,7 +393,7 @@ function render(
       baseline: 'middle',
       opacity: tanOp,
       z: 6,
-    });
+    })
   }
 
   // radius + point on the circle
@@ -412,7 +407,7 @@ function render(
     weight: 'md',
     cap: 'round',
     z: 5,
-  });
+  })
   prims.push({
     k: 'circle',
     cx: px,
@@ -422,21 +417,21 @@ function render(
     color: TOK.ink,
     weight: 'sm',
     z: 6,
-  });
+  })
 
   // legend: live computed values (fixed rows; hidden ones fade via opacity)
-  const tanTxtL = Math.abs(tanFin) > 99.5 ? (tanFin > 0 ? '∞' : '-∞') : fmt(tanFin);
+  const tanTxtL = Math.abs(tanFin) > 99.5 ? (tanFin > 0 ? '∞' : '-∞') : fmt(tanFin)
   const rows: { text: string; color: string; op: number }[] = [
     { text: `θ = ${angleLabel(deg, B.radians)}`, color: TOK.ink, op: 1 },
     { text: `sin θ = ${fmt(sinv)}`, color: TOK.accent, op: sinOp },
     { text: `cos θ = ${fmt(cosv)}`, color: TOK.accent2, op: cosOp },
     { text: `tan θ = ${tanTxtL}`, color: TOK.warn, op: tanOp },
-  ];
-  const lx = portrait ? box.w * 0.14 : box.w * 0.7;
-  const ly0 = portrait ? cy + r + box.h * 0.05 : box.h * 0.22;
-  const lgap = portrait ? box.h * 0.052 : box.h * 0.13;
+  ]
+  const lx = portrait ? box.w * 0.14 : box.w * 0.7
+  const ly0 = portrait ? cy + r + box.h * 0.05 : box.h * 0.22
+  const lgap = portrait ? box.h * 0.052 : box.h * 0.13
   rows.forEach((row, i) => {
-    if (row.op < 0.01) return;
+    if (row.op < 0.01) return
     prims.push({
       k: 'label',
       x: lx,
@@ -448,10 +443,10 @@ function render(
       baseline: 'middle',
       opacity: row.op,
       z: 6,
-    });
-  });
+    })
+  })
 
-  return { prims, view: box };
+  return { prims, view: box }
 }
 
 export const UnitCircle: Manipulative<UnitCircleP> = {
@@ -460,4 +455,4 @@ export const UnitCircle: Manipulative<UnitCircleP> = {
   normalize,
   render,
   verbs,
-};
+}

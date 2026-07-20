@@ -1,6 +1,6 @@
-import { buildTreePath, normalizeTagSlug, pathToIds, type LocalizedText } from '@bingoo/core';
-import { db } from '@bingoo/db';
-import type { TagKind, TagRelType } from '@bingoo/db';
+import { buildTreePath, normalizeTagSlug, pathToIds, type LocalizedText } from '@bingoo/core'
+import { db } from '@bingoo/db'
+import type { TagKind, TagRelType } from '@bingoo/db'
 
 /**
  * Tag taxonomy (docs/media-library-design.md §3.6) — a hierarchical controlled
@@ -12,30 +12,30 @@ import type { TagKind, TagRelType } from '@bingoo/db';
  */
 
 export interface UpsertTagInput {
-  slug?: string; // defaults to a normalised label
-  kind: TagKind;
-  label: LocalizedText;
-  description?: LocalizedText;
-  parentId?: string | null;
-  externalRef?: string | null;
+  slug?: string // defaults to a normalised label
+  kind: TagKind
+  label: LocalizedText
+  description?: LocalizedText
+  parentId?: string | null
+  externalRef?: string | null
 }
 
 /** Create or update a tag by slug, maintaining its materialised path. */
 export async function upsertTag(input: UpsertTagInput) {
-  const slug = normalizeTagSlug(input.slug ?? input.label.en ?? input.label.vi ?? '');
-  if (!slug) throw new Error('tag slug is empty');
+  const slug = normalizeTagSlug(input.slug ?? input.label.en ?? input.label.vi ?? '')
+  if (!slug) throw new Error('tag slug is empty')
 
-  let path = '';
+  let path = ''
   if (input.parentId) {
     const parent = await db.tag.findUnique({
       where: { id: input.parentId },
       select: { path: true },
-    });
-    if (!parent) throw new Error('parent tag not found');
-    path = parent.path; // completed with own id after create
+    })
+    if (!parent) throw new Error('parent tag not found')
+    path = parent.path // completed with own id after create
   }
 
-  const existing = await db.tag.findUnique({ where: { slug }, select: { id: true } });
+  const existing = await db.tag.findUnique({ where: { slug }, select: { id: true } })
   if (existing) {
     return db.tag.update({
       where: { slug },
@@ -47,7 +47,7 @@ export async function upsertTag(input: UpsertTagInput) {
         path: buildTreePath(path, existing.id),
         externalRef: input.externalRef ?? null,
       },
-    });
+    })
   }
 
   // Create then set path (needs the generated id).
@@ -60,22 +60,22 @@ export async function upsertTag(input: UpsertTagInput) {
       parentId: input.parentId ?? null,
       externalRef: input.externalRef ?? null,
     },
-  });
+  })
   return db.tag.update({
     where: { id: created.id },
     data: { path: buildTreePath(path, created.id) },
-  });
+  })
 }
 
 export function getTagBySlug(slug: string) {
-  return db.tag.findUnique({ where: { slug } });
+  return db.tag.findUnique({ where: { slug } })
 }
 
 export function listTags(kind?: TagKind) {
   return db.tag.findMany({
     where: kind ? { kind } : undefined,
     orderBy: [{ kind: 'asc' }, { path: 'asc' }],
-  });
+  })
 }
 
 export function relateTags(fromId: string, toId: string, relType: TagRelType, weight = 1) {
@@ -83,7 +83,7 @@ export function relateTags(fromId: string, toId: string, relType: TagRelType, we
     where: { fromId_toId_relType: { fromId, toId, relType } },
     create: { fromId, toId, relType, weight },
     update: { weight },
-  });
+  })
 }
 
 /**
@@ -92,10 +92,10 @@ export function relateTags(fromId: string, toId: string, relType: TagRelType, we
  * sub-topic. Bounded to one hop (recall vs. drift). Returns the union of slugs.
  */
 export async function expandTagSlugs(slugs: string[]): Promise<string[]> {
-  if (slugs.length === 0) return [];
-  const tags = await db.tag.findMany({ where: { slug: { in: slugs } }, select: { id: true } });
-  const ids = tags.map((t) => t.id);
-  if (ids.length === 0) return slugs;
+  if (slugs.length === 0) return []
+  const tags = await db.tag.findMany({ where: { slug: { in: slugs } }, select: { id: true } })
+  const ids = tags.map((t) => t.id)
+  if (ids.length === 0) return slugs
 
   const rels = await db.tagRelation.findMany({
     where: {
@@ -105,17 +105,17 @@ export async function expandTagSlugs(slugs: string[]): Promise<string[]> {
       ],
     },
     select: { fromId: true, toId: true },
-  });
-  const relatedIds = new Set<string>();
+  })
+  const relatedIds = new Set<string>()
   for (const r of rels) {
-    relatedIds.add(r.fromId);
-    relatedIds.add(r.toId);
+    relatedIds.add(r.fromId)
+    relatedIds.add(r.toId)
   }
   const extra = await db.tag.findMany({
     where: { id: { in: [...relatedIds] } },
     select: { slug: true },
-  });
-  return [...new Set([...slugs, ...extra.map((t) => t.slug)])];
+  })
+  return [...new Set([...slugs, ...extra.map((t) => t.slug)])]
 }
 
 /**
@@ -127,23 +127,23 @@ export async function computeAssetKeywords(assetId: string): Promise<string[]> {
   const tags = await db.mediaTag.findMany({
     where: { assetId },
     select: { tag: { select: { slug: true, path: true } } },
-  });
-  const ancestorIds = new Set<string>();
-  for (const { tag } of tags) for (const id of pathToIds(tag.path)) ancestorIds.add(id);
+  })
+  const ancestorIds = new Set<string>()
+  for (const { tag } of tags) for (const id of pathToIds(tag.path)) ancestorIds.add(id)
 
   const ancestors = ancestorIds.size
     ? await db.tag.findMany({ where: { id: { in: [...ancestorIds] } }, select: { slug: true } })
-    : [];
+    : []
 
-  return [...new Set([...tags.map((t) => t.tag.slug), ...ancestors.map((a) => a.slug)])];
+  return [...new Set([...tags.map((t) => t.tag.slug), ...ancestors.map((a) => a.slug)])]
 }
 
 export interface SetAssetTagsInput {
-  assetId: string;
-  tagIds: string[];
-  source?: 'MANUAL' | 'AI' | 'IMPORT';
-  confidence?: number | null;
-  addedById?: string | null;
+  assetId: string
+  tagIds: string[]
+  source?: 'MANUAL' | 'AI' | 'IMPORT'
+  confidence?: number | null
+  addedById?: string | null
 }
 
 /** Attach tags to an asset (idempotent) and refresh its keyword projection. */
@@ -158,16 +158,16 @@ export async function addAssetTags(input: SetAssetTagsInput): Promise<string[]> 
         addedById: input.addedById ?? null,
       })),
       skipDuplicates: true,
-    });
+    })
   }
-  const keywords = await computeAssetKeywords(input.assetId);
-  await db.mediaAsset.update({ where: { id: input.assetId }, data: { keywords } });
-  return keywords;
+  const keywords = await computeAssetKeywords(input.assetId)
+  await db.mediaAsset.update({ where: { id: input.assetId }, data: { keywords } })
+  return keywords
 }
 
 export async function removeAssetTag(assetId: string, tagId: string): Promise<string[]> {
-  await db.mediaTag.deleteMany({ where: { assetId, tagId } });
-  const keywords = await computeAssetKeywords(assetId);
-  await db.mediaAsset.update({ where: { id: assetId }, data: { keywords } });
-  return keywords;
+  await db.mediaTag.deleteMany({ where: { assetId, tagId } })
+  const keywords = await computeAssetKeywords(assetId)
+  await db.mediaAsset.update({ where: { id: assetId }, data: { keywords } })
+  return keywords
 }

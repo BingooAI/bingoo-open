@@ -1,16 +1,16 @@
-import { ChevronRight } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { ChevronRight } from 'lucide-react'
+import type { ReactNode } from 'react'
 
 export interface Crumb {
-  id: string;
-  label: ReactNode;
-  href?: string;
+  id: string
+  label: ReactNode
+  href?: string
 }
 
 export interface BreadcrumbsProps {
-  items: Crumb[];
+  items: Crumb[]
   /** Accessible label for the nav landmark. */
-  ariaLabel?: string;
+  ariaLabel?: string
 }
 
 /**
@@ -22,7 +22,7 @@ export function Breadcrumbs({ items, ariaLabel = 'Breadcrumb' }: BreadcrumbsProp
     <nav aria-label={ariaLabel}>
       <ol className="flex flex-wrap items-center gap-1 text-sm">
         {items.map((c, i) => {
-          const last = i === items.length - 1;
+          const last = i === items.length - 1
           return (
             <li key={c.id} className="flex items-center gap-1">
               {c.href && !last ? (
@@ -40,13 +40,11 @@ export function Breadcrumbs({ items, ariaLabel = 'Breadcrumb' }: BreadcrumbsProp
                   {c.label}
                 </span>
               )}
-              {!last ? (
-                <ChevronRight className="size-3.5 text-foreground-subtle" aria-hidden />
-              ) : null}
+              {!last ? <ChevronRight className="size-3.5 text-foreground-subtle" aria-hidden /> : null}
             </li>
-          );
+          )
         })}
       </ol>
     </nav>
-  );
+  )
 }

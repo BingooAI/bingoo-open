@@ -21,7 +21,7 @@
  * renders all 55 (verified: 55/55). So the only thing that was ever missing was
  * telling the model what each one LOOKS LIKE.
  */
-import { QuizQuestion } from '@bingoo/core';
+import { QuizQuestion } from '@bingoo/core'
 
 /** Fields shared by every question — documented once, not 55 times. */
 const BASE_FIELDS = new Set([
@@ -35,88 +35,86 @@ const BASE_FIELDS = new Set([
   'teach',
   'explanation',
   'tags',
-]);
+])
 
-type Field = { name: string; type: string; optional: boolean; desc?: string };
-export type QuizDoc = { type: string; fields: Field[] };
+type Field = { name: string; type: string; optional: boolean; desc?: string }
+export type QuizDoc = { type: string; fields: Field[] }
 
 /* zod v4 internals — introspection only, never validation. */
 type ZodLike = {
   _zod?: {
     def?: {
-      type?: string;
-      innerType?: ZodLike;
-      element?: ZodLike;
-      shape?: Record<string, ZodLike>;
-      values?: unknown[];
-      entries?: Record<string, unknown>;
-    };
-  };
-  description?: string;
-  def?: { type?: string; innerType?: ZodLike; element?: ZodLike; shape?: Record<string, ZodLike> };
-};
+      type?: string
+      innerType?: ZodLike
+      element?: ZodLike
+      shape?: Record<string, ZodLike>
+      values?: unknown[]
+      entries?: Record<string, unknown>
+    }
+  }
+  description?: string
+  def?: { type?: string; innerType?: ZodLike; element?: ZodLike; shape?: Record<string, ZodLike> }
+}
 
-const defOf = (z: ZodLike) => z._zod?.def ?? z.def ?? {};
+const defOf = (z: ZodLike) => z._zod?.def ?? z.def ?? {}
 
 /** A compact, human-readable type string for one field. */
 function typeStr(z: ZodLike, depth = 0): string {
-  if (depth > 3) return '…';
+  if (depth > 3) return '…'
   const d = defOf(z) as {
-    type?: string;
-    innerType?: ZodLike;
-    element?: ZodLike;
-    shape?: Record<string, ZodLike>;
-    values?: unknown[];
-  };
+    type?: string
+    innerType?: ZodLike
+    element?: ZodLike
+    shape?: Record<string, ZodLike>
+    values?: unknown[]
+  }
   switch (d.type) {
     case 'optional':
     case 'nullable':
     case 'default':
-      return d.innerType ? typeStr(d.innerType, depth) : 'any';
+      return d.innerType ? typeStr(d.innerType, depth) : 'any'
     case 'array':
-      return d.element ? `${typeStr(d.element, depth + 1)}[]` : 'any[]';
+      return d.element ? `${typeStr(d.element, depth + 1)}[]` : 'any[]'
     case 'object': {
-      const keys = Object.keys(d.shape ?? {});
-      return keys.length ? `{${keys.join(',')}}` : '{}';
+      const keys = Object.keys(d.shape ?? {})
+      return keys.length ? `{${keys.join(',')}}` : '{}'
     }
     case 'literal':
-      return d.values?.length ? JSON.stringify(d.values[0]) : 'literal';
+      return d.values?.length ? JSON.stringify(d.values[0]) : 'literal'
     case 'enum': {
-      const vals = Object.keys((d as { entries?: Record<string, unknown> }).entries ?? {});
-      return vals.length ? vals.join('|') : 'enum';
+      const vals = Object.keys((d as { entries?: Record<string, unknown> }).entries ?? {})
+      return vals.length ? vals.join('|') : 'enum'
     }
     case 'record':
-      return '{ [id]: value }';
+      return '{ [id]: value }'
     case 'union':
-      return 'union';
+      return 'union'
     default:
-      return d.type ?? 'any';
+      return d.type ?? 'any'
   }
 }
 
 const isOptional = (z: ZodLike) => {
-  const t = (defOf(z) as { type?: string }).type;
-  return t === 'optional' || t === 'default' || t === 'nullable';
-};
+  const t = (defOf(z) as { type?: string }).type
+  return t === 'optional' || t === 'default' || t === 'nullable'
+}
 
-let CACHE: QuizDoc[] | null = null;
+let CACHE: QuizDoc[] | null = null
 
 /** Every question type with the fields it actually requires. */
 export function quizDocs(): QuizDoc[] {
-  if (CACHE) return CACHE;
+  if (CACHE) return CACHE
   // QuizQuestion is a superRefine wrapper; the union sits inside it.
   const eff = QuizQuestion as unknown as {
-    _def?: { schema?: unknown };
-    def?: { schema?: unknown };
-  };
-  const inner = (eff._def?.schema ?? eff.def?.schema ?? QuizQuestion) as { options?: unknown[] };
-  const options = (inner.options ?? []) as { shape?: Record<string, ZodLike> }[];
+    _def?: { schema?: unknown }
+    def?: { schema?: unknown }
+  }
+  const inner = (eff._def?.schema ?? eff.def?.schema ?? QuizQuestion) as { options?: unknown[] }
+  const options = (inner.options ?? []) as { shape?: Record<string, ZodLike> }[]
 
   CACHE = options.map((opt) => {
-    const shape = opt.shape ?? {};
-    const type = String(
-      (defOf(shape.type as ZodLike) as { values?: unknown[] }).values?.[0] ?? '?',
-    );
+    const shape = opt.shape ?? {}
+    const type = String((defOf(shape.type as ZodLike) as { values?: unknown[] }).values?.[0] ?? '?')
     const fields: Field[] = Object.entries(shape)
       .filter(([k]) => k !== 'type' && !BASE_FIELDS.has(k))
       .map(([name, z]) => ({
@@ -124,44 +122,35 @@ export function quizDocs(): QuizDoc[] {
         type: typeStr(z),
         optional: isOptional(z),
         ...(z.description ? { desc: z.description } : {}),
-      }));
-    return { type, fields };
-  });
-  return CACHE;
+      }))
+    return { type, fields }
+  })
+  return CACHE
 }
 
 /** The question-type reference for the authoring brief. GENERATED. */
 /** The types worth documenting in FULL for a compact brief — the rest are named. */
-const COMMON_QUIZ = [
-  'single',
-  'multiple',
-  'boolean',
-  'order',
-  'match',
-  'categorize',
-  'numberline',
-  'fill',
-];
+const COMMON_QUIZ = ['single', 'multiple', 'boolean', 'order', 'match', 'categorize', 'numberline', 'fill']
 
 export function quizGuide(brief = false): string {
-  const docs = quizDocs();
-  const shown = brief ? docs.filter((d) => COMMON_QUIZ.includes(d.type)) : docs;
-  const lines: string[] = [];
+  const docs = quizDocs()
+  const shown = brief ? docs.filter((d) => COMMON_QUIZ.includes(d.type)) : docs
+  const lines: string[] = []
   lines.push(
     `${docs.length} loại câu hỏi, tất cả chấm được bằng code (\`gradeQuestion\`). Mỗi câu cần \`id\` và nên có \`prompt\`; ` +
       `các trường riêng của từng loại ở dưới (dấu \`?\` = không bắt buộc).`,
-  );
-  lines.push('');
+  )
+  lines.push('')
   for (const d of shown) {
     const fields = d.fields
       .map((f) => `\`${f.name}${f.optional ? '?' : ''}\`: ${f.type}${f.desc ? ` — ${f.desc}` : ''}`)
-      .join('\n  - ');
-    lines.push(`- **\`${d.type}\`**`);
-    if (fields) lines.push(`  - ${fields}`);
+      .join('\n  - ')
+    lines.push(`- **\`${d.type}\`**`)
+    if (fields) lines.push(`  - ${fields}`)
   }
   if (brief) {
-    const rest = docs.filter((d) => !COMMON_QUIZ.includes(d.type)).map((d) => `\`${d.type}\``);
-    lines.push('', `Loại khác (shape đầy đủ trong file reference): ${rest.join(' · ')}.`);
+    const rest = docs.filter((d) => !COMMON_QUIZ.includes(d.type)).map((d) => `\`${d.type}\``)
+    lines.push('', `Loại khác (shape đầy đủ trong file reference): ${rest.join(' · ')}.`)
   }
-  return lines.join('\n');
+  return lines.join('\n')
 }

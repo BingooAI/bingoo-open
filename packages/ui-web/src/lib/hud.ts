@@ -7,5 +7,5 @@
 export function hudSurfaceClass(onMedia?: boolean): string {
   return onMedia
     ? 'bg-black/35 text-white backdrop-blur-md border border-white/15'
-    : 'bg-surface text-foreground border border-border';
+    : 'bg-surface text-foreground border border-border'
 }

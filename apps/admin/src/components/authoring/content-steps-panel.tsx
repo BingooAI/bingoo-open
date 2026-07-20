@@ -1,16 +1,11 @@
-'use client';
+'use client'
 
-import { Component, useState, type ReactNode } from 'react';
-import { useTranslations } from 'next-intl';
-import { Badge, Button, QuizShell, useToast } from '@bingoo/ui-web';
-import type { QuizQuestion } from '@bingoo/core';
-import {
-  InteractiveManipulative,
-  VI_QUIZ_LABELS,
-  checkAnswer,
-  defaultTheme,
-} from '@bingoo/explainer-web';
-import { Check, ChevronDown, Plus, Sparkles, Wand2, X } from 'lucide-react';
+import { Component, useState, type ReactNode } from 'react'
+import { useTranslations } from 'next-intl'
+import { Badge, Button, QuizShell, useToast } from '@bingoo/ui-web'
+import type { QuizQuestion } from '@bingoo/core'
+import { InteractiveManipulative, VI_QUIZ_LABELS, checkAnswer, defaultTheme } from '@bingoo/explainer-web'
+import { Check, ChevronDown, Plus, Sparkles, Wand2, X } from 'lucide-react'
 import {
   useAllPrimitives,
   useApproveItemsFor,
@@ -24,9 +19,9 @@ import {
   type PrimitiveRecoDto,
   type LessonPlanResultDto,
   type LessonStepDto,
-} from '@/lib/authoring-queries';
-import { cn } from '@/lib/cn';
-import { MediaAttach } from './media-attach';
+} from '@/lib/authoring-queries'
+import { cn } from '@/lib/cn'
+import { MediaAttach } from './media-attach'
 
 /**
  * KHU SOẠN NỘI DUNG theo CONTENT STEP (từ kế hoạch kcArcs). KHÔNG batch:
@@ -35,10 +30,10 @@ import { MediaAttach } from './media-attach';
  *  · sinh TỪNG item (đa ngôn ngữ, default áp chung mọi step) → LIVE PREVIEW tương tác → duyệt/từ chối/sinh lại
  */
 
-const OFFERED_LOCALES = ['vi', 'en', 'fr', 'es', 'zh', 'ja', 'ko', 'th'];
-const bare = (k: string): string => k.replace(/^manip:/, '');
-const isKit = (k: string): boolean => k.startsWith('manip:');
-const loc = (t?: Record<string, string>): string => (t ? (t.vi ?? t.en ?? '') : '');
+const OFFERED_LOCALES = ['vi', 'en', 'fr', 'es', 'zh', 'ja', 'ko', 'th']
+const bare = (k: string): string => k.replace(/^manip:/, '')
+const isKit = (k: string): boolean => k.startsWith('manip:')
+const loc = (t?: Record<string, string>): string => (t ? (t.vi ?? t.en ?? '') : '')
 
 /**
  * Params khởi tạo cho LIVE PREVIEW kit. Kit ảnh-vật (count/tenframe/subitize…) thường bắt đầu RỖNG —
@@ -48,37 +43,34 @@ const loc = (t?: Record<string, string>): string => (t ? (t.vi ?? t.en ?? '') : 
  * gộp an toàn cho mọi kit; kit đã đầy sẵn (comparegroups/addstory) không đổi gì đáng kể.
  */
 function kitPreviewParams(payload: Record<string, unknown>): unknown {
-  const params = payload.params;
-  if (!params || typeof params !== 'object') return params;
-  const assets = (params as { assets?: unknown }).assets;
-  const hasImage = assets && typeof assets === 'object' && Object.keys(assets).length > 0;
-  const target = payload.target;
+  const params = payload.params
+  if (!params || typeof params !== 'object') return params
+  const assets = (params as { assets?: unknown }).assets
+  const hasImage = assets && typeof assets === 'object' && Object.keys(assets).length > 0
+  const target = payload.target
   if (hasImage && target && typeof target === 'object')
-    return { ...(params as object), ...(target as object) };
-  return params;
+    return { ...(params as object), ...(target as object) }
+  return params
 }
 
 /** Gộp brief step (role + brief + mustCover) làm GROUNDING cho sinh content — bám đúng ý đồ step. */
 function composeBrief(step: LessonStepDto, kc: string): string {
-  const parts = [`ROLE: ${step.role}`, `KC: ${kc}`];
-  const b = loc(step.brief) || (step.brief?.en ?? '');
-  if (b) parts.push(`BRIEF: ${b}`);
-  const mc = (step.mustCover ?? []).map((m) => loc(m)).filter(Boolean);
-  if (mc.length) parts.push(`MUST COVER: ${mc.join('; ')}`);
-  return parts.join('\n');
+  const parts = [`ROLE: ${step.role}`, `KC: ${kc}`]
+  const b = loc(step.brief) || (step.brief?.en ?? '')
+  if (b) parts.push(`BRIEF: ${b}`)
+  const mc = (step.mustCover ?? []).map((m) => loc(m)).filter(Boolean)
+  if (mc.length) parts.push(`MUST COVER: ${mc.join('; ')}`)
+  return parts.join('\n')
 }
 
 /** Chặn preview payload lỗi làm sập cả trang. */
-class PreviewBoundary extends Component<
-  { children: ReactNode; fallback: ReactNode },
-  { err: boolean }
-> {
-  override state = { err: false };
+class PreviewBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { err: boolean }> {
+  override state = { err: false }
   override componentDidCatch() {
-    this.setState({ err: true });
+    this.setState({ err: true })
   }
   override render() {
-    return this.state.err ? this.props.fallback : this.props.children;
+    return this.state.err ? this.props.fallback : this.props.children
   }
 }
 
@@ -87,21 +79,21 @@ export function ContentStepsPanel({
   lessonSlug,
   plan,
 }: {
-  courseSlug: string;
-  lessonSlug: string;
-  plan: LessonPlanResultDto;
+  courseSlug: string
+  lessonSlug: string
+  plan: LessonPlanResultDto
 }) {
-  const t = useTranslations('admin.authoring');
-  const arcs = plan.plan.kcArcs ?? [];
-  const [langs, setLangs] = useState<string[]>(['vi']);
-  const [open, setOpen] = useState<string | null>(null);
-  const itemsQ = useContentItems(undefined, lessonSlug);
-  const all = itemsQ.data ?? [];
+  const t = useTranslations('admin.authoring')
+  const arcs = plan.plan.kcArcs ?? []
+  const [langs, setLangs] = useState<string[]>(['vi'])
+  const [open, setOpen] = useState<string | null>(null)
+  const itemsQ = useContentItems(undefined, lessonSlug)
+  const all = itemsQ.data ?? []
 
   const toggleLang = (l: string) =>
-    setLangs((xs) => (xs.includes(l) ? xs.filter((x) => x !== l) : [...xs, l]));
+    setLangs((xs) => (xs.includes(l) ? xs.filter((x) => x !== l) : [...xs, l]))
 
-  if (!arcs.length) return <p className="text-xs text-foreground-subtle">{t('csNoArcs')}</p>;
+  if (!arcs.length) return <p className="text-xs text-foreground-subtle">{t('csNoArcs')}</p>
 
   return (
     <div className="space-y-3">
@@ -127,22 +119,20 @@ export function ContentStepsPanel({
               {l}
             </button>
           ))}
-          <span className="ml-1 self-center text-[11px] text-foreground-subtle">
-            {t('csEnCanonical')}
-          </span>
+          <span className="ml-1 self-center text-[11px] text-foreground-subtle">{t('csEnCanonical')}</span>
         </div>
       </div>
 
       {arcs.map((arc, ai) =>
         arc.steps.map((step, si) => {
-          const key = `${arc.kc}::${step.slug}`;
-          const kinds = (step.primitiveKinds ?? []).length ? step.primitiveKinds! : [];
+          const key = `${arc.kc}::${step.slug}`
+          const kinds = (step.primitiveKinds ?? []).length ? step.primitiveKinds! : []
           // Item thuộc ĐÚNG BƯỚC này: itemKey = `kc::stepSlug::kind::seq` → khớp bằng prefix. KHÔNG lọc
           // lỏng theo (kc+kind) nữa — đó là nguyên nhân 1 item leak ra mọi bước cùng KC (bug trùng).
-          const stepPrefix = `${key}::`;
-          const stepItems = all.filter((it) => it.itemKey.startsWith(stepPrefix));
-          const approved = stepItems.filter((i) => i.status === 'APPROVED').length;
-          const drafts = stepItems.filter((i) => i.status !== 'APPROVED').length;
+          const stepPrefix = `${key}::`
+          const stepItems = all.filter((it) => it.itemKey.startsWith(stepPrefix))
+          const approved = stepItems.filter((i) => i.status === 'APPROVED').length
+          const drafts = stepItems.filter((i) => i.status !== 'APPROVED').length
 
           return (
             <div key={key} className="rounded-xl border border-border bg-surface">
@@ -156,9 +146,7 @@ export function ContentStepsPanel({
                   {ai + 1}.{si + 1}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="text-sm font-medium text-foreground">
-                    {loc(step.title) || step.role}
-                  </span>{' '}
+                  <span className="text-sm font-medium text-foreground">{loc(step.title) || step.role}</span>{' '}
                   <span className="text-xs text-foreground-subtle">· {step.role}</span>
                 </span>
                 <StatusBadge approved={approved} drafts={drafts} t={t} />
@@ -192,11 +180,11 @@ export function ContentStepsPanel({
                 </div>
               ) : null}
             </div>
-          );
+          )
         }),
       )}
     </div>
-  );
+  )
 }
 
 function StatusBadge({
@@ -204,9 +192,9 @@ function StatusBadge({
   drafts,
   t,
 }: {
-  approved: number;
-  drafts: number;
-  t: ReturnType<typeof useTranslations>;
+  approved: number
+  drafts: number
+  t: ReturnType<typeof useTranslations>
 }) {
   if (approved > 0)
     return (
@@ -214,18 +202,18 @@ function StatusBadge({
         {t('csApprovedN', { n: approved })}
         {drafts > 0 ? ` +${drafts}` : ''}
       </Badge>
-    );
+    )
   if (drafts > 0)
     return (
       <Badge color="warning" tone="soft">
         {t('csDraftN', { n: drafts })}
       </Badge>
-    );
+    )
   return (
     <Badge color="neutral" tone="soft">
       {t('csNotGenerated')}
     </Badge>
-  );
+  )
 }
 
 function StepDetail({
@@ -233,23 +221,19 @@ function StepDetail({
   kc,
   t,
 }: {
-  step: LessonStepDto;
-  kc: string;
-  t: ReturnType<typeof useTranslations>;
+  step: LessonStepDto
+  kc: string
+  t: ReturnType<typeof useTranslations>
 }) {
   return (
     <div className="space-y-2 rounded-lg bg-surface-muted/30 p-2.5 text-xs">
       <div className="flex flex-wrap items-center gap-1.5">
         <Badge tone="soft">{t(`delivery.${step.deliveryKind}`)}</Badge>
         {step.band ? (
-          <Badge tone="soft">
-            {t.has(`band.${step.band}`) ? t(`band.${step.band}`) : step.band}
-          </Badge>
+          <Badge tone="soft">{t.has(`band.${step.band}`) ? t(`band.${step.band}`) : step.band}</Badge>
         ) : null}
         {typeof step.durationMin === 'number' && step.durationMin > 0 ? (
-          <span className="text-foreground-subtle">
-            ⏱ {t('csMinutes', { n: step.durationMin })}
-          </span>
+          <span className="text-foreground-subtle">⏱ {t('csMinutes', { n: step.durationMin })}</span>
         ) : null}
         {typeof step.itemCount === 'number' && step.itemCount > 0 ? (
           <span className="text-foreground-subtle">{t('csItemCount', { n: step.itemCount })}</span>
@@ -260,10 +244,7 @@ function StepDetail({
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="text-[10px] uppercase text-foreground-subtle">{t('csForStates')}</span>
           {step.forStates!.map((s) => (
-            <span
-              key={s}
-              className="rounded bg-accent-teal-soft px-1.5 py-0.5 text-[10px] text-accent-teal"
-            >
+            <span key={s} className="rounded bg-accent-teal-soft px-1.5 py-0.5 text-[10px] text-accent-teal">
               {t.has(`learnerState.${s}`) ? t(`learnerState.${s}`) : s}
             </span>
           ))}
@@ -292,7 +273,7 @@ function StepDetail({
         {t('csTrains')}: <code className="text-foreground-subtle">{kc}</code>
       </div>
     </div>
-  );
+  )
 }
 
 /** Độ dày ngân hàng của KC: có X / đích Y + còn thiếu N (rich-bank policy). Ẩn nếu chưa có dữ liệu. */
@@ -301,13 +282,13 @@ function DensityBadge({
   courseSlug,
   lessonSlug,
 }: {
-  kc: string;
-  courseSlug: string;
-  lessonSlug: string;
+  kc: string
+  courseSlug: string
+  lessonSlug: string
 }) {
-  const q = useContentDensity(kc, courseSlug, lessonSlug);
-  const d = q.data;
-  if (!d) return null;
+  const q = useContentDensity(kc, courseSlug, lessonSlug)
+  const d = q.data
+  if (!d) return null
   return (
     <div className="rounded-md bg-surface-muted/40 px-2 py-1 text-[11px] text-foreground-subtle">
       Ngân hàng KC: <b className="text-foreground">{d.have}</b>/{d.targetTotal} đích ·{' '}
@@ -316,7 +297,7 @@ function DensityBadge({
       </span>
       {d.representations.length ? ` · biểu diễn: ${d.representations.join('/')}` : ''}
     </div>
-  );
+  )
 }
 
 function GenerateControls({
@@ -331,57 +312,50 @@ function GenerateControls({
   existing,
   t,
 }: {
-  kc: string;
-  courseSlug: string;
-  lessonSlug: string;
-  stepSlug: string;
-  kinds: string[];
-  langs: string[];
-  band?: string;
-  brief: string;
-  existing: ContentItemDto[];
-  t: ReturnType<typeof useTranslations>;
+  kc: string
+  courseSlug: string
+  lessonSlug: string
+  stepSlug: string
+  kinds: string[]
+  langs: string[]
+  band?: string
+  brief: string
+  existing: ContentItemDto[]
+  t: ReturnType<typeof useTranslations>
 }) {
-  const { toast } = useToast();
-  const gen = useGenOneItem({ lesson: lessonSlug });
-  const [picked, setPicked] = useState<string>(kinds[0] ?? '');
-  const [showPreview, setShowPreview] = useState(false);
-  const [showPalette, setShowPalette] = useState(false);
-  const [recos, setRecos] = useState<PrimitiveRecoDto[]>([]);
-  const reco = useRecommendPrimitives();
-  const kind: string = (kinds.length ? picked || kinds[0] : picked) ?? '';
-  const infoKinds = kinds.length
-    ? [...new Set([...kinds, kind])].filter(Boolean)
-    : kind
-      ? [kind]
-      : [];
-  const infos = usePrimitiveInfos(infoKinds);
-  const palette = useAllPrimitives(showPalette);
-  const cur =
-    infos.data?.find((x) => x.kind === kind) ?? palette.data?.find((x) => x.kind === kind);
+  const { toast } = useToast()
+  const gen = useGenOneItem({ lesson: lessonSlug })
+  const [picked, setPicked] = useState<string>(kinds[0] ?? '')
+  const [showPreview, setShowPreview] = useState(false)
+  const [showPalette, setShowPalette] = useState(false)
+  const [recos, setRecos] = useState<PrimitiveRecoDto[]>([])
+  const reco = useRecommendPrimitives()
+  const kind: string = (kinds.length ? picked || kinds[0] : picked) ?? ''
+  const infoKinds = kinds.length ? [...new Set([...kinds, kind])].filter(Boolean) : kind ? [kind] : []
+  const infos = usePrimitiveInfos(infoKinds)
+  const palette = useAllPrimitives(showPalette)
+  const cur = infos.data?.find((x) => x.kind === kind) ?? palette.data?.find((x) => x.kind === kind)
   const labelFor = (k: string): string =>
-    infos.data?.find((x) => x.kind === k)?.label.vi ??
-    palette.data?.find((x) => x.kind === k)?.label.vi ??
-    k;
+    infos.data?.find((x) => x.kind === k)?.label.vi ?? palette.data?.find((x) => x.kind === k)?.label.vi ?? k
   const pick = (k: string) => {
-    setPicked(k);
-    setShowPreview(false);
-    setShowPalette(false);
-  };
+    setPicked(k)
+    setShowPreview(false)
+    setShowPalette(false)
+  }
 
   const onErr = (e: unknown) =>
     toast({
       variant: 'danger',
       title: t('failed'),
       description: e instanceof Error ? e.message : String(e),
-    });
+    })
 
   const run = (newItem: boolean) => {
     if (!kind) {
-      toast({ variant: 'danger', title: t('csPickKind') });
-      return;
+      toast({ variant: 'danger', title: t('csPickKind') })
+      return
     }
-    const seq = newItem ? existing.filter((i) => bare(i.primitiveKind) === bare(kind)).length : 0;
+    const seq = newItem ? existing.filter((i) => bare(i.primitiveKind) === bare(kind)).length : 0
     gen.mutate(
       {
         kc,
@@ -395,8 +369,8 @@ function GenerateControls({
         ...(band ? { band } : {}),
       },
       { onError: onErr },
-    );
-  };
+    )
+  }
 
   return (
     <div className="space-y-2">
@@ -440,8 +414,8 @@ function GenerateControls({
               { kc, brief, ...(band ? { band } : {}) },
               {
                 onSuccess: (r) => {
-                  setRecos(r);
-                  if (r[0]) pick(r[0].kind);
+                  setRecos(r)
+                  if (r[0]) pick(r[0].kind)
                 },
                 onError: onErr,
               },
@@ -479,9 +453,7 @@ function GenerateControls({
               )}
             >
               <span className="font-medium text-foreground">{r.info.label.vi}</span>{' '}
-              <span className="text-[10px] text-foreground-subtle">
-                · {t(`primFamily.${r.info.family}`)}
-              </span>
+              <span className="text-[10px] text-foreground-subtle">· {t(`primFamily.${r.info.family}`)}</span>
               {r.reason ? <div className="text-foreground-muted">{r.reason}</div> : null}
             </button>
           ))}
@@ -493,8 +465,8 @@ function GenerateControls({
         <div className="max-h-72 space-y-2 overflow-y-auto rounded-md border border-border bg-surface p-2">
           {palette.isLoading ? <p className="text-[11px] text-foreground-subtle">…</p> : null}
           {(['kit', 'quiz'] as const).map((fam) => {
-            const items = (palette.data ?? []).filter((p) => p.family === fam);
-            if (!items.length) return null;
+            const items = (palette.data ?? []).filter((p) => p.family === fam)
+            if (!items.length) return null
             return (
               <div key={fam}>
                 <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-foreground-subtle">
@@ -526,7 +498,7 @@ function GenerateControls({
                   ))}
                 </div>
               </div>
-            );
+            )
           })}
         </div>
       ) : null}
@@ -562,7 +534,7 @@ function GenerateControls({
         </div>
       ) : null}
     </div>
-  );
+  )
 }
 
 function ItemCard({
@@ -570,18 +542,18 @@ function ItemCard({
   lessonSlug,
   t,
 }: {
-  item: ContentItemDto;
-  lessonSlug: string;
-  t: ReturnType<typeof useTranslations>;
+  item: ContentItemDto
+  lessonSlug: string
+  t: ReturnType<typeof useTranslations>
 }) {
-  const { toast } = useToast();
-  const approve = useApproveItemsFor({ lesson: lessonSlug });
-  const del = useDeleteItem({ lesson: lessonSlug });
-  const [showSupport, setShowSupport] = useState(false);
-  const payload = (item.payload ?? {}) as Record<string, unknown>;
-  const prompt = payload.prompt as Record<string, string> | undefined;
-  const support = payload.support as Record<string, Record<string, string>> | undefined;
-  const approved = item.status === 'APPROVED';
+  const { toast } = useToast()
+  const approve = useApproveItemsFor({ lesson: lessonSlug })
+  const del = useDeleteItem({ lesson: lessonSlug })
+  const [showSupport, setShowSupport] = useState(false)
+  const payload = (item.payload ?? {}) as Record<string, unknown>
+  const prompt = payload.prompt as Record<string, string> | undefined
+  const support = payload.support as Record<string, Record<string, string>> | undefined
+  const approved = item.status === 'APPROVED'
 
   return (
     <div
@@ -597,11 +569,7 @@ function ItemCard({
         </Badge>
         <div className="ml-auto flex items-center gap-1.5">
           {!approved ? (
-            <Button
-              size="sm"
-              onClick={() => approve.mutate([item.itemKey])}
-              loading={approve.isPending}
-            >
+            <Button size="sm" onClick={() => approve.mutate([item.itemKey])} loading={approve.isPending}>
               <Check className="size-3.5" /> {t('csApprove')}
             </Button>
           ) : null}
@@ -610,8 +578,7 @@ function ItemCard({
             variant="ghost"
             onClick={() =>
               del.mutate(item.itemKey, {
-                onError: (e) =>
-                  toast({ variant: 'danger', title: t('failed'), description: String(e) }),
+                onError: (e) => toast({ variant: 'danger', title: t('failed'), description: String(e) }),
               })
             }
             loading={del.isPending}
@@ -625,9 +592,7 @@ function ItemCard({
 
       {/* LIVE PREVIEW tương tác */}
       <div className="overflow-hidden rounded-md border border-border">
-        <PreviewBoundary
-          fallback={<p className="p-3 text-xs text-danger">{t('csPreviewError')}</p>}
-        >
+        <PreviewBoundary fallback={<p className="p-3 text-xs text-danger">{t('csPreviewError')}</p>}>
           <ItemPreview item={item} />
         </PreviewBoundary>
       </div>
@@ -664,19 +629,19 @@ function ItemCard({
         inv={{ lesson: lessonSlug }}
       />
     </div>
-  );
+  )
 }
 
 /** Preview: kit → InteractiveManipulative (kèm nút Kiểm tra); quiz → QuizShell. */
 function ItemPreview({ item }: { item: ContentItemDto }) {
-  const t = useTranslations('admin.authoring');
-  const [params, setParams] = useState<unknown>(null);
-  const [verdict, setVerdict] = useState<boolean | null>(null);
-  const payload = (item.payload ?? {}) as Record<string, unknown>;
+  const t = useTranslations('admin.authoring')
+  const [params, setParams] = useState<unknown>(null)
+  const [verdict, setVerdict] = useState<boolean | null>(null)
+  const payload = (item.payload ?? {}) as Record<string, unknown>
 
   if (isKit(item.primitiveKind)) {
-    const kind = bare(item.primitiveKind);
-    const target = payload.target as Record<string, unknown> | undefined;
+    const kind = bare(item.primitiveKind)
+    const target = payload.target as Record<string, unknown> | undefined
     return (
       <div className="p-2">
         <InteractiveManipulative
@@ -685,8 +650,8 @@ function ItemPreview({ item }: { item: ContentItemDto }) {
           variant="sandbox"
           initialParams={kitPreviewParams(payload)}
           onParams={(p) => {
-            setParams(p);
-            setVerdict(null);
+            setParams(p)
+            setVerdict(null)
           }}
           extra={
             <button
@@ -699,19 +664,14 @@ function ItemPreview({ item }: { item: ContentItemDto }) {
           }
         />
         {verdict !== null ? (
-          <p
-            className={cn(
-              'mt-1 text-center text-xs font-medium',
-              verdict ? 'text-success' : 'text-danger',
-            )}
-          >
+          <p className={cn('mt-1 text-center text-xs font-medium', verdict ? 'text-success' : 'text-danger')}>
             {verdict ? t('csCorrect') : t('csIncorrect')}
           </p>
         ) : null}
       </div>
-    );
+    )
   }
 
   // quiz — QuizShell nhận đúng payload là QuizQuestion
-  return <QuizShell questions={[payload as unknown as QuizQuestion]} labels={VI_QUIZ_LABELS} />;
+  return <QuizShell questions={[payload as unknown as QuizQuestion]} labels={VI_QUIZ_LABELS} />
 }

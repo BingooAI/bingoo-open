@@ -1,24 +1,24 @@
-'use client';
+'use client'
 
-import type { CoordPoint } from '@bingoo/core';
-import { Minus, Plus } from 'lucide-react';
-import { cn } from './lib/cn';
-import { POP, stagger, tile } from './lib/interactive';
+import type { CoordPoint } from '@bingoo/core'
+import { Minus, Plus } from 'lucide-react'
+import { cn } from './lib/cn'
+import { POP, stagger, tile } from './lib/interactive'
 
-export type CoordValue = { x: number; y: number } | null;
+export type CoordValue = { x: number; y: number } | null
 
 export interface CoordinateGridProps {
-  maxX: number;
-  maxY: number;
-  task: 'plot' | 'read';
+  maxX: number
+  maxY: number
+  task: 'plot' | 'read'
   /** For task=read: the points already marked on the grid. */
-  coords: CoordPoint[];
+  coords: CoordPoint[]
   /** Controlled answer: plotted points (plot) or the coordinates typed per point (read). */
-  value: CoordValue[];
-  onChange: (value: CoordValue[]) => void;
-  reveal?: { correct: boolean; marks: boolean[]; answer: CoordPoint[] };
-  disabled?: boolean;
-  className?: string;
+  value: CoordValue[]
+  onChange: (value: CoordValue[]) => void
+  reveal?: { correct: boolean; marks: boolean[]; answer: CoordPoint[] }
+  disabled?: boolean
+  className?: string
 }
 
 /**
@@ -38,32 +38,32 @@ export function CoordinateGrid({
   disabled,
   className,
 }: CoordinateGridProps) {
-  const locked = !!reveal || disabled;
+  const locked = !!reveal || disabled
   // viewBox padding for the axis labels
-  const PAD = 12;
-  const W = 100;
-  const H = 100;
-  const sx = (x: number) => PAD + (x / maxX) * (W - PAD - 6);
-  const sy = (y: number) => H - PAD - (y / maxY) * (H - PAD - 6);
+  const PAD = 12
+  const W = 100
+  const H = 100
+  const sx = (x: number) => PAD + (x / maxX) * (W - PAD - 6)
+  const sy = (y: number) => H - PAD - (y / maxY) * (H - PAD - 6)
 
-  const placed = value.filter((p): p is { x: number; y: number } => p !== null);
-  const has = (x: number, y: number) => placed.some((p) => p.x === x && p.y === y);
+  const placed = value.filter((p): p is { x: number; y: number } => p !== null)
+  const has = (x: number, y: number) => placed.some((p) => p.x === x && p.y === y)
 
   const tapCell = (x: number, y: number) => {
-    if (locked || task !== 'plot') return;
-    if (has(x, y)) onChange(value.filter((p) => !(p && p.x === x && p.y === y)));
-    else onChange([...value, { x, y }]);
-  };
+    if (locked || task !== 'plot') return
+    if (has(x, y)) onChange(value.filter((p) => !(p && p.x === x && p.y === y)))
+    else onChange([...value, { x, y }])
+  }
 
   const setRead = (i: number, axis: 'x' | 'y', d: number) => {
-    if (locked) return;
-    const next = [...value];
-    const cur = next[i] ?? { x: 0, y: 0 };
-    const max = axis === 'x' ? maxX : maxY;
-    const v = Math.max(0, Math.min(max, (axis === 'x' ? cur.x : cur.y) + d));
-    next[i] = axis === 'x' ? { ...cur, x: v } : { ...cur, y: v };
-    onChange(next);
-  };
+    if (locked) return
+    const next = [...value]
+    const cur = next[i] ?? { x: 0, y: 0 }
+    const max = axis === 'x' ? maxX : maxY
+    const v = Math.max(0, Math.min(max, (axis === 'x' ? cur.x : cur.y) + d))
+    next[i] = axis === 'x' ? { ...cur, x: v } : { ...cur, y: v }
+    onChange(next)
+  }
 
   // What to draw as crosses on the grid.
   const marksOnGrid: Array<{ p: CoordPoint; ok?: boolean; ghost?: boolean }> =
@@ -77,7 +77,7 @@ export function CoordinateGrid({
               .filter((t) => !placed.some((p) => p.x === t.x && p.y === t.y))
               .map((p) => ({ p, ghost: true })),
           ]
-        : placed.map((p) => ({ p }));
+        : placed.map((p) => ({ p }))
 
   return (
     <div className={cn('flex flex-col items-center gap-3', className)}>
@@ -172,7 +172,7 @@ export function CoordinateGrid({
               ? 'stroke-primary'
               : ok
                 ? 'stroke-success'
-                : 'stroke-danger';
+                : 'stroke-danger'
           return (
             <g key={`m${i}`} className={cn(c, ok === true && POP)}>
               <line
@@ -192,16 +192,12 @@ export function CoordinateGrid({
                 strokeDasharray={ghost ? '1 1' : undefined}
               />
               {p.label ? (
-                <text
-                  x={sx(p.x) + 3}
-                  y={sy(p.y) - 2}
-                  className="fill-foreground text-[4px] font-bold"
-                >
+                <text x={sx(p.x) + 3} y={sy(p.y) - 2} className="fill-foreground text-[4px] font-bold">
                   {p.label}
                 </text>
               ) : null}
             </g>
-          );
+          )
         })}
       </svg>
 
@@ -209,8 +205,8 @@ export function CoordinateGrid({
       {task === 'read' ? (
         <div className="flex flex-col gap-2">
           {coords.map((p, i) => {
-            const v = value[i] ?? { x: 0, y: 0 };
-            const ok = reveal?.marks[i];
+            const v = value[i] ?? { x: 0, y: 0 }
+            const ok = reveal?.marks[i]
             return (
               <div
                 key={p.label ?? i}
@@ -232,10 +228,7 @@ export function CoordinateGrid({
                       <button
                         type="button"
                         onClick={() => setRead(i, ax, -1)}
-                        className={cn(
-                          tile({ size: 'none' }),
-                          'grid size-6 place-items-center rounded-md',
-                        )}
+                        className={cn(tile({ size: 'none' }), 'grid size-6 place-items-center rounded-md')}
                       >
                         <Minus className="size-3" />
                       </button>
@@ -247,10 +240,7 @@ export function CoordinateGrid({
                       <button
                         type="button"
                         onClick={() => setRead(i, ax, 1)}
-                        className={cn(
-                          tile({ size: 'none' }),
-                          'grid size-6 place-items-center rounded-md',
-                        )}
+                        className={cn(tile({ size: 'none' }), 'grid size-6 place-items-center rounded-md')}
                       >
                         <Plus className="size-3" />
                       </button>
@@ -264,10 +254,10 @@ export function CoordinateGrid({
                   </span>
                 ) : null}
               </div>
-            );
+            )
           })}
         </div>
       ) : null}
     </div>
-  );
+  )
 }

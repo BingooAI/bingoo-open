@@ -1,18 +1,18 @@
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
-import { hudSurfaceClass } from './lib/hud';
-import { Progress } from './progress';
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
+import { hudSurfaceClass } from './lib/hud'
+import { Progress } from './progress'
 
 export interface LeagueTierProps {
   /** Tier medallion (emoji or icon — data). */
-  icon: ReactNode;
-  tierLabel: ReactNode;
+  icon: ReactNode
+  tierLabel: ReactNode
   /** 0–1 progress toward the next tier. Omit to hide the bar. */
-  progress?: number;
+  progress?: number
   /** Caption under the bar, e.g. "120 → Vàng". */
-  caption?: ReactNode;
-  onMedia?: boolean;
-  className?: string;
+  caption?: ReactNode
+  onMedia?: boolean
+  className?: string
 }
 
 /**
@@ -20,23 +20,12 @@ export interface LeagueTierProps {
  * resolution (`leagueFromPoints`) lives in `@bingoo/core`; this renders the
  * result. Reused on a profile, a leaderboard header, or an arena banner.
  */
-export function LeagueTier({
-  icon,
-  tierLabel,
-  progress,
-  caption,
-  onMedia,
-  className,
-}: LeagueTierProps) {
-  const ink = onMedia ? 'text-white' : 'text-foreground';
-  const muted = onMedia ? 'text-white/70' : 'text-foreground-muted';
+export function LeagueTier({ icon, tierLabel, progress, caption, onMedia, className }: LeagueTierProps) {
+  const ink = onMedia ? 'text-white' : 'text-foreground'
+  const muted = onMedia ? 'text-white/70' : 'text-foreground-muted'
   return (
     <div
-      className={cn(
-        'flex w-full items-center gap-3 rounded-2xl p-3',
-        hudSurfaceClass(onMedia),
-        className,
-      )}
+      className={cn('flex w-full items-center gap-3 rounded-2xl p-3', hudSurfaceClass(onMedia), className)}
     >
       <span className="grid size-12 shrink-0 place-items-center rounded-full bg-gradient-brand text-2xl shadow-pop">
         {icon}
@@ -47,5 +36,5 @@ export function LeagueTier({
         {caption ? <span className={cn('text-xs', muted)}>{caption}</span> : null}
       </div>
     </div>
-  );
+  )
 }

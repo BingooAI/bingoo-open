@@ -1,8 +1,8 @@
-import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export interface SwitchProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
-  label?: ReactNode;
+  label?: ReactNode
 }
 
 export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
@@ -18,14 +18,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
       )}
     >
       <span className="relative inline-flex">
-        <input
-          ref={ref}
-          id={id}
-          type="checkbox"
-          role="switch"
-          className="peer sr-only"
-          {...props}
-        />
+        <input ref={ref} id={id} type="checkbox" role="switch" className="peer sr-only" {...props} />
         <span
           aria-hidden
           className="h-6 w-11 rounded-full bg-border-strong transition-colors peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background"
@@ -37,5 +30,5 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
       </span>
       {label && <span className="text-sm text-foreground">{label}</span>}
     </label>
-  );
-});
+  )
+})

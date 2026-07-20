@@ -1,18 +1,18 @@
-'use client';
+'use client'
 
-import { cn } from './lib/cn';
-import { tile } from './lib/interactive';
+import { cn } from './lib/cn'
+import { tile } from './lib/interactive'
 
 export interface PartWholeInputProps {
-  whole: number | null;
-  parts: (number | null)[];
+  whole: number | null
+  parts: (number | null)[]
   /** Value for the single blank (the null slot). */
-  value: string;
-  onChange: (value: string) => void;
-  reveal?: { correct: boolean; answer: number };
-  disabled?: boolean;
-  label?: string;
-  className?: string;
+  value: string
+  onChange: (value: string) => void
+  reveal?: { correct: boolean; answer: number }
+  disabled?: boolean
+  label?: string
+  className?: string
 }
 
 /** A part-whole (bar model) diagram with one blank to fill. Grading in core. */
@@ -26,14 +26,14 @@ export function PartWholeInput({
   label,
   className,
 }: PartWholeInputProps) {
-  const locked = !!reveal || disabled;
+  const locked = !!reveal || disabled
 
   const box = (v: number | null, isWholeBox: boolean) => {
     if (v === null) {
       const state = tile({
         state: reveal ? (reveal.correct ? 'correct' : 'wrong') : 'selected',
         size: 'none',
-      });
+      })
       return (
         <input
           value={reveal && !reveal.correct ? String(reveal.answer) : value}
@@ -48,7 +48,7 @@ export function PartWholeInput({
             reveal == null && 'bg-surface',
           )}
         />
-      );
+      )
     }
     return (
       <div
@@ -60,8 +60,8 @@ export function PartWholeInput({
       >
         {v}
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <div className={cn('mx-auto flex w-full max-w-xs flex-col items-center gap-2', className)}>
@@ -77,5 +77,5 @@ export function PartWholeInput({
         ))}
       </div>
     </div>
-  );
+  )
 }

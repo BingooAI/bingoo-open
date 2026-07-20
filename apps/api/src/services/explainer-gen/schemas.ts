@@ -6,7 +6,7 @@
  * of corrupting the whole lesson. These schemas are the studio-side quality
  * contract; pedagogy still comes from the LessonBrief upstream.
  */
-import { z } from 'zod';
+import { z } from 'zod'
 
 /* -------------------------------------------------------------- outline */
 /** A lightweight plan the writer follows: ordered scenes, each tied to the
@@ -27,8 +27,8 @@ export const Outline = z.object({
       }),
     )
     .min(2),
-});
-export type Outline = z.infer<typeof Outline>;
+})
+export type Outline = z.infer<typeof Outline>
 
 /* -------------------------------------------------------------- critique */
 /** The LLM-judge verdict per scene. `score` 1–5; anything below the pipeline's
@@ -41,15 +41,15 @@ export const SceneCritique = z.object({
   issues: z.array(z.string()).default([]),
   /** one concrete instruction for the rewrite */
   fix: z.string().default(''),
-});
-export type SceneCritique = z.infer<typeof SceneCritique>;
+})
+export type SceneCritique = z.infer<typeof SceneCritique>
 
 export const Critique = z.object({
   scenes: z.array(SceneCritique).default([]),
   /** 1–2 sentence overall read of the lesson */
   overall: z.string().default(''),
-});
-export type Critique = z.infer<typeof Critique>;
+})
+export type Critique = z.infer<typeof Critique>
 
 /* ------------------------------------------------- scene replacement (regen) */
 /** A regenerated scene + its narration segment, spliced back into the doc/bundle
@@ -61,13 +61,13 @@ export const SceneReplacement = z.object({
   /** bundle pieces this scene owns: element strings + its narration segment(s) */
   strings: z.record(z.string(), z.string()).default({}),
   narration: z.record(z.string(), z.unknown()).default({}),
-});
-export type SceneReplacement = z.infer<typeof SceneReplacement>;
+})
+export type SceneReplacement = z.infer<typeof SceneReplacement>
 
 export const RegenResult = z.object({
   scenes: z.array(SceneReplacement).default([]),
-});
-export type RegenResult = z.infer<typeof RegenResult>;
+})
+export type RegenResult = z.infer<typeof RegenResult>
 
 /** Scenes scoring at or below this are regenerated (max 1 round by default). */
-export const REGEN_THRESHOLD = 3;
+export const REGEN_THRESHOLD = 3

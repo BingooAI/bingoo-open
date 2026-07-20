@@ -5,7 +5,7 @@
  * whole explainer's look flows through, and it's what the editor's inspector
  * offers instead of free-form colour pickers.
  */
-import type { ThemeTokens } from '@bingoo/explainer';
+import type { ThemeTokens } from '@bingoo/explainer'
 
 export const defaultTheme: ThemeTokens = {
   colors: {
@@ -44,16 +44,16 @@ export const defaultTheme: ThemeTokens = {
     sans: 'var(--font-bvp), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
   },
   register: 'warm',
-};
+}
 
 export type ResolvedStyle = {
-  stroke: string;
-  fill: string;
-  strokeWidth: number;
-  fontSize: number;
-  fontFamily: string;
-  align: string;
-};
+  stroke: string
+  fill: string
+  strokeWidth: number
+  fontSize: number
+  fontFamily: string
+  align: string
+}
 
 /**
  * A LESSON IS CONTENT, NOT APP CHROME.
@@ -70,15 +70,11 @@ export type ResolvedStyle = {
  * in its own theme. The admin's chrome stays dark around it; the lesson does not
  * become part of the chrome.
  */
-export function resolveColor(
-  theme: ThemeTokens,
-  id: string | undefined,
-  fallbackId = 'ink',
-): string {
-  const key = id ?? fallbackId;
+export function resolveColor(theme: ThemeTokens, id: string | undefined, fallbackId = 'ink'): string {
+  const key = id ?? fallbackId
   // a token id resolves against the DOC's palette; anything else (an authored hex)
   // passes through untouched
-  return theme.colors[key] ?? theme.colors[fallbackId] ?? key;
+  return theme.colors[key] ?? theme.colors[fallbackId] ?? key
 }
 
 /** Resolve a token-bound StyleTokens against a theme into concrete CSS values. */
@@ -86,31 +82,29 @@ export function resolveColor(
 const FONT_FALLBACK: Record<string, string> = {
   hand: 'var(--font-baloo), ui-rounded, "Segoe UI Rounded", system-ui, sans-serif',
   sans: 'var(--font-bvp), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-};
+}
 
 export function resolveStyle(
   theme: ThemeTokens,
   style?: {
-    color?: string;
-    fill?: string;
-    weight?: string;
-    font?: string;
-    fontSize?: string;
-    align?: string;
+    color?: string
+    fill?: string
+    weight?: string
+    font?: string
+    fontSize?: string
+    align?: string
   },
 ): ResolvedStyle {
-  const color = resolveColor(theme, style?.color, 'ink');
-  const fill = style?.fill ? resolveColor(theme, style.fill, style.fill) : 'none';
-  const strokeWidth = theme.weights[style?.weight ?? 'md'] ?? 7;
-  const fontSize = theme.fontSizes[style?.fontSize ?? 'body'] ?? 40;
+  const color = resolveColor(theme, style?.color, 'ink')
+  const fill = style?.fill ? resolveColor(theme, style.fill, style.fill) : 'none'
+  const strokeWidth = theme.weights[style?.weight ?? 'md'] ?? 7
+  const fontSize = theme.fontSizes[style?.fontSize ?? 'body'] ?? 40
   // A doc whose theme omits `fonts` (an LLM will) used to fall back to
   // "cursive" — which the browser renders as a pale serif italic, i.e. every
   // title in the lesson silently became unreadable. An omitted OPTIONAL field
   // must never degrade to unstyled text; fall back to the real stack.
   const fontFamily =
-    (theme.fonts ?? {})[style?.font ?? 'hand'] ??
-    FONT_FALLBACK[style?.font ?? 'hand'] ??
-    FONT_FALLBACK.hand!;
+    (theme.fonts ?? {})[style?.font ?? 'hand'] ?? FONT_FALLBACK[style?.font ?? 'hand'] ?? FONT_FALLBACK.hand!
   return {
     stroke: color,
     fill,
@@ -118,9 +112,9 @@ export function resolveStyle(
     fontSize,
     fontFamily,
     align: style?.align ?? 'center',
-  };
+  }
 }
 
 export function tokenColor(theme: ThemeTokens, id: string | undefined, fallback = 'ink'): string {
-  return resolveColor(theme, id, fallback);
+  return resolveColor(theme, id, fallback)
 }

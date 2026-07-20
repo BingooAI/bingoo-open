@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import {
   Presentation,
@@ -12,34 +12,34 @@ import {
   Network,
   X,
   type LucideIcon,
-} from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useState, type ReactNode } from 'react';
-import { Avatar } from '@bingoo/ui-web';
-import { Logo } from '@/components/brand/logo';
-import { LocaleSwitcher } from '@/components/brand/locale-switcher';
-import { ThemeToggle } from '@/components/brand/theme-toggle';
-import { Link, usePathname, useRouter } from '@/i18n/navigation';
-import { signOut } from '@/lib/auth-client';
-import { cn } from '@/lib/cn';
-import type { StaffCapabilities } from '@/lib/roles';
+} from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useState, type ReactNode } from 'react'
+import { Avatar } from '@bingoo/ui-web'
+import { Logo } from '@/components/brand/logo'
+import { LocaleSwitcher } from '@/components/brand/locale-switcher'
+import { ThemeToggle } from '@/components/brand/theme-toggle'
+import { Link, usePathname, useRouter } from '@/i18n/navigation'
+import { signOut } from '@/lib/auth-client'
+import { cn } from '@/lib/cn'
+import type { StaffCapabilities } from '@/lib/roles'
 
 export interface ShellUser {
-  name: string;
-  email: string | null;
-  role: string | null;
-  image: string | null;
+  name: string
+  email: string | null
+  role: string | null
+  image: string | null
 }
 
 type NavItem = {
-  key: string;
-  Icon: LucideIcon;
-  href: string;
+  key: string
+  Icon: LucideIcon
+  href: string
   /** Gate visibility by capability; default = any staff. */
-  show?: (caps: StaffCapabilities) => boolean;
+  show?: (caps: StaffCapabilities) => boolean
   /** Active only on the exact path — for a section whose href prefixes its siblings. */
-  exact?: boolean;
-};
+  exact?: boolean
+}
 
 const NAV: NavItem[] = [
   { key: 'library', Icon: Images, href: '/media' },
@@ -70,19 +70,19 @@ const NAV: NavItem[] = [
     show: (c) => c.canManageContent,
   },
   { key: 'explainer', Icon: Presentation, href: '/explainer', show: (c) => c.canManageContent },
-];
+]
 
 export function AdminShell({
   children,
   user,
   caps,
 }: {
-  children: ReactNode;
-  user: ShellUser;
-  caps: StaffCapabilities;
+  children: ReactNode
+  user: ShellUser
+  caps: StaffCapabilities
 }) {
-  const [drawer, setDrawer] = useState(false);
-  const items = NAV.filter((item) => !item.show || item.show(caps));
+  const [drawer, setDrawer] = useState(false)
+  const items = NAV.filter((item) => !item.show || item.show(caps))
 
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[256px_1fr]">
@@ -118,7 +118,7 @@ export function AdminShell({
         </main>
       </div>
     </div>
-  );
+  )
 }
 
 function SidebarContent({
@@ -127,21 +127,21 @@ function SidebarContent({
   onClose,
   onNavigate,
 }: {
-  items: NavItem[];
-  user: ShellUser;
-  onClose?: () => void;
-  onNavigate?: () => void;
+  items: NavItem[]
+  user: ShellUser
+  onClose?: () => void
+  onNavigate?: () => void
 }) {
-  const t = useTranslations('admin');
-  const tc = useTranslations('common');
-  const pathname = usePathname();
-  const router = useRouter();
-  const [loggingOut, setLoggingOut] = useState(false);
+  const t = useTranslations('admin')
+  const tc = useTranslations('common')
+  const pathname = usePathname()
+  const router = useRouter()
+  const [loggingOut, setLoggingOut] = useState(false)
 
   async function logout() {
-    setLoggingOut(true);
-    await signOut().catch(() => {});
-    router.push('/login');
+    setLoggingOut(true)
+    await signOut().catch(() => {})
+    router.push('/login')
   }
 
   return (
@@ -167,8 +167,7 @@ function SidebarContent({
         {items.map((item) => {
           // A section is active for its exact path or any nested path under it —
           // unless `exact`, for a section whose href prefixes a sibling's.
-          const isActive =
-            pathname === item.href || (!item.exact && pathname.startsWith(`${item.href}/`));
+          const isActive = pathname === item.href || (!item.exact && pathname.startsWith(`${item.href}/`))
           return (
             <Link
               key={item.key}
@@ -185,7 +184,7 @@ function SidebarContent({
               <item.Icon className="size-5 shrink-0" />
               {t(`nav.${item.key}`)}
             </Link>
-          );
+          )
         })}
       </nav>
 
@@ -208,11 +207,11 @@ function SidebarContent({
         </button>
       </div>
     </>
-  );
+  )
 }
 
 function Topbar({ onMenu, user }: { onMenu: () => void; user: ShellUser }) {
-  const t = useTranslations('admin');
+  const t = useTranslations('admin')
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/85 px-4 backdrop-blur sm:px-6 lg:px-8">
       <button
@@ -236,5 +235,5 @@ function Topbar({ onMenu, user }: { onMenu: () => void; user: ShellUser }) {
         <Avatar name={user.name} src={user.image} size="sm" className="ml-1" />
       </div>
     </header>
-  );
+  )
 }

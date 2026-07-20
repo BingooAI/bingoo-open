@@ -1,19 +1,19 @@
-import type { ReactNode } from 'react';
-import { Button } from './button';
-import { Card } from './card';
-import { IconChip, type IconChipColor } from './icon-chip';
-import { cn } from './lib/cn';
-import { Progress } from './progress';
+import type { ReactNode } from 'react'
+import { Button } from './button'
+import { Card } from './card'
+import { IconChip, type IconChipColor } from './icon-chip'
+import { cn } from './lib/cn'
+import { Progress } from './progress'
 
 export interface LessonCardProps {
-  icon: ReactNode;
-  title: ReactNode;
-  meta?: ReactNode;
-  color?: IconChipColor;
-  progress?: number;
-  cta: ReactNode;
-  onStart?: () => void;
-  className?: string;
+  icon: ReactNode
+  title: ReactNode
+  meta?: ReactNode
+  color?: IconChipColor
+  progress?: number
+  cta: ReactNode
+  onStart?: () => void
+  className?: string
 }
 
 /** "Continue learning" card — subject icon, title/meta, progress, CTA. */
@@ -39,5 +39,5 @@ export function LessonCard({
       </div>
       <Button onClick={onStart}>{cta}</Button>
     </Card>
-  );
+  )
 }

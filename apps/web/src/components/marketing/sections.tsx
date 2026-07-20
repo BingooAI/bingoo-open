@@ -20,10 +20,10 @@ import {
   Timer,
   UserPlus,
   Users,
-} from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { type ComponentType } from 'react';
-import { Mascot } from '@/components/brand/mascot';
+} from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { type ComponentType } from 'react'
+import { Mascot } from '@/components/brand/mascot'
 import {
   Avatar,
   Badge,
@@ -33,20 +33,20 @@ import {
   type IconChipColor,
   Container,
   Section,
-} from '@bingoo/ui-web';
-import { Link } from '@/i18n/navigation';
-import { cn } from '@/lib/cn';
+} from '@bingoo/ui-web'
+import { Link } from '@/i18n/navigation'
+import { cn } from '@/lib/cn'
 
-type Icon = ComponentType<{ className?: string }>;
+type Icon = ComponentType<{ className?: string }>
 
 function SectionHeading({
   eyebrow,
   title,
   subtitle,
 }: {
-  eyebrow?: string;
-  title: string;
-  subtitle?: string;
+  eyebrow?: string
+  title: string
+  subtitle?: string
 }) {
   return (
     <div className="mx-auto max-w-2xl text-center">
@@ -60,7 +60,7 @@ function SectionHeading({
       </h2>
       {subtitle && <p className="mt-4 text-lg leading-relaxed text-foreground-muted">{subtitle}</p>}
     </div>
-  );
+  )
 }
 
 /* -------------------------------------------------------------------------- */
@@ -71,10 +71,10 @@ const STATS = [
   { value: '2,000+', key: 'lessons' },
   { value: '4.9/5', key: 'rating' },
   { value: '+35%', key: 'improvement' },
-] as const;
+] as const
 
 export function Stats() {
-  const t = useTranslations('landing.stats');
+  const t = useTranslations('landing.stats')
   return (
     <Container size="xl" className="-mt-8 pb-4">
       <Card
@@ -91,7 +91,7 @@ export function Stats() {
         ))}
       </Card>
     </Container>
-  );
+  )
 }
 
 /* -------------------------------------------------------------------------- */
@@ -104,10 +104,10 @@ const FEATURES: { key: string; Icon: Icon; color: IconChipColor }[] = [
   { key: 'reports', Icon: LineChart, color: 'teal' },
   { key: 'safe', Icon: ShieldCheck, color: 'success' },
   { key: 'adaptive', Icon: Repeat2, color: 'primary' },
-];
+]
 
 export function Features() {
-  const t = useTranslations('landing.features');
+  const t = useTranslations('landing.features')
   return (
     <Section id="features">
       <Container size="xl">
@@ -121,15 +121,13 @@ export function Features() {
               <h3 className="mt-5 font-display text-lg font-bold text-foreground">
                 {t(`items.${key}.title`)}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-foreground-muted">
-                {t(`items.${key}.desc`)}
-              </p>
+              <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{t(`items.${key}.desc`)}</p>
             </Card>
           ))}
         </div>
       </Container>
     </Section>
-  );
+  )
 }
 
 /* -------------------------------------------------------------------------- */
@@ -142,10 +140,10 @@ const SUBJECTS: { key: string; Icon: Icon; color: IconChipColor; count: number }
   { key: 'science', Icon: FlaskConical, color: 'sunbeam', count: 180 },
   { key: 'logic', Icon: Puzzle, color: 'success', count: 150 },
   { key: 'art', Icon: Palette, color: 'primary', count: 120 },
-];
+]
 
 export function Subjects() {
-  const t = useTranslations('landing.subjects');
+  const t = useTranslations('landing.subjects')
   return (
     <Section id="subjects" className="bg-surface-muted/40">
       <Container size="xl">
@@ -166,7 +164,7 @@ export function Subjects() {
         </div>
       </Container>
     </Section>
-  );
+  )
 }
 
 /* -------------------------------------------------------------------------- */
@@ -176,10 +174,10 @@ const STEPS: { key: string; Icon: Icon; color: IconChipColor }[] = [
   { key: 'signup', Icon: UserPlus, color: 'primary' },
   { key: 'assess', Icon: ClipboardList, color: 'teal' },
   { key: 'learn', Icon: Rocket, color: 'coral' },
-];
+]
 
 export function HowItWorks() {
-  const t = useTranslations('landing.how');
+  const t = useTranslations('landing.how')
   return (
     <Section id="how">
       <Container size="xl">
@@ -202,15 +200,13 @@ export function HowItWorks() {
               <h3 className="mt-5 font-display text-lg font-semibold text-foreground">
                 {t(`steps.${key}.title`)}
               </h3>
-              <p className="mt-2 max-w-xs text-sm text-foreground-muted">
-                {t(`steps.${key}.desc`)}
-              </p>
+              <p className="mt-2 max-w-xs text-sm text-foreground-muted">{t(`steps.${key}.desc`)}</p>
             </div>
           ))}
         </div>
       </Container>
     </Section>
-  );
+  )
 }
 
 /* -------------------------------------------------------------------------- */
@@ -221,11 +217,11 @@ const PARENT_POINTS: { key: string; Icon: Icon }[] = [
   { key: 'screentime', Icon: Timer },
   { key: 'safe', Icon: ShieldCheck },
   { key: 'multi', Icon: Users },
-];
+]
 
 export function Parents() {
-  const t = useTranslations('landing.parents');
-  const tSub = useTranslations('landing.subjects.items');
+  const t = useTranslations('landing.parents')
+  const tSub = useTranslations('landing.subjects.items')
   return (
     <Section id="parents" className="bg-surface-muted/40">
       <Container size="xl">
@@ -250,10 +246,7 @@ export function Parents() {
               ))}
             </ul>
 
-            <Link
-              href="/register"
-              className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'mt-8')}
-            >
+            <Link href="/register" className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'mt-8')}>
               {t('cta')}
               <ArrowRight className="size-5" />
             </Link>
@@ -299,16 +292,16 @@ export function Parents() {
         </div>
       </Container>
     </Section>
-  );
+  )
 }
 
 /* -------------------------------------------------------------------------- */
 /* Testimonials                                                                */
 /* -------------------------------------------------------------------------- */
-const TESTIMONIALS = ['one', 'two', 'three'] as const;
+const TESTIMONIALS = ['one', 'two', 'three'] as const
 
 export function Testimonials() {
-  const t = useTranslations('landing.testimonials');
+  const t = useTranslations('landing.testimonials')
   return (
     <Section>
       <Container size="xl">
@@ -336,15 +329,15 @@ export function Testimonials() {
         </div>
       </Container>
     </Section>
-  );
+  )
 }
 
 /* -------------------------------------------------------------------------- */
 /* Final CTA                                                                   */
 /* -------------------------------------------------------------------------- */
 export function CtaBand() {
-  const t = useTranslations('landing.cta');
-  const tHero = useTranslations('landing.hero');
+  const t = useTranslations('landing.cta')
+  const tHero = useTranslations('landing.hero')
   return (
     <Section>
       <Container size="xl">
@@ -366,10 +359,7 @@ export function CtaBand() {
                 {t('button')}
                 <ArrowRight className="size-5" />
               </Link>
-              <a
-                href="#features"
-                className={buttonVariants({ variant: 'inverse-outline', size: 'lg' })}
-              >
+              <a href="#features" className={buttonVariants({ variant: 'inverse-outline', size: 'lg' })}>
                 {t('secondary')}
               </a>
             </div>
@@ -381,5 +371,5 @@ export function CtaBand() {
         </div>
       </Container>
     </Section>
-  );
+  )
 }

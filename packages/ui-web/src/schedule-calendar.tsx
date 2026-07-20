@@ -1,27 +1,27 @@
-import { formatSlotTime, hourTicks, layoutWeek, type ScheduleSlot } from '@bingoo/core';
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { formatSlotTime, hourTicks, layoutWeek, type ScheduleSlot } from '@bingoo/core'
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 export interface CalendarSlot extends ScheduleSlot {
-  title: ReactNode;
+  title: ReactNode
   /** Optional secondary line (room, subject…). */
-  meta?: ReactNode;
-  color?: 'primary' | 'teal' | 'sunbeam' | 'coral' | 'success';
+  meta?: ReactNode
+  color?: 'primary' | 'teal' | 'sunbeam' | 'coral' | 'success'
 }
 
 export interface ScheduleCalendarProps {
-  slots: CalendarSlot[];
+  slots: CalendarSlot[]
   /** Localized day labels, Monday-first (length 7). Days without labels are hidden. */
-  dayLabels: ReactNode[];
+  dayLabels: ReactNode[]
   /** Highlight column 0–6 (today). */
-  todayIndex?: number;
+  todayIndex?: number
   /** Visible day count from Monday (e.g. 5 = Mon–Fri, default 7). */
-  days?: number;
+  days?: number
   /** Grid height in px (default 420). */
-  height?: number;
-  onSelectSlot?: (id: string) => void;
-  label?: string;
-  className?: string;
+  height?: number
+  onSelectSlot?: (id: string) => void
+  label?: string
+  className?: string
 }
 
 const SLOT_TINT = {
@@ -30,7 +30,7 @@ const SLOT_TINT = {
   sunbeam: 'border-accent-sunbeam/40 bg-accent-sunbeam-soft text-foreground',
   coral: 'border-accent-coral/40 bg-accent-coral-soft text-foreground',
   success: 'border-success/40 bg-success-soft text-foreground',
-} as const;
+} as const
 
 /**
  * A weekly schedule grid (periods / study slots). Layout math lives in
@@ -47,16 +47,12 @@ export function ScheduleCalendar({
   label,
   className,
 }: ScheduleCalendarProps) {
-  const { range, days: cols } = layoutWeek(slots);
-  const ticks = hourTicks(range);
-  const span = Math.max(1, range[1] - range[0]);
+  const { range, days: cols } = layoutWeek(slots)
+  const ticks = hourTicks(range)
+  const span = Math.max(1, range[1] - range[0])
 
   return (
-    <div
-      className={cn('w-full max-w-full overflow-x-auto', className)}
-      role="grid"
-      aria-label={label}
-    >
+    <div className={cn('w-full max-w-full overflow-x-auto', className)} role="grid" aria-label={label}>
       <div className="flex min-w-[560px] gap-1.5">
         {/* Hour gutter */}
         <div className="relative w-10 shrink-0" style={{ height, marginTop: 28 }}>
@@ -96,7 +92,7 @@ export function ScheduleCalendar({
                 />
               ))}
               {col.map(({ slot, top, height: h }) => {
-                const Cell = onSelectSlot ? 'button' : 'div';
+                const Cell = onSelectSlot ? 'button' : 'div'
                 return (
                   <Cell
                     key={slot.id}
@@ -114,16 +110,14 @@ export function ScheduleCalendar({
                     <span className="truncate text-2xs opacity-80">
                       {formatSlotTime(slot.startMin)}–{formatSlotTime(slot.endMin)}
                     </span>
-                    {slot.meta ? (
-                      <span className="truncate text-2xs opacity-70">{slot.meta}</span>
-                    ) : null}
+                    {slot.meta ? <span className="truncate text-2xs opacity-70">{slot.meta}</span> : null}
                   </Cell>
-                );
+                )
               })}
             </div>
           </div>
         ))}
       </div>
     </div>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import { useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl'
 import {
   Badge,
   Button,
@@ -15,41 +15,41 @@ import {
   THead,
   TR,
   useToast,
-} from '@bingoo/ui-web';
-import { Link } from '@/i18n/navigation';
-import { useCourses, useDeleteCourse, useSetCourseStatus } from '@/lib/authoring-queries';
+} from '@bingoo/ui-web'
+import { Link } from '@/i18n/navigation'
+import { useCourses, useDeleteCourse, useSetCourseStatus } from '@/lib/authoring-queries'
 
 const NEXT_STATUS: Record<string, string | undefined> = {
   DRAFT: 'NEEDS_REVIEW',
   NEEDS_REVIEW: 'APPROVED',
   APPROVED: 'PUBLISHED',
-};
+}
 
 /** Danh sách vỏ khoá — đẩy trạng thái theo vòng đời (DRAFT→…→PUBLISHED) hoặc xoá. */
 export function CoursesList() {
-  const t = useTranslations('admin.authoring');
-  const { toast } = useToast();
+  const t = useTranslations('admin.authoring')
+  const { toast } = useToast()
 
-  const { data, isLoading, isError } = useCourses();
-  const setStatus = useSetCourseStatus();
-  const del = useDeleteCourse();
+  const { data, isLoading, isError } = useCourses()
+  const setStatus = useSetCourseStatus()
+  const del = useDeleteCourse()
 
   const onErr = (e: unknown) =>
     toast({
       variant: 'danger',
       title: t('failed'),
       description: e instanceof Error ? e.message : String(e),
-    });
+    })
 
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">
         <Spinner />
       </div>
-    );
+    )
   }
-  if (isError) return <EmptyState title={t('failed')} />;
-  if (!data?.length) return <EmptyState title={t('empty')} />;
+  if (isError) return <EmptyState title={t('failed')} />
+  if (!data?.length) return <EmptyState title={t('empty')} />
 
   return (
     <Card>
@@ -64,23 +64,19 @@ export function CoursesList() {
           </THead>
           <TBody>
             {data.map((c) => {
-              const title = (c.title as Record<string, string> | null) ?? {};
-              const next = NEXT_STATUS[c.status];
+              const title = (c.title as Record<string, string> | null) ?? {}
+              const next = NEXT_STATUS[c.status]
               return (
                 <TR key={c.slug}>
                   <TD>
-                    <div className="font-medium text-foreground">
-                      {title.vi ?? title.en ?? c.slug}
-                    </div>
+                    <div className="font-medium text-foreground">{title.vi ?? title.en ?? c.slug}</div>
                     <div className="text-xs text-foreground-muted">
                       {c.slug}
                       {c.frameworkVersionId ? ` · fw:${c.frameworkVersionId.slice(0, 8)}` : ''}
                     </div>
                   </TD>
                   <TD>
-                    <Badge color={c.status === 'PUBLISHED' ? 'success' : 'warning'}>
-                      {c.status}
-                    </Badge>
+                    <Badge color={c.status === 'PUBLISHED' ? 'success' : 'warning'}>{c.status}</Badge>
                   </TD>
                   <TD>
                     <div className="flex justify-end gap-2">
@@ -99,8 +95,7 @@ export function CoursesList() {
                             setStatus.mutate(
                               { slug: c.slug, status: next },
                               {
-                                onSuccess: (r) =>
-                                  toast({ variant: 'success', title: `${r.status}` }),
+                                onSuccess: (r) => toast({ variant: 'success', title: `${r.status}` }),
                                 onError: onErr,
                               },
                             )
@@ -114,8 +109,8 @@ export function CoursesList() {
                         variant="ghost"
                         loading={del.isPending && del.variables === c.slug}
                         onClick={() => {
-                          if (!window.confirm(t('confirmDelete'))) return;
-                          del.mutate(c.slug, { onError: onErr });
+                          if (!window.confirm(t('confirmDelete'))) return
+                          del.mutate(c.slug, { onError: onErr })
                         }}
                       >
                         {t('delete')}
@@ -123,11 +118,11 @@ export function CoursesList() {
                     </div>
                   </TD>
                 </TR>
-              );
+              )
             })}
           </TBody>
         </Table>
       </CardContent>
     </Card>
-  );
+  )
 }

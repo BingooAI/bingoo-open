@@ -1,23 +1,23 @@
-'use client';
+'use client'
 
-import type { QuizItem } from '@bingoo/core';
-import { useQuizText } from './quiz-locale';
-import { cn } from './lib/cn';
-import { stagger, tile } from './lib/interactive';
+import type { QuizItem } from '@bingoo/core'
+import { useQuizText } from './quiz-locale'
+import { cn } from './lib/cn'
+import { stagger, tile } from './lib/interactive'
 
 export interface PictogramChartProps {
-  categories: QuizItem[];
-  maxIcons: number;
+  categories: QuizItem[]
+  maxIcons: number
   /** Units each icon represents (the key). */
-  iconValue?: number;
+  iconValue?: number
   /** Controlled: catId → number of icons. */
-  counts: Record<string, number>;
-  onChange: (counts: Record<string, number>) => void;
-  reveal?: { cells: Record<string, boolean>; answer: Record<string, number> };
-  disabled?: boolean;
+  counts: Record<string, number>
+  onChange: (counts: Record<string, number>) => void
+  reveal?: { cells: Record<string, boolean>; answer: Record<string, number> }
+  disabled?: boolean
   /** Localized "= " key text, e.g. "= {n}" rendered by the caller as `${keyLabel}`. */
-  keyLabel?: string;
-  className?: string;
+  keyLabel?: string
+  className?: string
 }
 
 /**
@@ -36,14 +36,14 @@ export function PictogramChart({
   keyLabel,
   className,
 }: PictogramChartProps) {
-  const locked = !!reveal || disabled;
-  const slots = Array.from({ length: maxIcons }, (_, i) => i + 1);
-  const t = useQuizText();
+  const locked = !!reveal || disabled
+  const slots = Array.from({ length: maxIcons }, (_, i) => i + 1)
+  const t = useQuizText()
   const setCount = (id: string, level: number) => {
-    if (locked) return;
-    const cur = counts[id] ?? 0;
-    onChange({ ...counts, [id]: cur === level ? level - 1 : level });
-  };
+    if (locked) return
+    const cur = counts[id] ?? 0
+    onChange({ ...counts, [id]: cur === level ? level - 1 : level })
+  }
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>
@@ -54,8 +54,8 @@ export function PictogramChart({
         </span>
       ) : null}
       {categories.map((c, i) => {
-        const n = counts[c.id] ?? 0;
-        const ok = reveal?.cells[c.id];
+        const n = counts[c.id] ?? 0
+        const ok = reveal?.cells[c.id]
         return (
           <div
             key={c.id}
@@ -69,12 +69,10 @@ export function PictogramChart({
               reveal == null && 'bg-surface',
             )}
           >
-            <span className="w-20 shrink-0 truncate text-sm font-semibold text-foreground">
-              {t(c.label)}
-            </span>
+            <span className="w-20 shrink-0 truncate text-sm font-semibold text-foreground">{t(c.label)}</span>
             <div className="flex flex-1 flex-wrap gap-0.5">
               {slots.map((level) => {
-                const filled = level <= n;
+                const filled = level <= n
                 return (
                   <button
                     key={level}
@@ -92,17 +90,15 @@ export function PictogramChart({
                   >
                     <span className={cn(!filled && 'opacity-0')}>{c.emoji ?? '⬤'}</span>
                   </button>
-                );
+                )
               })}
             </div>
             {reveal && ok === false ? (
-              <span className="shrink-0 text-xs font-semibold text-success">
-                → {reveal.answer[c.id]}
-              </span>
+              <span className="shrink-0 text-xs font-semibold text-success">→ {reveal.answer[c.id]}</span>
             ) : null}
           </div>
-        );
+        )
       })}
     </div>
-  );
+  )
 }

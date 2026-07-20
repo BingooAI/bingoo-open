@@ -1,5 +1,5 @@
-import type { MediaScope } from '@bingoo/db';
-import { getStorage } from '../providers';
+import type { MediaScope } from '@bingoo/db'
+import { getStorage } from '../providers'
 
 /**
  * Storage key layout for a rendition (invariant M3 — server-only, R1):
@@ -14,9 +14,9 @@ export function renditionStorageKey(
   rendition: string,
   ext?: string,
 ): string {
-  const tenant = scopeId ?? 'global';
-  const suffix = ext ? `.${ext.replace(/^\./, '')}` : '';
-  return `media/${scope.toLowerCase()}/${tenant}/${assetId}/${rendition}${suffix}`;
+  const tenant = scopeId ?? 'global'
+  const suffix = ext ? `.${ext.replace(/^\./, '')}` : ''
+  return `media/${scope.toLowerCase()}/${tenant}/${assetId}/${rendition}${suffix}`
 }
 
 const EXT_BY_MIME: Record<string, string> = {
@@ -32,60 +32,60 @@ const EXT_BY_MIME: Record<string, string> = {
   'text/markdown': 'md',
   'text/html': 'html',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
-};
+}
 
 export function extForMime(mime?: string | null): string | undefined {
-  return mime ? EXT_BY_MIME[mime] : undefined;
+  return mime ? EXT_BY_MIME[mime] : undefined
 }
 
 interface RenditionRow {
-  kind: string;
-  provider: string | null;
-  storageKey: string | null;
-  videoId: string | null;
-  url: string | null;
-  mimeType: string | null;
-  width: number | null;
-  height: number | null;
+  kind: string
+  provider: string | null
+  storageKey: string | null
+  videoId: string | null
+  url: string | null
+  mimeType: string | null
+  width: number | null
+  height: number | null
 }
 
 /** Resolve a viewable URL for a rendition: an external url, a public bucket URL,
  *  else a short-lived signed download URL. Never leaks the raw storage key. */
 export async function renditionUrl(r: RenditionRow): Promise<string | null> {
-  if (r.url) return r.url;
-  if (!r.storageKey) return null;
-  const storage = getStorage(r.provider ?? undefined);
-  const publicUrl = storage.getPublicUrl(r.storageKey);
-  if (publicUrl) return publicUrl;
-  const signed = await storage.createSignedDownloadUrl({ key: r.storageKey });
-  return signed.url;
+  if (r.url) return r.url
+  if (!r.storageKey) return null
+  const storage = getStorage(r.provider ?? undefined)
+  const publicUrl = storage.getPublicUrl(r.storageKey)
+  if (publicUrl) return publicUrl
+  const signed = await storage.createSignedDownloadUrl({ key: r.storageKey })
+  return signed.url
 }
 
 interface SerializableAsset {
-  id: string;
-  publicId: string;
-  kind: string;
-  status: string;
-  moderation: string;
-  moderationReason: string | null;
-  title: unknown;
-  description: unknown;
-  altText: unknown;
-  folderId: string | null;
-  scope: string;
-  scopeId: string | null;
-  visibility: string;
-  mimeType: string | null;
-  width: number | null;
-  height: number | null;
-  durationMs: number | null;
-  locale: string | null;
-  license: string | null;
-  ageRating: string | null;
-  keywords: string[];
-  createdAt: Date;
-  renditions?: RenditionRow[];
-  tags?: { tag: { slug: string; kind: string; label: unknown } }[];
+  id: string
+  publicId: string
+  kind: string
+  status: string
+  moderation: string
+  moderationReason: string | null
+  title: unknown
+  description: unknown
+  altText: unknown
+  folderId: string | null
+  scope: string
+  scopeId: string | null
+  visibility: string
+  mimeType: string | null
+  width: number | null
+  height: number | null
+  durationMs: number | null
+  locale: string | null
+  license: string | null
+  ageRating: string | null
+  keywords: string[]
+  createdAt: Date
+  renditions?: RenditionRow[]
+  tags?: { tag: { slug: string; kind: string; label: unknown } }[]
 }
 
 /**
@@ -97,18 +97,18 @@ interface SerializableAsset {
 // thumbnail if one exists, else progressively fall back so the client always gets
 // a viewable URL (assets without a derived thumbnail — e.g. freshly AI-generated —
 // otherwise serialise with no URL at all).
-const LIST_RENDITION_ORDER = ['THUMBNAIL', 'PREVIEW', 'OPTIMIZED', 'ORIGINAL'] as const;
+const LIST_RENDITION_ORDER = ['THUMBNAIL', 'PREVIEW', 'OPTIMIZED', 'ORIGINAL'] as const
 
 export async function serializeAsset(asset: SerializableAsset, signed = true) {
-  const renditions = asset.renditions ?? [];
-  let chosen: RenditionRow[];
+  const renditions = asset.renditions ?? []
+  let chosen: RenditionRow[]
   if (signed) {
-    chosen = renditions;
+    chosen = renditions
   } else {
     const best = LIST_RENDITION_ORDER.map((k) => renditions.find((r) => r.kind === k)).find(
       (r): r is RenditionRow => Boolean(r),
-    );
-    chosen = best ? [best] : [];
+    )
+    chosen = best ? [best] : []
   }
 
   const withUrls = await Promise.all(
@@ -119,7 +119,7 @@ export async function serializeAsset(asset: SerializableAsset, signed = true) {
       height: r.height,
       url: await renditionUrl(r),
     })),
-  );
+  )
 
   return {
     id: asset.id,
@@ -146,5 +146,5 @@ export async function serializeAsset(asset: SerializableAsset, signed = true) {
     createdAt: asset.createdAt,
     renditions: withUrls,
     tags: asset.tags?.map((t) => ({ slug: t.tag.slug, kind: t.tag.kind, label: t.tag.label })),
-  };
+  }
 }

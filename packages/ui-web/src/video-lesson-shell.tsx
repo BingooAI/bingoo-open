@@ -1,30 +1,30 @@
-'use client';
+'use client'
 
-import { Pause, Play } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
+import { Pause, Play } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 function mmss(s: number): string {
-  if (!Number.isFinite(s) || s < 0) s = 0;
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return `${m}:${String(sec).padStart(2, '0')}`;
+  if (!Number.isFinite(s) || s < 0) s = 0
+  const m = Math.floor(s / 60)
+  const sec = Math.floor(s % 60)
+  return `${m}:${String(sec).padStart(2, '0')}`
 }
 
 export interface VideoLessonShellProps {
   /** The actual media element (caller owns it, e.g. <video ref>). */
-  media?: ReactNode;
-  poster?: string;
-  playing: boolean;
+  media?: ReactNode
+  poster?: string
+  playing: boolean
   /** Seconds. */
-  currentTime: number;
-  duration: number;
-  onPlayPause: () => void;
-  onSeek: (time: number) => void;
-  title?: ReactNode;
-  playLabel?: string;
-  pauseLabel?: string;
-  className?: string;
+  currentTime: number
+  duration: number
+  onPlayPause: () => void
+  onSeek: (time: number) => void
+  title?: ReactNode
+  playLabel?: string
+  pauseLabel?: string
+  className?: string
 }
 
 /**
@@ -76,9 +76,7 @@ export function VideoLessonShell({
           )}
         </button>
         {title ? (
-          <span className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">
-            {title}
-          </span>
+          <span className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">{title}</span>
         ) : null}
         <input
           type="range"
@@ -96,5 +94,5 @@ export function VideoLessonShell({
         </span>
       </div>
     </div>
-  );
+  )
 }

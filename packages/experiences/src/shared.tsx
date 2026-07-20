@@ -1,21 +1,19 @@
-import { AnswerOption, Button, Card, cn, IconChip, type IconChipColor } from '@bingoo/ui-web';
-import { useRef, useState, type ReactNode } from 'react';
-import type { ExperienceLabels, LearnQuizItem } from './types';
+import { AnswerOption, Button, Card, cn, IconChip, type IconChipColor } from '@bingoo/ui-web'
+import { useRef, useState, type ReactNode } from 'react'
+import type { ExperienceLabels, LearnQuizItem } from './types'
 
 export function ScrollArea({ children }: { children: ReactNode }) {
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:py-8">{children}</div>
     </div>
-  );
+  )
 }
 
 export function EmptyState({ children }: { children: ReactNode }) {
   return (
-    <p className="rounded-2xl bg-surface-muted p-10 text-center text-sm text-foreground-muted">
-      {children}
-    </p>
-  );
+    <p className="rounded-2xl bg-surface-muted p-10 text-center text-sm text-foreground-muted">{children}</p>
+  )
 }
 
 export function CompletedCard({
@@ -25,11 +23,11 @@ export function CompletedCard({
   emoji = '🎉',
   accent = 'success',
 }: {
-  title: ReactNode;
-  restart: ReactNode;
-  onRestart: () => void;
-  emoji?: string;
-  accent?: IconChipColor;
+  title: ReactNode
+  restart: ReactNode
+  onRestart: () => void
+  emoji?: string
+  accent?: IconChipColor
 }) {
   return (
     <Card className="flex flex-col items-center gap-4 p-10 text-center">
@@ -41,7 +39,7 @@ export function CompletedCard({
         {restart}
       </Button>
     </Card>
-  );
+  )
 }
 
 /**
@@ -57,29 +55,29 @@ export function Drill({
   onResolved,
   onNext,
 }: {
-  question: LearnQuizItem;
-  index: number;
-  total: number;
-  labels: ExperienceLabels;
-  accent?: IconChipColor;
-  onResolved: (correct: boolean, timeMs: number) => void;
-  onNext: () => void;
+  question: LearnQuizItem
+  index: number
+  total: number
+  labels: ExperienceLabels
+  accent?: IconChipColor
+  onResolved: (correct: boolean, timeMs: number) => void
+  onNext: () => void
 }) {
-  const [picked, setPicked] = useState<string | null>(null);
-  const shownAt = useRef<number>(Date.now());
-  const revealed = picked != null;
-  const correct = picked === question.answerId;
+  const [picked, setPicked] = useState<string | null>(null)
+  const shownAt = useRef<number>(Date.now())
+  const revealed = picked != null
+  const correct = picked === question.answerId
 
   function pick(id: string) {
-    if (revealed) return;
-    setPicked(id);
-    onResolved(id === question.answerId, Date.now() - shownAt.current);
+    if (revealed) return
+    setPicked(id)
+    onResolved(id === question.answerId, Date.now() - shownAt.current)
   }
 
   function next() {
-    setPicked(null);
-    shownAt.current = Date.now();
-    onNext();
+    setPicked(null)
+    shownAt.current = Date.now()
+    onNext()
   }
 
   return (
@@ -101,7 +99,7 @@ export function Drill({
               ? 'correct'
               : picked === c.id
                 ? 'incorrect'
-                : 'default';
+                : 'default'
           return (
             <AnswerOption
               key={c.id}
@@ -111,7 +109,7 @@ export function Drill({
               disabled={revealed}
               onClick={() => pick(c.id)}
             />
-          );
+          )
         })}
       </div>
       {revealed ? (
@@ -125,5 +123,5 @@ export function Drill({
         </div>
       ) : null}
     </div>
-  );
+  )
 }

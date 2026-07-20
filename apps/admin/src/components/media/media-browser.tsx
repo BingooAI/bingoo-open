@@ -1,75 +1,75 @@
-'use client';
+'use client'
 
-import { CheckSquare, FolderTree as FolderTreeIcon, Info, Sparkles, X } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useMemo, useState } from 'react';
-import { locales } from '@bingoo/i18n';
-import { Pagination } from '@bingoo/ui-web';
-import { pickText } from '@/lib/i18n-text';
-import type { StaffCapabilities } from '@/lib/roles';
-import { useFolderAssets, useNlSearch, useSearch } from '@/lib/media-queries';
-import type { MediaAssetDto, MediaFolderDto } from '@/lib/api-types';
-import { AssetDetailPanel } from './asset-detail-panel';
-import { AssetGrid } from './asset-grid';
-import { Drawer } from './drawer';
-import { FolderTree } from './folder-tree';
-import { BulkModerationBar } from './moderation-actions';
-import { EMPTY_SEARCH, isSearchActive, SearchToolbar, type SearchState } from './search-toolbar';
-import { UploadDialog } from './upload-dialog';
+import { CheckSquare, FolderTree as FolderTreeIcon, Info, Sparkles, X } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
+import { useEffect, useMemo, useState } from 'react'
+import { locales } from '@bingoo/i18n'
+import { Pagination } from '@bingoo/ui-web'
+import { pickText } from '@/lib/i18n-text'
+import type { StaffCapabilities } from '@/lib/roles'
+import { useFolderAssets, useNlSearch, useSearch } from '@/lib/media-queries'
+import type { MediaAssetDto, MediaFolderDto } from '@/lib/api-types'
+import { AssetDetailPanel } from './asset-detail-panel'
+import { AssetGrid } from './asset-grid'
+import { Drawer } from './drawer'
+import { FolderTree } from './folder-tree'
+import { BulkModerationBar } from './moderation-actions'
+import { EMPTY_SEARCH, isSearchActive, SearchToolbar, type SearchState } from './search-toolbar'
+import { UploadDialog } from './upload-dialog'
 
-const SEARCH_LIMIT = 60;
-const PAGE_SIZE = 24;
+const SEARCH_LIMIT = 60
+const PAGE_SIZE = 24
 
 function useDebounced<T>(value: T, delay = 300): T {
-  const [v, setV] = useState(value);
+  const [v, setV] = useState(value)
   useEffect(() => {
-    const id = setTimeout(() => setV(value), delay);
-    return () => clearTimeout(id);
-  }, [value, delay]);
-  return v;
+    const id = setTimeout(() => setV(value), delay)
+    return () => clearTimeout(id)
+  }, [value, delay])
+  return v
 }
 
 export function MediaBrowser({ caps }: { caps: StaffCapabilities }) {
-  const t = useTranslations('admin.library');
-  const tk = useTranslations('admin.kind');
-  const locale = useLocale();
+  const t = useTranslations('admin.library')
+  const tk = useTranslations('admin.kind')
+  const locale = useLocale()
 
-  const [folderId, setFolderId] = useState<string | null>(null);
-  const [folder, setFolder] = useState<MediaFolderDto | null>(null);
-  const [search, setSearch] = useState<SearchState>(EMPTY_SEARCH);
-  const [nlSubmitted, setNlSubmitted] = useState('');
-  const [page, setPage] = useState(1);
-  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
-  const [checkedIds, setCheckedIds] = useState<ReadonlySet<string>>(new Set());
-  const [treeOpen, setTreeOpen] = useState(false);
+  const [folderId, setFolderId] = useState<string | null>(null)
+  const [folder, setFolder] = useState<MediaFolderDto | null>(null)
+  const [search, setSearch] = useState<SearchState>(EMPTY_SEARCH)
+  const [nlSubmitted, setNlSubmitted] = useState('')
+  const [page, setPage] = useState(1)
+  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null)
+  const [checkedIds, setCheckedIds] = useState<ReadonlySet<string>>(new Set())
+  const [treeOpen, setTreeOpen] = useState(false)
 
-  const debouncedText = useDebounced(search.text);
+  const debouncedText = useDebounced(search.text)
   const effectiveSearch = useMemo<SearchState>(
     () => ({ ...search, text: debouncedText }),
     [search, debouncedText],
-  );
+  )
 
   // Toolbar change — turning NL mode off clears the committed NL query.
   function onSearchChange(next: SearchState) {
-    if (!next.nl && search.nl) setNlSubmitted('');
-    setSearch(next);
+    if (!next.nl && search.nl) setNlSubmitted('')
+    setSearch(next)
   }
 
   // Data-source decision:
   //  · NL mode → LLM-parsed search (POST /search/nl), run on explicit submit.
   //  · text/facet or "All assets" root → capped hybrid search.
   //  · a selected folder with no filters → real server-paginated folder browse.
-  const nlMode = search.nl;
-  const searchMode = !nlMode && (isSearchActive(effectiveSearch) || folderId === null);
+  const nlMode = search.nl
+  const searchMode = !nlMode && (isSearchActive(effectiveSearch) || folderId === null)
 
   // A new result set invalidates the selection — leaving ids checked that are no
   // longer on screen would make the bulk bar act on assets nobody can see.
   useEffect(() => {
-    setPage(1);
-    setCheckedIds(new Set());
-  }, [folderId, effectiveSearch]);
+    setPage(1)
+    setCheckedIds(new Set())
+  }, [folderId, effectiveSearch])
 
-  const nlSearch = useNlSearch(nlSubmitted, SEARCH_LIMIT, nlMode);
+  const nlSearch = useNlSearch(nlSubmitted, SEARCH_LIMIT, nlMode)
   const searchQuery = useSearch(
     {
       text: effectiveSearch.text.trim() || undefined,
@@ -80,58 +80,58 @@ export function MediaBrowser({ caps }: { caps: StaffCapabilities }) {
       limit: SEARCH_LIMIT,
     },
     searchMode,
-  );
-  const folderAssets = useFolderAssets(folderId, page, PAGE_SIZE);
+  )
+  const folderAssets = useFolderAssets(folderId, page, PAGE_SIZE)
 
-  let assets: MediaAssetDto[] | undefined;
-  let isLoading: boolean;
-  let isError: boolean;
-  let retry: () => void;
+  let assets: MediaAssetDto[] | undefined
+  let isLoading: boolean
+  let isError: boolean
+  let retry: () => void
   if (nlMode) {
-    assets = nlSubmitted ? nlSearch.data?.hits : [];
-    isLoading = nlSearch.isFetching && !!nlSubmitted;
-    isError = nlSearch.isError;
-    retry = () => void nlSearch.refetch();
+    assets = nlSubmitted ? nlSearch.data?.hits : []
+    isLoading = nlSearch.isFetching && !!nlSubmitted
+    isError = nlSearch.isError
+    retry = () => void nlSearch.refetch()
   } else if (searchMode) {
-    assets = searchQuery.data?.hits;
-    isLoading = searchQuery.isLoading;
-    isError = searchQuery.isError;
-    retry = () => void searchQuery.refetch();
+    assets = searchQuery.data?.hits
+    isLoading = searchQuery.isLoading
+    isError = searchQuery.isError
+    retry = () => void searchQuery.refetch()
   } else {
-    assets = folderAssets.data?.data;
-    isLoading = folderAssets.isLoading;
-    isError = folderAssets.isError;
-    retry = () => void folderAssets.refetch();
+    assets = folderAssets.data?.data
+    isLoading = folderAssets.isLoading
+    isError = folderAssets.isError
+    retry = () => void folderAssets.refetch()
   }
 
-  const totalPages = folderAssets.data?.meta.totalPages ?? 1;
+  const totalPages = folderAssets.data?.meta.totalPages ?? 1
   const capped =
     (searchMode && (searchQuery.data?.hits.length ?? 0) >= SEARCH_LIMIT) ||
-    (nlMode && (nlSearch.data?.hits.length ?? 0) >= SEARCH_LIMIT);
+    (nlMode && (nlSearch.data?.hits.length ?? 0) >= SEARCH_LIMIT)
 
-  const parsed = nlMode && nlSubmitted ? nlSearch.data?.query : undefined;
+  const parsed = nlMode && nlSubmitted ? nlSearch.data?.query : undefined
 
   function selectFolder(id: string | null, f: MediaFolderDto | null) {
-    setFolderId(id);
-    setFolder(f);
-    setTreeOpen(false);
+    setFolderId(id)
+    setFolder(f)
+    setTreeOpen(false)
   }
 
   function toggleCheck(a: MediaAssetDto) {
     setCheckedIds((prev) => {
-      const next = new Set(prev);
-      if (!next.delete(a.id)) next.add(a.id);
-      return next;
-    });
+      const next = new Set(prev)
+      if (!next.delete(a.id)) next.add(a.id)
+      return next
+    })
   }
 
-  const allChecked = !!assets?.length && assets.every((a) => checkedIds.has(a.id));
+  const allChecked = !!assets?.length && assets.every((a) => checkedIds.has(a.id))
   function toggleAll() {
-    setCheckedIds(allChecked ? new Set() : new Set((assets ?? []).map((a) => a.id)));
+    setCheckedIds(allChecked ? new Set() : new Set((assets ?? []).map((a) => a.id)))
   }
 
-  const heading = folder ? pickText(folder.name, locale, folder.slug ?? '') : t('allAssets');
-  const tree = <FolderTree selectedId={folderId} onSelect={selectFolder} />;
+  const heading = folder ? pickText(folder.name, locale, folder.slug ?? '') : t('allAssets')
+  const tree = <FolderTree selectedId={folderId} onSelect={selectFolder} />
 
   return (
     <div className="lg:grid lg:grid-cols-[248px_1fr] lg:gap-6">
@@ -276,5 +276,5 @@ export function MediaBrowser({ caps }: { caps: StaffCapabilities }) {
         )}
       </Drawer>
     </div>
-  );
+  )
 }

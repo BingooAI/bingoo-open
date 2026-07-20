@@ -4,20 +4,20 @@
  * renderer (prims.tsx), positioned by the pose × laid-out rect transform. No
  * math/animation logic lives here (that's all pure in the engine).
  */
-import * as React from 'react';
-import type { RenderItem, ManipulativeRenderContent } from '@bingoo/explainer';
-import type { ThemeTokens } from '@bingoo/explainer';
-import { Prims, computeFit } from './prims';
-import { itemTransform } from './util';
+import * as React from 'react'
+import type { RenderItem, ManipulativeRenderContent } from '@bingoo/explainer'
+import type { ThemeTokens } from '@bingoo/explainer'
+import { Prims, computeFit } from './prims'
+import { itemTransform } from './util'
 
 export function ManipulativeEl({ item, theme }: { item: RenderItem; theme: ThemeTokens }) {
-  const c = item.content as ManipulativeRenderContent;
-  const { transform, opacity } = itemTransform(item);
+  const c = item.content as ManipulativeRenderContent
+  const { transform, opacity } = itemTransform(item)
   // shrink/center content to the element's box so edge labels never clip
-  const fit = computeFit(c.model.prims, { w: item.rect.w, h: item.rect.h });
+  const fit = computeFit(c.model.prims, { w: item.rect.w, h: item.rect.h })
   return (
     <g transform={transform} opacity={opacity} data-manip={c.manipKind}>
       <Prims prims={c.model.prims} theme={theme} transform={fit?.transform} />
     </g>
-  );
+  )
 }

@@ -127,9 +127,6 @@
    (set e.g. `--dots-color: rgb(255 255 255 / .14)`). Pair with `animate-dots`
    for a slow drift. */
 @utility bg-dots {
-  background-image: radial-gradient(
-    var(--dots-color, var(--border-strong)) 1.5px,
-    transparent 1.5px
-  );
+  background-image: radial-gradient(var(--dots-color, var(--border-strong)) 1.5px, transparent 1.5px);
   background-size: 22px 22px;
 }

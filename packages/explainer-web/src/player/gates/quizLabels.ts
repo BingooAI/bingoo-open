@@ -4,7 +4,7 @@
  * embedded quiz question renders with sensible copy out of the box. (Proper i18n
  * later routes these through @bingoo/i18n at the app layer.)
  */
-import type { QuizLabels } from '@bingoo/ui-web';
+import type { QuizLabels } from '@bingoo/ui-web'
 
 export const VI_QUIZ_LABELS: QuizLabels = {
   questionOf: (i, t) => `Câu ${i + 1}/${t}`,
@@ -37,4 +37,4 @@ export const VI_QUIZ_LABELS: QuizLabels = {
     retry: 'Làm lại',
     continueLabel: 'Tiếp tục',
   },
-};
+}

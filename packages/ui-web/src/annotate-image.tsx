@@ -1,24 +1,24 @@
-'use client';
+'use client'
 
-import { appendPoint, pointsToSvgPath, type DrawPoint, type DrawStroke } from '@bingoo/core';
-import { Undo2 } from 'lucide-react';
-import { useRef, useState, type PointerEvent } from 'react';
-import { cn } from './lib/cn';
-import { tile } from './lib/interactive';
+import { appendPoint, pointsToSvgPath, type DrawPoint, type DrawStroke } from '@bingoo/core'
+import { Undo2 } from 'lucide-react'
+import { useRef, useState, type PointerEvent } from 'react'
+import { cn } from './lib/cn'
+import { tile } from './lib/interactive'
 
 export interface AnnotateImageProps {
-  imageSrc?: string;
+  imageSrc?: string
   /** Controlled strokes (open response). */
-  strokes: DrawStroke[];
-  onChange: (strokes: DrawStroke[]) => void;
-  color?: string;
-  brushWidth?: number;
+  strokes: DrawStroke[]
+  onChange: (strokes: DrawStroke[]) => void
+  color?: string
+  brushWidth?: number
   /** Locks drawing after checking (it's an open response). */
-  locked?: boolean;
-  disabled?: boolean;
-  undoLabel?: string;
-  label?: string;
-  className?: string;
+  locked?: boolean
+  disabled?: boolean
+  undoLabel?: string
+  label?: string
+  className?: string
 }
 
 /**
@@ -38,39 +38,33 @@ export function AnnotateImage({
   label,
   className,
 }: AnnotateImageProps) {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const [draft, setDraft] = useState<DrawPoint[] | null>(null);
-  const off = !!locked || disabled;
+  const svgRef = useRef<SVGSVGElement>(null)
+  const [draft, setDraft] = useState<DrawPoint[] | null>(null)
+  const off = !!locked || disabled
 
   const toCanvas = (e: PointerEvent): DrawPoint => {
-    const rect = svgRef.current!.getBoundingClientRect();
-    return [
-      ((e.clientX - rect.left) / rect.width) * 100,
-      ((e.clientY - rect.top) / rect.height) * 100,
-    ];
-  };
+    const rect = svgRef.current!.getBoundingClientRect()
+    return [((e.clientX - rect.left) / rect.width) * 100, ((e.clientY - rect.top) / rect.height) * 100]
+  }
   const down = (e: PointerEvent<SVGSVGElement>) => {
-    if (off) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
-    setDraft([toCanvas(e)]);
-  };
+    if (off) return
+    e.currentTarget.setPointerCapture(e.pointerId)
+    setDraft([toCanvas(e)])
+  }
   const move = (e: PointerEvent<SVGSVGElement>) => {
-    if (off || !draft) return;
-    setDraft(appendPoint(draft, toCanvas(e)));
-  };
+    if (off || !draft) return
+    setDraft(appendPoint(draft, toCanvas(e)))
+  }
   const up = () => {
-    if (!draft) return;
-    if (draft.length > 0) onChange([...strokes, { points: draft, color, width: brushWidth }]);
-    setDraft(null);
-  };
+    if (!draft) return
+    if (draft.length > 0) onChange([...strokes, { points: draft, color, width: brushWidth }])
+    setDraft(null)
+  }
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>
       <div
-        className={cn(
-          tile({ state: 'quiet', size: 'none' }),
-          'relative aspect-video w-full overflow-hidden',
-        )}
+        className={cn(tile({ state: 'quiet', size: 'none' }), 'relative aspect-video w-full overflow-hidden')}
       >
         {imageSrc ? (
           <img src={imageSrc} alt="" className="absolute inset-0 size-full object-contain" />
@@ -125,5 +119,5 @@ export function AnnotateImage({
         </button>
       ) : null}
     </div>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-import { type HTMLAttributes } from 'react';
-import { cn } from './lib/cn';
-import { toPercent } from '@bingoo/core';
+import { type HTMLAttributes } from 'react'
+import { cn } from './lib/cn'
+import { toPercent } from '@bingoo/core'
 
 const BAR_COLOR = {
   primary: 'bg-primary',
@@ -8,15 +8,15 @@ const BAR_COLOR = {
   sunbeam: 'bg-accent-sunbeam',
   coral: 'bg-accent-coral',
   success: 'bg-success',
-} as const;
+} as const
 
 export interface ProgressProps extends HTMLAttributes<HTMLDivElement> {
-  value: number;
-  max?: number;
-  color?: keyof typeof BAR_COLOR;
-  size?: 'sm' | 'md' | 'lg';
+  value: number
+  max?: number
+  color?: keyof typeof BAR_COLOR
+  size?: 'sm' | 'md' | 'lg'
   /** Accessible label for the progressbar. */
-  label?: string;
+  label?: string
 }
 
 export function Progress({
@@ -28,8 +28,8 @@ export function Progress({
   label,
   ...props
 }: ProgressProps) {
-  const pct = toPercent(value / max);
-  const track = { sm: 'h-1.5', md: 'h-2.5', lg: 'h-3.5' }[size];
+  const pct = toPercent(value / max)
+  const track = { sm: 'h-1.5', md: 'h-2.5', lg: 'h-3.5' }[size]
 
   return (
     <div
@@ -42,12 +42,9 @@ export function Progress({
       {...props}
     >
       <div
-        className={cn(
-          'h-full rounded-full transition-[width] duration-500 ease-out-soft',
-          BAR_COLOR[color],
-        )}
+        className={cn('h-full rounded-full transition-[width] duration-500 ease-out-soft', BAR_COLOR[color])}
         style={{ width: `${pct}%` }}
       />
     </div>
-  );
+  )
 }

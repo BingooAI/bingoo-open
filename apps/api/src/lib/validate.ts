@@ -1,7 +1,7 @@
-import { zValidator } from '@hono/zod-validator';
-import type { ValidationTargets } from 'hono';
-import type { ZodType } from 'zod';
-import { AppError } from './errors';
+import { zValidator } from '@hono/zod-validator'
+import type { ValidationTargets } from 'hono'
+import type { ZodType } from 'zod'
+import { AppError } from './errors'
 
 /**
  * Wraps @hono/zod-validator so every validation failure becomes a uniform
@@ -19,7 +19,7 @@ export function validate<T extends ZodType>(target: keyof ValidationTargets, sch
           message: issue.message,
           code: issue.code,
         })),
-      );
+      )
     }
-  });
+  })
 }

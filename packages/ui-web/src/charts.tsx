@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
-import { cn } from './lib/cn';
+import type { ReactNode } from 'react'
+import { cn } from './lib/cn'
 
 /**
  * Lightweight, token-driven SVG charts for dashboards. Single-hue by default
@@ -8,7 +8,7 @@ import { cn } from './lib/cn';
  * series color. Cross-platform note: the geometry maps 1:1 onto react-native-svg
  * for the native port.
  */
-export type ChartColor = 'primary' | 'teal' | 'sunbeam' | 'coral' | 'success';
+export type ChartColor = 'primary' | 'teal' | 'sunbeam' | 'coral' | 'success'
 
 const CVAR: Record<ChartColor, string> = {
   primary: 'var(--color-primary)',
@@ -16,17 +16,17 @@ const CVAR: Record<ChartColor, string> = {
   sunbeam: 'var(--color-accent-sunbeam)',
   coral: 'var(--color-accent-coral)',
   success: 'var(--color-success)',
-};
+}
 
 /* ------------------------------- Sparkline ------------------------------- */
 export interface SparklineProps {
-  data: number[];
-  color?: ChartColor;
-  width?: number;
-  height?: number;
-  area?: boolean;
-  className?: string;
-  ariaLabel?: string;
+  data: number[]
+  color?: ChartColor
+  width?: number
+  height?: number
+  area?: boolean
+  className?: string
+  ariaLabel?: string
 }
 
 export function Sparkline({
@@ -38,17 +38,17 @@ export function Sparkline({
   className,
   ariaLabel = 'Trend',
 }: SparklineProps) {
-  if (data.length < 2) return null;
-  const stroke = CVAR[color];
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const range = max - min || 1;
+  if (data.length < 2) return null
+  const stroke = CVAR[color]
+  const max = Math.max(...data)
+  const min = Math.min(...data)
+  const range = max - min || 1
   const pts = data.map((v, i): [number, number] => [
     (i / (data.length - 1)) * width,
     height - 2 - ((v - min) / range) * (height - 4),
-  ]);
-  const line = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
-  const last = pts[pts.length - 1]!;
+  ])
+  const line = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ')
+  const last = pts[pts.length - 1]!
   return (
     <svg
       role="img"
@@ -58,9 +58,7 @@ export function Sparkline({
       height={height}
       className={className}
     >
-      {area ? (
-        <path d={`${line} L ${width} ${height} L 0 ${height} Z`} fill={stroke} opacity={0.12} />
-      ) : null}
+      {area ? <path d={`${line} L ${width} ${height} L 0 ${height} Z`} fill={stroke} opacity={0.12} /> : null}
       <path
         d={line}
         fill="none"
@@ -71,49 +69,39 @@ export function Sparkline({
       />
       <circle cx={last[0]} cy={last[1]} r={2.5} fill={stroke} />
     </svg>
-  );
+  )
 }
 
 /* ------------------------------- AreaChart ------------------------------- */
 export interface XYPoint {
-  label: string;
-  value: number;
+  label: string
+  value: number
 }
 
 export interface AreaChartProps {
-  data: XYPoint[];
-  color?: ChartColor;
-  className?: string;
-  ariaLabel?: string;
+  data: XYPoint[]
+  color?: ChartColor
+  className?: string
+  ariaLabel?: string
 }
 
-export function AreaChart({
-  data,
-  color = 'primary',
-  className,
-  ariaLabel = 'Area chart',
-}: AreaChartProps) {
-  const W = 320;
-  const H = 150;
-  const padB = 22;
-  const padT = 8;
-  const stroke = CVAR[color];
-  if (data.length < 2) return null;
-  const max = Math.max(...data.map((d) => d.value)) || 1;
-  const plotH = H - padB - padT;
+export function AreaChart({ data, color = 'primary', className, ariaLabel = 'Area chart' }: AreaChartProps) {
+  const W = 320
+  const H = 150
+  const padB = 22
+  const padT = 8
+  const stroke = CVAR[color]
+  if (data.length < 2) return null
+  const max = Math.max(...data.map((d) => d.value)) || 1
+  const plotH = H - padB - padT
   const pts = data.map((d, i): [number, number] => [
     (i / (data.length - 1)) * W,
     padT + plotH - (d.value / max) * plotH,
-  ]);
-  const line = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
-  const last = pts[pts.length - 1]!;
+  ])
+  const line = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ')
+  const last = pts[pts.length - 1]!
   return (
-    <svg
-      role="img"
-      aria-label={ariaLabel}
-      viewBox={`0 0 ${W} ${H}`}
-      className={cn('w-full', className)}
-    >
+    <svg role="img" aria-label={ariaLabel} viewBox={`0 0 ${W} ${H}`} className={cn('w-full', className)}>
       {[0.5, 1].map((f) => (
         <line
           key={f}
@@ -125,11 +113,7 @@ export function AreaChart({
           strokeWidth={1}
         />
       ))}
-      <path
-        d={`${line} L ${W} ${padT + plotH} L 0 ${padT + plotH} Z`}
-        fill={stroke}
-        opacity={0.12}
-      />
+      <path d={`${line} L ${W} ${padT + plotH} L 0 ${padT + plotH} Z`} fill={stroke} opacity={0.12} />
       <path
         d={line}
         fill="none"
@@ -138,14 +122,7 @@ export function AreaChart({
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <circle
-        cx={last[0]}
-        cy={last[1]}
-        r={3.5}
-        fill={stroke}
-        stroke="var(--color-surface)"
-        strokeWidth={2}
-      />
+      <circle cx={last[0]} cy={last[1]} r={3.5} fill={stroke} stroke="var(--color-surface)" strokeWidth={2} />
       {data.map((d, i) => (
         <text
           key={d.label}
@@ -158,42 +135,32 @@ export function AreaChart({
         </text>
       ))}
     </svg>
-  );
+  )
 }
 
 /* -------------------------------- BarChart ------------------------------- */
 export interface BarChartProps {
-  data: XYPoint[];
-  color?: ChartColor;
-  className?: string;
-  ariaLabel?: string;
+  data: XYPoint[]
+  color?: ChartColor
+  className?: string
+  ariaLabel?: string
 }
 
-export function BarChart({
-  data,
-  color = 'primary',
-  className,
-  ariaLabel = 'Bar chart',
-}: BarChartProps) {
-  const W = 320;
-  const H = 160;
-  const padB = 22;
-  const fill = CVAR[color];
-  const max = Math.max(...data.map((d) => d.value)) || 1;
-  const plotH = H - padB - 8;
-  const gap = 10;
-  const bw = (W - gap * (data.length - 1)) / data.length;
+export function BarChart({ data, color = 'primary', className, ariaLabel = 'Bar chart' }: BarChartProps) {
+  const W = 320
+  const H = 160
+  const padB = 22
+  const fill = CVAR[color]
+  const max = Math.max(...data.map((d) => d.value)) || 1
+  const plotH = H - padB - 8
+  const gap = 10
+  const bw = (W - gap * (data.length - 1)) / data.length
   return (
-    <svg
-      role="img"
-      aria-label={ariaLabel}
-      viewBox={`0 0 ${W} ${H}`}
-      className={cn('w-full', className)}
-    >
+    <svg role="img" aria-label={ariaLabel} viewBox={`0 0 ${W} ${H}`} className={cn('w-full', className)}>
       {data.map((d, i) => {
-        const h = Math.max(2, (d.value / max) * plotH);
-        const x = i * (bw + gap);
-        const y = 8 + plotH - h;
+        const h = Math.max(2, (d.value / max) * plotH)
+        const x = i * (bw + gap)
+        const y = 8 + plotH - h
         return (
           <g key={d.label}>
             <rect x={x} y={y} width={bw} height={h} rx={5} fill={fill} />
@@ -206,26 +173,26 @@ export function BarChart({
               {d.label}
             </text>
           </g>
-        );
+        )
       })}
     </svg>
-  );
+  )
 }
 
 /* ------------------------------- DonutChart ------------------------------ */
 export interface DonutSegment {
-  label: string;
-  value: number;
-  color: ChartColor;
+  label: string
+  value: number
+  color: ChartColor
 }
 
 export interface DonutChartProps {
-  data: DonutSegment[];
-  size?: number;
-  thickness?: number;
-  centerLabel?: ReactNode;
-  className?: string;
-  ariaLabel?: string;
+  data: DonutSegment[]
+  size?: number
+  thickness?: number
+  centerLabel?: ReactNode
+  className?: string
+  ariaLabel?: string
 }
 
 export function DonutChart({
@@ -236,22 +203,16 @@ export function DonutChart({
   className,
   ariaLabel = 'Donut chart',
 }: DonutChartProps) {
-  const r = (size - thickness) / 2;
-  const c = 2 * Math.PI * r;
-  const total = data.reduce((s, d) => s + d.value, 0) || 1;
-  let acc = 0;
+  const r = (size - thickness) / 2
+  const c = 2 * Math.PI * r
+  const total = data.reduce((s, d) => s + d.value, 0) || 1
+  let acc = 0
   return (
     <div
       className={cn('relative inline-grid place-items-center', className)}
       style={{ width: size, height: size }}
     >
-      <svg
-        role="img"
-        aria-label={ariaLabel}
-        width={size}
-        height={size}
-        viewBox={`0 0 ${size} ${size}`}
-      >
+      <svg role="img" aria-label={ariaLabel} width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -261,10 +222,10 @@ export function DonutChart({
           strokeWidth={thickness}
         />
         {data.map((d) => {
-          const len = (d.value / total) * c;
-          const dash = `${Math.max(0, len - 2)} ${c - Math.max(0, len - 2)}`;
-          const off = -acc;
-          acc += len;
+          const len = (d.value / total) * c
+          const dash = `${Math.max(0, len - 2)} ${c - Math.max(0, len - 2)}`
+          const off = -acc
+          acc += len
           return (
             <circle
               key={d.label}
@@ -278,7 +239,7 @@ export function DonutChart({
               strokeDashoffset={off}
               transform={`rotate(-90 ${size / 2} ${size / 2})`}
             />
-          );
+          )
         })}
       </svg>
       {centerLabel ? (
@@ -287,17 +248,17 @@ export function DonutChart({
         </div>
       ) : null}
     </div>
-  );
+  )
 }
 
 /* ------------------------------- RadarChart ------------------------------ */
 export interface RadarChartProps {
-  data: XYPoint[];
-  max?: number;
-  color?: ChartColor;
-  size?: number;
-  className?: string;
-  ariaLabel?: string;
+  data: XYPoint[]
+  max?: number
+  color?: ChartColor
+  size?: number
+  className?: string
+  ariaLabel?: string
 }
 
 export function RadarChart({
@@ -308,22 +269,22 @@ export function RadarChart({
   className,
   ariaLabel = 'Radar chart',
 }: RadarChartProps) {
-  const stroke = CVAR[color];
-  const cx = size / 2;
-  const cy = size / 2;
-  const r = size / 2 - 26;
-  const n = data.length;
-  const angle = (i: number) => (-90 + (360 / n) * i) * (Math.PI / 180);
+  const stroke = CVAR[color]
+  const cx = size / 2
+  const cy = size / 2
+  const r = size / 2 - 26
+  const n = data.length
+  const angle = (i: number) => (-90 + (360 / n) * i) * (Math.PI / 180)
   const at = (i: number, radius: number): [number, number] => [
     cx + Math.cos(angle(i)) * radius,
     cy + Math.sin(angle(i)) * radius,
-  ];
+  ]
   const poly = data
     .map((d, i) => {
-      const [x, y] = at(i, (Math.min(d.value, max) / max) * r);
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
+      const [x, y] = at(i, (Math.min(d.value, max) / max) * r)
+      return `${x.toFixed(1)},${y.toFixed(1)}`
     })
-    .join(' ');
+    .join(' ')
   return (
     <svg
       role="img"
@@ -349,18 +310,8 @@ export function RadarChart({
         />
       ))}
       {data.map((_, i) => {
-        const [x, y] = at(i, r);
-        return (
-          <line
-            key={i}
-            x1={cx}
-            y1={cy}
-            x2={x}
-            y2={y}
-            stroke="var(--color-border)"
-            strokeWidth={1}
-          />
-        );
+        const [x, y] = at(i, r)
+        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="var(--color-border)" strokeWidth={1} />
       })}
       <polygon
         points={poly}
@@ -371,7 +322,7 @@ export function RadarChart({
         strokeLinejoin="round"
       />
       {data.map((d, i) => {
-        const [x, y] = at(i, r + 12);
+        const [x, y] = at(i, r + 12)
         return (
           <text
             key={d.label}
@@ -383,8 +334,8 @@ export function RadarChart({
           >
             {d.label}
           </text>
-        );
+        )
       })}
     </svg>
-  );
+  )
 }

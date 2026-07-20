@@ -1,26 +1,20 @@
-import { type ReactNode } from 'react';
-import { cn } from '@/lib/cn';
-import { mascotSrc, type MascotEmotion } from '@bingoo/core';
+import { type ReactNode } from 'react'
+import { cn } from '@/lib/cn'
+import { mascotSrc, type MascotEmotion } from '@bingoo/core'
 
 export interface MascotProps {
-  emotion?: MascotEmotion;
+  emotion?: MascotEmotion
   /** Pixel size (square). */
-  size?: number;
+  size?: number
   /** Gentle idle bob animation. */
-  float?: boolean;
-  className?: string;
+  float?: boolean
+  className?: string
   /** Accessible description; empty string marks it decorative. */
-  alt?: string;
+  alt?: string
 }
 
 /** The Bingoo buddy — renders an animated emotion SVG from the brand kit. */
-export function Mascot({
-  emotion = 'happy',
-  size = 120,
-  float,
-  className,
-  alt = 'Bingoo',
-}: MascotProps) {
+export function Mascot({ emotion = 'happy', size = 120, float, className, alt = 'Bingoo' }: MascotProps) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
@@ -32,16 +26,16 @@ export function Mascot({
       className={cn('block select-none', float && 'animate-bob', className)}
       draggable={false}
     />
-  );
+  )
 }
 
 export interface MascotMessageProps {
-  emotion?: MascotEmotion;
-  size?: number;
-  children: ReactNode;
-  className?: string;
+  emotion?: MascotEmotion
+  size?: number
+  children: ReactNode
+  className?: string
   /** Which side the mascot sits on. */
-  side?: 'left' | 'right';
+  side?: 'left' | 'right'
 }
 
 /** Mascot paired with a speech bubble — used across auth & onboarding. */
@@ -53,9 +47,7 @@ export function MascotMessage({
   side = 'left',
 }: MascotMessageProps) {
   return (
-    <div
-      className={cn('flex items-center gap-3', side === 'right' && 'flex-row-reverse', className)}
-    >
+    <div className={cn('flex items-center gap-3', side === 'right' && 'flex-row-reverse', className)}>
       <Mascot emotion={emotion} size={size} float className="shrink-0" />
       <div
         className={cn(
@@ -66,5 +58,5 @@ export function MascotMessage({
         {children}
       </div>
     </div>
-  );
+  )
 }
