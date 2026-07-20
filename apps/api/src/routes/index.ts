@@ -11,14 +11,11 @@ import { health } from './health'
 import { i18n } from './i18n'
 import { knowledge } from './knowledge'
 import { media } from './media'
-import { notifications } from './notifications'
 import { orgs } from './orgs'
 import { prompts } from './prompts'
-import { payments } from './payments'
 import { profile } from './profile'
 import { relationships } from './relationships'
 import { students } from './students'
-import { paymentWebhooks } from './webhooks'
 
 /**
  * Root router. Better Auth's own endpoints are mounted separately at
@@ -43,6 +40,3 @@ export const routes = new Hono<AppEnv>()
   .route('/prompts', prompts)
   .route('/', profile)
   .route('/admin', admin)
-  .route('/payments', payments)
-  .route('/webhooks/payment', paymentWebhooks)
-  .route('/notifications', notifications)

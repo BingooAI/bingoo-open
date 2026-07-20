@@ -10,7 +10,6 @@ import { emitEvent } from '../repos/events.repo'
 import { onUserUpdated, refreshAccountType } from '../repos/lifecycle.repo'
 import { enforceDeviceLimit } from '../repos/session-policy.repo'
 import { ADMIN_ROLES, DEFAULT_ROLE } from './roles'
-import { sendAuthEmail } from './emails'
 
 /**
  * The Better Auth server instance — the single source of authentication for the
@@ -45,20 +44,26 @@ export const auth = betterAuth({
     // (and should) still choose longer. Children are minted server-side and
     // never flow through this validator (see children.repo).
     minPasswordLength: 6,
-    sendResetPassword: async ({ user, url }) => {
-      // Dev convenience: surface the link when no mailbox receives it (never in prod).
-      if (env.NODE_ENV !== 'production') console.log(`[dev] reset ${user.email}: ${url}`)
-      await sendAuthEmail('reset', user, url)
+    // There is no mail sender here. The link goes to the server log, and whoever
+    // runs the server passes it on.
+    //
+    // That is a deliberate floor rather than an oversight: an install that needs a
+    // transactional-email account before anyone can recover a password is an install
+    // a tutor cannot stand up on their own. Anyone wanting real delivery implements
+    // `sendResetPassword` against their own mail service — the hook is right here,
+    // which is a smaller surface than a provider abstraction nobody was using.
+    sendResetPassword: ({ user, url }) => {
+      console.warn(`[auth] password reset for ${user.email}: ${url}`)
+      return Promise.resolve()
     },
   },
 
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({ user, url }) => {
-      // Dev convenience: surface the link when no mailbox receives it (never in prod).
-      if (env.NODE_ENV !== 'production') console.log(`[dev] verify ${user.email}: ${url}`)
-      await sendAuthEmail('verify', user, url)
+    sendVerificationEmail: ({ user, url }) => {
+      console.warn(`[auth] verify ${user.email}: ${url}`)
+      return Promise.resolve()
     },
   },
 

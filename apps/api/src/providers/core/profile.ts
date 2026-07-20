@@ -49,30 +49,36 @@ export interface CapabilitySpec {
   readonly local: string | null
   /** Where the missing local adapter is being tracked, for the error message. */
   readonly localTracking?: string
+  /**
+   * The system works without it — a missing configuration is a smaller installation, not a
+   * broken one, and must not be reported as degraded. Only for capabilities whose every call
+   * site already degrades on its own.
+   */
+  readonly optional?: boolean
 }
 
 /**
- * The table. `local` is deliberately conservative: it names an adapter only where the whole
- * capability genuinely works with no third-party account. "Partly works" is recorded as
- * `null`, because a profile that half-works is worse than one that says it does not — the
- * first fails in front of a learner, the second fails at startup in front of an operator.
+ * The table.
+ *
+ * `local` is deliberately conservative: it names an adapter only where the whole capability
+ * genuinely works with no third-party account. "Partly works" is recorded as `null`, because a
+ * profile that half-works is worse than one that says it does not — the first fails in front of
+ * a learner, the second fails at startup in front of an operator, who can act.
+ *
+ * Nine capabilities, down from fifteen. Notification, payment, video, workflow, realtime and
+ * email were removed rather than given local adapters: they belonged to a paid tier that is not
+ * part of this project, and three of them had no caller at all.
  */
 export const CAPABILITY_SPECS = {
   ai: { env: 'AI_PROVIDER', cloud: 'claude', local: 'openai' },
-  cache: { env: 'CACHE_PROVIDER', cloud: 'redis', local: 'redis' },
-  email: { env: 'EMAIL_PROVIDER', cloud: 'resend', local: null, localTracking: 'issue #12' },
+  cache: { env: 'CACHE_PROVIDER', cloud: 'redis', local: 'redis', optional: true },
   embedding: { env: 'EMBEDDING_PROVIDER', cloud: 'openai', local: 'openai' },
   image: { env: 'IMAGE_PROVIDER', cloud: 'openai', local: null, localTracking: 'issue #14' },
-  notification: { env: 'NOTIFICATION_PROVIDER', cloud: 'fcm', local: null, localTracking: 'issue #14' },
-  payment: { env: 'PAYMENT_PROVIDER', cloud: 'vietqr', local: null, localTracking: 'issue #14' },
-  realtime: { env: 'REALTIME_PROVIDER', cloud: 'livekit', local: 'livekit' },
   search: { env: 'SEARCH_PROVIDER', cloud: 'postgres', local: 'postgres' },
   storage: { env: 'STORAGE_PROVIDER', cloud: 'r2', local: null, localTracking: 'issue #11' },
   translation: { env: 'TRANSLATION_PROVIDER', cloud: 'llm', local: 'llm' },
   tts: { env: 'TTS_PROVIDER', cloud: 'elevenlabs', local: 'openai' },
-  video: { env: 'VIDEO_PROVIDER', cloud: 'bunny', local: null, localTracking: 'issue #14' },
   vision: { env: 'VISION_PROVIDER', cloud: 'claude', local: 'claude' },
-  workflow: { env: 'WORKFLOW_PROVIDER', cloud: 'upstash', local: null, localTracking: 'issue #13' },
 } as const satisfies Record<string, CapabilitySpec>
 
 export type Capability = keyof typeof CAPABILITY_SPECS
@@ -117,4 +123,10 @@ export function providerFor(capability: Capability): string {
 /** Capabilities with no local adapter — what a self-hosted deployment still needs an account for. */
 export function capabilitiesWithoutLocalAdapter(): Capability[] {
   return (Object.keys(CAPABILITY_SPECS) as Capability[]).filter((c) => CAPABILITY_SPECS[c].local === null)
+}
+
+/** True when the installation works without this capability configured. */
+export function isOptional(capability: string): boolean {
+  const spec = (CAPABILITY_SPECS as Record<string, CapabilitySpec>)[capability]
+  return spec?.optional === true
 }

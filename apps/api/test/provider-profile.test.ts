@@ -5,6 +5,7 @@ import {
   type CapabilitySpec,
   activeProfile,
   capabilitiesWithoutLocalAdapter,
+  isOptional,
   providerFor,
 } from '../src/providers/core/profile'
 
@@ -36,19 +37,13 @@ afterEach(clearEnv)
 const DEFAULTS_BEFORE_THE_REFACTOR: Record<Capability, string> = {
   ai: 'claude',
   cache: 'redis',
-  email: 'resend',
   embedding: 'openai',
   image: 'openai',
-  notification: 'fcm',
-  payment: 'vietqr',
-  realtime: 'livekit',
   search: 'postgres',
   storage: 'r2',
   translation: 'llm',
   tts: 'elevenlabs',
-  video: 'bunny',
   vision: 'claude',
-  workflow: 'upstash',
 }
 
 describe('cloud is exactly what shipped before', () => {
@@ -90,6 +85,12 @@ describe('an explicit provider always wins', () => {
     expect(providerFor('storage')).toBe('r2')
   })
 
+  it('marks cache optional, so an installation without it is not degraded', () => {
+    expect(isOptional('cache')).toBe(true)
+    expect(isOptional('storage')).toBe(false)
+    expect(isOptional('not-a-capability')).toBe(false)
+  })
+
   it('treats an empty value as absent rather than as a provider named ""', () => {
     process.env.STORAGE_PROVIDER = '   '
     expect(providerFor('storage')).toBe('r2')
@@ -117,9 +118,7 @@ describe('a misconfiguration fails at startup, not in front of a learner', () =>
 
 describe('the table describes the deployment honestly', () => {
   it('reports which capabilities still need an account', () => {
-    expect(capabilitiesWithoutLocalAdapter().sort()).toEqual(
-      ['email', 'image', 'notification', 'payment', 'storage', 'video', 'workflow'].sort(),
-    )
+    expect(capabilitiesWithoutLocalAdapter().sort()).toEqual(['image', 'storage'].sort())
   })
 
   it('points every gap at somewhere the reader can go', () => {
