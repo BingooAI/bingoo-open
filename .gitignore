@@ -15,8 +15,14 @@ next-env.d.ts
 
 # Generated — regenerate, never edit or commit
 generated/
-coverage/
 *.lcov
+
+# Test coverage output. Anchored to the places a test runner actually writes it:
+# an unanchored `coverage/` also matches a route or module that happens to be
+# named "coverage", and silently keeps it out of the repository.
+/coverage/
+/apps/*/coverage/
+/packages/*/coverage/
 
 # Secrets — never commit
 .env
