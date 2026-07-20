@@ -1,10 +1,14 @@
 # @bingoo.ai/contracts
 
+> Releases below 0.2.0 were made from a separate repository, before this package moved into
+> the monorepo. Pull request and commit references are kept for the record; they do not
+> resolve to anything here.
+
 ## 0.2.0
 
 ### Minor Changes
 
-- [#10](https://github.com/BingooAI/contracts/pull/10) [`d06624a`](https://github.com/BingooAI/contracts/commit/d06624a49d3533042bfaf8a833f331164666d37b) Thanks [@khachuongvn](https://github.com/khachuongvn)! - **Breaking: the competency model is replaced.** Adopts the model established in the
+- #10 `d06624a` Thanks [@khachuongvn](https://github.com/khachuongvn)! - **Breaking: the competency model is replaced.** Adopts the model established in the
   knowledge-engine line, after RFC 0001 found that `0.1.0` had been designed from a blueprint
   without checking the system this organisation already runs. See ADR 0004.
 
@@ -48,7 +52,7 @@
 
 ### Patch Changes
 
-- [#7](https://github.com/BingooAI/contracts/pull/7) [`1ab67ea`](https://github.com/BingooAI/contracts/commit/1ab67ea882a6d78bc4e382428a53ef1274fbe304) Thanks [@khachuongvn](https://github.com/khachuongvn)! - Correct two documentation claims that did not match reality.
+- #7 `1ab67ea` Thanks [@khachuongvn](https://github.com/khachuongvn)! - Correct two documentation claims that did not match reality.
 
   `providers.ts` told readers that standalone stubs come from `@bingoo.ai/test-utils`. That
   package does not exist, and the reference shipped inside the published `.d.ts`. What actually
@@ -67,7 +71,7 @@
 
 ### Minor Changes
 
-- [#1](https://github.com/BingooAI/contracts/pull/1) [`7264ec4`](https://github.com/BingooAI/contracts/commit/7264ec482fbcbb577a0a4a6161b7c2ae7644bf14) Thanks [@khachuongvn](https://github.com/khachuongvn)! - Initial contract: the ten modules the Bingoo framework family agrees on.
+- #1 `7264ec4` Thanks [@khachuongvn](https://github.com/khachuongvn)! - Initial contract: the ten modules the Bingoo framework family agrees on.
 
   `refs` (identity and versioning), `competency` (CASE — KSD structure, proficiency levels,
   thresholds, crosswalks and migration), `evidence` (xAPI — mastery, gaps, explanations),
@@ -83,7 +87,7 @@
 
 ### Patch Changes
 
-- [#3](https://github.com/BingooAI/contracts/pull/3) [`ae00867`](https://github.com/BingooAI/contracts/commit/ae0086759c9fbfc24e02a28f7b9f00e0a1e98771) Thanks [@khachuongvn](https://github.com/khachuongvn)! - Align documentation with blueprint v3's shared-package layout. No type or schema changes.
+- #3 `ae00867` Thanks [@khachuongvn](https://github.com/khachuongvn)! - Align documentation with blueprint v3's shared-package layout. No type or schema changes.
 
   The five standard codecs are now reached by subpath from one package —
   `@bingoo.ai/codecs/case`, `/qti`, `/xapi`, `/c2pa`, `/credentials` — rather than existing as

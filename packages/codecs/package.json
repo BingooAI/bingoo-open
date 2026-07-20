@@ -13,13 +13,13 @@
   ],
   "license": "Apache-2.0",
   "author": "Bingoo.ai (https://bingoo.ai)",
-  "homepage": "https://github.com/BingooAI/codecs",
+  "homepage": "https://github.com/BingooAI/bingoo-open",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BingooAI/codecs.git",
+    "url": "git+https://github.com/BingooAI/bingoo-open.git",
     "directory": "packages/codecs"
   },
-  "bugs": "https://github.com/BingooAI/codecs/issues",
+  "bugs": "https://github.com/BingooAI/bingoo-open/issues",
   "type": "module",
   "sideEffects": false,
   "files": [
