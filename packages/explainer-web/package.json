@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "description": "Bingoo explainer web renderer — React/SVG player that draws the engine's RenderModel, resolves design tokens, and mounts @bingoo.ai/ui-web at activity beats. Used by the player (apps/web) and studio (apps/admin).",
-  "author": "VietDevelopers.com (https://vietdevelopers.com)",
-  "license": "UNLICENSED",
+  "author": "Bingoo.ai (https://bingoo.ai)",
+  "license": "Apache-2.0",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",

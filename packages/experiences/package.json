@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "description": "Bingoo learning experiences — web view của các mode học (Lesson/Practice/Arena/Feed/Project/Classroom). Input (descriptor + content + labels) → view. Dựng trên @bingoo.ai/ui-web + @bingoo.ai/learning-experience.",
-  "author": "VietDevelopers.com (https://vietdevelopers.com)",
-  "license": "UNLICENSED",
+  "author": "Bingoo.ai (https://bingoo.ai)",
+  "license": "Apache-2.0",
   "type": "module",
   "exports": {
     ".": "./src/index.ts"

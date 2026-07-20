@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "description": "Instruction Plan (khung chuẩn) + Knowledge Point + planQuality — tầng nội dung ②.",
-  "author": "VietDevelopers.com (https://vietdevelopers.com)",
-  "license": "UNLICENSED",
+  "author": "Bingoo.ai (https://bingoo.ai)",
+  "license": "Apache-2.0",
   "type": "module",
   "exports": {
     ".": "./src/index.ts"

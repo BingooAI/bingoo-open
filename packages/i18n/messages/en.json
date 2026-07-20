@@ -217,8 +217,8 @@
         "terms": "Terms of use",
         "cookies": "Cookies"
       },
-      "madeWith": "Built by VietDevelopers.com",
-      "copyright": "© {year} Bingoo — VietDevelopers.com. All rights reserved."
+      "madeWith": "Built by Bingoo.ai",
+      "copyright": "© {year} Bingoo.ai · Open source under Apache-2.0"
     }
   },
   "auth": {

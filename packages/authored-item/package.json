@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "description": "Lớp neo nối primitive @bingoo.ai/core vào knowledge-engine (Candidate + cầu grading).",
-  "author": "VietDevelopers.com (https://vietdevelopers.com)",
-  "license": "UNLICENSED",
+  "author": "Bingoo.ai (https://bingoo.ai)",
+  "license": "Apache-2.0",
   "type": "module",
   "exports": {
     ".": "./src/index.ts"

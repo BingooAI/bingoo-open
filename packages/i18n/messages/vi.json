@@ -217,8 +217,8 @@
         "terms": "Điều khoản sử dụng",
         "cookies": "Cookie"
       },
-      "madeWith": "Phát triển bởi VietDevelopers.com",
-      "copyright": "© {year} Bingoo — VietDevelopers.com. Bảo lưu mọi quyền."
+      "madeWith": "Phát triển bởi Bingoo.ai",
+      "copyright": "© {year} Bingoo.ai · Mã nguồn mở theo giấy phép Apache-2.0"
     }
   },
   "auth": {
