@@ -1,6 +1,7 @@
 {
   "name": "@bingoo.ai/codecs",
   "version": "0.0.0",
+  "private": true,
   "description": "Open-standard codecs for the Bingoo family: CASE and xAPI, reached by subpath.",
   "keywords": [
     "case",
@@ -44,11 +45,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@bingoo.ai/contracts": "^0.2.0",
+    "@bingoo.ai/contracts": "workspace:^",
     "zod": "^4.4.3"
-  },
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
   }
 }

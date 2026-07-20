@@ -419,8 +419,8 @@ importers:
   packages/codecs:
     dependencies:
       '@bingoo.ai/contracts':
-        specifier: ^0.2.0
-        version: 0.2.0
+        specifier: workspace:^
+        version: link:../contracts
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -916,9 +916,6 @@ packages:
 
   '@better-fetch/fetch@1.3.1':
     resolution: {integrity: sha512-ABkD1WhyfPZprKRQI3bhATjeiFuNWC9PXhfGWqL+sg/gKrM977oFrYkdb4msM3hgUGonr7KlOsOFT5TU2rht9g==}
-
-  '@bingoo.ai/contracts@0.2.0':
-    resolution: {integrity: sha512-MY0MYz9GBvww0ie4PwSfkbq14BXaBQ0j+EHknSu4iNy5RTngR0JeEe9Cb9+lb5rDQ1fu6D2q6Bi4AYwziq1zSw==}
 
   '@bufbuild/protobuf@1.10.1':
     resolution: {integrity: sha512-wJ8ReQbHxsAfXhrf9ixl0aYbZorRuOWpBNzm8pL8ftmSxQx/wnJD5Eg861NwJU/czy2VXFIebCeZnZrI9rktIQ==}
@@ -6275,10 +6272,6 @@ snapshots:
       '@noble/hashes': 2.2.0
 
   '@better-fetch/fetch@1.3.1': {}
-
-  '@bingoo.ai/contracts@0.2.0':
-    dependencies:
-      zod: 4.4.3
 
   '@bufbuild/protobuf@1.10.1': {}
 

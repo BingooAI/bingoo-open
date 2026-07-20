@@ -1,6 +1,7 @@
 {
   "name": "@bingoo.ai/contracts",
   "version": "0.2.0",
+  "private": true,
   "description": "The shared I/O contract for the Bingoo framework family: competency, evidence, content, teaching, assessment and the ports between them.",
   "keywords": [
     "competency-based-education",
@@ -44,9 +45,5 @@
   },
   "dependencies": {
     "zod": "^4.4.3"
-  },
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
   }
 }
