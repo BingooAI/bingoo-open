@@ -19,6 +19,7 @@ import { useSpeech, speechLang } from './useSpeech'
 import { GateHost } from './GateHost'
 import { InteractiveManipulative } from './InteractiveManipulative'
 import { useSfx } from './useSfx'
+import type { QuizLabels } from '@bingoo.ai/ui-web'
 
 export type AspectMode = '16:9' | '9:16' | 'dual'
 
@@ -29,6 +30,7 @@ export function ExplainerPlayer({
   onModeChange,
   variant = 'full',
   active,
+  quizLabels,
 }: {
   doc: ExplainerDoc
   bundles: Record<string, LocaleBundle>
@@ -40,6 +42,11 @@ export function ExplainerPlayer({
   variant?: 'full' | 'feed'
   /** Khi variant='feed': tự PHÁT lúc active, tự DỪNG khi rời khung (cuộn qua bài khác). */
   active?: boolean
+  /**
+   * Copy for quiz beats embedded in a lesson. A host that leaves this out gets English, which
+   * is the honest fallback: it reads as untranslated rather than as someone else's language.
+   */
+  quizLabels?: QuizLabels
 }) {
   const [locale, setLocale] = useState(doc.meta.defaultLocale)
   const [modeState, setModeState] = useState<AspectMode>('16:9')
@@ -240,6 +247,7 @@ export function ExplainerPlayer({
             ))}
             {api.state === 'at-gate' && api.gateSlot?.scene.gate && (
               <GateHost
+                labels={quizLabels}
                 key={api.gateSlot.scene.id}
                 gate={api.gateSlot.scene.gate}
                 theme={theme}
@@ -382,6 +390,7 @@ export function ExplainerPlayer({
                  no longer covers the scene anyway (it docks to the side/bottom). */}
             {api.state === 'at-gate' && api.gateSlot?.scene.gate && (
               <GateHost
+                labels={quizLabels}
                 key={api.gateSlot.scene.id}
                 gate={api.gateSlot.scene.gate}
                 theme={theme}

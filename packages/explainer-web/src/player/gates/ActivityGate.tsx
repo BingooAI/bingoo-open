@@ -25,7 +25,8 @@ import { coloringScore } from '@bingoo.ai/core'
 import { checkAnswer, getInteractions } from '@bingoo.ai/manipulatives'
 import { QuizShell, TracingBoard, ColoringBoard } from '@bingoo.ai/ui-web'
 import { InteractiveManipulative } from '../InteractiveManipulative'
-import { VI_QUIZ_LABELS } from './quizLabels'
+import { DEFAULT_QUIZ_LABELS } from './quizLabels'
+import type { QuizLabels } from '@bingoo.ai/ui-web'
 
 export function ActivityGate({
   gate,
@@ -33,18 +34,29 @@ export function ActivityGate({
   aspect = '16:9',
   onPass,
   onSkip,
+  labels = DEFAULT_QUIZ_LABELS,
 }: {
   gate: GateSpec
   theme: ThemeTokens
   aspect?: Aspect
   onPass: () => void
   onSkip?: () => void
+  /** Host-supplied copy. Defaults to English so an unwired host reads as untranslated. */
+  labels?: QuizLabels
 }) {
   const act = gate.activity
 
   // ── tracing — the child WRITES it; every stroke scored against the guide ──
   if (act?.tracing) {
-    return <TracingActivity glyph={act.tracing as TracingGlyph} gate={gate} onPass={onPass} onSkip={onSkip} />
+    return (
+      <TracingActivity
+        glyph={act.tracing as TracingGlyph}
+        gate={gate}
+        onPass={onPass}
+        onSkip={onSkip}
+        labels={labels}
+      />
+    )
   }
 
   // ── colouring — graded against each region's targetColor ──
@@ -55,6 +67,7 @@ export function ActivityGate({
         gate={gate}
         onPass={onPass}
         onSkip={onSkip}
+        labels={labels}
       />
     )
   }
@@ -81,7 +94,7 @@ export function ActivityGate({
           {/* QuizShell brings its OWN skip + check buttons — no extra one here. */}
           <QuizShell
             questions={[act.quiz as QuizQuestion]}
-            labels={VI_QUIZ_LABELS}
+            labels={labels}
             passMark={1}
             onComplete={(s) => {
               if (s.passed) onPass()
@@ -190,9 +203,11 @@ function TracingActivity({
   gate,
   onPass,
   onSkip,
+  labels,
 }: {
   glyph: TracingGlyph
   gate: GateSpec
+  labels: QuizLabels
   onPass: () => void
   onSkip?: () => void
 }) {
@@ -212,11 +227,11 @@ function TracingActivity({
       <div className="gate-actions">
         {onSkip ? (
           <button type="button" className="gate-skip" onClick={onSkip}>
-            {VI_QUIZ_LABELS.skip}
+            {labels.skip}
           </button>
         ) : null}
         <button type="button" className="gate-check" disabled={!done} onClick={onPass}>
-          {VI_QUIZ_LABELS.check}
+          {labels.check}
         </button>
       </div>
       {done && gate.feedback?.correct ? <p className="gate-feedback good">{gate.feedback.correct}</p> : null}
@@ -232,9 +247,11 @@ function ColoringActivity({
   gate,
   onPass,
   onSkip,
+  labels,
 }: {
   picture: ColoringPicture
   gate: GateSpec
+  labels: QuizLabels
   onPass: () => void
   onSkip?: () => void
 }) {
@@ -270,7 +287,7 @@ function ColoringActivity({
       <div className="gate-actions">
         {onSkip ? (
           <button type="button" className="gate-skip" onClick={onSkip}>
-            {VI_QUIZ_LABELS.skip}
+            {labels.skip}
           </button>
         ) : null}
         <button
@@ -283,7 +300,7 @@ function ColoringActivity({
             if (pass) onPass()
           }}
         >
-          {VI_QUIZ_LABELS.check}
+          {labels.check}
         </button>
       </div>
       {verdict === true ? <p className="gate-feedback good">{gate.feedback?.correct ?? ''}</p> : null}

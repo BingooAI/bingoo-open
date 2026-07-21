@@ -1420,5 +1420,37 @@
         "empty": "Chưa có nội dung cho mode này."
       }
     }
+  },
+  "quiz": {
+    "check": "Kiểm tra",
+    "clockHalfPast": "rưỡi",
+    "clockOClock": "đúng giờ",
+    "correct": "Chính xác!",
+    "crosswordAcross": "Hàng ngang",
+    "crosswordDown": "Hàng dọc",
+    "explanationTitle": "Giải thích",
+    "fillPlaceholder": "…",
+    "finish": "Xong",
+    "incorrect": "Chưa đúng",
+    "moveDown": "Xuống",
+    "moveUp": "Lên",
+    "next": "Tiếp",
+    "placeValueOnes": "Đơn vị",
+    "placeValueTens": "Chục",
+    "playMedia": "Phát",
+    "progressLabel": "Tiến độ",
+    "questionOf": "Câu",
+    "resultAccuracy": "Độ chính xác",
+    "resultContinue": "Tiếp tục",
+    "resultCorrect": "Số câu đúng",
+    "resultFailSubtitle": "Xem lại rồi thử lại nhé.",
+    "resultFailTitle": "Thử lại nhé",
+    "resultPassSubtitle": "Làm tốt lắm!",
+    "resultPassTitle": "Hoàn thành!",
+    "resultRetry": "Làm lại",
+    "showHint": "Gợi ý",
+    "skip": "Bỏ qua",
+    "undo": "Hoàn tác",
+    "vennNeither": "Ngoài cả hai"
   }
 }

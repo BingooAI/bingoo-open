@@ -6,7 +6,12 @@ import { Component, useState, type ReactNode } from 'react'
 import { useTranslations } from 'next-intl'
 import { Badge, Button, QuizShell, useToast } from '@bingoo.ai/ui-web'
 import type { QuizQuestion } from '@bingoo.ai/core'
-import { InteractiveManipulative, VI_QUIZ_LABELS, checkAnswer, defaultTheme } from '@bingoo.ai/explainer-web'
+import {
+  InteractiveManipulative,
+  DEFAULT_QUIZ_LABELS,
+  checkAnswer,
+  defaultTheme,
+} from '@bingoo.ai/explainer-web'
 import { Check, ChevronDown, Plus, Sparkles, Wand2, X } from 'lucide-react'
 import {
   useAllPrimitives,
@@ -675,5 +680,5 @@ function ItemPreview({ item }: { item: ContentItemDto }) {
   }
 
   // quiz — QuizShell nhận đúng payload là QuizQuestion
-  return <QuizShell questions={[payload as unknown as QuizQuestion]} labels={VI_QUIZ_LABELS} />
+  return <QuizShell questions={[payload as unknown as QuizQuestion]} labels={DEFAULT_QUIZ_LABELS} />
 }

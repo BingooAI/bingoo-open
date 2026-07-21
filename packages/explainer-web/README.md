@@ -63,7 +63,7 @@ It does not implement manipulatives. Geometry, verbs and answer checking live in
 `@bingoo.ai/manipulatives` — `checkAnswer` is re-exported here only so a host can grade a preview
 without adding the dependency. Quiz and answer widgets come from `@bingoo.ai/ui-web`.
 
-It does not translate. `VI_QUIZ_LABELS` is a default Vietnamese label pack for embedded quiz beats, and
+It does not translate. `DEFAULT_QUIZ_LABELS` is an English fallback for embedded quiz beats, and
 some player chrome is still hardcoded Vietnamese; routing those through `@bingoo.ai/i18n` is the host
 app's job and remains unfinished.
 

@@ -1420,5 +1420,37 @@
         "empty": "No content for this mode yet."
       }
     }
+  },
+  "quiz": {
+    "check": "Check",
+    "clockHalfPast": "half past",
+    "clockOClock": "o'clock",
+    "correct": "Correct",
+    "crosswordAcross": "Across",
+    "crosswordDown": "Down",
+    "explanationTitle": "Explanation",
+    "fillPlaceholder": "…",
+    "finish": "Finish",
+    "incorrect": "Not quite",
+    "moveDown": "Down",
+    "moveUp": "Up",
+    "next": "Next",
+    "placeValueOnes": "Ones",
+    "placeValueTens": "Tens",
+    "playMedia": "Play",
+    "progressLabel": "Progress",
+    "questionOf": "Question",
+    "resultAccuracy": "Accuracy",
+    "resultContinue": "Continue",
+    "resultCorrect": "Correct answers",
+    "resultFailSubtitle": "Have another look, then try again.",
+    "resultFailTitle": "Try again",
+    "resultPassSubtitle": "Well done!",
+    "resultPassTitle": "Done!",
+    "resultRetry": "Retry",
+    "showHint": "Hint",
+    "skip": "Skip",
+    "undo": "Undo",
+    "vennNeither": "Neither"
   }
 }

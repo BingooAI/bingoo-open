@@ -12,6 +12,7 @@ import { useMemo, useState } from 'react'
 import { LocaleSwitcher } from '@/components/brand/locale-switcher'
 import { ThemeToggle } from '@/components/brand/theme-toggle'
 import { buildExperienceLabels } from '@/lib/experience-labels'
+import { buildQuizLabels } from '@/lib/quiz-labels'
 import {
   buildArena,
   buildCourse,
@@ -46,13 +47,15 @@ const DESCR: Record<Exclude<TabId, 'me'>, ExperienceDescriptor> = {
 export default function LearnPage() {
   const t = useTranslations('learn')
   const exp = useTranslations('learn.experiences')
+  const quizT = useTranslations('quiz')
   const [tab, setTab] = useState<TabId>('home')
 
   const expLabels = useMemo(() => buildExperienceLabels(exp), [exp])
+  const quizLabels = useMemo(() => buildQuizLabels(quizT), [quizT])
   const surfaceLabels = useMemo<ExperienceLabels>(() => buildSurfaceLabels(t), [t])
 
   const steps = useMemo(() => buildRichSteps(t), [t])
-  const topics = useMemo(() => buildTopics(t), [t])
+  const topics = useMemo(() => buildTopics(t, quizLabels), [t, quizLabels])
   const course = useMemo(() => buildCourse(t), [t])
   const quiz = useMemo(() => buildQuiz(t), [t])
   const arena = useMemo(() => buildArena(t), [t])

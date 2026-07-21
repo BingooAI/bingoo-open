@@ -9,6 +9,7 @@
 'use client'
 import * as React from 'react'
 import type { GateSpec, ThemeTokens, Aspect } from '@bingoo.ai/explainer'
+import type { QuizLabels } from '@bingoo.ai/ui-web'
 import { SelectGate } from './gates/SelectGate'
 import { SequenceGate } from './gates/SequenceGate'
 import { HotspotGate } from './gates/HotspotGate'
@@ -25,10 +26,20 @@ function renderGate(
   aspect: Aspect,
   onPass: () => void,
   onSkip?: () => void,
+  labels?: QuizLabels,
 ) {
   switch (gate.kind) {
     case 'activity':
-      return <ActivityGate gate={gate} theme={theme} aspect={aspect} onPass={onPass} onSkip={onSkip} />
+      return (
+        <ActivityGate
+          gate={gate}
+          theme={theme}
+          aspect={aspect}
+          onPass={onPass}
+          onSkip={onSkip}
+          labels={labels}
+        />
+      )
     case 'manipulate':
       return <ManipulateGate gate={gate} theme={theme} aspect={aspect} onPass={onPass} onSkip={onSkip} />
     case 'sequence':
@@ -54,7 +65,7 @@ function GatePreview({ gate, theme, aspect }: { gate: GateSpec; theme: ThemeToke
   return (
     <div className="gate-preview" aria-hidden="true">
       <div className="gate-preview-tag">Câu hỏi sắp tới</div>
-      {renderGate(gate, theme, aspect, () => {}, undefined)}
+      {renderGate(gate, theme, aspect, () => {}, undefined, undefined)}
     </div>
   )
 }
@@ -66,6 +77,7 @@ export function GateHost({
   preview = false,
   onPass,
   onSkip,
+  labels,
 }: {
   gate: GateSpec
   theme: ThemeTokens
@@ -74,7 +86,9 @@ export function GateHost({
   preview?: boolean
   onPass: () => void
   onSkip?: () => void
+  /** Host copy for the embedded quiz. Omitted falls back to English. */
+  labels?: QuizLabels
 }) {
   if (preview) return <GatePreview gate={gate} theme={theme} aspect={aspect} />
-  return renderGate(gate, theme, aspect, onPass, onSkip)
+  return renderGate(gate, theme, aspect, onPass, onSkip, labels)
 }
