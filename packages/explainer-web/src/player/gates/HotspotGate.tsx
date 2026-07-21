@@ -9,15 +9,19 @@
 import * as React from 'react'
 import { useState } from 'react'
 import type { GateSpec } from '@bingoo.ai/explainer'
+import { DEFAULT_PLAYER_LABELS, type PlayerLabels } from '../labels'
 
 export function HotspotGate({
   gate,
   onPass,
   onSkip,
+  labels = DEFAULT_PLAYER_LABELS,
 }: {
   gate: GateSpec
   onPass: () => void
   onSkip?: () => void
+  /** Host copy. Defaults to English so an unwired host reads as untranslated. */
+  labels?: PlayerLabels
 }) {
   const spots = gate.hotspots ?? []
   const answers = Array.isArray(gate.answer) ? gate.answer : [gate.answer]
@@ -62,11 +66,11 @@ export function HotspotGate({
         <span className="gate-badge">Chạm đúng vùng</span>
         <span className="hotspot-prompt">{gate.prompt}</span>
         {status === 'correct' && (
-          <span className="gate-feedback good">✓ {gate.feedback?.correct ?? 'Đúng chỗ!'}</span>
+          <span className="gate-feedback good">✓ {gate.feedback?.correct ?? labels.correctPlace}</span>
         )}
         {status === 'wrong' && (
           <span className="gate-feedback bad">
-            {gate.feedback?.wrong ?? 'Chưa đúng, thử lại.'}{' '}
+            {gate.feedback?.wrong ?? labels.wrongRetry}{' '}
             <button className="gate-retry" onClick={() => setStatus('idle')}>
               Thử lại
             </button>

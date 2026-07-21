@@ -14,6 +14,7 @@ import type {
 } from '@bingoo.ai/experiences'
 import { defaultTheme, ExplainerPlayer, InteractiveManipulative } from '@bingoo.ai/explainer-web'
 import type { QuizLabels } from '@bingoo.ai/ui-web'
+import type { PlayerLabels } from '@bingoo.ai/explainer-web'
 import '@bingoo.ai/explainer-web/styles.css'
 import { ACCEPTANCE_BUNDLES, ACCEPTANCE_DOC } from '@/lib/explainerLesson'
 import { manipulativeKinds } from '@bingoo.ai/manipulatives'
@@ -545,7 +546,7 @@ export function buildManipulativeSteps(): LearnStep[] {
 }
 
 /** Player explainer bản FEED: full-bleed 9:16, tự PHÁT khi vào khung, tự DỪNG khi cuộn qua (IntersectionObserver). */
-function FeedExplainer({ quizLabels }: { quizLabels: QuizLabels }) {
+function FeedExplainer({ quizLabels, playerLabels }: { quizLabels: QuizLabels; playerLabels: PlayerLabels }) {
   const ref = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState(false)
   useEffect(() => {
@@ -567,25 +568,26 @@ function FeedExplainer({ quizLabels }: { quizLabels: QuizLabels }) {
         variant="feed"
         active={active}
         quizLabels={quizLabels}
+        labels={playerLabels}
       />
     </div>
   )
 }
 
 /** Bài explainer mẫu (ACCEPTANCE_DOC trong DB/lib) — trong feed dùng khung DỌC 9:16, player tối giản. */
-function explainerStep(t: T, quizLabels: QuizLabels): LearnStep {
+function explainerStep(t: T, quizLabels: QuizLabels, playerLabels: PlayerLabels): LearnStep {
   return {
     id: 'explainer',
     emoji: '🎬',
     accent: 'primary',
     eyebrow: t('rich.cHead'),
     blocks: [],
-    node: <FeedExplainer quizLabels={quizLabels} />,
+    node: <FeedExplainer quizLabels={quizLabels} playerLabels={playerLabels} />,
   }
 }
 
 /** Feed 2 trục: 3 topic (Toán/Tiếng Việt/Khoa học); mỗi topic trộn explainer + nội dung + manipulative. */
-export function buildTopics(t: T, quizLabels: QuizLabels): FeedTopic[] {
+export function buildTopics(t: T, quizLabels: QuizLabels, playerLabels: PlayerLabels): FeedTopic[] {
   const rich = buildRichSteps(t)
   const manip = buildManipulativeSteps()
   const k = Math.ceil(manip.length / 3) || 1
@@ -594,7 +596,7 @@ export function buildTopics(t: T, quizLabels: QuizLabels): FeedTopic[] {
       id: 'math',
       name: t('topics.math'),
       accent: 'primary',
-      steps: [explainerStep(t, quizLabels), ...rich.slice(0, 3), ...manip.slice(0, k)],
+      steps: [explainerStep(t, quizLabels, playerLabels), ...rich.slice(0, 3), ...manip.slice(0, k)],
     },
     {
       id: 'viet',

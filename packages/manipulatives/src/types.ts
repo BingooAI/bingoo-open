@@ -15,6 +15,7 @@
  * live here → the future RN/Skia renderer consumes the identical Prim[].
  */
 import type { BakedTrack } from './bake'
+import type { LocalizedString } from '@bingoo.ai/core'
 
 /**
  * The ONE escape hatch of this package — deliberately `any`, used at exactly two
@@ -177,7 +178,7 @@ export interface Manipulative<P> {
 /* ------------------------------------------------------------- interactivity */
 
 /** A verb exposed to the learner as a tappable control. */
-export type ActionDesc = { verb: string; label: string; args?: unknown }
+export type ActionDesc = { verb: string; label: LocalizedString; args?: unknown }
 
 /** Result of a tap: either new params to snap to, or a verb to animate. */
 export type TapResult<P> = { params?: P; verb?: string; args?: unknown } | null
@@ -201,7 +202,7 @@ export interface AnswerDoc {
 }
 
 export interface Interactions<P> {
-  hint?: string
+  hint?: LocalizedString
   /** verb controls shown as buttons; if omitted the host derives them. */
   actions?: ActionDesc[]
   /** discrete tap in the element's local box → snap-params or a verb to run. */

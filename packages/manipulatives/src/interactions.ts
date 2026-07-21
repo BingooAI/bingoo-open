@@ -23,12 +23,19 @@ type HitBox = { x: number; y: number; w: number; h: number }
 const REG: Record<string, Interactions<KitAny>> = {
   /* ---- maths (general) ---- */
   numberline: {
-    hint: 'Kéo điểm cam dọc trục — hoặc bấm nút.',
+    hint: {
+      vi: 'Kéo điểm cam dọc trục — hoặc bấm nút.',
+      en: 'Drag the orange point along the line — or use the buttons.',
+    },
     actions: [
-      { verb: 'placePoint', label: 'Đặt điểm 3', args: { x: 3 } },
-      { verb: 'jump', label: 'Nhảy 0→8', args: { a: 0, b: 8 } },
-      { verb: 'mark', label: 'Mốc 5', args: { x: 5 } },
-      { verb: 'highlightRange', label: 'Tô 2→7', args: { a: 2, b: 7 } },
+      { verb: 'placePoint', label: { vi: 'Đặt điểm 3', en: 'Place point at 3' }, args: { x: 3 } },
+      { verb: 'jump', label: { vi: 'Nhảy 0→8', en: 'Jump 0→8' }, args: { a: 0, b: 8 } },
+      { verb: 'mark', label: { vi: 'Mốc 5', en: 'Mark 5' }, args: { x: 5 } },
+      {
+        verb: 'highlightRange',
+        label: { vi: 'Tô 2→7', en: 'Shade 2→7' },
+        args: { a: 2, b: 7 },
+      },
     ],
     onDrag(p, pt, ctx) {
       const pad = ctx.box.w * 0.08
@@ -39,22 +46,25 @@ const REG: Record<string, Interactions<KitAny>> = {
     // No dedicated check → generic field match: target keys must equal the same params fields.
   },
   base10: {
-    hint: 'Chạm để thêm 1 đơn vị; bấm “Nhớ” khi đủ 10.',
+    hint: {
+      vi: 'Chạm để thêm 1 đơn vị; bấm “Nhớ” khi đủ 10.',
+      en: 'Tap to add 1 one; press “Regroup” when you reach 10.',
+    },
     actions: [
-      { verb: 'add', label: '+1', args: { n: 1 } },
-      { verb: 'add', label: '+5', args: { n: 5 } },
-      { verb: 'regroup', label: 'Nhớ (đổi 10)' },
-      { verb: 'remove', label: '−1', args: { n: 1 } },
+      { verb: 'add', label: { vi: '+1', en: '+1' }, args: { n: 1 } },
+      { verb: 'add', label: { vi: '+5', en: '+5' }, args: { n: 5 } },
+      { verb: 'regroup', label: { vi: 'Nhớ (đổi 10)', en: 'Regroup (make 10)' } },
+      { verb: 'remove', label: { vi: '−1', en: '−1' }, args: { n: 1 } },
     ],
     onTap: () => ({ verb: 'add', args: { n: 1 } }),
     check: (p, t) => p.hundreds * 100 + p.tens * 10 + p.ones === num(t.value),
   },
   fraction: {
-    hint: 'Chạm để tô thêm một phần.',
+    hint: { vi: 'Chạm để tô thêm một phần.', en: 'Tap to shade one more part.' },
     actions: [
-      { verb: 'split', label: 'Chia 4', args: { n: 4 } },
-      { verb: 'split', label: 'Chia 6', args: { n: 6 } },
-      { verb: 'equivalent', label: '×2', args: { n: 2 } },
+      { verb: 'split', label: { vi: 'Chia 4', en: 'Split into 4' }, args: { n: 4 } },
+      { verb: 'split', label: { vi: 'Chia 6', en: 'Split into 6' }, args: { n: 6 } },
+      { verb: 'equivalent', label: { vi: '×2', en: '×2' }, args: { n: 2 } },
     ],
     onTap: (p) => ({ verb: 'shade', args: { k: (p.shaded.length % p.denominator) + 1 } }),
     check: (p, t) => p.denominator === num(t.denominator) && p.shaded.length === num(t.shaded),
@@ -117,19 +127,29 @@ const REG: Record<string, Interactions<KitAny>> = {
     check: (p, t) => p.count === num(t.count),
   },
   partwhole: {
-    hint: 'Ẩn một phần rồi thử tìm số còn thiếu.',
+    hint: {
+      vi: 'Ẩn một phần rồi thử tìm số còn thiếu.',
+      en: 'Hide one part, then find the missing number.',
+    },
     actions: [
-      { verb: 'findUnknown', label: 'Ẩn phần 2', args: { which: 1 } },
-      { verb: 'findUnknown', label: 'Ẩn tổng', args: { which: 'whole' } },
-      { verb: 'reveal', label: 'Hiện đáp án' },
+      { verb: 'findUnknown', label: { vi: 'Ẩn phần 2', en: 'Hide part 2' }, args: { which: 1 } },
+      {
+        verb: 'findUnknown',
+        label: { vi: 'Ẩn tổng', en: 'Hide the whole' },
+        args: { which: 'whole' },
+      },
+      { verb: 'reveal', label: { vi: 'Hiện đáp án', en: 'Show answer' } },
     ],
   },
   placevalue: {
-    hint: 'Thêm đơn vị tới khi đủ 10 rồi bấm “Đổi 10”.',
+    hint: {
+      vi: 'Thêm đơn vị tới khi đủ 10 rồi bấm “Đổi 10”.',
+      en: 'Add ones until you have 10, then tap “Exchange 10”.',
+    },
     actions: [
-      { verb: 'addCounter', label: '+1 đơn vị', args: { col: 2 } },
-      { verb: 'exchange', label: 'Đổi 10' },
-      { verb: 'partition', label: 'Phân tích' },
+      { verb: 'addCounter', label: { vi: '+1 đơn vị', en: '+1 one' }, args: { col: 2 } },
+      { verb: 'exchange', label: { vi: 'Đổi 10', en: 'Exchange 10' } },
+      { verb: 'partition', label: { vi: 'Phân tích', en: 'Partition' } },
     ],
     check: (p, t) => {
       const n = p.digits.length
@@ -157,44 +177,50 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   money: {
-    hint: 'Bấm để bỏ thêm đồng xu vào khay.',
+    hint: { vi: 'Bấm để bỏ thêm đồng xu vào khay.', en: 'Tap to drop more coins into the tray.' },
     actions: [
-      { verb: 'addCoin', label: '+50¢', args: { value: 50 } },
-      { verb: 'addCoin', label: '+20¢', args: { value: 20 } },
-      { verb: 'addCoin', label: '+10¢', args: { value: 10 } },
-      { verb: 'makeAmount', label: 'Tạo 85¢', args: { amount: 85 } },
+      { verb: 'addCoin', label: { vi: '+50¢', en: '+50¢' }, args: { value: 50 } },
+      { verb: 'addCoin', label: { vi: '+20¢', en: '+20¢' }, args: { value: 20 } },
+      { verb: 'addCoin', label: { vi: '+10¢', en: '+10¢' }, args: { value: 10 } },
+      { verb: 'makeAmount', label: { vi: 'Tạo 85¢', en: 'Make 85¢' }, args: { amount: 85 } },
     ],
     check: (p, t) => p.coins.reduce((s: number, c: number) => s + c, 0) === num(t.total),
   },
   datachart: {
-    hint: 'Thêm dữ liệu và đổi cách biểu diễn.',
+    hint: { vi: 'Thêm dữ liệu và đổi cách biểu diễn.', en: 'Add data and change how it is shown.' },
     actions: [
-      { verb: 'addData', label: '+ Đỏ', args: { label: 'Đỏ', n: 1 } },
-      { verb: 'addData', label: '+ Xanh', args: { label: 'Xanh', n: 1 } },
-      { verb: 'setMode', label: 'Cột', args: { mode: 'bar' } },
-      { verb: 'setMode', label: 'Pictogram', args: { mode: 'picto' } },
-      { verb: 'setMode', label: 'Tally', args: { mode: 'tally' } },
+      { verb: 'addData', label: { vi: '+ Đỏ', en: '+ Red' }, args: { label: 'Đỏ', n: 1 } },
+      { verb: 'addData', label: { vi: '+ Xanh', en: '+ Blue' }, args: { label: 'Xanh', n: 1 } },
+      { verb: 'setMode', label: { vi: 'Cột', en: 'Bar' }, args: { mode: 'bar' } },
+      { verb: 'setMode', label: { vi: 'Pictogram', en: 'Pictogram' }, args: { mode: 'picto' } },
+      { verb: 'setMode', label: { vi: 'Tally', en: 'Tally' }, args: { mode: 'tally' } },
     ],
   },
   count: {
-    hint: 'Chạm để thêm một vật; bấm đổi loại (táo / sao / hoa).',
+    hint: {
+      vi: 'Chạm để thêm một vật; bấm đổi loại (táo / sao / hoa).',
+      en: 'Tap to add an object; press to change the type (apple / star / flower).',
+    },
     actions: [
-      { verb: 'add', label: '+1', args: { n: 1 } },
-      { verb: 'remove', label: '−1', args: { n: 1 } },
-      { verb: 'setShape', label: '🍎', args: { shape: 'apple' } },
-      { verb: 'setShape', label: '⭐', args: { shape: 'star' } },
-      { verb: 'setShape', label: '🌸', args: { shape: 'flower' } },
+      { verb: 'add', label: { vi: '+1', en: '+1' }, args: { n: 1 } },
+      { verb: 'remove', label: { vi: '−1', en: '−1' }, args: { n: 1 } },
+      { verb: 'setShape', label: { vi: '🍎', en: '🍎' }, args: { shape: 'apple' } },
+      { verb: 'setShape', label: { vi: '⭐', en: '⭐' }, args: { shape: 'star' } },
+      { verb: 'setShape', label: { vi: '🌸', en: '🌸' }, args: { shape: 'flower' } },
     ],
     onTap: () => ({ verb: 'add', args: { n: 1 } }),
     check: (p, t) => p.count === num(t.count),
   },
   share: {
-    hint: 'Đặt số & số nhóm, rồi bấm “Chia” để rải đều.',
+    hint: {
+      vi: 'Đặt số & số nhóm, rồi bấm “Chia” để rải đều.',
+      en: 'Set the total and the groups, then tap “Share” to deal them out evenly.',
+    },
     actions: [
-      { verb: 'deal', label: 'Chia đều' },
-      { verb: 'setGroups', label: '2 nhóm', args: { g: 2 } },
-      { verb: 'setGroups', label: '3 nhóm', args: { g: 3 } },
-      { verb: 'setGroups', label: '4 nhóm', args: { g: 4 } },
+      { verb: 'deal', label: { vi: 'Chia đều', en: 'Share equally' } },
+      { verb: 'setGroups', label: { vi: '2 nhóm', en: '2 groups' }, args: { g: 2 } },
+      { verb: 'setGroups', label: { vi: '3 nhóm', en: '3 groups' }, args: { g: 3 } },
+      { verb: 'setGroups', label: { vi: '4 nhóm', en: '4 groups' }, args: { g: 4 } },
     ],
     check: (p, t) =>
       t.perGroup != null ? Math.floor(p.total / p.groups) === num(t.perGroup) : p.groups === num(t.groups),
@@ -211,11 +237,14 @@ const REG: Record<string, Interactions<KitAny>> = {
       t.parity ? (p.number % 2 === 0 ? 'even' : 'odd') === t.parity : p.number === num(t.number),
   },
   estimate: {
-    hint: 'Kéo mũi tên để đoán số vật, rồi bấm “Đếm thật”.',
+    hint: {
+      vi: 'Kéo mũi tên để đoán số vật, rồi bấm “Đếm thật”.',
+      en: 'Drag the arrow to estimate how many, then tap “Count for real”.',
+    },
     actions: [
-      { verb: 'guess', label: 'Đoán 10', args: { n: 10 } },
-      { verb: 'guess', label: 'Đoán 20', args: { n: 20 } },
-      { verb: 'reveal', label: 'Đếm thật' },
+      { verb: 'guess', label: { vi: 'Đoán 10', en: 'Guess 10' }, args: { n: 10 } },
+      { verb: 'guess', label: { vi: 'Đoán 20', en: 'Guess 20' }, args: { n: 20 } },
+      { verb: 'reveal', label: { vi: 'Đếm thật', en: 'Count for real' } },
     ],
     onDrag: (p, pt, ctx) => {
       const jx = ctx.box.w * 0.12,
@@ -235,36 +264,39 @@ const REG: Record<string, Interactions<KitAny>> = {
     ],
   },
   measurescale: {
-    hint: 'Thêm khối hai bên rồi so sánh.',
+    hint: { vi: 'Thêm khối hai bên rồi so sánh.', en: 'Add blocks to both sides, then compare.' },
     actions: [
-      { verb: 'addLeft', label: 'Trái +1', args: { n: 1 } },
-      { verb: 'addRight', label: 'Phải +1', args: { n: 1 } },
-      { verb: 'compare', label: 'So sánh' },
+      { verb: 'addLeft', label: { vi: 'Trái +1', en: 'Left +1' }, args: { n: 1 } },
+      { verb: 'addRight', label: { vi: 'Phải +1', en: 'Right +1' }, args: { n: 1 } },
+      { verb: 'compare', label: { vi: 'So sánh', en: 'Compare' } },
     ],
   },
 
   /* ---- English ---- */
   phonics: {
-    hint: 'Tách rồi ghép các âm để đọc từ.',
+    hint: { vi: 'Tách rồi ghép các âm để đọc từ.', en: 'Break the word into sounds, then blend them.' },
     actions: [
-      { verb: 'segment', label: 'Tách âm' },
-      { verb: 'sound', label: 'Âm 1', args: { i: 0 } },
-      { verb: 'blend', label: 'Ghép âm' },
+      { verb: 'segment', label: { vi: 'Tách âm', en: 'Segment' } },
+      { verb: 'sound', label: { vi: 'Âm 1', en: 'Sound 1' }, args: { i: 0 } },
+      { verb: 'blend', label: { vi: 'Ghép âm', en: 'Blend' } },
     ],
   },
   wordbuilder: {
-    hint: 'Đổi từng chữ để tạo từ mới.',
+    hint: { vi: 'Đổi từng chữ để tạo từ mới.', en: 'Change one letter to make a new word.' },
     actions: [
-      { verb: 'changeLetter', label: 'c → h', args: { i: 0, ch: 'h' } },
-      { verb: 'changeLetter', label: 'a → o', args: { i: 1, ch: 'o' } },
+      { verb: 'changeLetter', label: { vi: 'c → h', en: 'c → h' }, args: { i: 0, ch: 'h' } },
+      { verb: 'changeLetter', label: { vi: 'a → o', en: 'a → o' }, args: { i: 1, ch: 'o' } },
     ],
   },
   sentence: {
-    hint: 'Sắp lại thứ tự, viết hoa, thêm dấu.',
+    hint: {
+      vi: 'Sắp lại thứ tự, viết hoa, thêm dấu.',
+      en: 'Put the words in order, capitalise, add punctuation.',
+    },
     actions: [
-      { verb: 'reorder', label: 'Sắp đúng', args: { order: [1, 2, 0] } },
-      { verb: 'capitalize', label: 'Viết hoa' },
-      { verb: 'punctuate', label: 'Dấu chấm', args: { mark: '.' } },
+      { verb: 'reorder', label: { vi: 'Sắp đúng', en: 'Fix the order' }, args: { order: [1, 2, 0] } },
+      { verb: 'capitalize', label: { vi: 'Viết hoa', en: 'Capitalise' } },
+      { verb: 'punctuate', label: { vi: 'Dấu chấm', en: 'Full stop' }, args: { mark: '.' } },
     ],
   },
   wordclass: {
@@ -295,35 +327,38 @@ const REG: Record<string, Interactions<KitAny>> = {
 
   /* ---- Science ---- */
   states: {
-    hint: 'Đun nóng / làm lạnh để đổi thể.',
+    hint: { vi: 'Đun nóng / làm lạnh để đổi thể.', en: 'Heat or cool it to change the state.' },
     actions: [
-      { verb: 'heat', label: 'Đun nóng 🔥' },
-      { verb: 'cool', label: 'Làm lạnh ❄️' },
+      { verb: 'heat', label: { vi: 'Đun nóng 🔥', en: 'Heat 🔥' } },
+      { verb: 'cool', label: { vi: 'Làm lạnh ❄️', en: 'Cool ❄️' } },
     ],
   },
   circuit: {
-    hint: 'Chạm công tắc để đóng / mở mạch.',
+    hint: { vi: 'Chạm công tắc để đóng / mở mạch.', en: 'Tap the switch to close or open the circuit.' },
     actions: [
-      { verb: 'closeSwitch', label: 'Đóng mạch' },
-      { verb: 'openSwitch', label: 'Mở mạch' },
+      { verb: 'closeSwitch', label: { vi: 'Đóng mạch', en: 'Close circuit' } },
+      { verb: 'openSwitch', label: { vi: 'Mở mạch', en: 'Open circuit' } },
     ],
     onTap: (p) => ({ verb: p.closed ? 'openSwitch' : 'closeSwitch' }),
   },
   forces: {
-    hint: 'Thêm lực hai bên rồi xem lực tổng.',
+    hint: {
+      vi: 'Thêm lực hai bên rồi xem lực tổng.',
+      en: 'Add forces on both sides, then see the net force.',
+    },
     actions: [
-      { verb: 'pushLeft', label: 'Trái +1', args: { n: 1 } },
-      { verb: 'pushRight', label: 'Phải +1', args: { n: 1 } },
-      { verb: 'showNet', label: 'Lực tổng' },
-      { verb: 'reset', label: 'Xóa' },
+      { verb: 'pushLeft', label: { vi: 'Trái +1', en: 'Left +1' }, args: { n: 1 } },
+      { verb: 'pushRight', label: { vi: 'Phải +1', en: 'Right +1' }, args: { n: 1 } },
+      { verb: 'showNet', label: { vi: 'Lực tổng', en: 'Net force' } },
+      { verb: 'reset', label: { vi: 'Xóa', en: 'Clear' } },
     ],
   },
   thermometer: {
-    hint: 'Kéo lên/xuống để đổi nhiệt độ.',
+    hint: { vi: 'Kéo lên/xuống để đổi nhiệt độ.', en: 'Drag up or down to change the temperature.' },
     actions: [
-      { verb: 'setTemp', label: 'Sôi 100°', args: { n: 100 } },
-      { verb: 'setTemp', label: 'Băng 0°', args: { n: 0 } },
-      { verb: 'mark', label: 'Mốc 0°', args: { n: 0 } },
+      { verb: 'setTemp', label: { vi: 'Sôi 100°', en: 'Boiling 100°' }, args: { n: 100 } },
+      { verb: 'setTemp', label: { vi: 'Băng 0°', en: 'Freezing 0°' }, args: { n: 0 } },
+      { verb: 'mark', label: { vi: 'Mốc 0°', en: 'Mark 0°' }, args: { n: 0 } },
     ],
     onDrag(p, pt, ctx) {
       const top = ctx.box.h * 0.1,
@@ -333,8 +368,8 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   shadow: {
-    hint: 'Kéo Mặt Trời ngang để đổi bóng.',
-    actions: [{ verb: 'showRays', label: 'Hiện tia sáng' }],
+    hint: { vi: 'Kéo Mặt Trời ngang để đổi bóng.', en: 'Drag the Sun sideways to move the shadow.' },
+    actions: [{ verb: 'showRays', label: { vi: 'Hiện tia sáng', en: 'Show light rays' } }],
     onDrag: (p, pt, ctx) => ({ ...p, lightX: clamp01(pt.x / ctx.box.w) }),
   },
   lifecycle: {
@@ -345,42 +380,49 @@ const REG: Record<string, Interactions<KitAny>> = {
     ],
   },
   foodchain: {
-    hint: 'Nối từng bậc trong chuỗi.',
-    actions: [{ verb: 'addLink', label: 'Nối tiếp →' }],
+    hint: { vi: 'Nối từng bậc trong chuỗi.', en: 'Link each level of the chain.' },
+    actions: [{ verb: 'addLink', label: { vi: 'Nối tiếp →', en: 'Add next link →' } }],
   },
   organism: {
-    hint: 'Hiện tên từng bộ phận.',
+    hint: { vi: 'Hiện tên từng bộ phận.', en: 'Show the name of each part.' },
     actions: [
-      { verb: 'revealPart', label: 'Hoa', args: { name: 'hoa' } },
-      { verb: 'revealPart', label: 'Lá', args: { name: 'lá' } },
-      { verb: 'revealPart', label: 'Thân', args: { name: 'thân' } },
-      { verb: 'revealAll', label: 'Hiện hết' },
+      { verb: 'revealPart', label: { vi: 'Hoa', en: 'Flower' }, args: { name: 'hoa' } },
+      { verb: 'revealPart', label: { vi: 'Lá', en: 'Leaf' }, args: { name: 'lá' } },
+      { verb: 'revealPart', label: { vi: 'Thân', en: 'Stem' }, args: { name: 'thân' } },
+      { verb: 'revealAll', label: { vi: 'Hiện hết', en: 'Show all' } },
     ],
   },
   orbit: {
-    hint: 'Quay Trái Đất; xem ngày/đêm.',
+    hint: { vi: 'Quay Trái Đất; xem ngày/đêm.', en: 'Spin the Earth; watch day and night.' },
     actions: [
-      { verb: 'orbit', label: 'Quay 180°', args: { to: 180 } },
-      { verb: 'showDayNight', label: 'Ngày/đêm' },
-      { verb: 'orbit', label: 'Đủ vòng', args: { to: 360 } },
+      { verb: 'orbit', label: { vi: 'Quay 180°', en: 'Turn 180°' }, args: { to: 180 } },
+      { verb: 'showDayNight', label: { vi: 'Ngày/đêm', en: 'Day/night' } },
+      { verb: 'orbit', label: { vi: 'Đủ vòng', en: 'Full orbit' }, args: { to: 360 } },
     ],
   },
   sort: {
-    hint: 'Bỏ vật vào nhóm chìm / nổi.',
+    hint: { vi: 'Bỏ vật vào nhóm chìm / nổi.', en: 'Sort each object into the sink or float group.' },
     actions: [
-      { verb: 'placeItem', label: 'Đá → Chìm', args: { label: 'Đá', bin: 0 } },
-      { verb: 'placeItem', label: 'Gỗ → Nổi', args: { label: 'Gỗ', bin: 1 } },
+      { verb: 'placeItem', label: { vi: 'Đá → Chìm', en: 'Rock → Sink' }, args: { label: 'Đá', bin: 0 } },
+      { verb: 'placeItem', label: { vi: 'Gỗ → Nổi', en: 'Wood → Float' }, args: { label: 'Gỗ', bin: 1 } },
     ],
   },
 
   /* ---- early math (mầm non / đầu tiểu học) ---- */
   pattern: {
-    hint: 'Chạm để chọn hình tiếp theo; bấm nút để nối dài quy luật.',
+    hint: {
+      vi: 'Chạm để chọn hình tiếp theo; bấm nút để nối dài quy luật.',
+      en: 'Tap to choose the next shape; use the buttons to extend the pattern.',
+    },
     actions: [
-      { verb: 'extend', label: 'Nối dài +2', args: { n: 2 } },
-      { verb: 'hide', label: 'Ẩn một ô', args: { i: 2 } },
-      { verb: 'revealHidden', label: 'Hiện ô ẩn' },
-      { verb: 'setUnit', label: 'Quy luật ABC', args: { unit: ['red', 'green', 'yellow'] } },
+      { verb: 'extend', label: { vi: 'Nối dài +2', en: 'Extend +2' }, args: { n: 2 } },
+      { verb: 'hide', label: { vi: 'Ẩn một ô', en: 'Hide a slot' }, args: { i: 2 } },
+      { verb: 'revealHidden', label: { vi: 'Hiện ô ẩn', en: 'Show hidden slot' } },
+      {
+        verb: 'setUnit',
+        label: { vi: 'Quy luật ABC', en: 'ABC pattern' },
+        args: { unit: ['red', 'green', 'yellow'] },
+      },
     ],
     // tap anywhere → cycle the "next item" choice through the unit's tokens
     onTap(p) {
@@ -393,25 +435,31 @@ const REG: Record<string, Interactions<KitAny>> = {
       t?.choice != null ? p.choice === t.choice : p.choice === p.unit[p.items % p.unit.length],
   },
   subitize: {
-    hint: 'Nhìn nhanh rồi đoán số chấm; chạm thẻ để lật.',
+    hint: {
+      vi: 'Nhìn nhanh rồi đoán số chấm; chạm thẻ để lật.',
+      en: 'Take a quick look and guess how many dots; tap the card to flip it.',
+    },
     actions: [
-      { verb: 'show', label: 'Hiện 4', args: { count: 4, arrangement: 'dice' } },
-      { verb: 'show', label: 'Hiện 6', args: { count: 6, arrangement: 'random' } },
-      { verb: 'rearrange', label: 'Đổi cách xếp' },
-      { verb: 'guess', label: 'Đoán 5', args: { n: 5 } },
-      { verb: 'reveal', label: 'Lật thẻ' },
+      { verb: 'show', label: { vi: 'Hiện 4', en: 'Show 4' }, args: { count: 4, arrangement: 'dice' } },
+      { verb: 'show', label: { vi: 'Hiện 6', en: 'Show 6' }, args: { count: 6, arrangement: 'random' } },
+      { verb: 'rearrange', label: { vi: 'Đổi cách xếp', en: 'Rearrange dots' } },
+      { verb: 'guess', label: { vi: 'Đoán 5', en: 'Guess 5' }, args: { n: 5 } },
+      { verb: 'reveal', label: { vi: 'Lật thẻ', en: 'Flip card' } },
     ],
     onTap: () => ({ verb: 'reveal' }),
     check: (p, t) => (t?.count != null ? p.guess === num(t.count) : p.guess === p.count),
   },
   comparegroups: {
-    hint: 'Chạm nửa trái / phải để thêm vật; ghép 1–1 rồi chọn dấu.',
+    hint: {
+      vi: 'Chạm nửa trái / phải để thêm vật; ghép 1–1 rồi chọn dấu.',
+      en: 'Tap the left / right half to add objects; match 1–1, then pick the sign.',
+    },
     actions: [
-      { verb: 'pairUp', label: 'Ghép 1–1' },
-      { verb: 'showSymbol', label: 'Hiện dấu' },
-      { verb: 'chooseSymbol', label: 'Chọn >', args: { s: '>' } },
-      { verb: 'chooseSymbol', label: 'Chọn <', args: { s: '<' } },
-      { verb: 'chooseSymbol', label: 'Chọn =', args: { s: '=' } },
+      { verb: 'pairUp', label: { vi: 'Ghép 1–1', en: 'Match 1–1' } },
+      { verb: 'showSymbol', label: { vi: 'Hiện dấu', en: 'Show the sign' } },
+      { verb: 'chooseSymbol', label: { vi: 'Chọn >', en: 'Pick >' }, args: { s: '>' } },
+      { verb: 'chooseSymbol', label: { vi: 'Chọn <', en: 'Pick <' }, args: { s: '<' } },
+      { verb: 'chooseSymbol', label: { vi: 'Chọn =', en: 'Pick =' }, args: { s: '=' } },
     ],
     // tap the first group's half → addLeft, the other half → addRight
     // (portrait stacks the groups vertically — keep in sync with comparegroups.ts render)
@@ -493,12 +541,15 @@ const REG: Record<string, Interactions<KitAny>> = {
 
   /* ---- secondary math (THCS / THPT) ---- */
   integerchips: {
-    hint: 'Chạm nửa trên thêm chip dương, nửa dưới thêm chip âm; bấm để triệt tiêu cặp.',
+    hint: {
+      vi: 'Chạm nửa trên thêm chip dương, nửa dưới thêm chip âm; bấm để triệt tiêu cặp.',
+      en: 'Tap the top half to add a positive chip, the bottom half for a negative one; tap to cancel zero pairs.',
+    },
     actions: [
-      { verb: 'addPos', label: '+1 dương', args: { n: 1 } },
-      { verb: 'addNeg', label: '+1 âm', args: { n: 1 } },
-      { verb: 'cancelPairs', label: 'Triệt tiêu cặp', args: {} },
-      { verb: 'showValue', label: 'Hiện giá trị', args: {} },
+      { verb: 'addPos', label: { vi: '+1 dương', en: '+1 positive' }, args: { n: 1 } },
+      { verb: 'addNeg', label: { vi: '+1 âm', en: '+1 negative' }, args: { n: 1 } },
+      { verb: 'cancelPairs', label: { vi: 'Triệt tiêu cặp', en: 'Cancel zero pairs' }, args: {} },
+      { verb: 'showValue', label: { vi: 'Hiện giá trị', en: 'Show value' }, args: {} },
     ],
     // keep in sync with integerchips.ts render: plus zone is the top half, minus zone the bottom half
     onTap: (_p, pt, ctx) =>
@@ -506,12 +557,23 @@ const REG: Record<string, Interactions<KitAny>> = {
     check: (p, t) => p.pos - p.neg === num(t.value),
   },
   algebratile: {
-    hint: 'Bớt cùng số gạch ở hai vế, rồi chia đều để tìm x.',
+    hint: {
+      vi: 'Bớt cùng số gạch ở hai vế, rồi chia đều để tìm x.',
+      en: 'Remove the same tiles from both sides, then split equally to find x.',
+    },
     actions: [
-      { verb: 'removeBoth', label: 'Bớt 1 đơn vị hai vế', args: { units: 1 } },
-      { verb: 'removeBoth', label: 'Bớt 1 gạch x hai vế', args: { x: 1 } },
-      { verb: 'splitEqually', label: 'Chia đều', args: {} },
-      { verb: 'showSolution', label: 'Hiện nghiệm', args: {} },
+      {
+        verb: 'removeBoth',
+        label: { vi: 'Bớt 1 đơn vị hai vế', en: 'Remove 1 unit both sides' },
+        args: { units: 1 },
+      },
+      {
+        verb: 'removeBoth',
+        label: { vi: 'Bớt 1 gạch x hai vế', en: 'Remove 1 x-tile both sides' },
+        args: { x: 1 },
+      },
+      { verb: 'splitEqually', label: { vi: 'Chia đều', en: 'Split equally' }, args: {} },
+      { verb: 'showSolution', label: { vi: 'Hiện nghiệm', en: 'Show solution' }, args: {} },
     ],
     check: (p, t) => {
       const d = num(p?.left?.x) - num(p?.right?.x)
@@ -521,11 +583,14 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   equationbalance: {
-    hint: 'Bớt quả cân hai bên, rồi chia đều cho số túi x.',
+    hint: {
+      vi: 'Bớt quả cân hai bên, rồi chia đều cho số túi x.',
+      en: 'Take weights off both sides, then share equally among the x bags.',
+    },
     actions: [
-      { verb: 'takeFromBoth', label: 'Bớt −b hai bên', args: {} },
-      { verb: 'divideBoth', label: 'Chia đều', args: {} },
-      { verb: 'showX', label: 'Hiện x', args: {} },
+      { verb: 'takeFromBoth', label: { vi: 'Bớt −b hai bên', en: 'Take −b both sides' }, args: {} },
+      { verb: 'divideBoth', label: { vi: 'Chia đều', en: 'Divide equally' }, args: {} },
+      { verb: 'showX', label: { vi: 'Hiện x', en: 'Show x' }, args: {} },
     ],
     check: (p, t) => {
       const a = num(p.a) || 1
@@ -535,12 +600,15 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   functionmachine: {
-    hint: 'Thả số vào máy rồi đoán quy tắc từ bảng vào–ra.',
+    hint: {
+      vi: 'Thả số vào máy rồi đoán quy tắc từ bảng vào–ra.',
+      en: 'Drop numbers into the machine, then guess the rule from the in–out table.',
+    },
     actions: [
-      { verb: 'feed', label: 'Thả 3', args: { x: 3 } },
-      { verb: 'feed', label: 'Thả 5', args: { x: 5 } },
-      { verb: 'revealRule', label: 'Lộ quy tắc' },
-      { verb: 'clear', label: 'Xóa bảng' },
+      { verb: 'feed', label: { vi: 'Thả 3', en: 'Drop 3' }, args: { x: 3 } },
+      { verb: 'feed', label: { vi: 'Thả 5', en: 'Drop 5' }, args: { x: 5 } },
+      { verb: 'revealRule', label: { vi: 'Lộ quy tắc', en: 'Reveal rule' } },
+      { verb: 'clear', label: { vi: 'Xóa bảng', en: 'Clear table' } },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with functionmachine.ts render (machineBox)
@@ -575,11 +643,14 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   ratiotable: {
-    hint: 'Nhân cả hai hàng với cùng một số để mở rộng bảng tỉ số.',
+    hint: {
+      vi: 'Nhân cả hai hàng với cùng một số để mở rộng bảng tỉ số.',
+      en: 'Multiply both rows by the same number to extend the ratio table.',
+    },
     actions: [
-      { verb: 'addColumn', label: '×2', args: { m: 2 } },
-      { verb: 'addColumn', label: '×5', args: { m: 5 } },
-      { verb: 'showUnitRate', label: 'Tỉ lệ đơn vị' },
+      { verb: 'addColumn', label: { vi: '×2', en: '×2' }, args: { m: 2 } },
+      { verb: 'addColumn', label: { vi: '×5', en: '×5' }, args: { m: 5 } },
+      { verb: 'showUnitRate', label: { vi: 'Tỉ lệ đơn vị', en: 'Unit rate' } },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with ratiotable.ts render (table geometry)
@@ -613,12 +684,15 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   factortree: {
-    hint: 'Tách dần tới khi mọi lá đều là số nguyên tố.',
+    hint: {
+      vi: 'Tách dần tới khi mọi lá đều là số nguyên tố.',
+      en: 'Keep splitting until every leaf is a prime number.',
+    },
     actions: [
-      { verb: 'splitBy', label: 'Tách ×2', args: { d: 2 } },
-      { verb: 'splitBy', label: 'Tách ×3', args: { d: 3 } },
-      { verb: 'circlePrimes', label: 'Khoanh nguyên tố' },
-      { verb: 'showProduct', label: 'Hiện tích' },
+      { verb: 'splitBy', label: { vi: 'Tách ×2', en: 'Split ×2' }, args: { d: 2 } },
+      { verb: 'splitBy', label: { vi: 'Tách ×3', en: 'Split ×3' }, args: { d: 3 } },
+      { verb: 'circlePrimes', label: { vi: 'Khoanh nguyên tố', en: 'Circle primes' } },
+      { verb: 'showProduct', label: { vi: 'Hiện tích', en: 'Show product' } },
     ],
     // target {factored:true}: every leaf is prime.
     // target {primes:[...]}: fully factored AND the sorted prime leaves match.
@@ -680,13 +754,16 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   trianglelab: {
-    hint: 'Chọn chế độ rồi bấm “Chứng minh” để thấy vì sao.',
+    hint: {
+      vi: 'Chọn chế độ rồi bấm “Chứng minh” để thấy vì sao.',
+      en: 'Pick a mode, then press “Show work” to see why.',
+    },
     actions: [
-      { verb: 'setMode', label: 'Tổng góc', args: { mode: 'angles' } },
-      { verb: 'setMode', label: 'Pytago', args: { mode: 'pythagoras' } },
-      { verb: 'setMode', label: 'Tỉ số LG', args: { mode: 'ratio' } },
-      { verb: 'showWork', label: 'Chứng minh' },
-      { verb: 'setRatio', label: 'sin→cos→tan', args: {} },
+      { verb: 'setMode', label: { vi: 'Tổng góc', en: 'Angle sum' }, args: { mode: 'angles' } },
+      { verb: 'setMode', label: { vi: 'Pytago', en: 'Pythagoras' }, args: { mode: 'pythagoras' } },
+      { verb: 'setMode', label: { vi: 'Tỉ số LG', en: 'Trig ratio' }, args: { mode: 'ratio' } },
+      { verb: 'showWork', label: { vi: 'Chứng minh', en: 'Show work' } },
+      { verb: 'setRatio', label: { vi: 'sin→cos→tan', en: 'sin→cos→tan' }, args: {} },
     ],
     check(p, t) {
       const tol = (x: number, y: number, e: number) => Math.abs(x - y) <= e
@@ -711,13 +788,16 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   transformgrid: {
-    hint: 'Bấm nút để biến hình; chạm lưới để đánh dấu một điểm.',
+    hint: {
+      vi: 'Bấm nút để biến hình; chạm lưới để đánh dấu một điểm.',
+      en: 'Press a button to transform the shape; tap the grid to mark a point.',
+    },
     actions: [
-      { verb: 'translate', label: 'Tịnh tiến (2;1)', args: { dx: 2, dy: 1 } },
-      { verb: 'reflect', label: 'Đối xứng Oy', args: { axis: 'y' } },
-      { verb: 'rotate', label: 'Quay 90°', args: { deg: 90 } },
-      { verb: 'dilate', label: 'Vị tự ×2', args: { k: 2 } },
-      { verb: 'resetShape', label: 'Về hình gốc', args: {} },
+      { verb: 'translate', label: { vi: 'Tịnh tiến (2;1)', en: 'Translate (2;1)' }, args: { dx: 2, dy: 1 } },
+      { verb: 'reflect', label: { vi: 'Đối xứng Oy', en: 'Reflect in y-axis' }, args: { axis: 'y' } },
+      { verb: 'rotate', label: { vi: 'Quay 90°', en: 'Rotate 90°' }, args: { deg: 90 } },
+      { verb: 'dilate', label: { vi: 'Vị tự ×2', en: 'Dilate ×2' }, args: { k: 2 } },
+      { verb: 'resetShape', label: { vi: 'Về hình gốc', en: 'Reset shape' }, args: {} },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with transformgrid.ts render grid geometry (pad/unit/centre)
@@ -794,13 +874,16 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   statplot: {
-    hint: 'Chạm vào trục để thêm một điểm dữ liệu — xem các mốc thống kê trượt theo.',
+    hint: {
+      vi: 'Chạm vào trục để thêm một điểm dữ liệu — xem các mốc thống kê trượt theo.',
+      en: 'Tap the axis to add a data point — watch the statistics shift with it.',
+    },
     actions: [
-      { verb: 'showMean', label: 'Trung bình' },
-      { verb: 'showMedian', label: 'Trung vị' },
-      { verb: 'showMode', label: 'Mốt' },
-      { verb: 'showRange', label: 'Khoảng biến thiên' },
-      { verb: 'addData', label: '+ Ngoại lệ', args: { v: 15 } }, // = axis max of defaults
+      { verb: 'showMean', label: { vi: 'Trung bình', en: 'Mean' } },
+      { verb: 'showMedian', label: { vi: 'Trung vị', en: 'Median' } },
+      { verb: 'showMode', label: { vi: 'Mốt', en: 'Mode' } },
+      { verb: 'showRange', label: { vi: 'Khoảng biến thiên', en: 'Range' } },
+      { verb: 'addData', label: { vi: '+ Ngoại lệ', en: '+ Outlier' }, args: { v: 15 } }, // = axis max of defaults
     ],
     onTap(p, pt, ctx) {
       // keep in sync with statplot.ts render (padX + axisOf axis derivation)
@@ -969,11 +1052,14 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   cloze: {
-    hint: 'Chạm từ trong khay để điền vào ô trống; chạm ô đã điền để bỏ từ ra.',
+    hint: {
+      vi: 'Chạm từ trong khay để điền vào ô trống; chạm ô đã điền để bỏ từ ra.',
+      en: 'Tap a word in the tray to fill a gap; tap a filled gap to take the word out.',
+    },
     actions: [
-      { verb: 'focus', label: 'Chọn ô 1', args: { gap: 0 } },
-      { verb: 'unfill', label: 'Bỏ từ ra', args: {} },
-      { verb: 'revealAnswers', label: 'Kiểm tra' },
+      { verb: 'focus', label: { vi: 'Chọn ô 1', en: 'Select gap 1' }, args: { gap: 0 } },
+      { verb: 'unfill', label: { vi: 'Bỏ từ ra', en: 'Remove word' }, args: {} },
+      { verb: 'revealAnswers', label: { vi: 'Kiểm tra', en: 'Check' } },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with layoutCloze in cloze.ts (render geometry)
@@ -1054,11 +1140,14 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   wordform: {
-    hint: 'Chạm một ô từ loại để mở dạng từ; chạm lần nữa để điền vào câu.',
+    hint: {
+      vi: 'Chạm một ô từ loại để mở dạng từ; chạm lần nữa để điền vào câu.',
+      en: 'Tap a word-class card to reveal the form; tap again to put it in the sentence.',
+    },
     actions: [
-      { verb: 'revealAll', label: 'Hiện cả họ từ' },
-      { verb: 'highlightSuffix', label: 'Nổi bật đuôi từ' },
-      { verb: 'place', label: 'Điền danh từ', args: { pos: 'noun' } },
+      { verb: 'revealAll', label: { vi: 'Hiện cả họ từ', en: 'Show word family' } },
+      { verb: 'highlightSuffix', label: { vi: 'Nổi bật đuôi từ', en: 'Highlight suffix' } },
+      { verb: 'place', label: { vi: 'Điền danh từ', en: 'Insert noun' }, args: { pos: 'noun' } },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with layoutWF in wordform.ts (render geometry)
@@ -1106,11 +1195,14 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   collocation: {
-    hint: 'Chạm danh từ ở khay rồi chạm cột động từ đi cùng với nó.',
+    hint: {
+      vi: 'Chạm danh từ ở khay rồi chạm cột động từ đi cùng với nó.',
+      en: 'Tap a noun in the tray, then tap the verb column that goes with it.',
+    },
     actions: [
-      { verb: 'placeAll', label: 'Xếp hết', args: {} },
-      { verb: 'reveal', label: 'Kiểm tra' },
-      { verb: 'clear', label: 'Xóa' },
+      { verb: 'placeAll', label: { vi: 'Xếp hết', en: 'Place all' }, args: {} },
+      { verb: 'reveal', label: { vi: 'Kiểm tra', en: 'Check' } },
+      { verb: 'clear', label: { vi: 'Xóa', en: 'Clear' } },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with layoutColl in collocation.ts (render geometry)
@@ -1153,11 +1245,14 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   paraphrase: {
-    hint: 'Chạm một từ ở câu trên rồi một từ ở câu dưới để ghép cặp đồng nghĩa.',
+    hint: {
+      vi: 'Chạm một từ ở câu trên rồi một từ ở câu dưới để ghép cặp đồng nghĩa.',
+      en: 'Tap a word in the top sentence, then one below, to pair up synonyms.',
+    },
     actions: [
-      { verb: 'showNext', label: 'Cặp tiếp theo' },
-      { verb: 'showAll', label: 'Hiện tất cả' },
-      { verb: 'clear', label: 'Xóa' },
+      { verb: 'showNext', label: { vi: 'Cặp tiếp theo', en: 'Next pair' } },
+      { verb: 'showAll', label: { vi: 'Hiện tất cả', en: 'Show all' } },
+      { verb: 'clear', label: { vi: 'Xóa', en: 'Clear' } },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with layoutPara/wrapRow in paraphrase.ts (render geometry)
@@ -1222,12 +1317,19 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   essaymap: {
-    hint: 'Chạm hai thẻ để đổi chỗ khối; bấm nút để mở dàn ý.',
+    hint: {
+      vi: 'Chạm hai thẻ để đổi chỗ khối; bấm nút để mở dàn ý.',
+      en: 'Tap two cards to swap blocks; use the buttons to open the outline.',
+    },
     actions: [
-      { verb: 'reveal', label: 'Mở khối kế' },
-      { verb: 'revealAll', label: 'Mở cả dàn ý' },
-      { verb: 'setMode', label: 'Luyện sắp xếp', args: { mode: 'reorder' } },
-      { verb: 'showRoles', label: 'Hiện vai trò' },
+      { verb: 'reveal', label: { vi: 'Mở khối kế', en: 'Reveal next block' } },
+      { verb: 'revealAll', label: { vi: 'Mở cả dàn ý', en: 'Reveal full outline' } },
+      {
+        verb: 'setMode',
+        label: { vi: 'Luyện sắp xếp', en: 'Reorder practice' },
+        args: { mode: 'reorder' },
+      },
+      { verb: 'showRoles', label: { vi: 'Hiện vai trò', en: 'Show roles' } },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with essaymap.ts geom()
@@ -1260,12 +1362,23 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   dialogue: {
-    hint: 'Chạm để hiện lượt thoại kế; ở chế độ sắp xếp, chạm hai bong bóng để đổi chỗ.',
+    hint: {
+      vi: 'Chạm để hiện lượt thoại kế; ở chế độ sắp xếp, chạm hai bong bóng để đổi chỗ.',
+      en: 'Tap to show the next turn; in reorder mode, tap two bubbles to swap them.',
+    },
     actions: [
-      { verb: 'next', label: 'Lượt kế' },
-      { verb: 'playAll', label: 'Phát cả đoạn' },
-      { verb: 'highlightFn', label: 'Chức năng câu', args: { fn: 'all' } },
-      { verb: 'setMode', label: 'Luyện sắp xếp', args: { mode: 'reorder' } },
+      { verb: 'next', label: { vi: 'Lượt kế', en: 'Next turn' } },
+      { verb: 'playAll', label: { vi: 'Phát cả đoạn', en: 'Play all' } },
+      {
+        verb: 'highlightFn',
+        label: { vi: 'Chức năng câu', en: 'Sentence function' },
+        args: { fn: 'all' },
+      },
+      {
+        verb: 'setMode',
+        label: { vi: 'Luyện sắp xếp', en: 'Reorder practice' },
+        args: { mode: 'reorder' },
+      },
     ],
     onTap(p, pt, ctx) {
       if (p.mode !== 'reorder') return { verb: 'next', args: {} }
@@ -1311,12 +1424,15 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   registerscale: {
-    hint: 'Chạm một câu rồi chạm vùng để xếp mức trang trọng.',
+    hint: {
+      vi: 'Chạm một câu rồi chạm vùng để xếp mức trang trọng.',
+      en: 'Tap a sentence, then tap a zone to sort it by formality.',
+    },
     actions: [
-      { verb: 'focus', label: 'Chọn câu 1', args: { i: 0 } },
-      { verb: 'placeAll', label: 'Xếp đúng hết' },
-      { verb: 'showScale', label: 'Hiện thang' },
-      { verb: 'clear', label: 'Xóa hết' },
+      { verb: 'focus', label: { vi: 'Chọn câu 1', en: 'Pick sentence 1' }, args: { i: 0 } },
+      { verb: 'placeAll', label: { vi: 'Xếp đúng hết', en: 'Place all correctly' } },
+      { verb: 'showScale', label: { vi: 'Hiện thang', en: 'Show scale' } },
+      { verb: 'clear', label: { vi: 'Xóa hết', en: 'Clear all' } },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with registerscale.ts cardPos() / zone layout

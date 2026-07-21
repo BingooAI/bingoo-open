@@ -10,15 +10,19 @@
 import * as React from 'react'
 import { useState } from 'react'
 import type { GateSpec } from '@bingoo.ai/explainer'
+import { DEFAULT_PLAYER_LABELS, type PlayerLabels } from '../labels'
 
 export function SequenceGate({
   gate,
   onPass,
   onSkip,
+  labels = DEFAULT_PLAYER_LABELS,
 }: {
   gate: GateSpec
   onPass: () => void
   onSkip?: () => void
+  /** Host copy. Defaults to English so an unwired host reads as untranslated. */
+  labels?: PlayerLabels
 }) {
   const options = gate.options ?? []
   const answer = (Array.isArray(gate.answer) ? gate.answer : [gate.answer]) as string[]
@@ -50,8 +54,8 @@ export function SequenceGate({
 
   return (
     <div className="gate">
-      <div className="gate-card wide" role="dialog" aria-label="Sắp xếp thứ tự">
-        <div className="gate-badge">Sắp thứ tự</div>
+      <div className="gate-card wide" role="dialog" aria-label={labels.putInOrder}>
+        <div className="gate-badge">{labels.order}</div>
         <h2 className="gate-prompt">{gate.prompt}</h2>
 
         <div className={`seq-slots ${status}`}>
@@ -76,11 +80,11 @@ export function SequenceGate({
         </div>
 
         {status === 'correct' && (
-          <p className="gate-feedback good">✓ {gate.feedback?.correct ?? 'Chuẩn thứ tự!'}</p>
+          <p className="gate-feedback good">✓ {gate.feedback?.correct ?? labels.correctOrder}</p>
         )}
         {status === 'wrong' && (
           <p className="gate-feedback bad">
-            {gate.feedback?.wrong ?? 'Chưa đúng thứ tự.'}{' '}
+            {gate.feedback?.wrong ?? labels.wrongOrder}{' '}
             <button className="gate-retry" onClick={reset}>
               Làm lại
             </button>

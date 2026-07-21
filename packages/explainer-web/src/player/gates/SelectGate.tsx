@@ -11,15 +11,19 @@
 import { useState } from 'react'
 import type { GateSpec } from '@bingoo.ai/explainer'
 import { AnswerOption, type AnswerState } from '@bingoo.ai/ui-web'
+import { DEFAULT_PLAYER_LABELS, type PlayerLabels } from '../labels'
 
 export function SelectGate({
   gate,
   onPass,
   onSkip,
+  labels = DEFAULT_PLAYER_LABELS,
 }: {
   gate: GateSpec
   onPass: () => void
   onSkip?: () => void
+  /** Host copy. Defaults to English so an unwired host reads as untranslated. */
+  labels?: PlayerLabels
 }) {
   const [picked, setPicked] = useState<string | null>(null)
   const [status, setStatus] = useState<'idle' | 'correct' | 'wrong'>('idle')
@@ -37,8 +41,8 @@ export function SelectGate({
 
   return (
     <div className="gate">
-      <div className="gate-card" role="dialog" aria-label="Câu hỏi tương tác">
-        <div className="gate-badge">Tương tác</div>
+      <div className="gate-card" role="dialog" aria-label={labels.interactiveQuestion}>
+        <div className="gate-badge">{labels.interactive}</div>
         <h2 className="gate-prompt">{gate.prompt}</h2>
         <div className="gate-options">
           {(gate.options ?? []).map((o, i) => {
@@ -64,11 +68,11 @@ export function SelectGate({
           })}
         </div>
         {status === 'correct' && (
-          <p className="gate-feedback good">✓ {gate.feedback?.correct ?? 'Chính xác!'}</p>
+          <p className="gate-feedback good">✓ {gate.feedback?.correct ?? labels.correct}</p>
         )}
         {status === 'wrong' && (
           <p className="gate-feedback bad">
-            {gate.feedback?.wrong ?? 'Chưa đúng, thử lại nhé.'}{' '}
+            {gate.feedback?.wrong ?? labels.wrongRetry}{' '}
             <button className="gate-retry" onClick={() => setStatus('idle')}>
               Thử lại
             </button>

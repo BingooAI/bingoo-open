@@ -1452,5 +1452,30 @@
     "skip": "Bỏ qua",
     "undo": "Hoàn tác",
     "vennNeither": "Ngoài cả hai"
+  },
+  "player": {
+    "audio": "Âm thanh",
+    "captionsOff": "Tắt phụ đề",
+    "captionsOn": "Bật phụ đề",
+    "correct": "Chính xác!",
+    "correctOrder": "Chuẩn thứ tự!",
+    "correctPlace": "Đúng chỗ!",
+    "emptyActivity": "Hoạt động trống.",
+    "interactive": "Tương tác",
+    "interactiveQuestion": "Câu hỏi tương tác",
+    "order": "Sắp thứ tự",
+    "pause": "Tạm dừng",
+    "play": "Phát",
+    "putInOrder": "Sắp xếp thứ tự",
+    "question": "Câu hỏi",
+    "restart": "Làm lại từ đầu",
+    "settings": "Cài đặt",
+    "settingsHint": "Tốc độ · khổ · ngôn ngữ",
+    "speed": "Tốc độ",
+    "timeline": "Thanh thời gian",
+    "tryIt": "Thử làm",
+    "wrong": "Chưa đúng — thử lại nhé.",
+    "wrongOrder": "Chưa đúng thứ tự.",
+    "wrongRetry": "Chưa đúng, thử lại nhé."
   }
 }

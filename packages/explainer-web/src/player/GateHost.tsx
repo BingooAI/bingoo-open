@@ -10,6 +10,7 @@
 import * as React from 'react'
 import type { GateSpec, ThemeTokens, Aspect } from '@bingoo.ai/explainer'
 import type { QuizLabels } from '@bingoo.ai/ui-web'
+import type { PlayerLabels } from './labels'
 import { SelectGate } from './gates/SelectGate'
 import { SequenceGate } from './gates/SequenceGate'
 import { HotspotGate } from './gates/HotspotGate'
@@ -27,6 +28,8 @@ function renderGate(
   onPass: () => void,
   onSkip?: () => void,
   labels?: QuizLabels,
+  locale?: string,
+  playerLabels?: PlayerLabels,
 ) {
   switch (gate.kind) {
     case 'activity':
@@ -38,10 +41,21 @@ function renderGate(
           onPass={onPass}
           onSkip={onSkip}
           labels={labels}
+          locale={locale}
+          playerLabels={playerLabels}
         />
       )
     case 'manipulate':
-      return <ManipulateGate gate={gate} theme={theme} aspect={aspect} onPass={onPass} onSkip={onSkip} />
+      return (
+        <ManipulateGate
+          gate={gate}
+          theme={theme}
+          aspect={aspect}
+          onPass={onPass}
+          onSkip={onSkip}
+          locale={locale}
+        />
+      )
     case 'sequence':
       return <SequenceGate gate={gate} onPass={onPass} onSkip={onSkip} />
     case 'hotspot':
@@ -65,7 +79,7 @@ function GatePreview({ gate, theme, aspect }: { gate: GateSpec; theme: ThemeToke
   return (
     <div className="gate-preview" aria-hidden="true">
       <div className="gate-preview-tag">Câu hỏi sắp tới</div>
-      {renderGate(gate, theme, aspect, () => {}, undefined, undefined)}
+      {renderGate(gate, theme, aspect, () => {}, undefined, undefined, undefined, undefined)}
     </div>
   )
 }
@@ -78,6 +92,8 @@ export function GateHost({
   onPass,
   onSkip,
   labels,
+  locale,
+  playerLabels,
 }: {
   gate: GateSpec
   theme: ThemeTokens
@@ -88,7 +104,11 @@ export function GateHost({
   onSkip?: () => void
   /** Host copy for the embedded quiz. Omitted falls back to English. */
   labels?: QuizLabels
+  /** Language for kit hints. */
+  locale?: string
+  /** Chrome and feedback copy for the gates. */
+  playerLabels?: PlayerLabels
 }) {
   if (preview) return <GatePreview gate={gate} theme={theme} aspect={aspect} />
-  return renderGate(gate, theme, aspect, onPass, onSkip, labels)
+  return renderGate(gate, theme, aspect, onPass, onSkip, labels, locale, playerLabels)
 }

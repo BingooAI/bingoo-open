@@ -26,7 +26,9 @@ import { checkAnswer, getInteractions } from '@bingoo.ai/manipulatives'
 import { QuizShell, TracingBoard, ColoringBoard } from '@bingoo.ai/ui-web'
 import { InteractiveManipulative } from '../InteractiveManipulative'
 import { DEFAULT_QUIZ_LABELS } from './quizLabels'
+import { DEFAULT_PLAYER_LABELS, type PlayerLabels } from '../labels'
 import type { QuizLabels } from '@bingoo.ai/ui-web'
+import { pickText } from '@bingoo.ai/core'
 
 export function ActivityGate({
   gate,
@@ -35,6 +37,8 @@ export function ActivityGate({
   onPass,
   onSkip,
   labels = DEFAULT_QUIZ_LABELS,
+  playerLabels = DEFAULT_PLAYER_LABELS,
+  locale = 'en',
 }: {
   gate: GateSpec
   theme: ThemeTokens
@@ -43,6 +47,9 @@ export function ActivityGate({
   onSkip?: () => void
   /** Host-supplied copy. Defaults to English so an unwired host reads as untranslated. */
   labels?: QuizLabels
+  playerLabels?: PlayerLabels
+  /** Language for kit hints and button labels. */
+  locale?: string
 }) {
   const act = gate.activity
 
@@ -82,6 +89,9 @@ export function ActivityGate({
         gate={gate}
         onPass={onPass}
         onSkip={onSkip}
+        labels={labels}
+        playerLabels={playerLabels}
+        locale={locale}
       />
     )
   }
@@ -110,10 +120,10 @@ export function ActivityGate({
     <div className="gate">
       <div className="gate-card" role="dialog">
         <h2 className="gate-prompt">{gate.prompt}</h2>
-        <p className="gate-feedback bad">Hoạt động trống.</p>
+        <p className="gate-feedback bad">{playerLabels.emptyActivity}</p>
         {onSkip && (
           <button className="gate-skip" onClick={onSkip}>
-            Bỏ qua
+            {labels.skip}
           </button>
         )}
       </div>
@@ -130,6 +140,9 @@ function ManipActivity({
   gate,
   onPass,
   onSkip,
+  labels,
+  playerLabels,
+  locale,
 }: {
   manip: NonNullable<NonNullable<GateSpec['activity']>['manip']>
   theme: ThemeTokens
@@ -137,6 +150,9 @@ function ManipActivity({
   gate: GateSpec
   onPass: () => void
   onSkip?: () => void
+  labels: QuizLabels
+  playerLabels: PlayerLabels
+  locale: string
 }) {
   const hint = getInteractions(manip.kind)?.hint
   const [params, setParams] = useState<unknown>(null)
@@ -154,11 +170,12 @@ function ManipActivity({
   return (
     <div className={`manip-inline ${status}`}>
       <div className="mg-banner">
-        <span className="mg-badge">✍ Thử làm</span>
+        <span className="mg-badge">✍ {playerLabels.tryIt}</span>
         <span className="mg-prompt">{gate.prompt}</span>
-        {hint && <span className="mg-hint">{hint}</span>}
+        {hint && <span className="mg-hint">{pickText(hint, locale)}</span>}
       </div>
       <InteractiveManipulative
+        locale={locale}
         kind={manip.kind}
         theme={theme}
         aspect={aspect}
@@ -176,17 +193,17 @@ function ManipActivity({
               onClick={submit}
               disabled={status === 'correct' || params == null}
             >
-              ✓ Kiểm tra
+              ✓ {labels.check}
             </button>
             {status === 'correct' && (
-              <span className="mg-fb good">🎉 {gate.feedback?.correct ?? 'Chính xác!'}</span>
+              <span className="mg-fb good">🎉 {gate.feedback?.correct ?? playerLabels.correct}</span>
             )}
             {status === 'wrong' && (
-              <span className="mg-fb bad">{gate.feedback?.wrong ?? 'Chưa đúng — thử lại nhé.'}</span>
+              <span className="mg-fb bad">{gate.feedback?.wrong ?? playerLabels.wrong}</span>
             )}
             {onSkip && status !== 'correct' && (
               <button className="mg-skip" onClick={onSkip}>
-                Bỏ qua →
+                {labels.skip} →
               </button>
             )}
           </>

@@ -13,6 +13,7 @@ import { LocaleSwitcher } from '@/components/brand/locale-switcher'
 import { ThemeToggle } from '@/components/brand/theme-toggle'
 import { buildExperienceLabels } from '@/lib/experience-labels'
 import { buildQuizLabels } from '@/lib/quiz-labels'
+import { buildPlayerLabels } from '@/lib/player-labels'
 import {
   buildArena,
   buildCourse,
@@ -48,14 +49,16 @@ export default function LearnPage() {
   const t = useTranslations('learn')
   const exp = useTranslations('learn.experiences')
   const quizT = useTranslations('quiz')
+  const playerT = useTranslations('player')
   const [tab, setTab] = useState<TabId>('home')
 
   const expLabels = useMemo(() => buildExperienceLabels(exp), [exp])
   const quizLabels = useMemo(() => buildQuizLabels(quizT), [quizT])
+  const playerLabels = useMemo(() => buildPlayerLabels(playerT), [playerT])
   const surfaceLabels = useMemo<ExperienceLabels>(() => buildSurfaceLabels(t), [t])
 
   const steps = useMemo(() => buildRichSteps(t), [t])
-  const topics = useMemo(() => buildTopics(t, quizLabels), [t, quizLabels])
+  const topics = useMemo(() => buildTopics(t, quizLabels, playerLabels), [t, quizLabels, playerLabels])
   const course = useMemo(() => buildCourse(t), [t])
   const quiz = useMemo(() => buildQuiz(t), [t])
   const arena = useMemo(() => buildArena(t), [t])

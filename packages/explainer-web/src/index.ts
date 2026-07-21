@@ -19,6 +19,8 @@ export { ExplainerStudio } from './editor/bingoo/ExplainerStudio'
 
 // Default Vietnamese quiz labels for embedded activity beats (QuizShell is i18n-free).
 export { DEFAULT_QUIZ_LABELS, quizLabelsFrom } from './player/gates/quizLabels'
+export { DEFAULT_PLAYER_LABELS, playerLabelsFrom } from './player/labels'
+export type { PlayerLabels, PlayerTranslator } from './player/labels'
 export type { QuizTranslator } from './player/gates/quizLabels'
 
 // Chấm kit (re-export để admin dùng preview mà không cần thêm dep @bingoo.ai/manipulatives trực tiếp).

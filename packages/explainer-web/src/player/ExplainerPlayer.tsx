@@ -20,6 +20,7 @@ import { GateHost } from './GateHost'
 import { InteractiveManipulative } from './InteractiveManipulative'
 import { useSfx } from './useSfx'
 import type { QuizLabels } from '@bingoo.ai/ui-web'
+import { DEFAULT_PLAYER_LABELS, type PlayerLabels } from './labels'
 
 export type AspectMode = '16:9' | '9:16' | 'dual'
 
@@ -31,6 +32,7 @@ export function ExplainerPlayer({
   variant = 'full',
   active,
   quizLabels,
+  labels = DEFAULT_PLAYER_LABELS,
 }: {
   doc: ExplainerDoc
   bundles: Record<string, LocaleBundle>
@@ -47,6 +49,8 @@ export function ExplainerPlayer({
    * is the honest fallback: it reads as untranslated rather than as someone else's language.
    */
   quizLabels?: QuizLabels
+  /** Chrome copy. Defaults to English so an unwired host reads as untranslated. */
+  labels?: PlayerLabels
 }) {
   const [locale, setLocale] = useState(doc.meta.defaultLocale)
   const [modeState, setModeState] = useState<AspectMode>('16:9')
@@ -248,6 +252,8 @@ export function ExplainerPlayer({
             {api.state === 'at-gate' && api.gateSlot?.scene.gate && (
               <GateHost
                 labels={quizLabels}
+                locale={locale}
+                playerLabels={labels}
                 key={api.gateSlot.scene.id}
                 gate={api.gateSlot.scene.gate}
                 theme={theme}
@@ -391,6 +397,8 @@ export function ExplainerPlayer({
             {api.state === 'at-gate' && api.gateSlot?.scene.gate && (
               <GateHost
                 labels={quizLabels}
+                locale={locale}
+                playerLabels={labels}
                 key={api.gateSlot.scene.id}
                 gate={api.gateSlot.scene.gate}
                 theme={theme}
@@ -422,7 +430,7 @@ export function ExplainerPlayer({
           variant="primary"
           size="icon"
           onClick={api.toggle}
-          aria-label={api.playing ? 'Tạm dừng' : 'Phát'}
+          aria-label={api.playing ? labels.pause : labels.play}
         >
           {api.playing ? '❚❚' : '▶'}
         </Button>
@@ -430,8 +438,8 @@ export function ExplainerPlayer({
           variant="ghost"
           size="icon-sm"
           onClick={api.restart}
-          aria-label="Làm lại từ đầu"
-          title="Làm lại từ đầu"
+          aria-label={labels.restart}
+          title={labels.restart}
         >
           ↺
         </Button>
@@ -460,7 +468,7 @@ export function ExplainerPlayer({
                       className="scrub-tip"
                       style={{ left: leftPct > 80 ? 'auto' : 0, right: leftPct > 80 ? 0 : 'auto' }}
                     >
-                      <b>{info.kind === 'manipulate' ? '✍ Thử làm' : 'Câu hỏi'}</b>
+                      <b>{info.kind === 'manipulate' ? `✍ ${labels.tryIt}` : labels.question}</b>
                       {info.prompt}
                     </span>
                   )}
@@ -475,7 +483,7 @@ export function ExplainerPlayer({
               step={0.01}
               value={api.t}
               onChange={(e) => api.seek(parseFloat(e.target.value))}
-              aria-label="Thanh thời gian"
+              aria-label={labels.timeline}
             />
             {/* custom thumb at the EXACT percentage so it aligns with the fill
                 and checkpoint dots (the native range thumb is inset by its own
@@ -490,7 +498,7 @@ export function ExplainerPlayer({
             size="icon-sm"
             onClick={() => setCaptionOn((c) => !c)}
             aria-pressed={captionOn}
-            title={captionOn ? 'Tắt phụ đề' : 'Bật phụ đề'}
+            title={captionOn ? labels.captionsOff : labels.captionsOn}
           >
             CC
           </Button>
@@ -498,8 +506,8 @@ export function ExplainerPlayer({
             variant="ghost"
             size="icon-sm"
             onClick={() => api.setMuted(!api.muted)}
-            aria-label="Âm thanh"
-            title="Âm thanh"
+            aria-label={labels.audio}
+            title={labels.audio}
           >
             {api.muted ? '🔇' : '🔊'}
           </Button>
@@ -510,8 +518,8 @@ export function ExplainerPlayer({
               variant={settingsOpen ? 'soft' : 'ghost'}
               size="icon-sm"
               onClick={() => setSettingsOpen((o) => !o)}
-              aria-label="Cài đặt"
-              title="Tốc độ · khổ · ngôn ngữ"
+              aria-label={labels.settings}
+              title={labels.settingsHint}
             >
               ⚙
             </Button>
@@ -520,7 +528,7 @@ export function ExplainerPlayer({
                 <div className="pl-menu-backdrop" onClick={() => setSettingsOpen(false)} />
                 <div className="pl-menu" role="menu">
                   <div className="pl-menu-row">
-                    <span>Tốc độ</span>
+                    <span>{labels.speed}</span>
                     <div className="pl-seg">
                       {([0.5, 0.75, 1] as const).map((s) => (
                         <button

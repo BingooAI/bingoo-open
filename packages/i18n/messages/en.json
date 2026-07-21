@@ -1452,5 +1452,30 @@
     "skip": "Skip",
     "undo": "Undo",
     "vennNeither": "Neither"
+  },
+  "player": {
+    "audio": "Sound",
+    "captionsOff": "Hide captions",
+    "captionsOn": "Show captions",
+    "correct": "Correct!",
+    "correctOrder": "Right order!",
+    "correctPlace": "Right spot!",
+    "emptyActivity": "This activity is empty.",
+    "interactive": "Interactive",
+    "interactiveQuestion": "Interactive question",
+    "order": "Order",
+    "pause": "Pause",
+    "play": "Play",
+    "putInOrder": "Put in order",
+    "question": "Question",
+    "restart": "Start over",
+    "settings": "Settings",
+    "settingsHint": "Speed · size · language",
+    "speed": "Speed",
+    "timeline": "Timeline",
+    "tryIt": "Try it",
+    "wrong": "Not quite — try again.",
+    "wrongOrder": "Not in the right order.",
+    "wrongRetry": "Not quite, try again."
   }
 }

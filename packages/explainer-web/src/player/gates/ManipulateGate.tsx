@@ -13,6 +13,8 @@ import { useState } from 'react'
 import type { GateSpec, ThemeTokens, Aspect } from '@bingoo.ai/explainer'
 import { checkAnswer, getInteractions } from '@bingoo.ai/manipulatives'
 import { InteractiveManipulative } from '../InteractiveManipulative'
+import { DEFAULT_PLAYER_LABELS, type PlayerLabels } from '../labels'
+import { pickText } from '@bingoo.ai/core'
 
 export function ManipulateGate({
   gate,
@@ -20,12 +22,18 @@ export function ManipulateGate({
   aspect = '16:9',
   onPass,
   onSkip,
+  labels = DEFAULT_PLAYER_LABELS,
+  locale = 'en',
 }: {
   gate: GateSpec
   theme: ThemeTokens
   aspect?: Aspect
   onPass: () => void
   onSkip?: () => void
+  /** Host copy. Defaults to English so an unwired host reads as untranslated. */
+  labels?: PlayerLabels
+  /** Language for kit hints and button labels. */
+  locale?: string
 }) {
   const manip = gate.manip!
   const hint = getInteractions(manip.kind)?.hint
@@ -46,9 +54,10 @@ export function ManipulateGate({
       <div className="mg-banner">
         <span className="mg-badge">✍ Thử làm</span>
         <span className="mg-prompt">{gate.prompt}</span>
-        {hint && <span className="mg-hint">{hint}</span>}
+        {hint && <span className="mg-hint">{pickText(hint, locale)}</span>}
       </div>
       <InteractiveManipulative
+        locale={locale}
         kind={manip.kind}
         theme={theme}
         aspect={manip.aspect ?? aspect}
@@ -69,11 +78,9 @@ export function ManipulateGate({
               ✓ Kiểm tra
             </button>
             {status === 'correct' && (
-              <span className="mg-fb good">🎉 {gate.feedback?.correct ?? 'Chính xác!'}</span>
+              <span className="mg-fb good">🎉 {gate.feedback?.correct ?? labels.correct}</span>
             )}
-            {status === 'wrong' && (
-              <span className="mg-fb bad">{gate.feedback?.wrong ?? 'Chưa đúng — thử lại nhé.'}</span>
-            )}
+            {status === 'wrong' && <span className="mg-fb bad">{gate.feedback?.wrong ?? labels.wrong}</span>}
             {onSkip && status !== 'correct' && (
               <button className="mg-skip" onClick={onSkip}>
                 Bỏ qua →

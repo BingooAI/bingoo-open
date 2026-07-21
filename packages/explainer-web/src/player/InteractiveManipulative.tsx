@@ -18,6 +18,7 @@ import type { ThemeTokens, Aspect } from '@bingoo.ai/explainer'
 import { getManipulative, getInteractions } from '@bingoo.ai/manipulatives'
 import type { ManipState, VerbClip, RenderCtx, ActionDesc } from '@bingoo.ai/manipulatives'
 import { Prims, computeFit, type Fit } from '../elements/prims'
+import { pickText } from '@bingoo.ai/core'
 
 type Anim = { clip: VerbClip<unknown>; startClock: number }
 
@@ -35,6 +36,7 @@ export function InteractiveManipulative({
   variant = 'sandbox',
   hideHint = false,
   extra,
+  locale = 'en',
 }: {
   kind: string
   theme: ThemeTokens
@@ -47,6 +49,8 @@ export function InteractiveManipulative({
   hideHint?: boolean
   /** extra control(s) appended to the button row (e.g. a "Kiểm tra" button). */
   extra?: React.ReactNode
+  /** Which language to read kit hints and button labels in. */
+  locale?: string
 }) {
   const kit = useMemo(() => getManipulative(kind), [kind])
   const inter = useMemo(() => getInteractions(kind), [kind])
@@ -221,7 +225,7 @@ export function InteractiveManipulative({
 
   return (
     <div className={stage ? 'sandbox stage' : 'sandbox'}>
-      {inter?.hint && !hideHint && <div className="sandbox-hint">💡 {inter.hint}</div>}
+      {inter?.hint && !hideHint && <div className="sandbox-hint">💡 {pickText(inter.hint, locale)}</div>}
       {stage ? (
         <div className="sandbox-surface">{svg}</div>
       ) : (
@@ -234,7 +238,7 @@ export function InteractiveManipulative({
             className="sandbox-btn"
             onClick={() => runVerb(act.verb, (act as { args?: unknown }).args)}
           >
-            {act.label}
+            {pickText(act.label, locale)}
           </button>
         ))}
         {extra}
