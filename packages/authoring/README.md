@@ -70,20 +70,20 @@ Cambridge scheme of work land on the same node instead of two nodes holding half
 
 ## Aligning a second framework
 
-The first curriculum you import builds the concept vocabulary. The second should map onto it rather
-than extract a parallel set. `structuralVerdict` decides from facet structure where it can, and says
+The first curriculum you import builds the concept vocabulary; the second should map onto it rather than
+extract a parallel set. `structuralVerdict` decides from facet structure where it can and returns
 `UNKNOWN` where it cannot — that residue is where an LLM or a person is worth spending:
 
 ```ts
 import { requiresHuman, structuralVerdict } from '@bingoo.ai/authoring'
 
-const verdict = structuralVerdict(
+const decision = structuralVerdict(
   { object: 'counting', scope: { max: 20 } },
   { object: 'counting', scope: { max: 100 } },
   math,
 )
-verdict.verdict // 'SUBSET' — a narrower scope is a separate concept with a prerequisite edge, not a merge
-requiresHuman(verdict.verdict) // false; only SAME, OVERLAP and UNKNOWN need a reviewer
+decision.verdict // 'SUBSET' — a narrower scope is a separate concept with a prerequisite edge, not a merge
+requiresHuman(decision.verdict) // false; only SAME, OVERLAP and UNKNOWN need a reviewer
 ```
 
 `proposeAlignment` wraps this into a reviewable proposal carrying the server-minted slug, the target
@@ -93,16 +93,14 @@ concept and a `needsHuman` flag.
 
 `checkInvariants` runs eight checks over a graph before it is written. Errors block, warnings do not.
 
-| Code | Caught                                     | Why it matters                                              |
-| ---- | ------------------------------------------ | ----------------------------------------------------------- |
-| I1   | two concepts with indistinguishable facets | a reviewer merges or adds a facet; the machine never merges  |
-| I2   | a concept carrying `stage`                 | stage belongs to one framework; the concept sits in several  |
-| I3   | an objective carrying facets (warning)     | objectives are statements, concepts hold mastery             |
-| I4   | a `MAPS_TO` edge that is not `REQUIRED`    | certification would average instead of requiring every link  |
-| I5   | an objective mapped to no concept          | no evidence can ever certify it                              |
-| I6   | a cycle in the ordering edges              | there is no order to teach in                                |
-| I7   | a title with no `en` entry                 | slugs are minted from it                                     |
-| I8   | a missing required facet axis              | the subject's `DomainProfile` needs it to tell concepts apart |
+- **I1** two concepts with indistinguishable facets — a reviewer merges or adds a distinguishing facet
+- **I2** `stage` on a concept — stage belongs to one framework, the concept sits in several
+- **I3** facets on an objective (warning) — objectives are statements, concepts hold mastery
+- **I4** a `MAPS_TO` edge that is not `REQUIRED` (warning) — certification would average, not require
+- **I5** an objective mapped to no concept — no evidence can ever certify it
+- **I6** a cycle in the ordering edges
+- **I7** a title with no `en` entry — slugs are minted from it
+- **I8** a facet axis the subject's `DomainProfile` requires but the concept does not carry
 
 ## What it does not do
 

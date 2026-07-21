@@ -82,8 +82,8 @@ lessonStepWork(lesson).map((w) => `${w.kc}:${w.step.slug}`) // ['add-within-20:t
 - `stepsForState(arc, state)` / `stepServesState(step, state)` — a step with no `forStates` serves every
   learner state, so a single-path arc renders unchanged for `novice`, `gap`, `proficient` and `mastered`,
   while a branching arc filters down to the steps meant for that learner.
-- `courseLessonTeaches(course)`, `collectAssessments(course)`, `assessmentObjectives(plan)` — the
-  projections a host needs to wire plans into the engine.
+- `courseLessonTeaches(course)`, `collectAssessments(course)`, `assessmentObjectives(assessment)` — the
+  projections a host needs to wire plans into the engine. The last takes an `AssessmentPlan`, not a plan.
 
 ## What it does not do
 

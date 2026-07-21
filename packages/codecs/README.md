@@ -29,7 +29,8 @@ const { graph, framework, report } = decodeCase(JSON.parse(readFileSync('ccss-ma
 console.log(framework.slug, report.metrics['objectives'], report.metrics['prerequisites'])
 for (const issue of report.issues) console.log(issue.severity, issue.code, issue.message)
 
-// graph.nodes — one OBJECTIVE per CFItem, slugged `fw.<framework>.<code>`
+// graph.nodes — one OBJECTIVE per CFItem, slugged `fw.<framework>.<slugified-code>`,
+//               e.g. `fw.common-core-state-standards-for-math.1-oa-a-1`
 // graph.edges — isChildOf becomes COMPOSES, precedes becomes PREREQUISITE
 ```
 
@@ -57,8 +58,8 @@ const { observations, skipped } = ingest([statement])
 There is no root entry. Import `@bingoo.ai/codecs/case` or `@bingoo.ai/codecs/xapi` — a player that
 only emits statements should not pull the CASE decoder into its bundle.
 
-This package and `@bingoo.ai/contracts` are the only two in the repo that build to `dist` (tsup, ESM
-and CJS). Everything else exports TypeScript source directly.
+This package and `@bingoo.ai/contracts` are the only two compiled with tsup, to ESM and CJS. The
+other packages export TypeScript source directly.
 
 ## Purity
 
@@ -80,7 +81,7 @@ impossible.
 - **Does not score.** `ingest` yields `Observation` values; folding them into mastery is
   `@bingoo.ai/knowledge-engine`.
 - **Does not define the exchanged types.** `GraphData`, `ValidationReport` and `Observation` live in
-  `@bingoo.ai/contracts`. Only the wire formats — `CFItem`, `XapiStatement` — belong here, so that an
+  `@bingoo.ai/contracts`. Only the wire formats — `CfItem`, `XapiStatement` — belong here, so that an
   erratum from 1EdTech or ADL changes this package and nothing else.
 - **Is not an LRS client.** No state or agent profile API, no attachments, no signed statements.
 

@@ -69,7 +69,7 @@ other authorable kinds: content, lesson, flashcard deck, course, tracing glyph, 
 ## Purity
 
 No I/O, no network, no platform imports — never `next/*` or `react-native`. Grading, the reducer and
-the geometry are deterministic. The date-dependent helpers (`srs`, `streak`, `schedule`) take the
+the geometry are deterministic. The date-dependent helpers (`srs`, `streak`, `age`) take the
 date as an argument; they default to `new Date()` for convenience, so pass one explicitly in tests.
 The one exception is `mintPublicId`, which reads the Web Crypto CSPRNG by design.
 

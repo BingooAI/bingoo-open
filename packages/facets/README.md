@@ -35,7 +35,7 @@ belongs in `identityAxes`.
 ## Example
 
 ```ts
-import { compareIdentity, facetKey, type DomainProfile } from '@bingoo.ai/facets'
+import { compareIdentity, facetKey, normalizeFacets, type DomainProfile } from '@bingoo.ai/facets'
 
 const math: DomainProfile = {
   domain: 'math',
@@ -51,10 +51,15 @@ compareIdentity(cambridge, moet, math).verdict // 'SAME' — alias and case norm
 compareIdentity(moet, parity, math).verdict // 'DIFFERENT' — result.axes is ['object']
 compareIdentity(moet, { object: 'addition' }, math).verdict // 'UNKNOWN' — 'bloom' not declared
 
-facetKey(moet) // deterministic string; group by it to find duplicates in one pass
+facetKey(moet) // 'object:addition|channel:∅|bloom:apply|scope:{"max":20}|…' — group by it to find duplicates in one pass
 ```
 
-Every result carries `axes` (which axes decided it) and `reason` (a sentence you can show a reviewer).
+`facetKey` lowercases values and sorts `scope` keys, but it takes no profile and so applies no aliases:
+`facetKey(cambridge) !== facetKey(moet)` even though `compareIdentity` calls them the same. Run facets
+through `normalizeFacets(f, profile)` first if you want the alias above to collapse.
+
+Every result carries `axes` (which axes decided it) and `reason`, a sentence explaining the verdict —
+written in Vietnamese, for the reviewers who read them.
 
 ## What it does not do
 
