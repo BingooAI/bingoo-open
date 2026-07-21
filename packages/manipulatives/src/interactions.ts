@@ -70,11 +70,14 @@ const REG: Record<string, Interactions<KitAny>> = {
     check: (p, t) => p.denominator === num(t.denominator) && p.shaded.length === num(t.shaded),
   },
   clock: {
-    hint: 'Kéo quanh mặt đồng hồ để chỉnh phút.',
+    hint: {
+      vi: 'Kéo quanh mặt đồng hồ để chỉnh phút.',
+      en: 'Drag around the clock face to set the minutes.',
+    },
     actions: [
-      { verb: 'setTime', label: '3:00', args: { h: 3, m: 0 } },
-      { verb: 'advance', label: '+15’', args: { min: 15 } },
-      { verb: 'showAngle', label: 'Hiện góc' },
+      { verb: 'setTime', label: { vi: '3:00', en: '3:00' }, args: { h: 3, m: 0 } },
+      { verb: 'advance', label: { vi: '+15’', en: '+15’' }, args: { min: 15 } },
+      { verb: 'showAngle', label: { vi: 'Hiện góc', en: 'Show angle' } },
     ],
     onDrag(p, pt, ctx) {
       const cx = ctx.box.w / 2,
@@ -95,10 +98,10 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   spinner: {
-    hint: 'Chạm vào một ô để quay kim tới đó.',
+    hint: { vi: 'Chạm vào một ô để quay kim tới đó.', en: 'Tap a sector to spin the pointer to it.' },
     actions: [
-      { verb: 'spin', label: 'Quay ô 1', args: { to: 0 } },
-      { verb: 'spin', label: 'Quay ô 2', args: { to: 1 } },
+      { verb: 'spin', label: { vi: 'Quay ô 1', en: 'Spin to sector 1' }, args: { to: 0 } },
+      { verb: 'spin', label: { vi: 'Quay ô 2', en: 'Spin to sector 2' }, args: { to: 1 } },
     ],
     onTap(p, pt, ctx) {
       const cx = ctx.box.w / 2,
@@ -117,11 +120,11 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   tenframe: {
-    hint: 'Chạm để thêm chấm; nút để bớt.',
+    hint: { vi: 'Chạm để thêm chấm; nút để bớt.', en: 'Tap to add a counter; use the buttons to remove.' },
     actions: [
-      { verb: 'add', label: '+1', args: { n: 1 } },
-      { verb: 'remove', label: '−1', args: { n: 1 } },
-      { verb: 'fill', label: 'Đầy khung', args: {} },
+      { verb: 'add', label: { vi: '+1', en: '+1' }, args: { n: 1 } },
+      { verb: 'remove', label: { vi: '−1', en: '−1' }, args: { n: 1 } },
+      { verb: 'fill', label: { vi: 'Đầy khung', en: 'Fill the frame' }, args: {} },
     ],
     onTap: (p) => (p.count < p.capacity ? { verb: 'add', args: { n: 1 } } : { params: { ...p, count: 0 } }),
     check: (p, t) => p.count === num(t.count),
@@ -160,11 +163,14 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   hundredsquare: {
-    hint: 'Chạm ô để làm nổi số; nút xem bội số.',
+    hint: {
+      vi: 'Chạm ô để làm nổi số; nút xem bội số.',
+      en: 'Tap a cell to highlight a number; use the buttons for multiples.',
+    },
     actions: [
-      { verb: 'highlightMultiples', label: 'Bội 5', args: { k: 5 } },
-      { verb: 'highlightMultiples', label: 'Bội 10', args: { k: 10 } },
-      { verb: 'countBy', label: 'Đếm cách 2', args: { step: 2 } },
+      { verb: 'highlightMultiples', label: { vi: 'Bội 5', en: 'Multiples of 5' }, args: { k: 5 } },
+      { verb: 'highlightMultiples', label: { vi: 'Bội 10', en: 'Multiples of 10' }, args: { k: 10 } },
+      { verb: 'countBy', label: { vi: 'Đếm cách 2', en: 'Count by 2s' }, args: { step: 2 } },
     ],
     onTap(p, pt, ctx) {
       const cell = Math.min((ctx.box.w * 0.92) / p.cols, (ctx.box.h * 0.86) / p.rows)
@@ -226,11 +232,14 @@ const REG: Record<string, Interactions<KitAny>> = {
       t.perGroup != null ? Math.floor(p.total / p.groups) === num(t.perGroup) : p.groups === num(t.groups),
   },
   evenodd: {
-    hint: 'Chạm để thêm một vật; xem số chẵn hay lẻ.',
+    hint: {
+      vi: 'Chạm để thêm một vật; xem số chẵn hay lẻ.',
+      en: 'Tap to add an object; see if the number is even or odd.',
+    },
     actions: [
-      { verb: 'add', label: '+1', args: { n: 1 } },
-      { verb: 'remove', label: '−1', args: { n: 1 } },
-      { verb: 'showResult', label: 'Chẵn hay lẻ?' },
+      { verb: 'add', label: { vi: '+1', en: '+1' }, args: { n: 1 } },
+      { verb: 'remove', label: { vi: '−1', en: '−1' }, args: { n: 1 } },
+      { verb: 'showResult', label: { vi: 'Chẵn hay lẻ?', en: 'Even or odd?' } },
     ],
     onTap: () => ({ verb: 'add', args: { n: 1 } }),
     check: (p, t) =>
@@ -255,12 +264,15 @@ const REG: Record<string, Interactions<KitAny>> = {
     check: (p, t) => Math.abs(p.guess - p.actual) <= num(t.within ?? 3),
   },
   table: {
-    hint: 'Bấm để làm nổi hàng/cột và xem tổng.',
+    hint: {
+      vi: 'Bấm để làm nổi hàng/cột và xem tổng.',
+      en: 'Tap to highlight a row or column and see the total.',
+    },
     actions: [
-      { verb: 'highlightRow', label: 'Nổi hàng 1', args: { i: 0 } },
-      { verb: 'highlightCol', label: 'Nổi cột 1', args: { i: 0 } },
-      { verb: 'showTotal', label: 'Hiện tổng' },
-      { verb: 'clear', label: 'Bỏ nổi' },
+      { verb: 'highlightRow', label: { vi: 'Nổi hàng 1', en: 'Highlight row 1' }, args: { i: 0 } },
+      { verb: 'highlightCol', label: { vi: 'Nổi cột 1', en: 'Highlight column 1' }, args: { i: 0 } },
+      { verb: 'showTotal', label: { vi: 'Hiện tổng', en: 'Show total' } },
+      { verb: 'clear', label: { vi: 'Bỏ nổi', en: 'Clear highlight' } },
     ],
   },
   measurescale: {
@@ -300,28 +312,28 @@ const REG: Record<string, Interactions<KitAny>> = {
     ],
   },
   wordclass: {
-    hint: 'Hiện từng từ loại.',
+    hint: { vi: 'Hiện từng từ loại.', en: 'Show each part of speech.' },
     actions: [
-      { verb: 'revealClass', label: 'Danh từ', args: { cls: 'noun' } },
-      { verb: 'revealClass', label: 'Động từ', args: { cls: 'verb' } },
-      { verb: 'revealClass', label: 'Tính từ', args: { cls: 'adj' } },
-      { verb: 'reveal', label: 'Hiện hết' },
+      { verb: 'revealClass', label: { vi: 'Danh từ', en: 'Noun' }, args: { cls: 'noun' } },
+      { verb: 'revealClass', label: { vi: 'Động từ', en: 'Verb' }, args: { cls: 'verb' } },
+      { verb: 'revealClass', label: { vi: 'Tính từ', en: 'Adjective' }, args: { cls: 'adj' } },
+      { verb: 'reveal', label: { vi: 'Hiện hết', en: 'Show all' } },
     ],
   },
   tense: {
-    hint: 'Chọn thì, hoặc chia đủ ba thì.',
+    hint: { vi: 'Chọn thì, hoặc chia đủ ba thì.', en: 'Pick a tense, or conjugate all three.' },
     actions: [
-      { verb: 'setTense', label: 'Quá khứ', args: { t: 'past' } },
-      { verb: 'setTense', label: 'Tương lai', args: { t: 'future' } },
-      { verb: 'conjugate', label: 'Chia đủ' },
+      { verb: 'setTense', label: { vi: 'Quá khứ', en: 'Past' }, args: { t: 'past' } },
+      { verb: 'setTense', label: { vi: 'Tương lai', en: 'Future' }, args: { t: 'future' } },
+      { verb: 'conjugate', label: { vi: 'Chia đủ', en: 'Conjugate all' } },
     ],
   },
   alphabet: {
-    hint: 'Nổi bật chữ, ghép hoa–thường.',
+    hint: { vi: 'Nổi bật chữ, ghép hoa–thường.', en: 'Highlight a letter, match uppercase to lowercase.' },
     actions: [
-      { verb: 'highlightLetter', label: 'Chữ b', args: { ch: 'b' } },
-      { verb: 'matchCase', label: 'B ↔ b', args: { ch: 'b' } },
-      { verb: 'showVowels', label: 'Nguyên âm' },
+      { verb: 'highlightLetter', label: { vi: 'Chữ b', en: 'Letter b' }, args: { ch: 'b' } },
+      { verb: 'matchCase', label: { vi: 'B ↔ b', en: 'B ↔ b' }, args: { ch: 'b' } },
+      { verb: 'showVowels', label: { vi: 'Nguyên âm', en: 'Vowels' } },
     ],
   },
 
@@ -373,10 +385,10 @@ const REG: Record<string, Interactions<KitAny>> = {
     onDrag: (p, pt, ctx) => ({ ...p, lightX: clamp01(pt.x / ctx.box.w) }),
   },
   lifecycle: {
-    hint: 'Bấm để sang giai đoạn kế.',
+    hint: { vi: 'Bấm để sang giai đoạn kế.', en: 'Tap to move to the next stage.' },
     actions: [
-      { verb: 'advance', label: 'Giai đoạn kế' },
-      { verb: 'reveal', label: 'Hiện mũi tên' },
+      { verb: 'advance', label: { vi: 'Giai đoạn kế', en: 'Next stage' } },
+      { verb: 'reveal', label: { vi: 'Hiện mũi tên', en: 'Show arrows' } },
     ],
   },
   foodchain: {
@@ -473,12 +485,15 @@ const REG: Record<string, Interactions<KitAny>> = {
         : p.choice === (p.left > p.right ? '>' : p.left < p.right ? '<' : '='),
   },
   ordinal: {
-    hint: 'Chạm một bạn trong hàng để tô vị trí; “Đổi hướng” để thấy thứ tự đổi theo.',
+    hint: {
+      vi: 'Chạm một bạn trong hàng để tô vị trí; “Đổi hướng” để thấy thứ tự đổi theo.',
+      en: 'Tap someone in the line to highlight their place; “Flip direction” shows how the order changes.',
+    },
     actions: [
-      { verb: 'highlightPos', label: 'Thứ nhất', args: { pos: 1 } },
-      { verb: 'highlightPos', label: 'Thứ ba', args: { pos: 3 } },
-      { verb: 'flip', label: 'Đổi hướng' },
-      { verb: 'setCount', label: '6 bạn', args: { n: 6 } },
+      { verb: 'highlightPos', label: { vi: 'Thứ nhất', en: 'First' }, args: { pos: 1 } },
+      { verb: 'highlightPos', label: { vi: 'Thứ ba', en: 'Third' }, args: { pos: 3 } },
+      { verb: 'flip', label: { vi: 'Đổi hướng', en: 'Flip direction' } },
+      { verb: 'setCount', label: { vi: '6 bạn', en: '6 kids' }, args: { n: 6 } },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with ordinal.ts render layout (queue span per facing)
@@ -493,12 +508,15 @@ const REG: Record<string, Interactions<KitAny>> = {
     check: (p, t) => p.highlight != null && p.highlight === num(t.pos),
   },
   sizeorder: {
-    hint: 'Chạm hai vật để đổi chỗ cho nhau; bấm “Sắp xếp” để xem thứ tự đúng.',
+    hint: {
+      vi: 'Chạm hai vật để đổi chỗ cho nhau; bấm “Sắp xếp” để xem thứ tự đúng.',
+      en: 'Tap two objects to swap them; tap “Sort” to see the right order.',
+    },
     actions: [
-      { verb: 'sort', label: 'Sắp xếp' },
-      { verb: 'setTarget', label: 'Bé → lớn', args: { dir: 'asc' } },
-      { verb: 'setTarget', label: 'Lớn → bé', args: { dir: 'desc' } },
-      { verb: 'shuffle', label: 'Xáo lại', args: { order: [2, 0, 1] } },
+      { verb: 'sort', label: { vi: 'Sắp xếp', en: 'Sort' } },
+      { verb: 'setTarget', label: { vi: 'Bé → lớn', en: 'Small → big' }, args: { dir: 'asc' } },
+      { verb: 'setTarget', label: { vi: 'Lớn → bé', en: 'Big → small' }, args: { dir: 'desc' } },
+      { verb: 'shuffle', label: { vi: 'Xáo lại', en: 'Shuffle' }, args: { order: [2, 0, 1] } },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with sizeorder.ts render layout (slot geometry per mode)
@@ -527,13 +545,16 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   addstory: {
-    hint: 'Bấm “Diễn” để xem nhóm bay vào (hoặc bay đi), rồi “Kết quả”.',
+    hint: {
+      vi: 'Bấm “Diễn” để xem nhóm bay vào (hoặc bay đi), rồi “Kết quả”.',
+      en: 'Tap “Act it out” to watch the group fly in (or fly away), then “Result”.',
+    },
     actions: [
-      { verb: 'act', label: 'Diễn' },
-      { verb: 'showResult', label: 'Kết quả' },
-      { verb: 'setStory', label: '5 − 2', args: { a: 5, b: 2, op: '-' } },
-      { verb: 'setStory', label: '3 + 2', args: { a: 3, b: 2, op: '+' } },
-      { verb: 'reset', label: 'Làm lại' },
+      { verb: 'act', label: { vi: 'Diễn', en: 'Act it out' } },
+      { verb: 'showResult', label: { vi: 'Kết quả', en: 'Result' } },
+      { verb: 'setStory', label: { vi: '5 − 2', en: '5 − 2' }, args: { a: 5, b: 2, op: '-' } },
+      { verb: 'setStory', label: { vi: '3 + 2', en: '3 + 2' }, args: { a: 3, b: 2, op: '+' } },
+      { verb: 'reset', label: { vi: 'Làm lại', en: 'Reset' } },
     ],
     onTap: () => ({ verb: 'act' }),
     check: (p, _t) => p.answer != null && num(p.answer) === (p.op === '-' ? p.a - p.b : p.a + p.b),
@@ -720,13 +741,16 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   unitcircle: {
-    hint: 'Kéo quanh vòng tròn để đổi góc — xem sin, cos, tan đổi theo.',
+    hint: {
+      vi: 'Kéo quanh vòng tròn để đổi góc — xem sin, cos, tan đổi theo.',
+      en: 'Drag around the circle to change the angle — watch sin, cos, tan change.',
+    },
     actions: [
-      { verb: 'setAngle', label: '30°', args: { deg: 30 } },
-      { verb: 'setAngle', label: '45°', args: { deg: 45 } },
-      { verb: 'setAngle', label: '90°', args: { deg: 90 } },
-      { verb: 'showTan', label: 'tan' },
-      { verb: 'toRadians', label: 'Rad (π)' },
+      { verb: 'setAngle', label: { vi: '30°', en: '30°' }, args: { deg: 30 } },
+      { verb: 'setAngle', label: { vi: '45°', en: '45°' }, args: { deg: 45 } },
+      { verb: 'setAngle', label: { vi: '90°', en: '90°' }, args: { deg: 90 } },
+      { verb: 'showTan', label: { vi: 'tan', en: 'tan' } },
+      { verb: 'toRadians', label: { vi: 'Rad (π)', en: 'Rad (π)' } },
     ],
     onDrag(p, pt, ctx) {
       // keep in sync with unitcircle.ts geom(): circle centre + radius
@@ -839,11 +863,14 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   probtree: {
-    hint: 'Mở dần từng tầng của cây; chạm vào một lá để tô đường đi.',
+    hint: {
+      vi: 'Mở dần từng tầng của cây; chạm vào một lá để tô đường đi.',
+      en: 'Reveal the tree one stage at a time; tap a leaf to trace its path.',
+    },
     actions: [
-      { verb: 'reveal', label: 'Tầng 1', args: { stage: 1 } },
-      { verb: 'reveal', label: 'Tầng 2', args: { stage: 2 } },
-      { verb: 'showProducts', label: 'Nhân xác suất' },
+      { verb: 'reveal', label: { vi: 'Tầng 1', en: 'Stage 1' }, args: { stage: 1 } },
+      { verb: 'reveal', label: { vi: 'Tầng 2', en: 'Stage 2' }, args: { stage: 2 } },
+      { verb: 'showProducts', label: { vi: 'Nhân xác suất', en: 'Multiply probabilities' } },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with probtree.ts render (leaf slot mapping)
@@ -929,12 +956,15 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   calculusgraph: {
-    hint: 'Kéo ngang: dời tiếp điểm (chế độ tiếp tuyến) hoặc đầu mút b (chế độ diện tích).',
+    hint: {
+      vi: 'Kéo ngang: dời tiếp điểm (chế độ tiếp tuyến) hoặc đầu mút b (chế độ diện tích).',
+      en: 'Drag sideways: move the point of tangency (tangent mode) or the endpoint b (area mode).',
+    },
     actions: [
-      { verb: 'setMode', label: 'Tiếp tuyến', args: { mode: 'tangent' } },
-      { verb: 'setMode', label: 'Diện tích', args: { mode: 'area' } },
-      { verb: 'refine', label: 'Chia mịn ×2' },
-      { verb: 'showValue', label: 'Giá trị đúng' },
+      { verb: 'setMode', label: { vi: 'Tiếp tuyến', en: 'Tangent' }, args: { mode: 'tangent' } },
+      { verb: 'setMode', label: { vi: 'Diện tích', en: 'Area' }, args: { mode: 'area' } },
+      { verb: 'refine', label: { vi: 'Chia mịn ×2', en: 'Refine ×2' } },
+      { verb: 'showValue', label: { vi: 'Giá trị đúng', en: 'Exact value' } },
     ],
     onDrag(p, pt, ctx) {
       // keep in sync with calculusgraph.ts render (pad + x∈[-6,6] mapping)
@@ -966,13 +996,16 @@ const REG: Record<string, Interactions<KitAny>> = {
 
   /* ---- English: early → exam (IELTS/TOEFL/TOEIC) → professional ---- */
   vocabcard: {
-    hint: 'Chạm thẻ để lật; ở chế độ nối, chạm tranh rồi chạm chữ tương ứng.',
+    hint: {
+      vi: 'Chạm thẻ để lật; ở chế độ nối, chạm tranh rồi chạm chữ tương ứng.',
+      en: 'Tap a card to flip it; in match mode, tap a picture then its word.',
+    },
     actions: [
-      { verb: 'next', label: 'Thẻ sau', args: {} },
-      { verb: 'flip', label: 'Lật thẻ', args: {} },
-      { verb: 'reveal', label: 'Tranh + chữ', args: {} },
-      { verb: 'setMode', label: 'Trò nối cặp', args: { mode: 'match' } },
-      { verb: 'setMode', label: 'Thẻ rời', args: { mode: 'flash' } },
+      { verb: 'next', label: { vi: 'Thẻ sau', en: 'Next card' }, args: {} },
+      { verb: 'flip', label: { vi: 'Lật thẻ', en: 'Flip card' }, args: {} },
+      { verb: 'reveal', label: { vi: 'Tranh + chữ', en: 'Picture + word' }, args: {} },
+      { verb: 'setMode', label: { vi: 'Trò nối cặp', en: 'Matching game' }, args: { mode: 'match' } },
+      { verb: 'setMode', label: { vi: 'Thẻ rời', en: 'Flashcards' }, args: { mode: 'flash' } },
     ],
     onTap(p, pt, ctx) {
       if (p.mode !== 'match') return { verb: 'flip' }
@@ -992,13 +1025,16 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   rhymetime: {
-    hint: 'Chạm để ghép âm đầu với vần thành từ mới; tìm từ không cùng vần.',
+    hint: {
+      vi: 'Chạm để ghép âm đầu với vần thành từ mới; tìm từ không cùng vần.',
+      en: 'Tap to blend an onset with the rime into a new word; find the one that does not rhyme.',
+    },
     actions: [
-      { verb: 'build', label: 'Ghép 1 từ', args: {} },
-      { verb: 'buildAll', label: 'Ghép hết', args: {} },
-      { verb: 'highlightRime', label: 'Gạch vần', args: {} },
-      { verb: 'showOdd', label: 'Thêm từ lạ', args: { word: 'dog' } },
-      { verb: 'spotOdd', label: 'Từ lạc vần?', args: {} },
+      { verb: 'build', label: { vi: 'Ghép 1 từ', en: 'Build a word' }, args: {} },
+      { verb: 'buildAll', label: { vi: 'Ghép hết', en: 'Build all' }, args: {} },
+      { verb: 'highlightRime', label: { vi: 'Gạch vần', en: 'Underline rime' }, args: {} },
+      { verb: 'showOdd', label: { vi: 'Thêm từ lạ', en: 'Add odd word' }, args: { word: 'dog' } },
+      { verb: 'spotOdd', label: { vi: 'Từ lạc vần?', en: 'Odd one out?' }, args: {} },
     ],
     onTap: () => ({ verb: 'build', args: {} }),
     check(p, t) {
@@ -1010,12 +1046,15 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   minimalpair: {
-    hint: 'Chạm thẻ trái / phải để chọn từ; xem khẩu hình và phiên âm.',
+    hint: {
+      vi: 'Chạm thẻ trái / phải để chọn từ; xem khẩu hình và phiên âm.',
+      en: 'Tap the left or right card to pick a word; see the mouth shape and the IPA.',
+    },
     actions: [
-      { verb: 'focus', label: 'Nhìn từ A', args: { side: 'a' } },
-      { verb: 'focus', label: 'Nhìn từ B', args: { side: 'b' } },
-      { verb: 'contrast', label: 'So sánh âm', args: {} },
-      { verb: 'showIpa', label: 'Phiên âm', args: {} },
+      { verb: 'focus', label: { vi: 'Nhìn từ A', en: 'Look at word A' }, args: { side: 'a' } },
+      { verb: 'focus', label: { vi: 'Nhìn từ B', en: 'Look at word B' }, args: { side: 'b' } },
+      { verb: 'contrast', label: { vi: 'So sánh âm', en: 'Compare sounds' }, args: {} },
+      { verb: 'showIpa', label: { vi: 'Phiên âm', en: 'Show IPA' }, args: {} },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with minimalpair.ts render (a = left/top card, b = right/bottom; portrait split at 0.45h)
@@ -1026,11 +1065,14 @@ const REG: Record<string, Interactions<KitAny>> = {
     check: (p, t) => p.chosen != null && p.chosen === (t && t.side),
   },
   wordmatch: {
-    hint: 'Chạm từ bên trái rồi chạm từ khớp với nó bên phải.',
+    hint: {
+      vi: 'Chạm từ bên trái rồi chạm từ khớp với nó bên phải.',
+      en: 'Tap a word on the left, then tap its match on the right.',
+    },
     actions: [
-      { verb: 'connect', label: 'Nối 1 cặp', args: { i: 0 } },
-      { verb: 'connectAll', label: 'Nối hết', args: {} },
-      { verb: 'clear', label: 'Xóa', args: {} },
+      { verb: 'connect', label: { vi: 'Nối 1 cặp', en: 'Match one pair' }, args: { i: 0 } },
+      { verb: 'connectAll', label: { vi: 'Nối hết', en: 'Match all' }, args: {} },
+      { verb: 'clear', label: { vi: 'Xóa', en: 'Clear' }, args: {} },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with layout() in wordmatch.ts (rows/columns)
@@ -1397,11 +1439,11 @@ const REG: Record<string, Interactions<KitAny>> = {
     },
   },
   stresspattern: {
-    hint: 'Chạm một âm tiết để đánh dấu trọng âm.',
+    hint: { vi: 'Chạm một âm tiết để đánh dấu trọng âm.', en: 'Tap a syllable to mark the stress.' },
     actions: [
-      { verb: 'showBeats', label: 'Gõ nhịp' },
-      { verb: 'showCompare', label: 'So sánh cặp từ' },
-      { verb: 'reveal', label: 'Đáp án' },
+      { verb: 'showBeats', label: { vi: 'Gõ nhịp', en: 'Tap the beat' } },
+      { verb: 'showCompare', label: { vi: 'So sánh cặp từ', en: 'Compare word pair' } },
+      { verb: 'reveal', label: { vi: 'Đáp án', en: 'Answer' } },
     ],
     onTap(p, pt, ctx) {
       // keep in sync with stresspattern.ts rowGeom() / main-row cy
