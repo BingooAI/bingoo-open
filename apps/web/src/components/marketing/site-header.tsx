@@ -12,12 +12,12 @@ import { buttonVariants, Container } from '@bingoo.ai/ui-web'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 
+/** Anchors that exist on the page, in the order a reader meets them. */
 const NAV: { key: string; href: string; route?: boolean }[] = [
-  { key: 'features', href: '#features' },
-  { key: 'subjects', href: '#subjects' },
-  { key: 'howItWorks', href: '#how' },
-  { key: 'forParents', href: '#parents' },
-  { key: 'pricing', href: '/pricing', route: true },
+  { key: 'frameworks', href: '#frameworks' },
+  { key: 'measure', href: '#measure' },
+  { key: 'editions', href: '#editions' },
+  { key: 'openness', href: '#openness' },
   { key: 'help', href: '/faq', route: true },
 ]
 

@@ -50,12 +50,10 @@
     }
   },
   "nav": {
-    "features": "Tính năng",
-    "subjects": "Môn học",
-    "howItWorks": "Cách hoạt động",
-    "forParents": "Dành cho phụ huynh",
-    "pricing": "Học phí",
-    "about": "Về chúng tôi",
+    "frameworks": "Năm khung",
+    "measure": "Cách đo",
+    "editions": "Ba cách dùng",
+    "openness": "Vì sao mở",
     "help": "Trợ giúp"
   },
   "theme": {
@@ -70,155 +68,188 @@
     "switch": "Đổi ngôn ngữ"
   },
   "landing": {
-    "announce": "Mới ✨ Lộ trình học cá nhân hoá bằng AI",
     "hero": {
-      "badge": "Nền tảng học tập cho trẻ 6–15 tuổi",
-      "title": "Học vui mỗi ngày cùng",
-      "titleHighlight": "Bingoo",
-      "subtitle": "Lộ trình cá nhân hoá, bài học trò chơi hoá và người bạn Bingoo đồng hành — giúp con yêu việc học và tiến bộ thật sự.",
-      "ctaPrimary": "Bắt đầu miễn phí",
-      "ctaSecondary": "Xem cách hoạt động",
-      "note": "Miễn phí 14 ngày · Không cần thẻ tín dụng",
-      "safe": "An toàn & kiểm duyệt cho trẻ em",
-      "trustedBy": "Được tin dùng bởi hơn 2.000 trường và trung tâm",
+      "badge": "Mã nguồn mở · Apache-2.0",
+      "title": "Dạy đúng sức từng em, và",
+      "titleHighlight": "biết là có hiệu quả",
+      "subtitle": "Bingoo Open là bộ công cụ dạy học cho gia sư, giáo viên tự do, trung tâm và trường nhỏ: dựng bản đồ kiến thức, soạn bài vừa sức, dạy bằng học cụ tương tác, và đo bằng minh chứng kiểm tra được bằng tay.",
+      "ctaPrimary": "Bắt đầu tự cài",
+      "ctaSecondary": "Xem mã nguồn",
+      "note": "Tự chạy trên máy bạn · Không tài khoản · Không tính tiền theo đầu người",
+      "safe": "Nội dung tới trẻ luôn có người duyệt",
       "chips": {
         "levelUp": "Lên cấp!",
         "subject": "Toán",
         "praise": "Giỏi lắm!",
         "days": "ngày"
+      },
+      "tiles": {
+        "graph": "Đồ thị năng lực",
+        "evidence": "Minh chứng",
+        "kits": "67 học cụ"
       }
     },
     "stats": {
-      "learners": "Học sinh đang học",
-      "lessons": "Bài học tương tác",
-      "rating": "Đánh giá phụ huynh",
-      "improvement": "Tiến bộ sau 3 tháng"
+      "kits": "học cụ tương tác",
+      "questionTypes": "dạng câu hỏi",
+      "languages": "ngôn ngữ",
+      "licence": "mã nguồn mở"
     },
-    "features": {
-      "title": "Mọi thứ con cần để yêu việc học",
-      "subtitle": "Thiết kế theo khoa học giáo dục, đặt trải nghiệm của trẻ làm trung tâm.",
+    "frameworks": {
+      "eyebrow": "Năm khung",
+      "title": "Mỗi khung dùng riêng được",
+      "subtitle": "Lấy trọn bộ, hoặc cài đúng một package và bỏ qua phần còn lại.",
       "items": {
-        "personalized": {
-          "title": "Lộ trình cá nhân hoá",
-          "desc": "AI đánh giá năng lực và đề xuất bài học phù hợp với từng con, không quá dễ cũng không quá khó."
+        "knowledge": {
+          "name": "Kiến thức",
+          "desc": "Đồ thị năng lực và quan hệ tiên quyết — thứ cho phép hệ thống nói \"em chưa làm được bài này vì chưa nắm được cái kia\", thay vì chỉ chấm sai một câu."
         },
-        "gamified": {
-          "title": "Học qua trò chơi",
-          "desc": "Điểm XP, chuỗi ngày học, huy hiệu và bảng xếp hạng biến việc học thành cuộc phiêu lưu."
+        "pedagogy": {
+          "name": "Sư phạm",
+          "desc": "Giáo án mang theo lỗi hiểu sai thường gặp, cách biểu diễn cụ thể → hình ảnh → trừu tượng, và thế nào là đạt."
         },
-        "mascot": {
-          "title": "Bingoo đồng hành",
-          "desc": "Người bạn Bingoo cổ vũ, nhắc nhở và ăn mừng cùng con qua từng cột mốc."
+        "teaching": {
+          "name": "Giảng dạy",
+          "desc": "Engine bài giảng và 67 học cụ: tia số, khối cơ số mười, thanh phân số, cân thăng bằng, mạch điện, lưới toạ độ."
         },
-        "reports": {
-          "title": "Báo cáo cho phụ huynh",
-          "desc": "Theo dõi tiến độ, điểm mạnh và điểm cần cải thiện của con theo tuần, rõ ràng và trực quan."
+        "content": {
+          "name": "Nội dung",
+          "desc": "Soạn và sinh câu hỏi, sáu dạng câu hỏi, ngân hàng item kèm theo dõi độ phủ."
         },
-        "safe": {
-          "title": "An toàn cho trẻ em",
-          "desc": "Không quảng cáo, nội dung được kiểm duyệt và công cụ kiểm soát thời gian dành cho phụ huynh."
-        },
-        "adaptive": {
-          "title": "Ôn tập thông minh",
-          "desc": "Hệ thống lặp lại ngắt quãng giúp con ghi nhớ lâu và ôn đúng lúc cần nhất."
+        "learning": {
+          "name": "Học",
+          "desc": "Các chế độ học cho học sinh, luồng phiên học, và thu thập minh chứng."
         }
       }
     },
-    "subjects": {
-      "title": "Chương trình bám sát nhà trường",
-      "subtitle": "Nội dung biên soạn theo chương trình giáo dục phổ thông mới.",
+    "measure": {
+      "eyebrow": "Đo mà không tô vẽ",
+      "title": "Mỗi con số đều giải thích được",
+      "subtitle": "Con số không giải thích được cho phụ huynh thì không nên hiện lên màn hình.",
       "items": {
-        "math": "Toán",
-        "vietnamese": "Tiếng Việt",
-        "english": "Tiếng Anh",
-        "science": "Khoa học",
-        "logic": "Tư duy logic",
-        "art": "Nghệ thuật"
-      },
-      "lessonsCount": "{count} bài học"
-    },
-    "how": {
-      "title": "Bắt đầu chỉ trong vài phút",
-      "subtitle": "Ba bước đơn giản để con vào lộ trình học phù hợp.",
-      "steps": {
-        "signup": {
-          "title": "Tạo tài khoản",
-          "desc": "Đăng ký miễn phí và thêm hồ sơ cho con chỉ trong một phút."
+        "evidence": {
+          "name": "Minh chứng, không phải điểm",
+          "desc": "Mỗi lần làm bài thành một mẩu minh chứng có mốc thời gian và nguồn gốc. Chạy lại từ đầu vẫn ra đúng con số đó."
         },
-        "assess": {
-          "title": "Kiểm tra đầu vào",
-          "desc": "Bingoo đánh giá nhẹ nhàng để hiểu con đang ở đâu."
+        "rightTool": {
+          "name": "Đúng công cụ cho đúng thứ",
+          "desc": "Kiến thức và quy trình đo bằng BKT và Elo. Kỹ năng do người chấm theo rubric, vì máy chấm kỹ năng mà không có rubric là đoán."
         },
-        "learn": {
-          "title": "Học & tiến bộ",
-          "desc": "Con học mỗi ngày, bạn theo dõi tiến độ qua báo cáo trực quan."
+        "disposition": {
+          "name": "Phẩm chất không quy thành điểm",
+          "desc": "Thói quen báo cáo bằng tần suất quan sát kèm khoảng tin cậy, không bao giờ trộn vào điểm học tập."
+        },
+        "explain": {
+          "name": "Giải thích được",
+          "desc": "Mỗi ước lượng xuất ra được: kết luận, minh chứng, công thức, và cần đổi gì thì con số sẽ khác."
         }
       }
     },
-    "parents": {
-      "badge": "Dành cho phụ huynh",
-      "title": "Yên tâm khi con học một mình",
-      "subtitle": "Bingoo giúp bạn đồng hành mà không cần ngồi kèm từng buổi.",
-      "points": {
-        "reports": "Báo cáo tiến độ hằng tuần gửi thẳng đến bạn",
-        "screentime": "Đặt giới hạn thời gian và mục tiêu học mỗi ngày",
-        "safe": "Môi trường an toàn, không quảng cáo, không phân tâm",
-        "multi": "Quản lý nhiều con trong cùng một tài khoản"
+    "editions": {
+      "eyebrow": "Ba cách dùng",
+      "title": "Bắt đầu ở mức phù hợp",
+      "subtitle": "Bản mở là đầy đủ, không phải bản dùng thử. Hai cách còn lại có khi bạn cần.",
+      "open": {
+        "name": "Bingoo Open",
+        "tag": "Miễn phí · Apache-2.0",
+        "desc": "Bạn tự cài trên máy hoặc máy chủ của mình. Trọn bộ công cụ soạn nội dung và ứng dụng học–dạy. Dữ liệu không rời khỏi nơi bạn đặt.",
+        "points": {
+          "a": "Không tài khoản, không tính theo đầu người",
+          "b": "Chạy được với kho lưu trữ S3 bất kỳ, kể cả MinIO trên máy",
+          "c": "Nhập chương trình qua CASE, xuất minh chứng qua xAPI"
+        },
+        "cta": "Bắt đầu"
       },
-      "cta": "Tạo tài khoản phụ huynh",
-      "report": "Báo cáo tuần này"
+      "cloud": {
+        "name": "Bingoo Cloud",
+        "tag": "Thuê bao",
+        "desc": "Bản vận hành sẵn cho nơi không có đội kỹ thuật. Thêm AI cao cấp, tự động hoá, tổ chức kỳ thi và cổng phụ huynh.",
+        "points": {
+          "a": "Không phải tự vận hành hạ tầng",
+          "b": "Kỳ thi và cổng phụ huynh",
+          "c": "Chuyển sang tự cài lúc nào cũng được"
+        },
+        "cta": "Tìm hiểu"
+      },
+      "network": {
+        "name": "Bingoo Network",
+        "tag": "Hộ chiếu học tập",
+        "desc": "Hồ sơ năng lực do chính người học sở hữu, mang theo khi chuyển trường hay đổi nghề — nhiều năm sau vẫn còn.",
+        "points": {
+          "a": "Người học sở hữu hồ sơ của mình",
+          "b": "Xác minh được, chống làm giả",
+          "c": "Đổi chương trình không mất thành quả"
+        },
+        "cta": "Tìm hiểu"
+      },
+      "note": "Cloud và Network là dịch vụ thương mại của Bingoo.ai. Bản mở không cần chúng để chạy đầy đủ."
     },
-    "testimonials": {
-      "title": "Phụ huynh nói gì về Bingoo",
+    "transfer": {
+      "eyebrow": "Đổi chương trình",
+      "title": "Chuyển trường không mất thành quả",
+      "subtitle": "Một em đang học chương trình Bộ Giáo dục chuyển sang chương trình quốc tế. Hệ thống đối chiếu hai bên và cho biết ngay phần nào đã xong.",
+      "kept": {
+        "name": "Đã có · giữ nguyên",
+        "desc": "Phần đã thành thạo được công nhận sang chương trình mới, không học lại."
+      },
+      "missing": {
+        "name": "Còn thiếu · bổ sung",
+        "desc": "Phần chưa có theo chuẩn mới được xếp thành lộ trình học tiếp."
+      },
+      "extra": {
+        "name": "Học thừa · ghi nhận",
+        "desc": "Phần nâng cao chưa cần tới được ghi nhận là điểm mạnh riêng."
+      }
+    },
+    "openness": {
+      "eyebrow": "Vì sao mở",
+      "title": "Bạn rời đi lúc nào cũng được",
+      "subtitle": "Đó là điều làm cho việc ở lại có ý nghĩa.",
       "items": {
-        "one": {
-          "quote": "Con mình chủ động mở Bingoo mỗi tối mà không cần nhắc. Điểm Toán tiến bộ thấy rõ.",
-          "author": "Chị Minh Anh",
-          "role": "Phụ huynh lớp 3"
+        "standards": {
+          "name": "Chuẩn mở",
+          "desc": "Chương trình nhập vào qua CASE, minh chứng xuất ra qua xAPI. Bạn mang theo được cả đồ thị lẫn minh chứng."
         },
-        "two": {
-          "quote": "Báo cáo tuần rất rõ ràng, mình biết chính xác con đang yếu phần nào để hỗ trợ thêm.",
-          "author": "Anh Quốc Huy",
-          "role": "Phụ huynh lớp 5"
+        "swap": {
+          "name": "Đổi nhà cung cấp bằng cấu hình",
+          "desc": "Mọi dịch vụ ngoài nằm sau một cổng chuyển được. Đổi nhà cung cấp là sửa cấu hình, không phải viết lại."
         },
-        "three": {
-          "quote": "Bạn Bingoo dễ thương khiến con hào hứng lắm. Học mà cứ như đang chơi.",
-          "author": "Chị Thu Hà",
-          "role": "Phụ huynh lớp 1"
+        "audit": {
+          "name": "Kiểm chứng được",
+          "desc": "Toàn bộ mã nguồn công khai. Công thức tính mastery đọc được, chạy lại được, phản biện được."
+        },
+        "contribute": {
+          "name": "Đóng góp được",
+          "desc": "Apache-2.0, ký DCO, không CLA. Cả bất đồng về mô hình cũng là đóng góp có ích."
         }
       }
     },
     "cta": {
-      "title": "Sẵn sàng cho hành trình học vui của con?",
-      "subtitle": "Tham gia cùng hàng nghìn gia đình đang học mỗi ngày với Bingoo.",
-      "button": "Bắt đầu miễn phí",
-      "secondary": "Nói chuyện với chúng tôi"
+      "title": "Chạy thử trong mười phút",
+      "subtitle": "Cần Node 22 và pnpm 9. Ứng dụng web lên cùng dữ liệu mẫu, bấm thử trọn một bài học trước khi cấu hình gì.",
+      "primary": "Đọc hướng dẫn",
+      "secondary": "Xem trên GitHub"
     },
     "footer": {
-      "tagline": "Nền tảng học tập trực tuyến giúp con học vui và tiến bộ mỗi ngày.",
-      "groups": {
+      "tagline": "Bộ công cụ dạy học mã nguồn mở.",
+      "madeWith": "Phát triển bởi Bingoo.ai",
+      "copyright": "© {year} Bingoo.ai · Mã nguồn mở theo giấy phép Apache-2.0",
+      "sections": {
         "product": "Sản phẩm",
-        "company": "Công ty",
         "resources": "Tài nguyên",
-        "legal": "Pháp lý"
+        "community": "Cộng đồng"
       },
       "links": {
-        "features": "Tính năng",
-        "subjects": "Môn học",
-        "pricing": "Học phí",
-        "forParents": "Dành cho phụ huynh",
-        "about": "Về chúng tôi",
-        "careers": "Tuyển dụng",
-        "contact": "Liên hệ",
-        "blog": "Blog",
-        "help": "Trung tâm trợ giúp",
-        "community": "Cộng đồng",
-        "privacy": "Chính sách bảo mật",
-        "terms": "Điều khoản sử dụng",
-        "cookies": "Cookie"
-      },
-      "madeWith": "Phát triển bởi Bingoo.ai",
-      "copyright": "© {year} Bingoo.ai · Mã nguồn mở theo giấy phép Apache-2.0"
+        "docs": "Tài liệu",
+        "github": "GitHub",
+        "issues": "Báo lỗi",
+        "contributing": "Đóng góp",
+        "licence": "Giấy phép",
+        "security": "Bảo mật",
+        "trademark": "Nhãn hiệu",
+        "cloud": "Bingoo Cloud",
+        "network": "Bingoo Network"
+      }
     }
   },
   "auth": {
@@ -248,7 +279,7 @@
     },
     "register": {
       "title": "Tạo tài khoản Bingoo",
-      "subtitle": "Miễn phí 14 ngày, không cần thẻ tín dụng.",
+      "subtitle": "Tạo tài khoản trên bản cài của bạn. Dữ liệu ở lại nơi bạn đặt.",
       "submit": "Tạo tài khoản",
       "haveAccount": "Đã có tài khoản?",
       "loginLink": "Đăng nhập",
@@ -576,53 +607,6 @@
       "5": {
         "q": "Huỷ đăng ký như thế nào?",
         "a": "Ba mẹ có thể huỷ bất cứ lúc nào trong phần cài đặt tài khoản — không mất phí, không ràng buộc."
-      }
-    }
-  },
-  "pricing": {
-    "metaTitle": "Học phí",
-    "metaDescription": "Chọn gói Bingoo phù hợp với gia đình — bắt đầu miễn phí, nâng cấp khi cần.",
-    "title": "Chọn gói phù hợp với gia đình",
-    "subtitle": "Bắt đầu miễn phí, nâng cấp khi cần. Huỷ bất cứ lúc nào.",
-    "perMonth": "/tháng",
-    "popular": "Phổ biến",
-    "draft": "Giá dự kiến — có thể thay đổi.",
-    "tiers": {
-      "free": {
-        "name": "Miễn phí",
-        "price": "0đ",
-        "desc": "Trải nghiệm cơ bản cho 1 con.",
-        "cta": "Bắt đầu",
-        "features": {
-          "0": "1 tài khoản học sinh",
-          "1": "3 bài học mỗi ngày",
-          "2": "Theo dõi tiến độ cơ bản",
-          "3": "Nội dung an toàn, không quảng cáo"
-        }
-      },
-      "plus": {
-        "name": "Plus",
-        "price": "149.000đ",
-        "desc": "Đầy đủ tính năng cho 1 con.",
-        "cta": "Dùng thử 14 ngày",
-        "features": {
-          "0": "Bài học không giới hạn",
-          "1": "Lộ trình cá nhân hoá bằng AI",
-          "2": "Game, Arena & huy hiệu",
-          "3": "Báo cáo chi tiết cho phụ huynh"
-        }
-      },
-      "family": {
-        "name": "Gia đình",
-        "price": "249.000đ",
-        "desc": "Cho tối đa 4 con.",
-        "cta": "Dùng thử 14 ngày",
-        "features": {
-          "0": "Tất cả trong gói Plus",
-          "1": "Tối đa 4 tài khoản học sinh",
-          "2": "Bảng điều khiển phụ huynh",
-          "3": "Ưu tiên hỗ trợ"
-        }
       }
     }
   },

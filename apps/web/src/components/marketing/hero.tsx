@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2026 Bingoo.ai
 // SPDX-License-Identifier: Apache-2.0
-import { FlaskConical, Palette, Play, ShieldCheck } from 'lucide-react'
+import { Blocks, Github, ListChecks, Network, ShieldCheck } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 import { Mascot } from '@/components/brand/mascot'
@@ -37,7 +37,7 @@ function FloatTile({
 
 export function Hero() {
   const t = useTranslations('landing.hero')
-  const ts = useTranslations('landing.subjects.items')
+  const tc = useTranslations('landing.hero.tiles')
 
   return (
     <section id="hero" className="relative overflow-hidden">
@@ -65,11 +65,15 @@ export function Hero() {
             </p>
 
             <div className="flex animate-fade-up flex-col gap-3 sm:flex-row sm:items-center">
-              <Link href="/register" className={buttonVariants({ variant: 'primary', size: 'lg' })}>
+              <a href="#start" className={buttonVariants({ variant: 'primary', size: 'lg' })}>
                 {t('ctaPrimary')}
-              </Link>
-              <a href="#how" className={buttonVariants({ variant: 'secondary', size: 'lg' })}>
-                <Play className="size-5" />
+              </a>
+              <a
+                href="https://github.com/BingooAI/bingoo-open"
+                rel="noreferrer"
+                className={buttonVariants({ variant: 'secondary', size: 'lg' })}
+              >
+                <Github className="size-5" />
                 {t('ctaSecondary')}
               </a>
             </div>
@@ -96,20 +100,20 @@ export function Hero() {
             <FloatTile
               className="-left-4 top-8"
               color="primary"
-              icon={<span className="text-lg leading-none">÷</span>}
-              label={ts('math')}
+              icon={<Network className="size-5" />}
+              label={tc('graph')}
             />
             <FloatTile
               className="-right-3 top-28"
               color="teal"
-              icon={<FlaskConical className="size-5" />}
-              label={ts('science')}
+              icon={<ListChecks className="size-5" />}
+              label={tc('evidence')}
             />
             <FloatTile
               className="-bottom-2 left-10"
               color="sunbeam"
-              icon={<Palette className="size-5" />}
-              label={ts('art')}
+              icon={<Blocks className="size-5" />}
+              label={tc('kits')}
             />
           </div>
         </div>

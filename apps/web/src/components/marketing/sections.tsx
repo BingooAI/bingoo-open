@@ -2,44 +2,42 @@
 // SPDX-License-Identifier: Apache-2.0
 import {
   ArrowRight,
+  Blocks,
   BookOpenText,
-  Calculator,
-  CheckCircle2,
+  Check,
   ClipboardList,
-  FileBarChart,
-  FlaskConical,
-  Gamepad2,
-  Languages,
-  LineChart,
-  Palette,
-  Puzzle,
-  Repeat2,
-  Rocket,
-  Route,
+  Cloud,
+  Gauge,
+  Github,
+  GitPullRequest,
+  Globe,
+  Layers,
+  ListChecks,
+  Network,
+  Plus,
+  Scale,
+  ScrollText,
+  Server,
   ShieldCheck,
+  Shuffle,
   Sparkles,
-  Star,
-  Timer,
-  UserPlus,
-  Users,
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { type ComponentType } from 'react'
-import { Mascot } from '@/components/brand/mascot'
 import {
-  Avatar,
   Badge,
   buttonVariants,
   Card,
+  Container,
   IconChip,
   type IconChipColor,
-  Container,
   Section,
 } from '@bingoo.ai/ui-web'
-import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 
 type Icon = ComponentType<{ className?: string }>
+
+const REPO_URL = 'https://github.com/BingooAI/bingoo-open'
 
 function SectionHeading({
   eyebrow,
@@ -68,60 +66,61 @@ function SectionHeading({
 /* -------------------------------------------------------------------------- */
 /* Stats band                                                                 */
 /* -------------------------------------------------------------------------- */
+/**
+ * Numbers a reader can check by opening the repository: kit count, question types, locales,
+ * licence. The adoption and satisfaction figures that used to sit here are gone — on a page
+ * whose argument is "verify this yourself", an unverifiable statistic undoes the argument.
+ */
 const STATS = [
-  { value: '500K+', key: 'learners' },
-  { value: '2,000+', key: 'lessons' },
-  { value: '4.9/5', key: 'rating' },
-  { value: '+35%', key: 'improvement' },
+  { value: '67', key: 'kits' },
+  { value: '6', key: 'questionTypes' },
+  { value: '2', key: 'languages' },
+  { value: '100%', key: 'licence' },
 ] as const
 
 export function Stats() {
   const t = useTranslations('landing.stats')
   return (
-    <Container size="xl" className="-mt-8 pb-4">
-      <Card
-        variant="raised"
-        className="grid grid-cols-2 gap-y-8 p-8 sm:grid-cols-4 sm:divide-x sm:divide-border"
-      >
-        {STATS.map((s) => (
-          <div key={s.key} className="px-2 text-center">
-            <div className="text-gradient-brand font-display text-3xl font-extrabold sm:text-4xl">
-              {s.value}
+    <Section className="py-10 sm:py-12">
+      <Container size="xl">
+        <div className="grid grid-cols-2 gap-6 rounded-3xl border border-border bg-surface p-8 sm:grid-cols-4">
+          {STATS.map(({ value, key }) => (
+            <div key={key} className="text-center">
+              <div className="font-display text-3xl font-extrabold text-primary sm:text-4xl">{value}</div>
+              <div className="mt-1 text-sm text-foreground-muted">{t(key)}</div>
             </div>
-            <div className="mt-1.5 text-sm font-medium text-foreground-muted">{t(s.key)}</div>
-          </div>
-        ))}
-      </Card>
-    </Container>
+          ))}
+        </div>
+      </Container>
+    </Section>
   )
 }
 
 /* -------------------------------------------------------------------------- */
-/* Features                                                                   */
+/* Five frameworks                                                            */
 /* -------------------------------------------------------------------------- */
-const FEATURES: { key: string; Icon: Icon; color: IconChipColor }[] = [
-  { key: 'personalized', Icon: Route, color: 'primary' },
-  { key: 'gamified', Icon: Gamepad2, color: 'coral' },
-  { key: 'mascot', Icon: Sparkles, color: 'sunbeam' },
-  { key: 'reports', Icon: LineChart, color: 'teal' },
-  { key: 'safe', Icon: ShieldCheck, color: 'success' },
-  { key: 'adaptive', Icon: Repeat2, color: 'primary' },
+const FRAMEWORKS: { key: string; Icon: Icon; color: IconChipColor }[] = [
+  { key: 'knowledge', Icon: Network, color: 'primary' },
+  { key: 'pedagogy', Icon: ClipboardList, color: 'coral' },
+  { key: 'teaching', Icon: Blocks, color: 'teal' },
+  { key: 'content', Icon: BookOpenText, color: 'sunbeam' },
+  { key: 'learning', Icon: Sparkles, color: 'success' },
 ]
 
-export function Features() {
-  const t = useTranslations('landing.features')
+export function Frameworks() {
+  const t = useTranslations('landing.frameworks')
   return (
-    <Section id="features">
+    <Section id="frameworks">
       <Container size="xl">
-        <SectionHeading title={t('title')} subtitle={t('subtitle')} />
+        <SectionHeading eyebrow={t('eyebrow')} title={t('title')} subtitle={t('subtitle')} />
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map(({ key, Icon, color }) => (
+          {FRAMEWORKS.map(({ key, Icon, color }) => (
             <Card key={key} interactive className="p-6 hover:border-primary/30">
               <IconChip color={color} size="lg" tone="gradient">
                 <Icon />
               </IconChip>
               <h3 className="mt-5 font-display text-lg font-bold text-foreground">
-                {t(`items.${key}.title`)}
+                {t(`items.${key}.name`)}
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{t(`items.${key}.desc`)}</p>
             </Card>
@@ -133,197 +132,33 @@ export function Features() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Subjects                                                                    */
+/* Measurement                                                                */
 /* -------------------------------------------------------------------------- */
-const SUBJECTS: { key: string; Icon: Icon; color: IconChipColor; count: number }[] = [
-  { key: 'math', Icon: Calculator, color: 'primary', count: 320 },
-  { key: 'vietnamese', Icon: BookOpenText, color: 'coral', count: 280 },
-  { key: 'english', Icon: Languages, color: 'teal', count: 240 },
-  { key: 'science', Icon: FlaskConical, color: 'sunbeam', count: 180 },
-  { key: 'logic', Icon: Puzzle, color: 'success', count: 150 },
-  { key: 'art', Icon: Palette, color: 'primary', count: 120 },
+const MEASURE: { key: string; Icon: Icon; color: IconChipColor }[] = [
+  { key: 'evidence', Icon: ListChecks, color: 'primary' },
+  { key: 'rightTool', Icon: Gauge, color: 'teal' },
+  { key: 'disposition', Icon: Scale, color: 'coral' },
+  { key: 'explain', Icon: ScrollText, color: 'sunbeam' },
 ]
 
-export function Subjects() {
-  const t = useTranslations('landing.subjects')
+export function Measure() {
+  const t = useTranslations('landing.measure')
   return (
-    <Section id="subjects" className="bg-surface-muted/40">
+    <Section id="measure" className="bg-surface-muted/40">
       <Container size="xl">
-        <SectionHeading title={t('title')} subtitle={t('subtitle')} />
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {SUBJECTS.map(({ key, Icon, color, count }) => (
-            <Card key={key} interactive className="flex items-center gap-4 p-5">
-              <IconChip color={color} size="lg" tone="gradient">
-                <Icon />
-              </IconChip>
-              <div>
-                <h3 className="font-display font-semibold text-foreground">{t(`items.${key}`)}</h3>
-                <p className="text-sm text-foreground-muted">{t('lessonsCount', { count })}</p>
-              </div>
-              <ArrowRight className="ml-auto size-5 text-foreground-subtle" />
-            </Card>
-          ))}
-        </div>
-      </Container>
-    </Section>
-  )
-}
-
-/* -------------------------------------------------------------------------- */
-/* How it works                                                                */
-/* -------------------------------------------------------------------------- */
-const STEPS: { key: string; Icon: Icon; color: IconChipColor }[] = [
-  { key: 'signup', Icon: UserPlus, color: 'primary' },
-  { key: 'assess', Icon: ClipboardList, color: 'teal' },
-  { key: 'learn', Icon: Rocket, color: 'coral' },
-]
-
-export function HowItWorks() {
-  const t = useTranslations('landing.how')
-  return (
-    <Section id="how">
-      <Container size="xl">
-        <SectionHeading title={t('title')} subtitle={t('subtitle')} />
-        <div className="relative mt-14 grid gap-6 md:grid-cols-3">
-          <div
-            aria-hidden
-            className="absolute left-0 right-0 top-9 hidden border-t-2 border-dashed border-border md:block"
-          />
-          {STEPS.map(({ key, Icon, color }, i) => (
-            <div key={key} className="relative flex flex-col items-center text-center">
-              <div className="relative grid size-18 place-items-center rounded-2xl border border-border bg-surface shadow-sm">
+        <SectionHeading eyebrow={t('eyebrow')} title={t('title')} subtitle={t('subtitle')} />
+        <div className="mt-14 grid gap-5 sm:grid-cols-2">
+          {MEASURE.map(({ key, Icon, color }) => (
+            <Card key={key} className="p-6">
+              <div className="flex items-start gap-4">
                 <IconChip color={color} size="lg" tone="gradient">
                   <Icon />
                 </IconChip>
-                <span className="absolute -right-2 -top-2 grid size-7 place-items-center rounded-full bg-primary font-display text-sm font-bold text-primary-foreground shadow-sm">
-                  {i + 1}
-                </span>
-              </div>
-              <h3 className="mt-5 font-display text-lg font-semibold text-foreground">
-                {t(`steps.${key}.title`)}
-              </h3>
-              <p className="mt-2 max-w-xs text-sm text-foreground-muted">{t(`steps.${key}.desc`)}</p>
-            </div>
-          ))}
-        </div>
-      </Container>
-    </Section>
-  )
-}
-
-/* -------------------------------------------------------------------------- */
-/* Parents                                                                     */
-/* -------------------------------------------------------------------------- */
-const PARENT_POINTS: { key: string; Icon: Icon }[] = [
-  { key: 'reports', Icon: FileBarChart },
-  { key: 'screentime', Icon: Timer },
-  { key: 'safe', Icon: ShieldCheck },
-  { key: 'multi', Icon: Users },
-]
-
-export function Parents() {
-  const t = useTranslations('landing.parents')
-  const tSub = useTranslations('landing.subjects.items')
-  return (
-    <Section id="parents" className="bg-surface-muted/40">
-      <Container size="xl">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div>
-            <Badge color="teal" tone="soft" className="mb-4">
-              {t('badge')}
-            </Badge>
-            <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-              {t('title')}
-            </h2>
-            <p className="mt-4 text-lg leading-relaxed text-foreground-muted">{t('subtitle')}</p>
-
-            <ul className="mt-8 flex flex-col gap-4">
-              {PARENT_POINTS.map(({ key, Icon }) => (
-                <li key={key} className="flex items-start gap-3">
-                  <IconChip color="teal" size="sm">
-                    <Icon />
-                  </IconChip>
-                  <span className="pt-1 text-foreground">{t(`points.${key}`)}</span>
-                </li>
-              ))}
-            </ul>
-
-            <Link href="/register" className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'mt-8')}>
-              {t('cta')}
-              <ArrowRight className="size-5" />
-            </Link>
-          </div>
-
-          <Card variant="raised" className="p-6 sm:p-8">
-            <div className="flex items-center gap-3">
-              <Mascot emotion="care" size={56} float alt="" />
-              <div>
-                <div className="font-display font-semibold text-foreground">Bingoo</div>
-                <div className="text-sm text-foreground-muted">{t('report')}</div>
-              </div>
-              <Badge color="success" className="ml-auto">
-                +12%
-              </Badge>
-            </div>
-            <div className="mt-6 space-y-4">
-              {[
-                { key: 'math', value: 82, color: 'primary' as const },
-                { key: 'vietnamese', value: 68, color: 'coral' as const },
-                { key: 'english', value: 74, color: 'teal' as const },
-              ].map((row) => (
-                <div key={row.key}>
-                  <div className="mb-1.5 flex items-center justify-between text-sm">
-                    <span className="font-medium text-foreground">{tSub(row.key)}</span>
-                    <span className="text-foreground-muted">{row.value}%</span>
-                  </div>
-                  <div className="h-2.5 w-full overflow-hidden rounded-full bg-surface-muted">
-                    <div
-                      className={cn(
-                        'h-full rounded-full',
-                        row.color === 'primary' && 'bg-primary',
-                        row.color === 'coral' && 'bg-accent-coral',
-                        row.color === 'teal' && 'bg-accent-teal',
-                      )}
-                      style={{ width: `${row.value}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </div>
-      </Container>
-    </Section>
-  )
-}
-
-/* -------------------------------------------------------------------------- */
-/* Testimonials                                                                */
-/* -------------------------------------------------------------------------- */
-const TESTIMONIALS = ['one', 'two', 'three'] as const
-
-export function Testimonials() {
-  const t = useTranslations('landing.testimonials')
-  return (
-    <Section>
-      <Container size="xl">
-        <SectionHeading title={t('title')} />
-        <div className="mt-14 grid gap-5 md:grid-cols-3">
-          {TESTIMONIALS.map((key) => (
-            <Card key={key} className="flex flex-col p-6">
-              <div className="flex gap-0.5 text-accent-sunbeam">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="size-4 fill-current" />
-                ))}
-              </div>
-              <p className="mt-4 flex-1 text-foreground">“{t(`items.${key}.quote`)}”</p>
-              <div className="mt-6 flex items-center gap-3">
-                <Avatar name={t(`items.${key}.author`)} size="md" />
                 <div>
-                  <div className="font-display text-sm font-semibold text-foreground">
-                    {t(`items.${key}.author`)}
-                  </div>
-                  <div className="text-xs text-foreground-muted">{t(`items.${key}.role`)}</div>
+                  <h3 className="font-display text-lg font-bold text-foreground">{t(`items.${key}.name`)}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-foreground-muted">
+                    {t(`items.${key}.desc`)}
+                  </p>
                 </div>
               </div>
             </Card>
@@ -335,40 +170,185 @@ export function Testimonials() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Final CTA                                                                   */
+/* Editions — open / cloud / network                                          */
+/* -------------------------------------------------------------------------- */
+/**
+ * The open edition leads and is visually primary, because on this page it *is* the product.
+ * Cloud and Network are described plainly rather than pitched: a repository that sells its paid
+ * tiers to the people reading its source teaches them to distrust the free one.
+ */
+const EDITIONS = [
+  { key: 'open', Icon: Server, color: 'primary' as IconChipColor, href: '#start', primary: true },
+  {
+    key: 'cloud',
+    Icon: Cloud,
+    color: 'teal' as IconChipColor,
+    href: 'https://bingoo.ai/cloud',
+    primary: false,
+  },
+  {
+    key: 'network',
+    Icon: Globe,
+    color: 'sunbeam' as IconChipColor,
+    href: 'https://bingoo.ai/network',
+    primary: false,
+  },
+]
+
+export function Editions() {
+  const t = useTranslations('landing.editions')
+  return (
+    <Section id="editions">
+      <Container size="xl">
+        <SectionHeading eyebrow={t('eyebrow')} title={t('title')} subtitle={t('subtitle')} />
+        <div className="mt-14 grid gap-5 lg:grid-cols-3">
+          {EDITIONS.map(({ key, Icon, color, href, primary }) => (
+            <Card
+              key={key}
+              className={cn('flex flex-col p-6', primary && 'border-primary/40 ring-1 ring-primary/20')}
+            >
+              <div className="flex items-center gap-3">
+                <IconChip color={color} size="lg" tone="gradient">
+                  <Icon />
+                </IconChip>
+                <div>
+                  <h3 className="font-display text-lg font-bold text-foreground">{t(`${key}.name`)}</h3>
+                  <Badge color={primary ? 'primary' : 'neutral'} tone="soft" className="mt-1">
+                    {t(`${key}.tag`)}
+                  </Badge>
+                </div>
+              </div>
+              <p className="mt-4 text-sm leading-relaxed text-foreground-muted">{t(`${key}.desc`)}</p>
+              <ul className="mt-5 flex-1 space-y-2">
+                {(['a', 'b', 'c'] as const).map((p) => (
+                  <li key={p} className="flex items-start gap-2 text-sm text-foreground-muted">
+                    <Check className="mt-0.5 size-4 shrink-0 text-success" aria-hidden />
+                    <span>{t(`${key}.points.${p}`)}</span>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href={href}
+                className={cn(
+                  buttonVariants({ variant: primary ? 'primary' : 'outline', size: 'md' }),
+                  'mt-6 w-full justify-center',
+                )}
+              >
+                {t(`${key}.cta`)}
+              </a>
+            </Card>
+          ))}
+        </div>
+        <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-foreground-muted">{t('note')}</p>
+      </Container>
+    </Section>
+  )
+}
+
+/* -------------------------------------------------------------------------- */
+/* Curriculum transfer                                                        */
+/* -------------------------------------------------------------------------- */
+const TRANSFER = [
+  { key: 'kept', Icon: Check, color: 'success' as IconChipColor },
+  { key: 'missing', Icon: Plus, color: 'coral' as IconChipColor },
+  { key: 'extra', Icon: Sparkles, color: 'sunbeam' as IconChipColor },
+]
+
+export function Transfer() {
+  const t = useTranslations('landing.transfer')
+  return (
+    <Section id="transfer" className="bg-surface-muted/40">
+      <Container size="xl">
+        <SectionHeading eyebrow={t('eyebrow')} title={t('title')} subtitle={t('subtitle')} />
+        <div className="mt-14 grid gap-5 sm:grid-cols-3">
+          {TRANSFER.map(({ key, Icon, color }) => (
+            <Card key={key} className="p-6">
+              <IconChip color={color} size="lg" tone="gradient">
+                <Icon />
+              </IconChip>
+              <h3 className="mt-5 font-display text-base font-bold text-foreground">{t(`${key}.name`)}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{t(`${key}.desc`)}</p>
+            </Card>
+          ))}
+        </div>
+      </Container>
+    </Section>
+  )
+}
+
+/* -------------------------------------------------------------------------- */
+/* Why open                                                                   */
+/* -------------------------------------------------------------------------- */
+const OPENNESS: { key: string; Icon: Icon; color: IconChipColor }[] = [
+  { key: 'standards', Icon: Shuffle, color: 'primary' },
+  { key: 'swap', Icon: Layers, color: 'teal' },
+  { key: 'audit', Icon: ShieldCheck, color: 'success' },
+  { key: 'contribute', Icon: GitPullRequest, color: 'coral' },
+]
+
+export function Openness() {
+  const t = useTranslations('landing.openness')
+  return (
+    <Section id="openness">
+      <Container size="xl">
+        <SectionHeading eyebrow={t('eyebrow')} title={t('title')} subtitle={t('subtitle')} />
+        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {OPENNESS.map(({ key, Icon, color }) => (
+            <Card key={key} className="p-6">
+              <IconChip color={color} size="lg" tone="gradient">
+                <Icon />
+              </IconChip>
+              <h3 className="mt-5 font-display text-base font-bold text-foreground">
+                {t(`items.${key}.name`)}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{t(`items.${key}.desc`)}</p>
+            </Card>
+          ))}
+        </div>
+      </Container>
+    </Section>
+  )
+}
+
+/* -------------------------------------------------------------------------- */
+/* Closing call to action                                                     */
 /* -------------------------------------------------------------------------- */
 export function CtaBand() {
   const t = useTranslations('landing.cta')
-  const tHero = useTranslations('landing.hero')
   return (
-    <Section>
-      <Container size="xl">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-brand px-6 py-16 text-center shadow-pop sm:px-16">
-          {/* Drifting dotted texture — `bg-dots` with a white dot color for the
-              colored band, animated via the `dots` motion token. */}
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-dots animate-dots [--dots-color:rgb(255_255_255/0.16)]"
-          />
-          <div className="relative mx-auto flex max-w-2xl flex-col items-center">
-            <Mascot emotion="celebrate" size={128} float alt="" />
-            <h2 className="mt-6 font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-              {t('title')}
-            </h2>
-            <p className="mt-3 text-lg text-white/85">{t('subtitle')}</p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/register" className={buttonVariants({ variant: 'inverse', size: 'lg' })}>
-                {t('button')}
-                <ArrowRight className="size-5" />
-              </Link>
-              <a href="#features" className={buttonVariants({ variant: 'inverse-outline', size: 'lg' })}>
-                {t('secondary')}
-              </a>
-            </div>
-            <p className="mt-6 inline-flex items-center gap-1.5 text-sm text-white/80">
-              <CheckCircle2 className="size-4" />
-              {tHero('note')}
-            </p>
+    <Section id="start" className="pb-24">
+      <Container size="lg">
+        <div className="rounded-3xl border border-border bg-surface p-10 text-center sm:p-14">
+          <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+            {t('title')}
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-foreground-muted">
+            {t('subtitle')}
+          </p>
+          <pre className="mx-auto mt-8 max-w-md overflow-x-auto rounded-2xl bg-surface-muted px-5 py-4 text-left text-sm text-foreground">
+            <code>
+              git clone {REPO_URL}.git{'\n'}
+              cd bingoo-open{'\n'}
+              pnpm install && pnpm dev
+            </code>
+          </pre>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <a
+              href={`${REPO_URL}#quickstart`}
+              className={cn(buttonVariants({ variant: 'primary', size: 'lg' }))}
+              rel="noreferrer"
+            >
+              {t('primary')}
+              <ArrowRight className="size-4" aria-hidden />
+            </a>
+            <a
+              href={REPO_URL}
+              className={cn(buttonVariants({ variant: 'outline', size: 'lg' }))}
+              rel="noreferrer"
+            >
+              <Github className="size-4" aria-hidden />
+              {t('secondary')}
+            </a>
           </div>
         </div>
       </Container>

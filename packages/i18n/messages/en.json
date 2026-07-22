@@ -50,12 +50,10 @@
     }
   },
   "nav": {
-    "features": "Features",
-    "subjects": "Subjects",
-    "howItWorks": "How it works",
-    "forParents": "For parents",
-    "pricing": "Pricing",
-    "about": "About",
+    "frameworks": "Frameworks",
+    "measure": "How it measures",
+    "editions": "Editions",
+    "openness": "Why open",
     "help": "Help"
   },
   "theme": {
@@ -70,155 +68,188 @@
     "switch": "Change language"
   },
   "landing": {
-    "announce": "New ✨ AI-personalized learning path",
     "hero": {
-      "badge": "Learning platform for kids aged 6–15",
-      "title": "Learn joyfully every day with",
-      "titleHighlight": "Bingoo",
-      "subtitle": "A personalized path, playful gamified lessons and Bingoo — a friendly buddy who makes your child love learning and truly improve.",
-      "ctaPrimary": "Start free",
-      "ctaSecondary": "See how it works",
-      "note": "Free for 14 days · No credit card required",
-      "safe": "Safe & moderated for kids",
-      "trustedBy": "Trusted by 2,000+ schools and learning centers",
+      "badge": "Open source · Apache-2.0",
+      "title": "Teach adaptively, and",
+      "titleHighlight": "know whether it worked",
+      "subtitle": "Bingoo Open is a teaching toolkit for tutors, freelance teachers, learning centres and small schools: map what has to be learned, build lessons that fit, teach with interactive manipulatives, and measure with evidence you can check by hand.",
+      "ctaPrimary": "Run it yourself",
+      "ctaSecondary": "Read the source",
+      "note": "Runs on your own machine · No account · No per-seat pricing",
+      "safe": "A person approves what a child sees",
       "chips": {
         "levelUp": "Level up!",
-        "subject": "Math",
-        "praise": "Great job!",
+        "subject": "Maths",
+        "praise": "Well done!",
         "days": "days"
+      },
+      "tiles": {
+        "graph": "Competency graph",
+        "evidence": "Evidence",
+        "kits": "67 manipulatives"
       }
     },
     "stats": {
-      "learners": "Active learners",
-      "lessons": "Interactive lessons",
-      "rating": "Parent rating",
-      "improvement": "Growth in 3 months"
+      "kits": "interactive manipulatives",
+      "questionTypes": "question types",
+      "languages": "languages",
+      "licence": "open source"
     },
-    "features": {
-      "title": "Everything your child needs to love learning",
-      "subtitle": "Designed around learning science, with the child's experience at the center.",
+    "frameworks": {
+      "eyebrow": "Five frameworks",
+      "title": "Each one usable on its own",
+      "subtitle": "Take the whole thing, or install one package and ignore the rest.",
       "items": {
-        "personalized": {
-          "title": "Personalized path",
-          "desc": "AI assesses each child and serves lessons at just the right level — never too easy, never too hard."
+        "knowledge": {
+          "name": "Knowledge",
+          "desc": "A competency graph with prerequisites — what lets the system say \"she cannot do this yet because she has not got that\", instead of just marking an answer wrong."
         },
-        "gamified": {
-          "title": "Learning through play",
-          "desc": "XP points, daily streaks, badges and leaderboards turn studying into an adventure."
+        "pedagogy": {
+          "name": "Pedagogy",
+          "desc": "Lesson plans carrying the misconceptions learners arrive with, concrete → pictorial → abstract representations, and what counts as success."
         },
-        "mascot": {
-          "title": "Bingoo by their side",
-          "desc": "Bingoo cheers, reminds and celebrates every milestone right alongside your child."
+        "teaching": {
+          "name": "Teaching",
+          "desc": "A lesson engine and 67 manipulatives: number lines, base-ten blocks, fraction bars, balance scales, circuits, coordinate grids."
         },
-        "reports": {
-          "title": "Reports for parents",
-          "desc": "Track weekly progress, strengths and areas to improve — clear and visual."
+        "content": {
+          "name": "Content",
+          "desc": "Authoring and generation of items, six question types, an item bank with coverage tracking."
         },
-        "safe": {
-          "title": "Kid-safe by design",
-          "desc": "No ads, moderated content and screen-time controls built for parents."
-        },
-        "adaptive": {
-          "title": "Smart review",
-          "desc": "Spaced repetition helps your child remember longer and review exactly when it matters."
+        "learning": {
+          "name": "Learning",
+          "desc": "Learner-facing modes, session flow, and evidence capture."
         }
       }
     },
-    "subjects": {
-      "title": "Aligned with the school curriculum",
-      "subtitle": "Content crafted to match the national education program.",
+    "measure": {
+      "eyebrow": "Measure without pretending",
+      "title": "Every number can explain itself",
+      "subtitle": "A number you cannot explain to a parent does not belong on a screen.",
       "items": {
-        "math": "Math",
-        "vietnamese": "Vietnamese",
-        "english": "English",
-        "science": "Science",
-        "logic": "Logic & reasoning",
-        "art": "Art"
-      },
-      "lessonsCount": "{count} lessons"
-    },
-    "how": {
-      "title": "Get started in minutes",
-      "subtitle": "Three simple steps to the right learning path.",
-      "steps": {
-        "signup": {
-          "title": "Create an account",
-          "desc": "Sign up free and add your child's profile in under a minute."
+        "evidence": {
+          "name": "Evidence, not marks",
+          "desc": "Every attempt becomes evidence with a timestamp and a source. Replay the log from scratch and the same number comes back."
         },
-        "assess": {
-          "title": "Quick placement",
-          "desc": "Bingoo gently assesses where your child is right now."
+        "rightTool": {
+          "name": "The right tool for each thing",
+          "desc": "Knowledge and procedures use Bayesian knowledge tracing and Elo. Skills are scored against rubrics by a person, because a machine grading a skill without a rubric is guessing."
         },
-        "learn": {
-          "title": "Learn & grow",
-          "desc": "Your child learns daily while you follow along with visual reports."
+        "disposition": {
+          "name": "Dispositions are never scored",
+          "desc": "Habits are reported as observed frequencies with a confidence interval, and never mixed into an academic grade."
+        },
+        "explain": {
+          "name": "Explainable",
+          "desc": "Any estimate produces the claim, the evidence behind it, the formula used, and what would have to change for it to read differently."
         }
       }
     },
-    "parents": {
-      "badge": "For parents",
-      "title": "Peace of mind while they learn on their own",
-      "subtitle": "Bingoo helps you stay involved without sitting in on every session.",
-      "points": {
-        "reports": "Weekly progress reports delivered straight to you",
-        "screentime": "Set daily time limits and learning goals",
-        "safe": "A safe space — no ads, no distractions",
-        "multi": "Manage multiple children under one account"
+    "editions": {
+      "eyebrow": "Three ways to run it",
+      "title": "Start where it fits",
+      "subtitle": "The open edition is the whole thing, not a trial. The other two exist for when you want them.",
+      "open": {
+        "name": "Bingoo Open",
+        "tag": "Free · Apache-2.0",
+        "desc": "You run it, on your own machine or your own server. The full authoring toolkit and the learn–teach apps. Data never leaves where you put it.",
+        "points": {
+          "a": "No account, no per-seat pricing",
+          "b": "Works with any S3-compatible store, including MinIO on your laptop",
+          "c": "Curricula in via CASE, evidence out via xAPI"
+        },
+        "cta": "Get started"
       },
-      "cta": "Create a parent account",
-      "report": "This week's report"
+      "cloud": {
+        "name": "Bingoo Cloud",
+        "tag": "Subscription",
+        "desc": "A hosted edition for places without a technical team. Adds higher-tier AI, automation, exam sittings and a parent portal.",
+        "points": {
+          "a": "No infrastructure to run",
+          "b": "Exams and a parent portal",
+          "c": "Move to self-hosting whenever you like"
+        },
+        "cta": "Learn more"
+      },
+      "network": {
+        "name": "Bingoo Network",
+        "tag": "Learning passport",
+        "desc": "A competency record the learner owns, carried between schools and into a career — still there years later.",
+        "points": {
+          "a": "The learner owns their record",
+          "b": "Verifiable, hard to forge",
+          "c": "Change curriculum without losing progress"
+        },
+        "cta": "Learn more"
+      },
+      "note": "Cloud and Network are commercial services from Bingoo.ai. The open edition needs neither to run in full."
     },
-    "testimonials": {
-      "title": "What parents say about Bingoo",
+    "transfer": {
+      "eyebrow": "Changing curriculum",
+      "title": "Moving schools without starting over",
+      "subtitle": "A learner on a national curriculum moves to an international one. The system compares the two and says immediately what is already done.",
+      "kept": {
+        "name": "Already there · kept",
+        "desc": "What has been mastered is recognised in the new curriculum. No relearning."
+      },
+      "missing": {
+        "name": "Missing · scheduled",
+        "desc": "What the new standard expects and the learner has not met becomes the next path."
+      },
+      "extra": {
+        "name": "Beyond · recorded",
+        "desc": "Advanced work the new curriculum does not need yet is recorded as a strength."
+      }
+    },
+    "openness": {
+      "eyebrow": "Why open",
+      "title": "You can leave whenever you want",
+      "subtitle": "Which is what makes staying mean something.",
       "items": {
-        "one": {
-          "quote": "My child opens Bingoo every evening without being asked. Their math has visibly improved.",
-          "author": "Minh Anh",
-          "role": "Parent, Grade 3"
+        "standards": {
+          "name": "Open standards",
+          "desc": "Curricula come in as CASE, evidence goes out as xAPI. You can take both the graph and the evidence with you."
         },
-        "two": {
-          "quote": "The weekly report is so clear — I know exactly where to help my child.",
-          "author": "Quoc Huy",
-          "role": "Parent, Grade 5"
+        "swap": {
+          "name": "Swap providers by configuration",
+          "desc": "Every external service sits behind a port with swappable adapters. Changing provider is configuration, not a rewrite."
         },
-        "three": {
-          "quote": "The Bingoo buddy is adorable and keeps my kid excited. Learning feels like play.",
-          "author": "Thu Ha",
-          "role": "Parent, Grade 1"
+        "audit": {
+          "name": "Auditable",
+          "desc": "All of it is public. The mastery formulas can be read, re-run and argued with."
+        },
+        "contribute": {
+          "name": "Contributable",
+          "desc": "Apache-2.0, DCO sign-off, no CLA. Disagreement about the modelling counts as a contribution too."
         }
       }
     },
     "cta": {
-      "title": "Ready for your child's joyful learning journey?",
-      "subtitle": "Join thousands of families learning every day with Bingoo.",
-      "button": "Start for free",
-      "secondary": "Talk to us"
+      "title": "Running in ten minutes",
+      "subtitle": "Needs Node 22 and pnpm 9. The web app comes up with sample data, so you can click through a lesson before configuring anything.",
+      "primary": "Read the guide",
+      "secondary": "View on GitHub"
     },
     "footer": {
-      "tagline": "The online learning platform that helps your child learn joyfully and grow every day.",
-      "groups": {
+      "tagline": "An open-source teaching toolkit.",
+      "madeWith": "Built by Bingoo.ai",
+      "copyright": "© {year} Bingoo.ai · Open source under Apache-2.0",
+      "sections": {
         "product": "Product",
-        "company": "Company",
         "resources": "Resources",
-        "legal": "Legal"
+        "community": "Community"
       },
       "links": {
-        "features": "Features",
-        "subjects": "Subjects",
-        "pricing": "Pricing",
-        "forParents": "For parents",
-        "about": "About us",
-        "careers": "Careers",
-        "contact": "Contact",
-        "blog": "Blog",
-        "help": "Help center",
-        "community": "Community",
-        "privacy": "Privacy policy",
-        "terms": "Terms of use",
-        "cookies": "Cookies"
-      },
-      "madeWith": "Built by Bingoo.ai",
-      "copyright": "© {year} Bingoo.ai · Open source under Apache-2.0"
+        "docs": "Docs",
+        "github": "GitHub",
+        "issues": "Issues",
+        "contributing": "Contributing",
+        "licence": "Licence",
+        "security": "Security",
+        "trademark": "Trademark",
+        "cloud": "Bingoo Cloud",
+        "network": "Bingoo Network"
+      }
     }
   },
   "auth": {
@@ -248,7 +279,7 @@
     },
     "register": {
       "title": "Create your Bingoo account",
-      "subtitle": "Free for 14 days, no credit card needed.",
+      "subtitle": "Create an account on your own installation. Your data stays where you put it.",
       "submit": "Create account",
       "haveAccount": "Already have an account?",
       "loginLink": "Sign in",
@@ -576,53 +607,6 @@
       "5": {
         "q": "How do I cancel?",
         "a": "You can cancel anytime from your account settings — no fees, no strings attached."
-      }
-    }
-  },
-  "pricing": {
-    "metaTitle": "Pricing",
-    "metaDescription": "Pick the Bingoo plan that fits your family — start free, upgrade anytime.",
-    "title": "Pick the plan that fits your family",
-    "subtitle": "Start free, upgrade when you need to. Cancel anytime.",
-    "perMonth": "/month",
-    "popular": "Popular",
-    "draft": "Indicative pricing — subject to change.",
-    "tiers": {
-      "free": {
-        "name": "Free",
-        "price": "$0",
-        "desc": "The basics for one child.",
-        "cta": "Get started",
-        "features": {
-          "0": "1 student account",
-          "1": "3 lessons per day",
-          "2": "Basic progress tracking",
-          "3": "Safe content, no ads"
-        }
-      },
-      "plus": {
-        "name": "Plus",
-        "price": "$6",
-        "desc": "Everything for one child.",
-        "cta": "Try 14 days",
-        "features": {
-          "0": "Unlimited lessons",
-          "1": "AI-personalized path",
-          "2": "Games, Arena & badges",
-          "3": "Detailed parent reports"
-        }
-      },
-      "family": {
-        "name": "Family",
-        "price": "$10",
-        "desc": "For up to 4 children.",
-        "cta": "Try 14 days",
-        "features": {
-          "0": "Everything in Plus",
-          "1": "Up to 4 student accounts",
-          "2": "Parent dashboard",
-          "3": "Priority support"
-        }
       }
     }
   },
