@@ -1,5 +1,6 @@
 dist/
 .next/
+.next-dev/
 .turbo/
 node_modules/
 contract/
