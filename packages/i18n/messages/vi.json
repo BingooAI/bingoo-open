@@ -420,7 +420,9 @@
     },
     "searchPlaceholder": "Tìm bài học, môn học…",
     "notifications": "Thông báo",
-    "profileMenu": "Tài khoản"
+    "profileMenu": "Tài khoản",
+    "openAdmin": "Trang soạn nội dung",
+    "openAdminHint": "Mở ở tab mới"
   },
   "student": {
     "hero": {

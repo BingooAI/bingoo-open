@@ -420,7 +420,9 @@
     },
     "searchPlaceholder": "Search lessons, subjects…",
     "notifications": "Notifications",
-    "profileMenu": "Account"
+    "profileMenu": "Account",
+    "openAdmin": "Authoring app",
+    "openAdminHint": "Opens in a new tab"
   },
   "student": {
     "hero": {

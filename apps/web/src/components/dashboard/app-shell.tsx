@@ -7,10 +7,12 @@ import {
   Bell,
   BookOpen,
   CalendarDays,
+  ExternalLink,
   HelpCircle,
   Home,
   LogOut,
   Menu,
+  PenSquare,
   MessageCircle,
   MonitorSmartphone,
   Search,
@@ -29,6 +31,7 @@ import { ThemeToggle } from '@/components/brand/theme-toggle'
 import { Avatar } from '@bingoo.ai/ui-web'
 import { Link, usePathname, useRouter } from '@/i18n/navigation'
 import { signOut } from '@/lib/auth-client'
+import { adminUrl, isStaff } from '@/lib/roles'
 import { cn } from '@/lib/cn'
 
 export interface SessionUser {
@@ -73,6 +76,7 @@ export function AppShell({ children, user }: { children: ReactNode; user: Sessio
     role: navRole === 'parent' ? tr('roleParent') : tr('roleStudent'),
     image: user.image,
   }
+  const staff = isStaff(user.role)
   const [drawer, setDrawer] = useState(false)
   const [active, setActive] = useState('home')
   const [loggingOut, setLoggingOut] = useState(false)
@@ -94,6 +98,7 @@ export function AppShell({ children, user }: { children: ReactNode; user: Sessio
           user={display}
           onLogout={logout}
           loggingOut={loggingOut}
+          staff={staff}
         />
       </aside>
 
@@ -117,6 +122,7 @@ export function AppShell({ children, user }: { children: ReactNode; user: Sessio
               onLogout={logout}
               loggingOut={loggingOut}
               onClose={() => setDrawer(false)}
+              staff={staff}
             />
           </aside>
         </div>
@@ -141,6 +147,7 @@ function SidebarContent({
   onLogout,
   loggingOut,
   onClose,
+  staff = false,
 }: {
   role: 'student' | 'parent'
   active: string
@@ -149,6 +156,8 @@ function SidebarContent({
   onLogout: () => void
   loggingOut: boolean
   onClose?: () => void
+  /** Whether this account may enter the authoring app. Shows the link; does not grant access. */
+  staff?: boolean
 }) {
   const t = useTranslations()
   const pathname = usePathname()
@@ -201,6 +210,24 @@ function SidebarContent({
         <div className="my-3 h-px bg-border" />
         {FOOTER_NAV.map(renderItem)}
       </nav>
+
+      {/* Authoring app — a separate deployment, so a plain anchor rather than a router link.
+          Both roles are held at once: this is a way across, not a mode to switch into. */}
+      {staff && (
+        <div className="px-3 pb-2">
+          <a
+            href={adminUrl()}
+            target="_blank"
+            rel="noreferrer"
+            title={t('app.openAdminHint')}
+            className="flex items-center gap-3 rounded-xl border border-border px-3 py-2.5 text-sm font-semibold text-foreground-muted transition-colors hover:border-primary/40 hover:bg-primary-soft hover:text-primary-soft-foreground"
+          >
+            <PenSquare className="size-5 shrink-0" />
+            <span className="flex-1 truncate">{t('app.openAdmin')}</span>
+            <ExternalLink className="size-4 shrink-0 opacity-60" aria-hidden />
+          </a>
+        </div>
+      )}
 
       {/* user */}
       <div className="flex items-center gap-3 border-t border-border p-4">
