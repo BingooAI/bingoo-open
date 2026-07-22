@@ -176,23 +176,16 @@ export function Measure() {
  * The open edition leads and is visually primary, because on this page it *is* the product.
  * Cloud and Network are described plainly rather than pitched: a repository that sells its paid
  * tiers to the people reading its source teaches them to distrust the free one.
+ *
+ * Both point at the site root rather than a per-edition page, because those pages do not exist
+ * yet and a "Learn more" that 404s is worse than one that lands somewhere general.
  */
+const SITE = 'https://bingoo.ai'
+
 const EDITIONS = [
   { key: 'open', Icon: Server, color: 'primary' as IconChipColor, href: '#start', primary: true },
-  {
-    key: 'cloud',
-    Icon: Cloud,
-    color: 'teal' as IconChipColor,
-    href: 'https://bingoo.ai/cloud',
-    primary: false,
-  },
-  {
-    key: 'network',
-    Icon: Globe,
-    color: 'sunbeam' as IconChipColor,
-    href: 'https://bingoo.ai/network',
-    primary: false,
-  },
+  { key: 'cloud', Icon: Cloud, color: 'teal' as IconChipColor, href: SITE, primary: false },
+  { key: 'network', Icon: Globe, color: 'sunbeam' as IconChipColor, href: SITE, primary: false },
 ]
 
 export function Editions() {
