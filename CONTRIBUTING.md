@@ -34,6 +34,18 @@ actually is.
 
 `pnpm dev` starts the web app on `localhost:3000` with sample data.
 
+If a page throws `__webpack_modules__[moduleId] is not a function`, or the server
+logs `Could not find the module … in the React Client Manifest`, the dev cache is
+stale — pnpm rewrites the hashed paths under `node_modules/.pnpm` whenever
+dependencies change, and Next's webpack cache can keep pointing at the old ones:
+
+```bash
+rm -rf apps/*/.next .turbo apps/*/.turbo packages/*/.turbo
+pnpm dev
+```
+
+It only affects `pnpm dev`. A production build resolves everything from scratch.
+
 ## Where things go
 
 The repository is organised as five frameworks — knowledge, pedagogy, teaching, content and
