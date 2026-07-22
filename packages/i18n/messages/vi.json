@@ -329,6 +329,11 @@
       "weakPassword": "Mật khẩu quá ngắn (tối thiểu 8 ký tự).",
       "network": "Không kết nối được máy chủ. Vui lòng thử lại.",
       "generic": "Có lỗi xảy ra. Vui lòng thử lại."
+    },
+    "highlights": {
+      "a": "Lộ trình riêng cho từng em",
+      "b": "Học cụ tương tác, không chỉ trắc nghiệm",
+      "c": "Dữ liệu ở lại nơi bạn đặt"
     }
   },
   "onboarding": {
@@ -415,12 +420,7 @@
     },
     "searchPlaceholder": "Tìm bài học, môn học…",
     "notifications": "Thông báo",
-    "profileMenu": "Tài khoản",
-    "upgrade": {
-      "title": "Nâng cấp lên Bingoo Plus",
-      "subtitle": "Mở khoá toàn bộ bài học và báo cáo chi tiết.",
-      "cta": "Nâng cấp"
-    }
+    "profileMenu": "Tài khoản"
   },
   "student": {
     "hero": {
@@ -1461,5 +1461,13 @@
     "wrong": "Chưa đúng — thử lại nhé.",
     "wrongOrder": "Chưa đúng thứ tự.",
     "wrongRetry": "Chưa đúng, thử lại nhé."
+  },
+  "subjects": {
+    "math": "Toán",
+    "vietnamese": "Tiếng Việt",
+    "english": "Tiếng Anh",
+    "science": "Khoa học",
+    "logic": "Tư duy logic",
+    "art": "Nghệ thuật"
   }
 }

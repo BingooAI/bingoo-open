@@ -32,7 +32,7 @@ import { greetingKey } from '@bingoo.ai/core'
 export default function StudentDashboard() {
   const t = useTranslations('student')
   const tc = useTranslations('common')
-  const tSub = useTranslations('landing.subjects.items')
+  const tSub = useTranslations('subjects')
   const format = useFormatter()
 
   const [done, setDone] = useState(() => todayQuests.map((q) => q.done))

@@ -42,7 +42,7 @@ const ACTIVITY_ICON: Record<string, Icon> = {
 
 export default function ParentDashboard() {
   const t = useTranslations('parent')
-  const tSub = useTranslations('landing.subjects.items')
+  const tSub = useTranslations('subjects')
 
   const [childId, setChildId] = useState(children[0]!.id)
   const child = children.find((c) => c.id === childId) ?? children[0]!

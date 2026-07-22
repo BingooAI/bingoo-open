@@ -329,6 +329,11 @@
       "weakPassword": "Password is too short (at least 8 characters).",
       "network": "Couldn't reach the server. Please try again.",
       "generic": "Something went wrong. Please try again."
+    },
+    "highlights": {
+      "a": "A path that fits each learner",
+      "b": "Interactive manipulatives, not just multiple choice",
+      "c": "Your data stays where you put it"
     }
   },
   "onboarding": {
@@ -415,12 +420,7 @@
     },
     "searchPlaceholder": "Search lessons, subjects…",
     "notifications": "Notifications",
-    "profileMenu": "Account",
-    "upgrade": {
-      "title": "Upgrade to Bingoo Plus",
-      "subtitle": "Unlock all lessons and detailed reports.",
-      "cta": "Upgrade"
-    }
+    "profileMenu": "Account"
   },
   "student": {
     "hero": {
@@ -1461,5 +1461,13 @@
     "wrong": "Not quite — try again.",
     "wrongOrder": "Not in the right order.",
     "wrongRetry": "Not quite, try again."
+  },
+  "subjects": {
+    "math": "Maths",
+    "vietnamese": "Vietnamese",
+    "english": "English",
+    "science": "Science",
+    "logic": "Logic",
+    "art": "Art"
   }
 }

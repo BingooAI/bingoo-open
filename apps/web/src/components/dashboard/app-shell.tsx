@@ -15,7 +15,6 @@ import {
   MonitorSmartphone,
   Search,
   Settings,
-  Sparkles,
   Target,
   Trophy,
   Users,
@@ -202,18 +201,6 @@ function SidebarContent({
         <div className="my-3 h-px bg-border" />
         {FOOTER_NAV.map(renderItem)}
       </nav>
-
-      {/* upgrade card */}
-      <div className="p-3">
-        <div className="rounded-2xl bg-gradient-brand p-4 text-white shadow-pop">
-          <Sparkles className="size-5" />
-          <p className="mt-2 font-display text-sm font-bold">{t('app.upgrade.title')}</p>
-          <p className="mt-1 text-xs text-white/80">{t('app.upgrade.subtitle')}</p>
-          <button className="mt-3 w-full rounded-full bg-white/95 py-2 text-xs font-bold text-primary transition-colors hover:bg-white">
-            {t('app.upgrade.cta')}
-          </button>
-        </div>
-      </div>
 
       {/* user */}
       <div className="flex items-center gap-3 border-t border-border p-4">

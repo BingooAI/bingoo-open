@@ -56,7 +56,7 @@ const AVATARS: MascotEmotion[] = ['happy', 'excited', 'proud', 'celebrate', 'gra
 
 export default function OnboardingPage() {
   const t = useTranslations('onboarding')
-  const tSub = useTranslations('landing.subjects.items')
+  const tSub = useTranslations('subjects')
   const router = useRouter()
 
   const [step, setStep] = useState(0)

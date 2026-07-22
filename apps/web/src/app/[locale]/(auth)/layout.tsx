@@ -12,9 +12,9 @@ import { Link } from '@/i18n/navigation'
 function BrandPanel() {
   const t = useTranslations()
   const highlights = [
-    { Icon: Sparkles, text: t('landing.features.items.personalized.title') },
-    { Icon: Star, text: t('landing.features.items.gamified.title') },
-    { Icon: ShieldCheck, text: t('landing.features.items.safe.title') },
+    { Icon: Sparkles, text: t('auth.highlights.a') },
+    { Icon: Star, text: t('auth.highlights.b') },
+    { Icon: ShieldCheck, text: t('auth.highlights.c') },
   ]
 
   return (
