@@ -26,15 +26,15 @@ const TONES: Record<string, number> = {
   sparkle: 1180,
 }
 
-import { sfxUrl } from '@bingoo.ai/explainer'
+import { sfxUrl } from '../sfx-base'
 
 /** cache of preloaded <audio> per sound so repeated fires don't re-download */
 const clips = new Map<string, HTMLAudioElement>()
 
 /**
- * Play a named sound effect. A real clip from the SFX library (SFX_CATALOG,
- * hosted on R2) if the name is one of them; otherwise the synth blip — which is
- * now only a fallback for an unknown name, not the default for every lesson.
+ * Play a named sound effect. A real clip when the deployment has a sound pack configured
+ * and the name is in it; otherwise the synth blip. With no pack — the default, since no
+ * audio ships with this repository — every cue is a blip, which is audible and honest.
  */
 export function blip(sound: string) {
   const url = sfxUrl(sound)

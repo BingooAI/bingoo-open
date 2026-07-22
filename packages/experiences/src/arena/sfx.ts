@@ -1,17 +1,25 @@
 // SPDX-FileCopyrightText: 2026 Bingoo.ai
 // SPDX-License-Identifier: Apache-2.0
 /**
- * Âm thanh arena — SFX là FILE THẬT do host phục vụ tại `/sfx/{id}.mp3` (bộ 161 hiệu ứng). Ánh xạ
- * sự kiện game → id SFX; phát chồng lấn được (clone node). Nhạc nền (BGM) tổng hợp WebAudio nhẹ, tắt
- * được. Thuần client; no-op khi không có `Audio`/`AudioContext`. Nếu file lỗi thì im lặng (không chặn).
+ * Arena audio. Game events map to sound-effect ids; clips overlap by cloning the node. The
+ * background music is synthesised with WebAudio and can be switched off. Client-only, and a
+ * no-op where `Audio`/`AudioContext` are missing or a clip fails to load — sound never blocks
+ * play.
+ *
+ * No audio ships with this repository (see `packages/explainer/src/sfx-catalog.ts` for why), so
+ * effects are silent until a deployment points `NEXT_PUBLIC_SFX_BASE_URL` at a pack it has the
+ * right to distribute. The synthesised music still plays: it is generated, not sampled.
  */
 
 export type Sfx = 'correct' | 'wrong' | 'hit' | 'win' | 'lose' | 'special' | 'combo' | 'round' | 'tap'
 
-/** Đường dẫn gốc SFX host phục vụ. Đổi được nếu re-host chỗ khác. */
-export const SFX_BASE = '/sfx/'
+/**
+ * Where this deployment serves `<id>.mp3` from. Unset — the default — means no effects, which
+ * is why every player below tolerates a null clip rather than assuming one exists.
+ */
+export const SFX_BASE: string | undefined = process.env.NEXT_PUBLIC_SFX_BASE_URL || undefined
 
-/** Sự kiện game → id file trong bộ 161. */
+/** Game event → sound-effect id. */
 const EVENT_SFX: Record<Sfx, string> = {
   correct: 'correct',
   wrong: 'incorrect',
@@ -27,10 +35,10 @@ const EVENT_SFX: Record<Sfx, string> = {
 const cache = new Map<string, HTMLAudioElement>()
 
 function base(id: string): HTMLAudioElement | null {
-  if (typeof window === 'undefined' || typeof Audio === 'undefined') return null
+  if (typeof window === 'undefined' || typeof Audio === 'undefined' || !SFX_BASE) return null
   let a = cache.get(id)
   if (!a) {
-    a = new Audio(`${SFX_BASE}${id}.mp3`)
+    a = new Audio(`${SFX_BASE.replace(/\/$/, '')}/${id}.mp3`)
     a.preload = 'auto'
     cache.set(id, a)
   }

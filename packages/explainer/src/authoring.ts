@@ -33,7 +33,7 @@ import { getManipulative, KIT_DOCS } from '@bingoo.ai/manipulatives'
 import type { Aspect, Scene, ElementType } from './schema'
 import { resolveLayout } from './layout'
 import { templateCatalog, contractOf, type Template } from './catalog'
-import { SFX_CATALOG } from './sfx-catalog'
+import { isSfxName } from './sfx-catalog'
 
 /* ─────────────────────────────────────────────────────── 1. the guide (text) */
 
@@ -299,7 +299,7 @@ export function checkScene(
   for (const beat of scene.beats ?? []) {
     for (const a of beat.actions) {
       if (a.verb !== 'sfx') continue
-      if (!SFX_CATALOG[a.sound]) {
+      if (!isSfxName(a.sound)) {
         out.push({
           level: 'error',
           code: 'sfx-unknown',

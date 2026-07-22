@@ -65,8 +65,9 @@ them. A step can also carry a `node` you built yourself, which replaces its bloc
 The package is i18n-free by design: `ExperienceLabels` is a required prop and holds every word the
 learner reads, so translation stays in your app. Styling comes from `@bingoo.ai/ui-web` semantic
 tokens, so add both packages' sources to your Tailwind `@source` globs and import
-`@bingoo.ai/tokens/css`. Arena and feed sound effects are served by the host at `/sfx/{id}.mp3`;
-without those files everything still works, silently.
+`@bingoo.ai/tokens/css`. Arena and feed sound effects come from whatever directory of
+`<id>.mp3` files you point `NEXT_PUBLIC_SFX_BASE_URL` at; no audio ships here, so leaving it
+unset means everything still works, silently.
 
 ## What it does not do
 

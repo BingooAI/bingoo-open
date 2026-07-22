@@ -19,6 +19,11 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "contract": "node --disable-warning=ExperimentalWarning --import ./scripts/ts-hook.mjs scripts/gen-contract.mjs",
-    "prompt": "node --disable-warning=ExperimentalWarning --import ./scripts/ts-hook.mjs scripts/gen-prompt.mjs"
+    "prompt": "node --disable-warning=ExperimentalWarning --import ./scripts/ts-hook.mjs scripts/gen-prompt.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.10"
   }
 }

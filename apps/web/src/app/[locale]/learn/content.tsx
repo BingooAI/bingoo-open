@@ -34,7 +34,13 @@ import { useEffect, useRef, useState } from 'react'
 /** Translator (next-intl) đã bound namespace `learn`. */
 type T = (key: string, values?: Record<string, string | number>) => string
 
-const DEMO_IMG = 'https://storage.bingoo.ai/media/global/global/cmrheen6y001jwo0cfsy1j746/original.png'
+/**
+ * Illustration for the sample lesson, drawn for this repository and served from `public/`.
+ * It used to be a media-library URL on Bingoo's own storage — which made a self-hosted copy
+ * depend on someone else's CDN for its demo content, and left the picture's provenance
+ * unanswerable to anyone reading the source.
+ */
+const DEMO_IMG = '/demo/place-value.svg'
 
 /* ───────── Wrappers cho block tương tác (giữ state cục bộ) ───────── */
 

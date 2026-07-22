@@ -17,7 +17,8 @@ import type {
   GateSpec,
   Background,
 } from '@bingoo.ai/explainer'
-import { resolveNarrations, contractOf, templateCatalog, SFX_NAMES, sfxUrl } from '@bingoo.ai/explainer'
+import { resolveNarrations, contractOf, templateCatalog, SFX_NAMES } from '@bingoo.ai/explainer'
+import { sfxUrl } from '../../sfx-base'
 import { EXPLAINER_API, apiPost } from './endpoints'
 import { useSnap, useStore } from '../store/ctx'
 import type { EditOp } from '../store/ops'
@@ -1521,7 +1522,9 @@ function MediaPicker({
 }
 
 /**
- * SfxPicker — browse and preview the built-in sound library (SFX_CATALOG).
+ * SfxPicker — browse and preview the built-in sound library. Preview is silent unless the
+ * deployment has configured a pack; the names are pickable either way, because the name is
+ * what the document stores and what the player later resolves.
  * Filter by name, click ▶ to hear, "Chọn" to attach. So a sound effect is a
  * choose-and-hear flow instead of typing a name and hoping it exists.
  */
@@ -1530,7 +1533,8 @@ function SfxPicker({
   onPick,
 }: {
   onClose: () => void
-  onPick: (name: string, url: string) => void
+  /** `url` is undefined when this deployment has no sound pack — the name is still worth storing. */
+  onPick: (name: string, url: string | undefined) => void
 }) {
   const [q, setQ] = useState('')
   const names = SFX_NAMES.filter((n) => n.includes(q.trim().toLowerCase()))
@@ -1570,7 +1574,7 @@ function SfxPicker({
                 ▶
               </button>
               <span className="cc-sfx-name">{n}</span>
-              <button className="cc-mini" onClick={() => onPick(n, sfxUrl(n)!)}>
+              <button className="cc-mini" onClick={() => onPick(n, sfxUrl(n))}>
                 Chọn
               </button>
             </div>
