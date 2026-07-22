@@ -10,6 +10,7 @@ out/
 .turbo/
 *.tsbuildinfo
 .next/
+.next-dev/
 next-env.d.ts
 *.orig.*
 
