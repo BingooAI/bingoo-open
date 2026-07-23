@@ -50,8 +50,25 @@ describe('encodeCase', () => {
     expect(pkg.CFItems).toHaveLength(2)
     const item = pkg.CFItems.find((i) => i.humanCodingScheme === '1Nc.01')
     expect(item?.fullStatement).toBe('Count to 10')
-    expect(item?.educationLevel).toBe('1')
+    // educationLevel is a CASE list (0..*): the value rides in an array, not a bare string.
+    expect(item?.educationLevel).toEqual(['1'])
     expect(item?.conceptKeywords).toEqual(['Number'])
+  })
+
+  it('carries document-level adoptionStatus and subject when supplied', () => {
+    const { package: pkg } = encodeCase({
+      framework: { ...framework, adoptionStatus: 'Adopted', subject: 'Mathematics' },
+      graph,
+      lastChangeDateTime: T,
+    })
+    expect(pkg.CFDocument.adoptionStatus).toBe('Adopted')
+    expect(pkg.CFDocument.subject).toBe('Mathematics')
+  })
+
+  it('omits adoptionStatus / subject when not supplied — no empty keys', () => {
+    const { package: pkg } = encodeCase({ framework, graph, lastChangeDateTime: T })
+    expect('adoptionStatus' in pkg.CFDocument).toBe(false)
+    expect('subject' in pkg.CFDocument).toBe(false)
   })
 
   it('leaves out edges that touch a concept, keeps objective↔objective edges', () => {

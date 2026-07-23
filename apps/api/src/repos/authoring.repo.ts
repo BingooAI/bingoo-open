@@ -497,6 +497,8 @@ export interface FrameworkExport {
     readonly language: string
     readonly version?: string
     readonly officialSourceURL?: string
+    readonly adoptionStatus?: 'Draft' | 'Adopted' | 'Deprecated'
+    readonly subject?: string
   }
   readonly graph: GraphData
 }
@@ -518,7 +520,7 @@ export async function loadFrameworkForExport(
   const versions = await db.frameworkVersion.findMany({
     where: { frameworkId: fw.id },
     orderBy: [{ major: 'desc' }, { minor: 'desc' }, { patch: 'desc' }],
-    select: { id: true, major: true, minor: true, patch: true },
+    select: { id: true, major: true, minor: true, patch: true, status: true },
   })
   const version = versionSemver
     ? versions.find((v) => `${v.major}.${v.minor}.${v.patch}` === versionSemver)
@@ -526,7 +528,7 @@ export async function loadFrameworkForExport(
 
   const objectives = await db.competency.findMany({
     where: { frameworkId: fw.id, kind: 'OBJECTIVE', ...(version ? { frameworkVersionId: version.id } : {}) },
-    select: { id: true, slug: true, title: true, code: true, stage: true, strand: true },
+    select: { id: true, slug: true, title: true, code: true, stage: true, strand: true, subject: true },
   })
   const objIds = objectives.map((o) => o.id)
   const slugById = new Map(objectives.map((o) => [o.id, o.slug]))
@@ -555,6 +557,18 @@ export async function loadFrameworkForExport(
     return from && to ? [{ from, to, relType: r.relType as RelType, mode: r.mode, weight: r.weight }] : []
   })
 
+  // adoptionStatus: bản đã PUBLISHED = "Adopted" (đã ban hành), DEPRECATED = "Deprecated", còn lại
+  // "Draft". Suy TỪ trạng thái publish sẵn có — CASE registry index/lọc theo trường này.
+  const adoptionStatus = version
+    ? version.status === 'PUBLISHED'
+      ? ('Adopted' as const)
+      : version.status === 'DEPRECATED'
+        ? ('Deprecated' as const)
+        : ('Draft' as const)
+    : undefined
+  // subject cấp document: lấy môn từ objective (một khung là một môn) — trường registry lọc theo.
+  const subject = objectives.find((o) => o.subject != null && o.subject !== '')?.subject ?? undefined
+
   const name = fw.name as Record<string, string>
   return {
     framework: {
@@ -563,6 +577,8 @@ export async function loadFrameworkForExport(
       language: fw.locale,
       ...(version ? { version: `${version.major}.${version.minor}.${version.patch}` } : {}),
       ...(fw.source != null ? { officialSourceURL: fw.source } : {}),
+      ...(adoptionStatus ? { adoptionStatus } : {}),
+      ...(subject ? { subject } : {}),
     },
     graph: { nodes, edges },
   }

@@ -2,7 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { GraphData, RelType, SkillNode, ValidationIssue, ValidationReport } from '@bingoo.ai/contracts'
-import type { CfAssociation, CfAssociationType, CfItem, CfLinkUri, CfPackage } from './schema.js'
+import type {
+  CfAdoptionStatus,
+  CfAssociation,
+  CfAssociationType,
+  CfItem,
+  CfLinkUri,
+  CfPackage,
+} from './schema.js'
 
 /**
  * A capability graph → CASE.
@@ -37,6 +44,10 @@ export interface EncodeFramework {
   readonly version?: string
   readonly publisher?: string
   readonly officialSourceURL?: string
+  /** Where the framework sits in its publication life — derived from the version's publish state. */
+  readonly adoptionStatus?: CfAdoptionStatus
+  /** The framework's subject, e.g. "Mathematics" — a registry indexes and filters on this. */
+  readonly subject?: string
 }
 
 export interface EncodeInput {
@@ -139,6 +150,8 @@ export function encodeCase(input: EncodeInput): EncodeResult {
       lastChangeDateTime,
       ...(framework.version !== undefined ? { version: framework.version } : {}),
       ...(framework.publisher !== undefined ? { publisher: framework.publisher } : {}),
+      ...(framework.subject !== undefined ? { subject: framework.subject } : {}),
+      ...(framework.adoptionStatus !== undefined ? { adoptionStatus: framework.adoptionStatus } : {}),
       ...(framework.officialSourceURL !== undefined
         ? { officialSourceURL: framework.officialSourceURL }
         : {}),
@@ -188,7 +201,9 @@ function toCfItem(
     language: lang,
     lastChangeDateTime,
     ...(n.code !== undefined ? { humanCodingScheme: n.code } : {}),
-    ...(n.stage !== undefined ? { educationLevel: n.stage } : {}),
+    // CASE educationLevel is a LIST (0..*); emit the array shape the spec specifies, not a bare
+    // string — so a strict consumer reads it natively instead of relying on exporter leniency.
+    ...(n.stage !== undefined ? { educationLevel: [n.stage] } : {}),
     ...(n.strand !== undefined ? { conceptKeywords: [n.strand] } : {}),
     // Carry every translation we hold so the Vietnamese does not vanish behind an English
     // `fullStatement` — but only when there is more than the one canonical statement to preserve.
