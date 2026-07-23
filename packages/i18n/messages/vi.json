@@ -1525,6 +1525,18 @@
     "wrongOrder": "Chưa đúng thứ tự.",
     "wrongRetry": "Chưa đúng, thử lại nhé."
   },
+  "switchFramework": {
+    "title": "Chuyển chương trình học",
+    "subtitle": "Học xong chương trình này và chuyển sang chương trình khác? Đây là phần mang theo được và phần cần học thêm.",
+    "studied": "Bạn đã học",
+    "movingTo": "Chuyển sang",
+    "ready": "Bạn đã sẵn sàng {percent}%",
+    "metOfTotal": "đạt {met}/{total}",
+    "have": "Bạn đã có",
+    "needN": "Cần học thêm ({n})",
+    "needNone": "Bạn đã sẵn sàng hết rồi — không còn gì phải bù! 🎉",
+    "failed": "Không tải được báo cáo chuyển khung."
+  },
   "subjects": {
     "math": "Toán",
     "vietnamese": "Tiếng Việt",

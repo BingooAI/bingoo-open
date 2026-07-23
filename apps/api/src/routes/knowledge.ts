@@ -15,6 +15,7 @@ import {
   recordLearnerEvidence,
 } from '../services/knowledge.service'
 import { gradeAndFold } from '../services/content-grade.service'
+import { getCrosswalk, getLearnerFrameworkReport } from '../repos/crosswalk.repo'
 import { loadExposure } from '../repos/content-item.repo'
 import { dueReview, reviewFlashcard } from '../services/srs.service'
 
@@ -66,6 +67,21 @@ const CertifyBody = z.object({
 })
 
 export const knowledge = new Hono<AppEnv>()
+  // CHUYỂN KHUNG cho NGƯỜI HỌC: học chương trình này, sang chương trình kia còn thiếu gì.
+  // Dữ liệu khung (không nhạy cảm) — chỉ cần đăng nhập, không cần quyền biên soạn. Đối chiếu qua
+  // KC nền dùng chung; nếu học viên đã có mastery thật thì `/framework/:slug/report` đọc theo họ.
+  .get('/crosswalk/:a/:b', requireAuth, async (c) => {
+    const r = await getCrosswalk(c.req.param('a'), c.req.param('b'))
+    if (!r) throw AppError.notFound('Không có một trong hai chương trình này.')
+    return ok(c, r)
+  })
+  .get('/framework/:slug/report', requireAuth, async (c) => {
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    const r = await getLearnerFrameworkReport(user.id, c.req.param('slug'))
+    if (!r) throw AppError.notFound('Không có chương trình này.')
+    return ok(c, r)
+  })
   .post('/evidence', requireAuth, validate('json', EvidenceBody), async (c) => {
     const user = c.get('user')
     if (!user) throw AppError.unauthorized()

@@ -1525,6 +1525,18 @@
     "wrongOrder": "Not in the right order.",
     "wrongRetry": "Not quite, try again."
   },
+  "switchFramework": {
+    "title": "Switching curriculum",
+    "subtitle": "Finished one curriculum and moving to another? Here's what carries over and what to pick up.",
+    "studied": "You studied",
+    "movingTo": "Moving to",
+    "ready": "You're {percent}% ready",
+    "metOfTotal": "{met} of {total} met",
+    "have": "You already have",
+    "needN": "Still to learn ({n})",
+    "needNone": "You're all set — nothing left to catch up on! 🎉",
+    "failed": "Couldn't load your switch report."
+  },
   "subjects": {
     "math": "Maths",
     "vietnamese": "Vietnamese",
