@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { ArrowLeftRight } from 'lucide-react'
 import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, Spinner } from '@bingoo.ai/ui-web'
-import { useCrosswalk, useFrameworks, type CrosswalkKcDto } from '@/lib/authoring-queries'
+import { useCrosswalk, useFrameworks, type CrosswalkDto } from '@/lib/authoring-queries'
 import { cn } from '@/lib/cn'
 
 /**
@@ -122,59 +122,42 @@ export function CrosswalkView() {
             </CardContent>
           </Card>
 
-          {/* BẢN ĐỒ ĐỐI CHIẾU — mind-map: khung ĐÍCH ở giữa, tỏa ra 3 nhánh (đã có · cần học · chỉ
-              khung nguồn). Đọc "cái nào trùng, cái nào cần" bằng nhánh + màu, không phải đám chỉ rối. */}
-          <CrosswalkVenn
-            sourceName={cw.data.a.name}
-            targetName={cw.data.b.name}
-            leftOnly={cw.data.kcs.filter((k) => k.side === 'a')}
-            shared={cw.data.kcs.filter((k) => k.side === 'both')}
-            rightOnly={cw.data.kcs.filter((k) => k.side === 'b')}
-          />
+          {/* BẢN ĐỒ ĐỐI CHIẾU — biểu đồ VENN: chương trình đang học ∩ chương trình mới; trùng ở giữa,
+              cần bổ sung ở rìa phải. Đọc bằng vùng — hình chuẩn cho "so hai tập". */}
+          <CrosswalkVenn data={cw.data} />
         </>
       )}
     </div>
   )
 }
 
-// Tông màu 3 vùng Venn: RIÊNG chương trình cũ (primary) · TRÙNG ở giữa (teal) · CẦN BỔ SUNG (coral).
+// Tông màu 3 vùng Venn: CHƯƠNG TRÌNH ĐANG HỌC (primary) · TRÙNG ở giữa (teal) · CẦN BỔ SUNG (coral).
 const VENN = {
-  left: { badge: 'primary' as const, text: 'text-primary', chip: 'border-primary/25 bg-primary-soft/50' },
+  left: { badge: 'primary' as const, text: 'text-primary', chip: 'border-primary/30', code: 'text-primary' },
   mid: {
     badge: 'teal' as const,
     text: 'text-accent-teal',
-    chip: 'border-accent-teal/30 bg-accent-teal-soft/60',
+    chip: 'border-accent-teal/35',
+    code: 'text-accent-teal',
   },
   right: {
     badge: 'coral' as const,
     text: 'text-accent-coral',
-    chip: 'border-accent-coral/25 bg-accent-coral-soft/50',
+    chip: 'border-accent-coral/30',
+    code: 'text-accent-coral',
   },
 }
 type VennTone = (typeof VENN)[keyof typeof VENN]
 
-function VennZone({
-  header,
-  items,
-  tone,
-  align,
-}: {
-  header: string
-  items: CrosswalkKcDto[]
-  tone: VennTone
-  align: 'start' | 'center' | 'end'
-}) {
+interface ZoneItem {
+  slug: string
+  title: string
+  code: string
+}
+
+function VennZone({ header, items, tone }: { header: string; items: ZoneItem[]; tone: VennTone }) {
   return (
-    <div
-      className={cn(
-        'flex flex-col gap-1.5',
-        align === 'center'
-          ? 'items-center text-center'
-          : align === 'end'
-            ? 'items-end text-right'
-            : 'items-start',
-      )}
-    >
+    <div className="flex flex-col items-center gap-1.5 text-center">
       <span
         className={cn(
           'inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide',
@@ -193,10 +176,11 @@ function VennZone({
           <span
             key={k.slug}
             className={cn(
-              'rounded-lg border px-2.5 py-1 text-[12px] leading-tight text-foreground',
+              'max-w-[12rem] rounded-lg border bg-surface/85 px-2 py-1 text-[11px] leading-tight text-foreground shadow-sm backdrop-blur-sm',
               tone.chip,
             )}
           >
+            {k.code ? <span className={cn('mr-1 font-mono font-semibold', tone.code)}>{k.code}</span> : null}
             {k.title}
           </span>
         ))
@@ -205,68 +189,66 @@ function VennZone({
   )
 }
 
-/** Biểu đồ VENN: chương trình cũ ∩ chương trình mới. Phần TRÙNG ở giữa, riêng mỗi bên ở hai rìa —
- *  hình chuẩn để đọc "cái gì chung, cái gì phải bổ sung". */
-function CrosswalkVenn({
-  sourceName,
-  targetName,
-  leftOnly,
-  shared,
-  rightOnly,
-}: {
-  sourceName: string
-  targetName: string
-  leftOnly: CrosswalkKcDto[]
-  shared: CrosswalkKcDto[]
-  rightOnly: CrosswalkKcDto[]
-}) {
+/** Biểu đồ VENN: chương trình đang học ∩ chương trình mới. Vòng tròn THẬT (viewBox 300×200 khớp tỉ lệ
+ *  khung 3:2 nên scale đều), chữ nằm TRONG vòng. Phần trùng ở giữa; mã LO in kèm (giữa = cặp nguồn↔đích). */
+function CrosswalkVenn({ data }: { data: CrosswalkDto }) {
   const t = useTranslations('admin.authoring')
+
+  const srcCode = new Map<string, string>()
+  for (const o of data.a.objectives) for (const k of o.requires) if (o.code) srcCode.set(k, o.code)
+  const tgtCode = new Map<string, string>()
+  for (const o of data.b.objectives) for (const k of o.requires) if (o.code) tgtCode.set(k, o.code)
+
+  const zone = (side: 'a' | 'b' | 'both', code: (slug: string) => string): ZoneItem[] =>
+    data.kcs.filter((k) => k.side === side).map((k) => ({ slug: k.slug, title: k.title, code: code(k.slug) }))
+  const left = zone('a', (s) => srcCode.get(s) ?? '')
+  const mid = zone('both', (s) => [srcCode.get(s), tgtCode.get(s)].filter(Boolean).join(' ↔ '))
+  const right = zone('b', (s) => tgtCode.get(s) ?? '')
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-base">{t('crosswalkGraphTitle')}</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* Tên hai chương trình gắn với hai vòng */}
-        <div className="mb-3 flex items-baseline justify-between gap-3 text-[12px] font-semibold">
-          <span className="min-w-0 truncate text-primary">◖ {sourceName}</span>
-          <span className="min-w-0 truncate text-right text-accent-coral">{targetName} ◗</span>
+        {/* Tên hai chương trình gắn hai vòng */}
+        <div className="mb-2 flex items-baseline justify-between gap-3 text-[12px] font-semibold">
+          <span className="min-w-0 truncate text-primary">◖ {data.a.name}</span>
+          <span className="min-w-0 truncate text-right text-accent-coral">{data.b.name} ◗</span>
         </div>
-        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-2xl border border-border/60 px-4 py-6 sm:px-8">
-          {/* HAI VÒNG chồng nhau (preserveAspectRatio=none → luôn phủ đúng khung; overlap ở GIỮA) */}
+        {/* Khung tỉ lệ 3:2 == viewBox 300×200 → circle TRÒN thật, canh đúng 3 cột. */}
+        <div className="relative mx-auto aspect-[3/2] w-full max-w-3xl">
           <svg
             aria-hidden
-            className="pointer-events-none absolute inset-0 h-full w-full"
-            viewBox="0 0 100 100"
+            viewBox="0 0 300 200"
             preserveAspectRatio="none"
+            className="absolute inset-0 h-full w-full"
           >
-            <ellipse
-              cx="34"
-              cy="50"
-              rx="33"
-              ry="47"
+            <circle
+              cx="102"
+              cy="100"
+              r="90"
               fill="var(--color-primary)"
-              fillOpacity="0.06"
+              fillOpacity="0.07"
               stroke="var(--color-primary)"
-              strokeOpacity="0.3"
-              strokeWidth="0.3"
+              strokeOpacity="0.35"
+              strokeWidth="1.2"
             />
-            <ellipse
-              cx="66"
-              cy="50"
-              rx="33"
-              ry="47"
+            <circle
+              cx="198"
+              cy="100"
+              r="90"
               fill="var(--color-accent-coral)"
-              fillOpacity="0.06"
+              fillOpacity="0.07"
               stroke="var(--color-accent-coral)"
-              strokeOpacity="0.3"
-              strokeWidth="0.3"
+              strokeOpacity="0.35"
+              strokeWidth="1.2"
             />
           </svg>
-          <div className="relative grid grid-cols-3 items-start gap-2">
-            <VennZone header={t('crosswalkVennLeft')} items={leftOnly} tone={VENN.left} align="start" />
-            <VennZone header={t('crosswalkVennMid')} items={shared} tone={VENN.mid} align="center" />
-            <VennZone header={t('crosswalkVennRight')} items={rightOnly} tone={VENN.right} align="end" />
+          <div className="absolute inset-0 grid grid-cols-3 items-center gap-1 px-3 py-4">
+            <VennZone header={t('crosswalkVennLeft')} items={left} tone={VENN.left} />
+            <VennZone header={t('crosswalkVennMid')} items={mid} tone={VENN.mid} />
+            <VennZone header={t('crosswalkVennRight')} items={right} tone={VENN.right} />
           </div>
         </div>
       </CardContent>
