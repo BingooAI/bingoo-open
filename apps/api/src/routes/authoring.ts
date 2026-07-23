@@ -56,6 +56,7 @@ import { courseShellFromBook, courseShellFromPrompt } from '../services/course-s
 import { alignSource } from '../services/alignment.service'
 import { applyAlignDecisions, listAlignHistory } from '../services/alignment-apply.service'
 import { getCoverage } from '../repos/coverage.repo'
+import { getCrosswalk } from '../repos/crosswalk.repo'
 import { deleteCourse, getCourse, listCourses, setCourseStatus } from '../repos/course.repo'
 import {
   createFrameworkVersion,
@@ -660,6 +661,17 @@ export const authoring = new Hono<AppEnv>()
     if (!user) throw AppError.unauthorized()
     const r = await getCoverage(c.req.param('framework'), c.req.param('course'))
     if (!r) throw AppError.notFound('Không có framework hoặc khoá học này.')
+    return ok(c, r)
+  })
+
+  // A6b) CROSSWALK hai khung: KC TRÙNG + THIẾU gì khi chuyển mỗi chiều — join qua KC nền, không
+  // qua cạnh objective↔objective. Người dạy đối chiếu Cambridge ↔ MOET để thấy học bên này chuyển
+  // bên kia còn hụt gì.
+  .get('/crosswalk/:a/:b', authorGuard, async (c) => {
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    const r = await getCrosswalk(c.req.param('a'), c.req.param('b'))
+    if (!r) throw AppError.notFound('Không có một trong hai framework này.')
     return ok(c, r)
   })
 
