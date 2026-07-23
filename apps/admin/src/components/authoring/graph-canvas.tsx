@@ -42,9 +42,6 @@ export interface GNode {
   /** MẠCH kiến thức (strand) — để gom nhóm và THU GỌN. Một khung thật có ~300 mục tiêu; không thu
    *  gọn được thì đồ thị chỉ là một đám chỉ rối, nhìn cho vui chứ không duyệt được. */
   group?: string
-  /** Màu TƯỜNG MINH do caller quyết (vd crosswalk: KC trùng vs chỉ-một-khung). Thắng màu theo kind,
-   *  thua status (cảnh báo độ phủ vẫn nổi lên trước). Generic — không gắn nghĩa nào cụ thể. */
-  tint?: { fill: string; stroke: string }
 }
 
 export interface GEdge {
@@ -68,9 +65,6 @@ function nodeColor(n: GNode): { fill: string; stroke: string } {
   if (n.status === 'full') return { fill: 'var(--color-success-soft)', stroke: 'var(--color-success)' }
   if (n.status === 'untethered')
     return { fill: 'var(--color-surface-muted)', stroke: 'var(--color-foreground-subtle)' }
-
-  // Màu tường minh của caller (crosswalk) — sau status (cảnh báo thắng), trước màu theo kind.
-  if (n.tint) return n.tint
 
   switch (n.kind) {
     case 'OBJECTIVE':
