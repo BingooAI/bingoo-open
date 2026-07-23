@@ -116,7 +116,9 @@ export function AdminShell({
       <div className="flex min-w-0 flex-col">
         <Topbar onMenu={() => setDrawer(true)} user={user} />
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
-          <div className="mx-auto w-full max-w-7xl">{children}</div>
+          {/* Khu công cụ staff — nhiều bảng, đồ thị, đối chiếu — nên tận dụng bề rộng màn lớn.
+              Cap ở 96rem (1536px) thay vì 7xl (1280px): rộng hơn nhưng vẫn giữ độ dài dòng đọc được. */}
+          <div className="mx-auto w-full max-w-[96rem]">{children}</div>
         </main>
       </div>
     </div>
