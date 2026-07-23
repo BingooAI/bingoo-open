@@ -67,6 +67,7 @@ import {
   publishFrameworkVersion,
 } from '../repos/authoring.repo'
 import { CaseDecodeError, decodeCase, encodeCase, type EncodeInput } from '@bingoo.ai/codecs/case'
+import { writeAudit } from '../repos/audit.repo'
 import type { LessonInstructionPlan } from '@bingoo.ai/plans'
 import type { EngineSnapshot, LearnerPersona, TeacherPersona } from '@bingoo.ai/personalization'
 
@@ -268,8 +269,17 @@ export const authoring = new Hono<AppEnv>()
       const user = c.get('user')
       if (!user) throw AppError.unauthorized()
       const { level, refSlug } = c.req.valid('json')
-      const r = await approvePlan(c.req.param('course'), level, refSlug, user.id)
+      const course = c.req.param('course')
+      const r = await approvePlan(course, level, refSlug, user.id)
       if (!r) throw AppError.notFound('Chưa có bản nháp kế hoạch để duyệt.')
+      // DẤU VẾT (R5): ai DUYỆT giáo án nào, lúc nào, bản mấy — thứ trẻ sẽ học đi qua đây.
+      await writeAudit({
+        action: 'authoring.plan.approve',
+        actorUserId: user.id,
+        targetType: 'authoring_plan',
+        targetId: `${course}/${level}/${refSlug}`,
+        metadata: { course, level, refSlug, version: r.version },
+      })
       return ok(c, r)
     },
   )
@@ -298,7 +308,16 @@ export const authoring = new Hono<AppEnv>()
     async (c) => {
       const user = c.get('user')
       if (!user) throw AppError.unauthorized()
-      return ok(c, { approved: await approveItems(c.req.valid('json').itemKeys) })
+      const itemKeys = c.req.valid('json').itemKeys
+      const approved = await approveItems(itemKeys)
+      // DẤU VẾT (R5): ai DUYỆT nội dung tới trẻ — item nào, bao nhiêu.
+      await writeAudit({
+        action: 'authoring.content.approve',
+        actorUserId: user.id,
+        targetType: 'content_item',
+        metadata: { itemKeys, count: approved },
+      })
+      return ok(c, { approved })
     },
   )
   // ── SINH TỪNG ITEM MỘT (per-item, KHÔNG batch): bấm → sinh 1 → soát → duyệt/sinh lại. Đa ngôn ngữ.
@@ -683,8 +702,17 @@ export const authoring = new Hono<AppEnv>()
   .post('/framework/version/:id/publish', authorGuard, async (c) => {
     const user = c.get('user')
     if (!user) throw AppError.unauthorized()
-    const r = await publishFrameworkVersion(c.req.param('id'))
+    const id = c.req.param('id')
+    const r = await publishFrameworkVersion(id)
     if (!r) throw AppError.notFound('Không có bản phát hành này.')
+    // DẤU VẾT: ai PHÁT HÀNH bản khung nào — bản này bất biến, content/state sẽ ghim vào nó.
+    await writeAudit({
+      action: 'authoring.framework.publish',
+      actorUserId: user.id,
+      targetType: 'framework_version',
+      targetId: id,
+      metadata: { published: r.published, deprecated: r.deprecated },
+    })
     return ok(c, r)
   })
   // XUẤT khung ra CASE 1EdTech (một bản version — mặc định mới nhất). Trả gói + report (thứ bị bỏ/mặc định).
@@ -826,12 +854,22 @@ export const authoring = new Hono<AppEnv>()
     const user = c.get('user')
     if (!user) throw AppError.unauthorized()
     const b = c.req.valid('json')
-    return ok(
-      c,
-      await applyAuthoredFramework({
-        graph: { nodes: b.nodes, edges: b.edges } as GraphData,
-        ...(b.framework ? { framework: b.framework as FrameworkMeta } : {}),
-        ...(b.objectives ? { objectives: b.objectives as CompiledObjective[] } : {}),
-      }),
-    )
+    const res = await applyAuthoredFramework({
+      graph: { nodes: b.nodes, edges: b.edges } as GraphData,
+      ...(b.framework ? { framework: b.framework as FrameworkMeta } : {}),
+      ...(b.objectives ? { objectives: b.objectives as CompiledObjective[] } : {}),
+    })
+    // DẤU VẾT: ai GHI đồ thị năng lực (xương sống bằng chứng) — bao nhiêu node/cạnh, khung nào.
+    await writeAudit({
+      action: 'authoring.framework.apply',
+      actorUserId: user.id,
+      targetType: 'framework',
+      ...(b.framework ? { targetId: b.framework.slug } : {}),
+      metadata: {
+        nodes: res.nodes,
+        edges: res.edges,
+        ...(b.framework ? { framework: b.framework.slug } : {}),
+      },
+    })
+    return ok(c, res)
   })
