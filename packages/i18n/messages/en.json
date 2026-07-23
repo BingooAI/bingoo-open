@@ -1552,7 +1552,9 @@
     "failed": "Couldn't load your switch report.",
     "vennOld": "Current programme",
     "vennHave": "You already have",
-    "vennNeed": "To learn"
+    "vennNeed": "To learn",
+    "viewVenn": "Diagram",
+    "viewList": "List"
   },
   "subjects": {
     "math": "Maths",

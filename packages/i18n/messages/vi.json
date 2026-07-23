@@ -1552,7 +1552,9 @@
     "failed": "Không tải được báo cáo chuyển khung.",
     "vennOld": "Chương trình đang học",
     "vennHave": "Bạn đã có",
-    "vennNeed": "Cần học thêm"
+    "vennNeed": "Cần học thêm",
+    "viewVenn": "Biểu đồ",
+    "viewList": "Danh sách"
   },
   "subjects": {
     "math": "Toán",

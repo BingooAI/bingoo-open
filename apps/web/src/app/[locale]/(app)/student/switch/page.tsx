@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight, CheckCircle2, LayoutGrid, List, Sparkles } from 'lucide-react'
 import { Badge, Card, CardContent, CardHeader, CardTitle, Progress, Spinner } from '@bingoo.ai/ui-web'
 import { cn } from '@/lib/cn'
 
@@ -133,6 +133,7 @@ export default function SwitchFrameworkPage() {
   const t = useTranslations('switchFramework')
   const [data, setData] = useState<Crosswalk | null>(null)
   const [state, setState] = useState<'loading' | 'error' | 'ready'>('loading')
+  const [view, setView] = useState<'venn' | 'list'>('venn')
 
   useEffect(() => {
     let alive = true
@@ -165,6 +166,7 @@ export default function SwitchFrameworkPage() {
   const { aToB } = data
   const kcTitle = new Map(data.kcs.map((k) => [k.slug, k.title]))
   const missing = aToB.objectives.filter((o) => o.status !== 'achieved')
+  const have = aToB.objectives.filter((o) => o.status === 'achieved')
 
   return (
     <div className="mx-auto max-w-3xl space-y-5 py-4">
@@ -199,38 +201,83 @@ export default function SwitchFrameworkPage() {
         </CardContent>
       </Card>
 
-      {/* Bản đồ Venn: chương trình đang học ∩ chương trình mới — thấy ngay phần chung & phần cần học */}
-      <VennMini data={data} />
+      {/* Chọn cách xem: Biểu đồ Venn (trực quan) hay Danh sách (đọc kỹ từng mục) */}
+      <div className="flex items-center gap-1 rounded-lg border border-border bg-surface p-1 text-[13px] sm:w-fit">
+        {(['venn', 'list'] as const).map((v) => (
+          <button
+            key={v}
+            type="button"
+            onClick={() => setView(v)}
+            className={cn(
+              'inline-flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 transition-colors sm:flex-none',
+              view === v
+                ? 'bg-primary-soft font-medium text-primary-soft-foreground'
+                : 'text-foreground-muted hover:bg-surface-muted',
+            )}
+          >
+            {v === 'venn' ? <LayoutGrid className="size-3.5" /> : <List className="size-3.5" />}
+            {t(v === 'venn' ? 'viewVenn' : 'viewList')}
+          </button>
+        ))}
+      </div>
 
-      {/* Cần học thêm — danh sách nhẹ, mỗi mục nói rõ khái niệm còn thiếu */}
-      <Card className={cn(missing.length ? 'border-warning/30' : 'border-success/30')}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base text-foreground">
-            <Sparkles className="size-4 text-warning" />
-            {missing.length ? t('needN', { n: missing.length }) : t('needNone')}
-          </CardTitle>
-        </CardHeader>
-        {missing.length > 0 ? (
-          <CardContent>
-            <ul className="space-y-2.5">
-              {missing.map((o) => (
-                <li key={o.slug} className="rounded-lg border border-border bg-surface px-3 py-2">
-                  <div className="text-[14px] font-medium text-foreground">{o.title}</div>
-                  {o.missing.length > 0 ? (
-                    <div className="mt-1 flex flex-wrap gap-1">
-                      {o.missing.map((k) => (
-                        <Badge key={k} color="warning" tone="soft" size="sm">
-                          {kcTitle.get(k) ?? k}
-                        </Badge>
-                      ))}
-                    </div>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        ) : null}
-      </Card>
+      {view === 'venn' ? (
+        <VennMini data={data} />
+      ) : (
+        <>
+          {/* Bạn đã có */}
+          {have.length > 0 ? (
+            <Card className="border-success/25">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base text-foreground">
+                  <CheckCircle2 className="size-4 text-success" />
+                  {t('have')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-1.5">
+                  {have.map((o) => (
+                    <li key={o.slug} className="flex items-baseline gap-2 text-[14px]">
+                      <span className="mt-[6px] size-1.5 shrink-0 rounded-full bg-success" />
+                      <span className="text-foreground">{o.title}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {/* Cần học thêm — mỗi mục nói rõ khái niệm còn thiếu */}
+          <Card className={cn(missing.length ? 'border-warning/30' : 'border-success/30')}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base text-foreground">
+                <Sparkles className="size-4 text-warning" />
+                {missing.length ? t('needN', { n: missing.length }) : t('needNone')}
+              </CardTitle>
+            </CardHeader>
+            {missing.length > 0 ? (
+              <CardContent>
+                <ul className="space-y-2.5">
+                  {missing.map((o) => (
+                    <li key={o.slug} className="rounded-lg border border-border bg-surface px-3 py-2">
+                      <div className="text-[14px] font-medium text-foreground">{o.title}</div>
+                      {o.missing.length > 0 ? (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {o.missing.map((k) => (
+                            <Badge key={k} color="warning" tone="soft" size="sm">
+                              {kcTitle.get(k) ?? k}
+                            </Badge>
+                          ))}
+                        </div>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            ) : null}
+          </Card>
+        </>
+      )}
     </div>
   )
 }
