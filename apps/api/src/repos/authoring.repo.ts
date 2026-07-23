@@ -551,11 +551,53 @@ export async function loadFrameworkForExport(
     ...(o.stage != null ? { stage: o.stage } : {}),
     ...(o.strand != null ? { strand: o.strand } : {}),
   }))
-  const edges = rels.flatMap((r) => {
+
+  type Edge = { from: string; to: string; relType: RelType; mode: 'REQUIRED' | 'RECOMMENDED'; weight: number }
+  const edges: Edge[] = rels.flatMap((r) => {
     const from = slugById.get(r.fromId)
     const to = slugById.get(r.toId)
-    return from && to ? [{ from, to, relType: r.relType as RelType, mode: r.mode, weight: r.weight }] : []
+    return from && to
+      ? [{ from, to, relType: r.relType as RelType, mode: r.mode as Edge['mode'], weight: r.weight }]
+      : []
   })
+
+  // LỘ TRÌNH cấp objective SUY TỪ tiên quyết KC: A đo KC-X, B đo KC-Y, X→Y ⟹ A precedes B.
+  // Tiên quyết sống ở tầng CONCEPT (KC), nhưng CASE chỉ có tầng objective — chiếu thứ tự học lên
+  // objective để CFAssociations không rỗng (khung phẳng không có trình tự thì import về là một đống rời).
+  const seen = new Set(edges.map((e) => `${e.from}|${e.to}`))
+  if (objIds.length > 0) {
+    const mapsTo = await db.capabilityRelation.findMany({
+      where: { fromId: { in: objIds }, relType: 'MAPS_TO' },
+      select: { fromId: true, toId: true },
+    })
+    const objsByKc = new Map<string, string[]>() // kcId → slug objective đo nó
+    for (const m of mapsTo) {
+      const objSlug = slugById.get(m.fromId)
+      if (objSlug) objsByKc.set(m.toId, [...(objsByKc.get(m.toId) ?? []), objSlug])
+    }
+    const kcIds = [...objsByKc.keys()]
+    const kcEdges = kcIds.length
+      ? await db.capabilityRelation.findMany({
+          where: {
+            fromId: { in: kcIds },
+            toId: { in: kcIds },
+            relType: { in: ['PREREQUISITE', 'ENABLES', 'COMPOSES'] },
+          },
+          select: { fromId: true, toId: true },
+        })
+      : []
+    for (const e of kcEdges) {
+      for (const a of objsByKc.get(e.fromId) ?? []) {
+        for (const b of objsByKc.get(e.toId) ?? []) {
+          const key = `${a}|${b}`
+          if (a !== b && !seen.has(key)) {
+            seen.add(key)
+            edges.push({ from: a, to: b, relType: 'PREREQUISITE' as RelType, mode: 'RECOMMENDED', weight: 1 })
+          }
+        }
+      }
+    }
+  }
 
   // adoptionStatus: bản đã PUBLISHED = "Adopted" (đã ban hành), DEPRECATED = "Deprecated", còn lại
   // "Draft". Suy TỪ trạng thái publish sẵn có — CASE registry index/lọc theo trường này.
