@@ -5,7 +5,7 @@
 import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Badge, Button, useToast } from '@bingoo.ai/ui-web'
-import { Check, ChevronDown, Lock, RefreshCw } from 'lucide-react'
+import { Check, ChevronDown, Lock, RefreshCw, Sparkles } from 'lucide-react'
 import {
   useApprovePlan,
   useCancelPlanJob,
@@ -238,19 +238,6 @@ function PlanRow({
 
       {open && plan ? (
         <div className="mt-3 space-y-4 border-t border-border pt-3">
-          {(plan.aiModel ?? plan.promptId) ? (
-            // TRUY VẾT (XAI): bản này do model nào + prompt nào (id@hash template hiệu lực) sinh ra.
-            <div className="text-[11px] text-foreground-subtle">
-              {t('planProvenance')} <span className="font-medium">{plan.aiModel ?? '—'}</span>
-              {plan.promptId ? (
-                <span className="font-mono">
-                  {' · '}
-                  {plan.promptId}
-                  {plan.promptHash ? `@${plan.promptHash}` : ''}
-                </span>
-              ) : null}
-            </div>
-          ) : null}
           {renderDoc(plan.doc)}
           <div className="border-t border-border/60 pt-3">
             <div className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-foreground-subtle">
@@ -258,6 +245,19 @@ function PlanRow({
             </div>
             <CompetencyBreakdown courseSlug={courseSlug} level={level} refSlug={refSlug} />
           </div>
+          {/* TRUY VẾT (XAI) — chân trang, mờ. Giáo viên đọc "sinh bởi model nào"; mã prompt+hash
+              để trong tooltip cho ai cần soát, không phô mã vô nghĩa ra trước mặt. */}
+          {(plan.aiModel ?? plan.promptId) ? (
+            <p
+              className="flex items-center gap-1.5 border-t border-border/40 pt-2 text-[11px] text-foreground-subtle"
+              title={
+                plan.promptId ? `${plan.promptId}${plan.promptHash ? `@${plan.promptHash}` : ''}` : undefined
+              }
+            >
+              <Sparkles className="size-3 shrink-0 opacity-70" />
+              {t('planProvenance')} {plan.aiModel ?? '—'}
+            </p>
+          ) : null}
         </div>
       ) : null}
     </div>
@@ -374,18 +374,32 @@ function UnitDoc({ doc }: { doc: Record<string, unknown> }) {
       </Section>
       {lessons.length ? (
         <Section label={`${t('planLessonSequence')} (${lessons.length})`}>
-          <ol className="space-y-1.5">
-            {lessons.map((l, i) => (
-              <li key={i} className="flex items-baseline gap-2 text-[13px]">
-                <span className="grid size-5 shrink-0 place-items-center rounded-full bg-surface-muted text-[10px] font-bold text-foreground-subtle">
-                  {i + 1}
-                </span>
-                <span>
-                  <b className="text-foreground">{line(l.title)}</b>
-                  {line(l.role) ? <span className="text-foreground-muted"> — {line(l.role)}</span> : null}
-                </span>
-              </li>
-            ))}
+          {/* MẠCH BÀI như một dòng chảy: nút số nối bằng đường dọc — thấy được bài xây lên bài,
+              thay vì một danh sách phẳng đọc không ra tiến trình. */}
+          <ol>
+            {lessons.map((l, i) => {
+              const last = i === lessons.length - 1
+              return (
+                <li key={i} className="flex gap-3">
+                  <div className="flex flex-col items-center">
+                    <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
+                      {i + 1}
+                    </span>
+                    {!last ? <span className="w-px flex-1 bg-border" /> : null}
+                  </div>
+                  <div className={cn('flex-1', !last && 'pb-3')}>
+                    <div className="rounded-lg border border-border bg-surface px-3 py-2">
+                      <b className="text-[13px] text-foreground">{line(l.title)}</b>
+                      {line(l.role) ? (
+                        <p className="mt-0.5 text-[12px] leading-snug text-foreground-muted">
+                          {line(l.role)}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                </li>
+              )
+            })}
           </ol>
         </Section>
       ) : null}
