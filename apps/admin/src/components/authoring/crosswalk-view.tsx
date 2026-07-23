@@ -70,7 +70,7 @@ export function CrosswalkView() {
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="max-w-[16rem] rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground"
+      className="w-full rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground"
     >
       {opts.map((o) => (
         <option key={o.slug} value={o.slug}>
@@ -85,7 +85,7 @@ export function CrosswalkView() {
       {/* Chọn chiều: học theo → chuyển sang */}
       <Card>
         <CardContent className="flex flex-wrap items-end gap-x-3 gap-y-2 pt-6">
-          <label className="flex flex-col gap-1">
+          <label className="flex min-w-[15rem] flex-1 flex-col gap-1">
             <span className="text-[11px] font-semibold uppercase tracking-wide text-foreground-subtle">
               {t('crosswalkFrom')}
             </span>
@@ -100,7 +100,7 @@ export function CrosswalkView() {
           >
             <ArrowLeftRight className="size-4" />
           </button>
-          <label className="flex flex-col gap-1">
+          <label className="flex min-w-[15rem] flex-1 flex-col gap-1">
             <span className="text-[11px] font-semibold uppercase tracking-wide text-foreground-subtle">
               {t('crosswalkTo')}
             </span>
