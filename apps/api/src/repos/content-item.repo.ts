@@ -39,6 +39,17 @@ export async function saveItems(
   items: readonly AuthoredItem[],
   status: ItemStatus = 'NEEDS_REVIEW',
 ): Promise<number> {
+  // Sửa NỘI DUNG (regenerate / gắn media) một item ĐÃ DUYỆT/PHÁT HÀNH → HẠ về NEEDS_REVIEW: nội dung
+  // MỚI tới trẻ phải qua người duyệt LẠI (R5). Trước đây update giữ nguyên status → nội dung/ảnh mới
+  // thừa hưởng phê duyệt cũ mà không ai xem lại. Nạp trạng thái cũ một lượt để biết cái nào cần hạ.
+  const prior = new Map(
+    (
+      await db.contentItem.findMany({
+        where: { itemKey: { in: items.map((i) => i.itemKey) } },
+        select: { itemKey: true, status: true },
+      })
+    ).map((r) => [r.itemKey, r.status]),
+  )
   for (const it of items) {
     const payload = it.payload as Prisma.InputJsonValue
     const base = {
@@ -50,10 +61,12 @@ export async function saveItems(
       ...(it.lessonSlug !== undefined ? { lessonSlug: it.lessonSlug } : {}),
       payload,
     }
+    const was = prior.get(it.itemKey)
+    const demote = was === 'APPROVED' || was === 'PUBLISHED'
     await db.contentItem.upsert({
       where: { itemKey: it.itemKey },
       create: { itemKey: it.itemKey, status, ...base },
-      update: base, // giữ nguyên status khi cập nhật nội dung
+      update: { ...base, ...(demote ? { status: 'NEEDS_REVIEW' } : {}) },
     })
   }
   return items.length

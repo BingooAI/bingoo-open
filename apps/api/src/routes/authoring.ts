@@ -485,7 +485,8 @@ export const authoring = new Hono<AppEnv>()
     },
   )
   // MEDIA per-item: ô media CẦN gắn (ảnh minh hoạ + đọc-to prompt + ô cấu trúc). Ảnh = chọn thư viện /
-  // sinh mới; audio = sinh (sau khi ưng text). Gắn qua applyMediaAsset (giữ nguyên trạng thái item).
+  // sinh mới; audio = sinh (sau khi ưng text). Gắn qua applyMediaAsset; nếu item đã duyệt, đổi media
+  // HẠ nó về NEEDS_REVIEW (R5) — media mới tới trẻ phải xem lại.
   .get('/content/item/media-targets', authorGuard, async (c) => {
     const user = c.get('user')
     if (!user) throw AppError.unauthorized()
@@ -522,7 +523,7 @@ export const authoring = new Hono<AppEnv>()
         value = s?.renditions.find((r) => r.url)?.url ?? assetId
       }
       const payload = applyMediaAsset(item.payload, path, value)
-      await saveItems([{ ...item, payload }]) // update → giữ nguyên status
+      await saveItems([{ ...item, payload }]) // item ĐÃ DUYỆT + đổi media → saveItems HẠ về NEEDS_REVIEW (R5)
       return ok(c, { ...item, payload })
     },
   )
