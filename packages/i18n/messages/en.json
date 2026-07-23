@@ -893,6 +893,8 @@
       "crosswalkNoOverlap": "No shared concepts yet.",
       "crosswalkAchievedTitle": "Already have from {name}",
       "crosswalkMissing": "Missing",
+      "crosswalkGraphTitle": "Overlap map",
+      "crosswalkLegShared": "Shared (both)",
       "crosswalkNav": "Compare frameworks",
       "published": "Published",
       "graphTitle": "Competency graph",

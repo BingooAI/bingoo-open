@@ -7,7 +7,15 @@ import { useTranslations } from 'next-intl'
 import { ArrowRight, ArrowLeftRight, CheckCircle2, CircleDashed, CircleAlert } from 'lucide-react'
 import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, Spinner } from '@bingoo.ai/ui-web'
 import { useCrosswalk, useFrameworks, type GapStatus, type ObjectiveGapDto } from '@/lib/authoring-queries'
+import { GraphCanvas, type GEdge, type GNode } from './graph-canvas'
 import { cn } from '@/lib/cn'
+
+// Màu tường minh cho đồ thị đối chiếu: KC TRÙNG (teal) · chỉ khung nguồn (primary) · chỉ khung đích (coral).
+const TINT = {
+  shared: { fill: 'var(--color-accent-teal-soft)', stroke: 'var(--color-accent-teal)' },
+  source: { fill: 'var(--color-primary-soft)', stroke: 'var(--color-primary)' },
+  target: { fill: 'var(--color-accent-coral-soft)', stroke: 'var(--color-accent-coral)' },
+}
 
 /**
  * ĐỐI CHIẾU HAI KHUNG cho NGƯỜI DẠY — "học theo khung này, chuyển sang khung kia còn thiếu gì".
@@ -48,6 +56,41 @@ export function CrosswalkView() {
     const m = new Map<string, string>()
     for (const k of cw.data?.kcs ?? []) m.set(k.slug, k.title)
     return m
+  }, [cw.data])
+
+  // ĐỒ THỊ đối chiếu: 3 băng — objective NGUỒN (trên) · KC nền (giữa, tô theo side) · objective ĐÍCH
+  // (dưới). KC TRÙNG (teal) được objective CẢ HAI khung nối tới → bắc cầu, nhìn ra ngay cái nào chung.
+  const graph = useMemo((): { nodes: GNode[]; edges: GEdge[] } => {
+    const d = cw.data
+    if (!d) return { nodes: [], edges: [] }
+    const nodes: GNode[] = [
+      ...d.a.objectives.map((o): GNode => ({
+        id: o.slug,
+        label: o.title,
+        kind: 'OBJECTIVE',
+        band: 0,
+        tint: TINT.source,
+        ...(o.code ? { meta: o.code } : {}),
+      })),
+      ...d.kcs.map((k): GNode => ({
+        id: k.slug,
+        label: k.title,
+        kind: 'KC',
+        band: 1,
+        tint: k.side === 'both' ? TINT.shared : k.side === 'a' ? TINT.source : TINT.target,
+        ...(k.strand ? { group: k.strand } : {}),
+      })),
+      ...d.b.objectives.map((o): GNode => ({
+        id: o.slug,
+        label: o.title,
+        kind: 'OBJECTIVE',
+        band: 2,
+        tint: TINT.target,
+        ...(o.code ? { meta: o.code } : {}),
+      })),
+    ]
+    const edges: GEdge[] = d.edges.map((e) => ({ from: e.from, to: e.to, relType: e.relType }))
+    return { nodes, edges }
   }, [cw.data])
 
   const swap = () => {
@@ -136,6 +179,25 @@ export function CrosswalkView() {
                   {t('crosswalkSharedN', { n: shared.length })}
                 </Badge>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* ĐỒ THỊ đối chiếu — nhìn ra cái nào TRÙNG (teal, nối cả hai khung) cái nào chỉ một bên */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">{t('crosswalkGraphTitle')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <GraphCanvas
+                nodes={graph.nodes}
+                edges={graph.edges}
+                height={480}
+                legend={[
+                  { color: 'var(--color-accent-teal)', label: t('crosswalkLegShared') },
+                  { color: 'var(--color-primary)', label: cw.data.a.name },
+                  { color: 'var(--color-accent-coral)', label: cw.data.b.name },
+                ]}
+              />
             </CardContent>
           </Card>
 

@@ -893,6 +893,8 @@
       "crosswalkNoOverlap": "Chưa có KC nền dùng chung.",
       "crosswalkAchievedTitle": "Đã có sẵn từ {name}",
       "crosswalkMissing": "Thiếu",
+      "crosswalkGraphTitle": "Bản đồ đối chiếu",
+      "crosswalkLegShared": "Trùng (cả hai)",
       "crosswalkNav": "Đối chiếu khung",
       "published": "Đã phát hành",
       "graphTitle": "Đồ thị năng lực",
