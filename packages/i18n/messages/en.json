@@ -395,6 +395,7 @@
       "home": "Home",
       "learn": "Learn",
       "practice": "Practice",
+      "switch": "Switch",
       "achievements": "Achievements",
       "schedule": "Schedule",
       "reports": "Reports",
@@ -1548,7 +1549,10 @@
     "have": "You already have",
     "needN": "Still to learn ({n})",
     "needNone": "You're all set — nothing left to catch up on! 🎉",
-    "failed": "Couldn't load your switch report."
+    "failed": "Couldn't load your switch report.",
+    "vennOld": "Current programme",
+    "vennHave": "You already have",
+    "vennNeed": "To learn"
   },
   "subjects": {
     "math": "Maths",

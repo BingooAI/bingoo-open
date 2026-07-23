@@ -395,6 +395,7 @@
       "home": "Trang chủ",
       "learn": "Học bài",
       "practice": "Luyện tập",
+      "switch": "Chuyển chương trình",
       "achievements": "Thành tích",
       "schedule": "Lịch học",
       "reports": "Báo cáo",
@@ -1548,7 +1549,10 @@
     "have": "Bạn đã có",
     "needN": "Cần học thêm ({n})",
     "needNone": "Bạn đã sẵn sàng hết rồi — không còn gì phải bù! 🎉",
-    "failed": "Không tải được báo cáo chuyển khung."
+    "failed": "Không tải được báo cáo chuyển khung.",
+    "vennOld": "Chương trình đang học",
+    "vennHave": "Bạn đã có",
+    "vennNeed": "Cần học thêm"
   },
   "subjects": {
     "math": "Toán",

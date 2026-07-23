@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ArrowRight, CheckCircle2, Sparkles } from 'lucide-react'
+import { ArrowRight, Sparkles } from 'lucide-react'
 import { Badge, Card, CardContent, CardHeader, CardTitle, Progress, Spinner } from '@bingoo.ai/ui-web'
 import { cn } from '@/lib/cn'
 
@@ -29,15 +29,104 @@ interface ObjGap {
   missing: string[]
   status: Status
 }
+interface Kc {
+  slug: string
+  title: string
+  side: 'a' | 'b' | 'both'
+}
 interface Crosswalk {
   a: { name: string }
   b: { name: string }
-  kcs: { slug: string; title: string }[]
+  kcs: Kc[]
   sharedKcs: string[]
   aToB: {
     objectives: ObjGap[]
     summary: { achieved: number; none: number; partial: number; total: number; percent: number }
   }
+}
+
+// Venn thu gọn cho học sinh: hai vòng tròn thật (viewBox 350×250 khớp aspect-[7/5]), chữ trong vòng.
+function VennMini({ data }: { data: Crosswalk }) {
+  const t = useTranslations('switchFramework')
+  const zones = [
+    {
+      header: t('vennOld'),
+      items: data.kcs.filter((k) => k.side === 'a'),
+      tone: 'text-primary',
+      chip: 'border-primary/30',
+    },
+    {
+      header: t('vennHave'),
+      items: data.kcs.filter((k) => k.side === 'both'),
+      tone: 'text-accent-teal',
+      chip: 'border-accent-teal/35',
+    },
+    {
+      header: t('vennNeed'),
+      items: data.kcs.filter((k) => k.side === 'b'),
+      tone: 'text-accent-coral',
+      chip: 'border-accent-coral/30',
+    },
+  ]
+  return (
+    <Card>
+      <CardContent className="pt-6">
+        <div className="mb-2 flex items-baseline justify-between gap-3 text-[12px] font-semibold">
+          <span className="min-w-0 truncate text-primary">◖ {data.a.name}</span>
+          <span className="min-w-0 truncate text-right text-accent-coral">{data.b.name} ◗</span>
+        </div>
+        <div className="relative mx-auto aspect-[7/5] w-full max-w-2xl">
+          <svg
+            aria-hidden
+            viewBox="0 0 350 250"
+            preserveAspectRatio="none"
+            className="absolute inset-0 h-full w-full"
+          >
+            <circle
+              cx="120"
+              cy="125"
+              r="115"
+              fill="var(--color-primary)"
+              fillOpacity="0.06"
+              stroke="var(--color-primary)"
+              strokeOpacity="0.35"
+              strokeWidth="1.2"
+            />
+            <circle
+              cx="230"
+              cy="125"
+              r="115"
+              fill="var(--color-accent-coral)"
+              fillOpacity="0.06"
+              stroke="var(--color-accent-coral)"
+              strokeOpacity="0.35"
+              strokeWidth="1.2"
+            />
+          </svg>
+          <div className="absolute inset-0 grid grid-cols-3 items-center gap-1 px-2 py-4">
+            {zones.map((z) => (
+              <div key={z.header} className="flex flex-col items-center gap-2 text-center">
+                <span className={cn('text-[11px] font-semibold uppercase tracking-wide', z.tone)}>
+                  {z.header} · {z.items.length}
+                </span>
+                {z.items.map((k) => (
+                  <span
+                    key={k.slug}
+                    className={cn(
+                      'max-w-[11rem] rounded-full border bg-surface/90 px-2.5 py-1 text-[11px] leading-tight text-foreground shadow-sm backdrop-blur-sm',
+                      z.chip,
+                    )}
+                  >
+                    {k.title}
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
 }
 
 export default function SwitchFrameworkPage() {
@@ -76,7 +165,6 @@ export default function SwitchFrameworkPage() {
   const { aToB } = data
   const kcTitle = new Map(data.kcs.map((k) => [k.slug, k.title]))
   const missing = aToB.objectives.filter((o) => o.status !== 'achieved')
-  const have = aToB.objectives.filter((o) => o.status === 'achieved')
 
   return (
     <div className="mx-auto max-w-3xl space-y-5 py-4">
@@ -111,27 +199,8 @@ export default function SwitchFrameworkPage() {
         </CardContent>
       </Card>
 
-      {/* Đã có — trấn an */}
-      {have.length > 0 ? (
-        <Card className="border-success/25">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base text-foreground">
-              <CheckCircle2 className="size-4 text-success" />
-              {t('have')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-1.5">
-              {have.map((o) => (
-                <li key={o.slug} className="flex items-baseline gap-2 text-[14px]">
-                  <span className="mt-[6px] size-1.5 shrink-0 rounded-full bg-success" />
-                  <span className="text-foreground">{o.title}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-      ) : null}
+      {/* Bản đồ Venn: chương trình đang học ∩ chương trình mới — thấy ngay phần chung & phần cần học */}
+      <VennMini data={data} />
 
       {/* Cần học thêm — danh sách nhẹ, mỗi mục nói rõ khái niệm còn thiếu */}
       <Card className={cn(missing.length ? 'border-warning/30' : 'border-success/30')}>
