@@ -25,7 +25,7 @@ import {
   flashcardDeckJsonSchema,
   quizJsonSchema,
 } from '@bingoo.ai/core'
-import type { ExpositionPort, FlashcardPort, GeneratorPort } from '@bingoo.ai/content-gen'
+import type { ExpositionPort, FlashcardPort, GeneratorPort, StepBrief } from '@bingoo.ai/content-gen'
 import type { Slug } from '@bingoo.ai/knowledge-engine'
 import type { DifficultyBand, GenerationSpec } from '@bingoo.ai/personalization'
 import { getAi } from '../providers'
@@ -82,8 +82,15 @@ function parseItems(text: string): unknown[] {
   }
 }
 
-/** raw model → AuthoredItem; null nếu KHÔNG hợp schema core / primitive chưa đăng ký. */
-function toAuthoredItem(raw: unknown, kc: Slug, index: number, elo: number): AuthoredItem | null {
+/** raw model → AuthoredItem; null nếu KHÔNG hợp schema core / primitive chưa đăng ký.
+ * `stepSlug` (nếu có) đưa vào itemKey để hai bước cùng KC/cùng type không trùng khoá (persist đè mất). */
+function toAuthoredItem(
+  raw: unknown,
+  kc: Slug,
+  index: number,
+  elo: number,
+  stepSlug?: string,
+): AuthoredItem | null {
   const parsed = QuizQuestion.safeParse(raw)
   if (!parsed.success) {
     if (process.env.DEBUG_GEN)
@@ -100,7 +107,7 @@ function toAuthoredItem(raw: unknown, kc: Slug, index: number, elo: number): Aut
     if (process.env.DEBUG_GEN) console.error('[toAuthoredItem] primitive chưa đăng ký:', q.type)
     return null
   }
-  const itemKey = `${kc}::${q.type}::${index}`
+  const itemKey = `${kc}::${stepSlug ?? 'kc'}::${q.type}::${index}`
   // THANG HỖ TRỢ 4 level (hint/guide/instruction/teach, đa ngôn ngữ) — LLM sinh kèm nhưng `QuizQuestion`
   // schema core KHÔNG có field này nên safeParse STRIP mất; lấy lại từ raw để lưu SONG SONG như kit
   // (không đụng core; QuizShell không render, dùng cho TTS/chat sau). Xem [[content-authoring-spec]].
@@ -134,8 +141,9 @@ function parseBlocks(text: string): unknown[] {
 // không tự lọc `CONTENT_BLOCK_META` của core — để đường HỌC và đường ĐÁNH GIÁ cùng tin MỘT chỗ.
 const TEACHING_BLOCKS: readonly string[] = listBlockTypes({ graded: false })
 
-/** raw model → AuthoredItem content HỌC (measurable=false); null nếu sai schema / là block chấm được. */
-function toBlockItem(raw: unknown, kc: Slug, index: number): AuthoredItem | null {
+/** raw model → AuthoredItem content HỌC (measurable=false); null nếu sai schema / là block chấm được.
+ * `stepSlug` (nếu có) vào itemKey để hai bước `content` cùng KC không sinh trùng khoá (persist đè mất). */
+function toBlockItem(raw: unknown, kc: Slug, index: number, stepSlug?: string): AuthoredItem | null {
   const parsed = ContentBlock.safeParse(raw)
   if (!parsed.success) return null
   const b = parsed.data
@@ -144,7 +152,7 @@ function toBlockItem(raw: unknown, kc: Slug, index: number): AuthoredItem | null
   if (!meta) return null // block lạ, chưa đăng ký
   if (meta.measurable) return null // block CHẤM ĐƯỢC → thuộc luồng đánh giá, không lẫn vào phần dạy
   const item: AuthoredItem = {
-    itemKey: `${kc}::teach::${index}`,
+    itemKey: `${kc}::${stepSlug ?? 'kc'}::teach::${index}`,
     skills: [kc],
     difficulty: 1500, // không dùng (phơi bày), nhưng field bắt buộc
     measurable: false,
@@ -154,10 +162,17 @@ function toBlockItem(raw: unknown, kc: Slug, index: number): AuthoredItem | null
   return validateItem(item).some((i) => i.severity === 'error') ? null : item
 }
 
-/** Dựng ExpositionPort (content HỌC) từ hạ tầng AI. Sinh content block phơi bày cho 1 KC. */
+/** Gộp brief + mustCover của MỘT BƯỚC thành grounding text; undefined nếu bước không có brief. */
+function stepBriefText(step?: StepBrief): string | undefined {
+  if (!step) return undefined
+  const parts = [step.brief, ...(step.mustCover ?? [])].filter((s): s is string => !!s && s.trim().length > 0)
+  return parts.length ? parts.join(' · ') : undefined
+}
+
+/** Dựng ExpositionPort (content HỌC) từ hạ tầng AI. Sinh content block phơi bày cho 1 KC (grounded theo step). */
 export function buildExpositionPort(opts?: { aiKey?: string }): ExpositionPort {
   return {
-    async generate(spec: GenerationSpec, kc: Slug): Promise<readonly AuthoredItem[]> {
+    async generate(spec: GenerationSpec, kc: Slug, step?: StepBrief): Promise<readonly AuthoredItem[]> {
       const res = await getAi(opts?.aiKey).generateText({
         system: await renderPrompt('content.exposition.generate', {
           kc,
@@ -166,6 +181,7 @@ export function buildExpositionPort(opts?: { aiKey?: string }): ExpositionPort {
           storyTheme: spec.storyTheme ?? '',
           blocks: TEACHING_BLOCKS.join(', '),
           schema: CONTENT_SCHEMA_JSON,
+          brief: stepBriefText(step) ?? '(no step brief — teach the KC directly)',
         }),
         messages: [{ role: 'user', content: `KC=${kc}` }],
         model: modelFor('content'),
@@ -176,7 +192,7 @@ export function buildExpositionPort(opts?: { aiKey?: string }): ExpositionPort {
         throw new Error('Sinh nội dung bị CẮT vì hết token — giảm phạm vi yêu cầu.')
       }
       return parseBlocks(res.text)
-        .map((raw, i) => toBlockItem(raw, kc, i))
+        .map((raw, i) => toBlockItem(raw, kc, i, step?.slug))
         .filter((it): it is AuthoredItem => it !== null)
     },
   }
@@ -212,7 +228,8 @@ function toCardItem(raw: unknown, kc: Slug, index: number): AuthoredItem | null 
 /** Dựng FlashcardPort (content ÔN TẬP). Sinh flashcard cho 1 KC. */
 export function buildFlashcardPort(opts?: { aiKey?: string }): FlashcardPort {
   return {
-    async generate(spec: GenerationSpec, kc: Slug): Promise<readonly AuthoredItem[]> {
+    // Ôn tập theo KC, không theo step (SRS per-learner) — nhận `step` cho đồng bộ hợp đồng, không dùng.
+    async generate(spec: GenerationSpec, kc: Slug, _step?: StepBrief): Promise<readonly AuthoredItem[]> {
       const res = await getAi(opts?.aiKey).generateText({
         system: await renderPrompt('content.flashcard.generate', {
           kc,
@@ -251,10 +268,12 @@ export function buildGeneratorPort(opts?: {
   misconceptions?: string
 }): GeneratorPort {
   return {
-    async generate(spec: GenerationSpec, kc: Slug): Promise<readonly AuthoredItem[]> {
+    async generate(spec: GenerationSpec, kc: Slug, step?: StepBrief): Promise<readonly AuthoredItem[]> {
       const catalogue = opts?.kinds?.length ? opts.kinds.join(', ') : CATALOGUE
       const count = opts?.count ?? opts?.kinds?.length ?? ITEMS_PER_KC
       const locales = localeList(opts?.languages, spec.language)
+      // Brief bước (nếu có) THẮNG brief build-time — cấu trúc giáo án lái đúng ý đồ từng bước.
+      const brief = stepBriefText(step) ?? opts?.brief
       const res = await getAi(opts?.aiKey).generateText({
         system: await renderPrompt('content.item.generate', {
           kc,
@@ -266,7 +285,7 @@ export function buildGeneratorPort(opts?: {
           count: String(count),
           catalogue,
           schema: SCHEMA_JSON,
-          brief: opts?.brief ?? '(no specific brief — design a fitting item for the KC)',
+          brief: brief ?? '(no specific brief — design a fitting item for the KC)',
           misconceptions: opts?.misconceptions ?? '(none listed — write plausible distractors)',
         }),
         messages: [{ role: 'user', content: `KC=${kc}` }],
@@ -293,7 +312,7 @@ export function buildGeneratorPort(opts?: {
           parsed.length ? '' : `\ntextHead=${res.text.slice(0, 400)}`,
         )
       return parsed
-        .map((raw, i) => toAuthoredItem(raw, kc, i, elo))
+        .map((raw, i) => toAuthoredItem(raw, kc, i, elo, step?.slug))
         .filter((it): it is AuthoredItem => it !== null)
     },
   }

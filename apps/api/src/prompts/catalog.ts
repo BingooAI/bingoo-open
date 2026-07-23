@@ -312,10 +312,12 @@ export const PROMPTS = {
     id: 'content.exposition.generate',
     description:
       'Generate LEARNING content blocks (exposition, non-assessment) that TEACH one KC (content factory S4b).',
-    variables: ['kc', 'band', 'language', 'storyTheme', 'blocks', 'schema'],
+    variables: ['kc', 'band', 'language', 'storyTheme', 'blocks', 'schema', 'brief'],
     template: [
       'You write LEARNING material (not questions) that TEACHES knowledge component "{{kc}}"',
       'at difficulty band "{{band}}", in language "{{language}}". Optional theme: {{storyTheme}}.',
+      'GROUND this in the lesson step it belongs to — teach exactly what it asks, not the KC in general:',
+      '{{brief}}',
       'Produce a short, coherent explanation as an ORDERED array of content blocks.',
       'You may ONLY use these block types (all non-graded, for reading): {{blocks}}.',
       'Do NOT emit quiz/tracing/coloring blocks — assessment is generated separately.',

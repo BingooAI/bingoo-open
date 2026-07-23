@@ -12,11 +12,27 @@ import type { Elo, Slug } from '@bingoo.ai/knowledge-engine'
 import type { DifficultyBand, GenerationSpec } from '@bingoo.ai/personalization'
 
 /**
+ * BRIEF của MỘT BƯỚC (lấy từ kcArcs của Instruction Plan) — thứ khiến nội dung sinh ra CỤ THỂ thay vì
+ * chung chung. `undefined` = sinh theo KC không có brief bước (đường cũ). Nhờ đây mà cấu trúc giáo án
+ * (steps/brief/mustCover/forStates) mới THỰC SỰ lái nhà máy nội dung.
+ */
+export interface StepBrief {
+  /** Slug của bước — ĐƯA VÀO itemKey để hai bước cùng KC/cùng họ generator không sinh trùng khoá
+   * (persist upsert theo itemKey sẽ ĐÈ mất nội dung nếu trùng). */
+  readonly slug?: string
+  readonly role: string
+  readonly brief?: string
+  readonly mustCover?: readonly string[]
+  /** Trạng thái người học bước phục vụ (novice/gap/proficient/mastered); rỗng = nhánh mặc định. */
+  readonly forStates?: readonly string[]
+}
+
+/**
  * Cổng sinh CONTENT ĐÁNH GIÁ (đo) — quiz item measurable → Candidate → evidence.
  * Host cấp (adapter Claude ở apps/api). content-gen KHÔNG biết vendor.
  */
 export interface GeneratorPort {
-  generate(spec: GenerationSpec, kc: Slug): Promise<readonly AuthoredItem[]>
+  generate(spec: GenerationSpec, kc: Slug, step?: StepBrief): Promise<readonly AuthoredItem[]>
 }
 
 /**
@@ -24,7 +40,7 @@ export interface GeneratorPort {
  * Cùng chữ ký nhưng KHÁC bản chất: không sinh Observation, không vào bank chọn.
  */
 export interface ExpositionPort {
-  generate(spec: GenerationSpec, kc: Slug): Promise<readonly AuthoredItem[]>
+  generate(spec: GenerationSpec, kc: Slug, step?: StepBrief): Promise<readonly AuthoredItem[]>
 }
 
 /**
@@ -32,7 +48,7 @@ export interface ExpositionPort {
  * KHÔNG đo/không sinh evidence; là tự-ôn (giống telemetry: ngoài xương sống bằng chứng).
  */
 export interface FlashcardPort {
-  generate(spec: GenerationSpec, kc: Slug): Promise<readonly AuthoredItem[]>
+  generate(spec: GenerationSpec, kc: Slug, step?: StepBrief): Promise<readonly AuthoredItem[]>
 }
 
 // Ngưỡng Elo → band (baseline 1500). Hiệu chuẩn sau theo cộng đồng; đổi ở đây một chỗ.
