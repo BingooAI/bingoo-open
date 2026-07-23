@@ -666,6 +666,69 @@ export function usePublishVersion(slug: string) {
   })
 }
 
+// Kiểu tối thiểu của một gói CASE — CHỈ những trường viewer đọc. Admin không phụ thuộc
+// `@bingoo.ai/codecs` (tách nền), nên khai lại ở đây thay vì import type từ codec.
+export interface CaseLink {
+  identifier?: string
+  uri?: string
+  title?: string
+}
+export interface CaseItem {
+  identifier: string
+  humanCodingScheme?: string
+  fullStatement: string
+  conceptKeywords?: string[]
+  educationLevel?: string | string[]
+  language?: string
+  uri?: string
+  /** Bản dịch đi kèm dưới túi mở rộng CASE (encode ghi `localizedStatements`: lang → phát biểu). */
+  extensions?: { localizedStatements?: Record<string, string> } & Record<string, unknown>
+}
+export interface CaseAssociation {
+  identifier: string
+  associationType: string
+  originNodeURI?: CaseLink
+  destinationNodeURI?: CaseLink
+}
+export interface CasePackage {
+  CFDocument: {
+    identifier: string
+    title: string
+    language?: string
+    version?: string
+    officialSourceURL?: string
+  }
+  CFItems: CaseItem[]
+  CFAssociations: CaseAssociation[]
+}
+export interface CaseExportDto {
+  package: CasePackage
+  report: { ok: boolean; issues: { severity: string; code: string; message: string }[] }
+}
+
+/** Lấy một bản khung ở dạng CASE 1EdTech (để XEM). Không tự tải — download là hành động riêng. */
+export function useCaseExport(slug: string) {
+  return useMutation({
+    mutationFn: (version?: string): Promise<CaseExportDto> => {
+      const q = version ? `?version=${encodeURIComponent(version)}` : ''
+      return api.get<CaseExportDto>(`/authoring/framework/${slug}/export/case${q}`)
+    },
+  })
+}
+
+/** Tải gói CASE về máy dưới dạng `.case.json` (client-only; không lưu server). */
+export function downloadCasePackage(pkg: CasePackage, slug: string, version?: string): void {
+  const blob = new Blob([JSON.stringify(pkg, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${slug}${version ? `@${version}` : ''}.case.json`
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
 // ── Quản lý Course ───────────────────────────────────────────────────────────
 export function useCourse(slug: string) {
   return useQuery({

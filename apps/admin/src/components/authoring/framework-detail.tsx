@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client'
 
+import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import {
   Badge,
@@ -21,7 +22,15 @@ import {
   useToast,
 } from '@bingoo.ai/ui-web'
 import { GraphCanvas, type GEdge, type GNode } from './graph-canvas'
-import { useCreateVersion, useFramework, useFrameworkGraph, usePublishVersion } from '@/lib/authoring-queries'
+import { CaseViewer } from './case-viewer'
+import {
+  useCaseExport,
+  useCreateVersion,
+  useFramework,
+  useFrameworkGraph,
+  usePublishVersion,
+  type CaseExportDto,
+} from '@/lib/authoring-queries'
 
 /** Chi tiết khung: bản phát hành (tạo/publish), mục tiêu, và ĐỒ THỊ năng lực. */
 export function FrameworkDetail({ slug }: { slug: string }) {
@@ -32,6 +41,8 @@ export function FrameworkDetail({ slug }: { slug: string }) {
   const graph = useFrameworkGraph(slug)
   const createVersion = useCreateVersion(slug)
   const publish = usePublishVersion(slug)
+  const caseExport = useCaseExport(slug)
+  const [viewing, setViewing] = useState<{ semver: string; data: CaseExportDto } | null>(null)
 
   const onErr = (e: unknown) =>
     toast({
@@ -110,23 +121,38 @@ export function FrameworkDetail({ slug }: { slug: string }) {
                     </TD>
                     <TD>{v.objectives}</TD>
                     <TD className="text-right">
-                      {v.status === 'PUBLISHED' ? (
-                        <span className="text-xs text-foreground-muted">{t('published')}</span>
-                      ) : (
+                      <div className="flex items-center justify-end gap-2">
                         <Button
                           size="sm"
-                          variant="secondary"
-                          loading={publish.isPending && publish.variables === v.id}
+                          variant={viewing?.semver === v.semver ? 'primary' : 'secondary'}
+                          loading={caseExport.isPending && caseExport.variables === v.semver}
                           onClick={() =>
-                            publish.mutate(v.id, {
-                              onSuccess: () => toast({ variant: 'success', title: t('published') }),
+                            caseExport.mutate(v.semver, {
+                              onSuccess: (data) => setViewing({ semver: v.semver, data }),
                               onError: onErr,
                             })
                           }
                         >
-                          {t('publish')}
+                          {t('caseView')}
                         </Button>
-                      )}
+                        {v.status === 'PUBLISHED' ? (
+                          <span className="text-xs text-foreground-muted">{t('published')}</span>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            loading={publish.isPending && publish.variables === v.id}
+                            onClick={() =>
+                              publish.mutate(v.id, {
+                                onSuccess: () => toast({ variant: 'success', title: t('published') }),
+                                onError: onErr,
+                              })
+                            }
+                          >
+                            {t('publish')}
+                          </Button>
+                        )}
+                      </div>
                     </TD>
                   </TR>
                 ))}
@@ -135,6 +161,17 @@ export function FrameworkDetail({ slug }: { slug: string }) {
           )}
         </CardContent>
       </Card>
+
+      {/* Trình xem CASE — hiện khi giáo viên nhấn "Xem CASE" trên một bản phát hành */}
+      {viewing ? (
+        <CaseViewer
+          pkg={viewing.data.package}
+          report={viewing.data.report}
+          semver={viewing.semver}
+          slug={slug}
+          onClose={() => setViewing(null)}
+        />
+      ) : null}
 
       {/* Mục tiêu */}
       <Card>
