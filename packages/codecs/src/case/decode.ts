@@ -167,7 +167,9 @@ function toNode(
 
   return {
     slug: nodeSlug,
-    title: { [language]: item.fullStatement },
+    // The canonical statement is the document's language; any translations the exporter carried in
+    // `extensions.localizedStatements` are layered on so a re-import keeps the Vietnamese it shipped.
+    title: { [language]: item.fullStatement, ...readLocalizedStatements(item.extensions) },
     kind: 'OBJECTIVE' satisfies CompetencyKind,
     altitude: 'outcome',
     ...(item.humanCodingScheme !== undefined ? { code: item.humanCodingScheme } : {}),
@@ -180,6 +182,22 @@ function toNode(
     source: doc.officialSourceURL ?? doc.title,
     version: 1,
   }
+}
+
+/**
+ * The extra translations an exporter stashed under `extensions.localizedStatements` (lang →
+ * statement). Read defensively: extensions is an open bag of `unknown`, and a package from another
+ * tool may put anything there — a non-object, or non-string values — none of which may crash import.
+ */
+function readLocalizedStatements(extensions: Record<string, unknown> | undefined): Record<string, string> {
+  if (extensions === undefined) return {}
+  const bag = extensions['localizedStatements']
+  if (bag === null || typeof bag !== 'object') return {}
+  const out: Record<string, string> = {}
+  for (const [language, text] of Object.entries(bag as Record<string, unknown>)) {
+    if (typeof text === 'string' && text.trim() !== '') out[language] = text
+  }
+  return out
 }
 
 function stageOf(item: CfItem): string | undefined {

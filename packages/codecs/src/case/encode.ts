@@ -178,6 +178,7 @@ function toCfItem(
       path: ['CFItems', n.slug],
     })
   }
+  const localized = localizedStatements(n.title)
   return {
     identifier: n.slug,
     uri: uriOf(n.slug),
@@ -189,7 +190,22 @@ function toCfItem(
     ...(n.code !== undefined ? { humanCodingScheme: n.code } : {}),
     ...(n.stage !== undefined ? { educationLevel: n.stage } : {}),
     ...(n.strand !== undefined ? { conceptKeywords: [n.strand] } : {}),
+    // Carry every translation we hold so the Vietnamese does not vanish behind an English
+    // `fullStatement` — but only when there is more than the one canonical statement to preserve.
+    ...(localized !== undefined ? { extensions: { localizedStatements: localized } } : {}),
   }
+}
+
+/**
+ * The node's statement in every language it is written in, for `extensions.localizedStatements`.
+ * `undefined` when only one language is present — there is nothing a single `fullStatement` loses.
+ */
+function localizedStatements(title: Record<string, string>): Record<string, string> | undefined {
+  const out: Record<string, string> = {}
+  for (const [language, text] of Object.entries(title)) {
+    if (typeof text === 'string' && text.trim() !== '') out[language] = text
+  }
+  return Object.keys(out).length > 1 ? out : undefined
 }
 
 function pickTitle(n: SkillNode, lang: string, issues: ValidationIssue[]): string {

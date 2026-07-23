@@ -92,3 +92,41 @@ describe('round-trip encode → decode', () => {
     expect(edge?.mode).toBe('RECOMMENDED')
   })
 })
+
+describe('bilingual statements ride along in extensions', () => {
+  const bilingual: GraphData = {
+    nodes: [
+      {
+        slug: '1nc-01',
+        title: { en: 'Count objects from 0 to 20', vi: 'Đếm các vật từ 0 đến 20' },
+        kind: 'OBJECTIVE',
+        code: '1Nc.01',
+        version: 1,
+      },
+    ],
+    edges: [],
+  }
+
+  it('keeps English canonical in fullStatement, Vietnamese in extensions', () => {
+    const { package: pkg } = encodeCase({ framework, graph: bilingual, lastChangeDateTime: T })
+    const item = pkg.CFItems[0]
+    // A CASE consumer that ignores extensions still reads the document-language statement.
+    expect(item?.fullStatement).toBe('Count objects from 0 to 20')
+    const localized = (item?.extensions as { localizedStatements?: Record<string, string> } | undefined)
+      ?.localizedStatements
+    expect(localized?.['vi']).toBe('Đếm các vật từ 0 đến 20')
+    expect(localized?.['en']).toBe('Count objects from 0 to 20')
+  })
+
+  it('single-language objectives carry no extensions — nothing to preserve', () => {
+    const { package: pkg } = encodeCase({ framework, graph, lastChangeDateTime: T })
+    expect(pkg.CFItems.every((i) => i.extensions === undefined)).toBe(true)
+  })
+
+  it('re-import recovers the Vietnamese a bare fullStatement would have lost', () => {
+    const { package: pkg } = encodeCase({ framework, graph: bilingual, lastChangeDateTime: T })
+    const node = decodeCase(pkg).graph.nodes[0]
+    expect(node?.title['vi']).toBe('Đếm các vật từ 0 đến 20')
+    expect(node?.title['en']).toBe('Count objects from 0 to 20')
+  })
+})

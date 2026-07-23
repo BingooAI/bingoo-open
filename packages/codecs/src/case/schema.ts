@@ -123,6 +123,15 @@ export const cfItem = z
     language: z.string().max(35).optional(),
     notes: z.string().max(20_000).optional(),
     lastChangeDateTime: z.string().max(64).optional(),
+    /**
+     * The bag CASE reserves for exporter-specific data (`.loose()` already lets it through; this
+     * only names it in the type). `fullStatement` can hold one language — the document's — so a
+     * Vietnamese teacher reading an English framework, or a re-import, would lose every other
+     * translation we actually have. We stash them under `localizedStatements` (lang → statement).
+     * A consumer that ignores extensions still reads the canonical `fullStatement`: the CASE
+     * interchange contract is unbroken, and the extra languages ride along for those who want them.
+     */
+    extensions: z.record(z.string(), z.unknown()).optional(),
   })
   .loose()
 export type CfItem = z.infer<typeof cfItem>
