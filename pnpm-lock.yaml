@@ -188,6 +188,9 @@ importers:
       '@bingoo.ai/authoring-workflow':
         specifier: workspace:^
         version: link:../../packages/authoring-workflow
+      '@bingoo.ai/codecs':
+        specifier: workspace:^
+        version: link:../../packages/codecs
       '@bingoo.ai/content-gen':
         specifier: workspace:^
         version: link:../../packages/content-gen

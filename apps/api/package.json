@@ -24,6 +24,7 @@
     "@bingoo.ai/authored-item": "workspace:^",
     "@bingoo.ai/authoring": "workspace:^",
     "@bingoo.ai/authoring-workflow": "workspace:^",
+    "@bingoo.ai/codecs": "workspace:^",
     "@bingoo.ai/content-gen": "workspace:^",
     "@bingoo.ai/core": "workspace:^",
     "@bingoo.ai/db": "workspace:^",

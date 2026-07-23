@@ -12,6 +12,7 @@ import type {
   FrameworkKind,
   GraphData,
   LateralEdgeRef,
+  RelType,
   SkillNode,
 } from '@bingoo.ai/knowledge-engine'
 import { cloneObjectivesForward, formatSemver, nextSemver } from '@bingoo.ai/knowledge-engine'
@@ -475,6 +476,84 @@ export async function publishFrameworkVersion(
     data: { status: 'PUBLISHED', publishedAt: new Date() },
   })
   return { published: v.id, deprecated: dep.count }
+}
+
+export interface FrameworkExport {
+  readonly framework: {
+    readonly slug: string
+    readonly title: string
+    readonly language: string
+    readonly version?: string
+    readonly officialSourceURL?: string
+  }
+  readonly graph: GraphData
+}
+
+/**
+ * Nạp MỘT bản khung để XUẤT CASE: identity + đồ thị các OBJECTIVE của một version (mặc định bản mới
+ * nhất) + cạnh GIỮA các objective. KHÔNG lấy concept/MAPS_TO — CASE là overlay chuẩn, encode tự bỏ.
+ */
+export async function loadFrameworkForExport(
+  slug: string,
+  versionSemver?: string,
+): Promise<FrameworkExport | null> {
+  const fw = await db.framework.findUnique({
+    where: { slug },
+    select: { id: true, slug: true, name: true, locale: true, source: true },
+  })
+  if (!fw) return null
+
+  const versions = await db.frameworkVersion.findMany({
+    where: { frameworkId: fw.id },
+    orderBy: [{ major: 'desc' }, { minor: 'desc' }, { patch: 'desc' }],
+    select: { id: true, major: true, minor: true, patch: true },
+  })
+  const version = versionSemver
+    ? versions.find((v) => `${v.major}.${v.minor}.${v.patch}` === versionSemver)
+    : versions[0]
+
+  const objectives = await db.competency.findMany({
+    where: { frameworkId: fw.id, kind: 'OBJECTIVE', ...(version ? { frameworkVersionId: version.id } : {}) },
+    select: { id: true, slug: true, title: true, code: true, stage: true, strand: true },
+  })
+  const objIds = objectives.map((o) => o.id)
+  const slugById = new Map(objectives.map((o) => [o.id, o.slug]))
+
+  // Chỉ cạnh GIỮA hai objective (encode bỏ cạnh chạm concept, nhưng lọc sớm cho gọn + đỡ tải).
+  const rels =
+    objIds.length > 0
+      ? await db.capabilityRelation.findMany({
+          where: { fromId: { in: objIds }, toId: { in: objIds } },
+          select: { fromId: true, toId: true, relType: true, mode: true, weight: true },
+        })
+      : []
+
+  const nodes: SkillNode[] = objectives.map((o) => ({
+    slug: o.slug,
+    title: o.title as Record<string, string>,
+    kind: 'OBJECTIVE',
+    version: 1,
+    ...(o.code != null ? { code: o.code } : {}),
+    ...(o.stage != null ? { stage: o.stage } : {}),
+    ...(o.strand != null ? { strand: o.strand } : {}),
+  }))
+  const edges = rels.flatMap((r) => {
+    const from = slugById.get(r.fromId)
+    const to = slugById.get(r.toId)
+    return from && to ? [{ from, to, relType: r.relType as RelType, mode: r.mode, weight: r.weight }] : []
+  })
+
+  const name = fw.name as Record<string, string>
+  return {
+    framework: {
+      slug: fw.slug,
+      title: name['en'] ?? Object.values(name)[0] ?? fw.slug,
+      language: fw.locale,
+      ...(version ? { version: `${version.major}.${version.minor}.${version.patch}` } : {}),
+      ...(fw.source != null ? { officialSourceURL: fw.source } : {}),
+    },
+    graph: { nodes, edges },
+  }
 }
 
 // ── Truy hồi ứng viên cho ĐỐI CHIẾU khung ────────────────────────────────────

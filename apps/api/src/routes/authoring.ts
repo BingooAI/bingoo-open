@@ -63,8 +63,10 @@ import {
   getFrameworkGraph,
   listFrameworks,
   listStages,
+  loadFrameworkForExport,
   publishFrameworkVersion,
 } from '../repos/authoring.repo'
+import { CaseDecodeError, decodeCase, encodeCase, type EncodeInput } from '@bingoo.ai/codecs/case'
 import type { LessonInstructionPlan } from '@bingoo.ai/plans'
 import type { EngineSnapshot, LearnerPersona, TeacherPersona } from '@bingoo.ai/personalization'
 
@@ -684,6 +686,42 @@ export const authoring = new Hono<AppEnv>()
     const r = await publishFrameworkVersion(c.req.param('id'))
     if (!r) throw AppError.notFound('Không có bản phát hành này.')
     return ok(c, r)
+  })
+  // XUẤT khung ra CASE 1EdTech (một bản version — mặc định mới nhất). Trả gói + report (thứ bị bỏ/mặc định).
+  .get('/framework/:slug/export/case', authorGuard, async (c) => {
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    const data = await loadFrameworkForExport(c.req.param('slug'), c.req.query('version'))
+    if (!data) throw AppError.notFound('Không có framework này.')
+    const { package: pkg, report } = encodeCase({
+      framework: data.framework,
+      // knowledge-engine's GraphData types version/weight as optional; the loader always sets them
+      // (version: 1, weight from a non-null column), so the data satisfies encode's stricter shape.
+      graph: data.graph as unknown as EncodeInput['graph'],
+      lastChangeDateTime: new Date().toISOString(),
+    })
+    return ok(c, { package: pkg, report })
+  })
+  // NHẬP khung CASE ngoài → BẢN NHÁP (graph OBJECTIVE + report) để NGƯỜI DUYỆT rồi mới /apply (R5).
+  // Không tự ghi: nhập thẳng vào đồ thị là bỏ qua bước người kiểm.
+  .post('/framework/import/case', authorGuard, async (c) => {
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    let body: unknown
+    try {
+      body = await c.req.json()
+    } catch {
+      throw AppError.badRequest('Body không phải JSON hợp lệ.')
+    }
+    try {
+      return ok(c, decodeCase(body))
+    } catch (e) {
+      if (e instanceof CaseDecodeError)
+        throw AppError.validation(
+          e.issues.map((message) => ({ path: 'package', message, code: 'case_invalid' })),
+        )
+      throw e
+    }
   })
 
   // B) Sinh VỎ KHOÁ (course shell) map vào framework — từ prompt hoặc từ sách PDF. Lưu luôn (DRAFT).
