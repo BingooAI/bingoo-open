@@ -47,7 +47,8 @@ export default function SwitchFrameworkPage() {
 
   useEffect(() => {
     let alive = true
-    fetch(`${API}/api/knowledge/crosswalk/${FROM}/${TO}`, { credentials: 'include' })
+    // Hono app mount ở `/` (không phải `/api`; chỉ better-auth ở /api/auth). Route: /knowledge/...
+    fetch(`${API}/knowledge/crosswalk/${FROM}/${TO}`, { credentials: 'include' })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then((j: { data: Crosswalk }) => {
         if (alive) {
