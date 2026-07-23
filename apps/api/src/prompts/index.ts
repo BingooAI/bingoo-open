@@ -7,6 +7,7 @@
  * `{{var}}` placeholders are interpolated. Overrides are server-controlled (R6)
  * so prompts can be tuned/hotfixed without a release.
  */
+import { createHash } from 'node:crypto'
 import { deleteRemoteConfig, getRemoteConfig, hasRemoteConfig, setRemoteConfig } from '../repos/config.repo'
 import { PROMPTS, PROMPT_IDS, type PromptId } from './catalog'
 
@@ -26,6 +27,16 @@ export function interpolate(template: string, vars: Record<string, string | unde
 /** The effective template for `id` — a runtime override if set, else the default. */
 export async function getPromptTemplate(id: PromptId): Promise<string> {
   return getRemoteConfig<string>(overrideKey(id), PROMPTS[id].template)
+}
+
+/**
+ * Vân tay của prompt tại thời điểm gọi: id + hash của template HIỆU LỰC (kể cả override runtime). Lưu
+ * kèm thứ AI sinh để TRUY VẾT — prompt có thể bị override đổi giữa hai lần sinh (R6) mà không đổi id;
+ * hash bắt được đúng bản đã dùng (quyết định D1: giữ override được, nhưng phải truy được).
+ */
+export async function promptFingerprint(id: PromptId): Promise<{ promptId: PromptId; promptHash: string }> {
+  const template = await getPromptTemplate(id)
+  return { promptId: id, promptHash: createHash('sha256').update(template).digest('hex').slice(0, 16) }
 }
 
 /** Render a prompt ready to send to the LLM (override-aware + interpolated). */

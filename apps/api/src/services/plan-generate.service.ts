@@ -14,6 +14,8 @@ import { generateLessonPlan } from './plan-adapters'
 import { getSkillGraph } from './knowledge.service'
 import { getCourse } from '../repos/course.repo'
 import { getPlan, isApproved, savePlan, type StoredPlan } from '../repos/plan-hierarchy.repo'
+import { promptFingerprint } from '../prompts'
+import { modelFor } from '../config/models'
 import { AppError } from '../lib/errors'
 
 export interface LessonPlanResult {
@@ -97,6 +99,7 @@ export async function generateLessonPlanInCourse(input: {
     doc: withSlug,
     quality,
     createdBy: input.userId,
+    provenance: { aiModel: modelFor('content'), ...(await promptFingerprint('plan.lesson.generate')) },
   })
   return { plan: withSlug, quality, stored }
 }

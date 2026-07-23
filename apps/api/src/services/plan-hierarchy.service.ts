@@ -8,7 +8,7 @@
 import type { CoursePlanDoc, UnitPlanDoc } from '@bingoo.ai/plans'
 import { coursePlanQuality, unitPlanQuality } from '@bingoo.ai/plans'
 import { getAi } from '../providers'
-import { renderPrompt } from '../prompts'
+import { promptFingerprint, renderPrompt } from '../prompts'
 import { getCourse } from '../repos/course.repo'
 import { getPlan, isApproved, savePlan, type StoredPlan } from '../repos/plan-hierarchy.repo'
 import { AppError } from '../lib/errors'
@@ -150,6 +150,7 @@ export async function generateCoursePlan(input: {
     doc,
     quality,
     createdBy: input.userId,
+    provenance: { aiModel: modelFor('content'), ...(await promptFingerprint('authoring.plan.course')) },
   })
   return { plan, quality }
 }
@@ -262,6 +263,7 @@ export async function generateUnitPlan(input: {
     doc,
     quality,
     createdBy: input.userId,
+    provenance: { aiModel: modelFor('content'), ...(await promptFingerprint('authoring.plan.unit')) },
   })
   return { plan, quality }
 }
