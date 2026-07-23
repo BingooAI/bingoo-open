@@ -10,6 +10,7 @@
  */
 
 export { decodeCase, CaseDecodeError, type DecodeOptions, type DecodeResult } from './decode.js'
+export { encodeCase, type EncodeFramework, type EncodeInput, type EncodeResult } from './encode.js'
 export {
   cfAssociation,
   cfAssociationType,

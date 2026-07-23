@@ -252,11 +252,15 @@ function mapAssociations(
 
     edges.push({
       // CASE hierarchy is composition and never gates: a learner is not blocked from a standard
-      // because they have not finished the domain containing it.
+      // because they have not finished the domain containing it. An imported `precedes` is a soft
+      // ordering too: RECOMMENDED, never REQUIRED. A foreign standard we do not ourselves teach must
+      // not hard-lock a learner — CASE carries no gate strength, so importing one as REQUIRED would
+      // invent a wall nobody authored. (Project decision: `precedes` → RECOMMENDED on import; a gate's
+      // real strength is a Bingoo authoring act, re-derived in the studio, not read off a CASE file.)
       from,
       to,
       relType,
-      mode: relType === 'PREREQUISITE' ? 'REQUIRED' : 'RECOMMENDED',
+      mode: 'RECOMMENDED',
       weight: 1,
     })
   }
