@@ -650,6 +650,55 @@ export function useFrameworkGraph(slug: string) {
   })
 }
 
+// ── CROSSWALK hai khung (mirror crosswalk.repo.ts) ───────────────────────────
+export type GapStatus = 'achieved' | 'partial' | 'none'
+export interface CrosswalkObjectiveDto {
+  slug: string
+  code?: string
+  title: string
+  requires: string[]
+}
+export interface CrosswalkKcDto {
+  slug: string
+  title: string
+  kind: string
+  strand?: string
+  side: 'both' | 'a' | 'b'
+}
+export interface ObjectiveGapDto {
+  slug: string
+  code?: string
+  title: string
+  requires: string[]
+  have: string[]
+  missing: string[]
+  status: GapStatus
+}
+export interface FrameworkReportDto {
+  frameworkSlug: string
+  frameworkName: string
+  objectives: ObjectiveGapDto[]
+  summary: { achieved: number; partial: number; none: number; total: number; percent: number }
+}
+export interface CrosswalkDto {
+  a: { slug: string; name: string; objectives: CrosswalkObjectiveDto[] }
+  b: { slug: string; name: string; objectives: CrosswalkObjectiveDto[] }
+  kcs: CrosswalkKcDto[]
+  sharedKcs: string[]
+  edges: { from: string; to: string; relType: string }[]
+  aToB: FrameworkReportDto
+  bToA: FrameworkReportDto
+}
+
+/** Đối chiếu hai khung (KC trùng + thiếu gì khi chuyển). Chỉ chạy khi chọn đủ A ≠ B. */
+export function useCrosswalk(a: string | undefined, b: string | undefined) {
+  return useQuery({
+    queryKey: ['authoring', 'crosswalk', a, b],
+    queryFn: () => api.get<CrosswalkDto>(`/authoring/crosswalk/${a}/${b}`),
+    enabled: Boolean(a && b && a !== b),
+  })
+}
+
 export function useCreateVersion(slug: string) {
   const qc = useQueryClient()
   return useMutation({

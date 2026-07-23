@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client'
 
-import { BookOpen, GitCompareArrows, LayoutGrid, Network, SquareStack } from 'lucide-react'
+import { ArrowLeftRight, BookOpen, GitCompareArrows, LayoutGrid, Network, SquareStack } from 'lucide-react'
 import { Card, CardContent } from '@bingoo.ai/ui-web'
 import { Link } from '@/i18n/navigation'
 import { useCourses, useFrameworks } from '@/lib/authoring-queries'
@@ -111,6 +111,15 @@ export function AuthoringHub() {
       desc: 'Đồ thị 2 chiều khung ↕ KC ↕ bài học: thấy mục tiêu nào chưa được dạy, bài nào dạy kiến thức không mục tiêu nào chứng nhận.',
       href: '/authoring/coverage',
       cta: 'Xem độ phủ',
+    },
+    {
+      n: 6,
+      Icon: ArrowLeftRight,
+      title: 'Chuyển khung & lỗ hổng',
+      when: 'khi so hai khung',
+      desc: 'Học theo khung này chuyển sang khung kia còn thiếu gì. Đối chiếu qua KC nền dùng chung (vd MOET Lớp 1 → Cambridge Stage 2): thấy phần trùng và các mục tiêu còn phải học.',
+      href: '/authoring/crosswalk',
+      cta: 'Mở đối chiếu & lỗ hổng',
     },
   ]
 
