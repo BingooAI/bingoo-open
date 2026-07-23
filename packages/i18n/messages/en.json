@@ -627,6 +627,7 @@
       "courses": "Courses",
       "align": "Align frameworks",
       "coverage": "Coverage",
+      "crosswalk": "Compare programmes",
       "explainer": "Explainer lessons"
     },
     "actions": {
@@ -877,7 +878,7 @@
         "representation": "Representation"
       },
       "crosswalkTitle": "Compare two frameworks",
-      "crosswalkPageDesc": "Studied one framework, moving to another — what carries over and what is still missing. Frameworks are never linked objective-to-objective; the comparison runs through the shared underlying concepts.",
+      "crosswalkPageDesc": "Studied one programme and moving to another — what carries over, and what's still to learn.",
       "crosswalkFrom": "Studying",
       "crosswalkTo": "Switching to",
       "crosswalkSwap": "Swap direction",
@@ -902,6 +903,8 @@
       "crosswalkVennLeft": "The current programme",
       "crosswalkVennMid": "Taught by both",
       "crosswalkVennRight": "To add",
+      "crosswalkViewVenn": "Diagram",
+      "crosswalkViewList": "List",
       "crosswalkPartialHint": "Partial: some of the concepts an objective needs are held, but not all — the risky case, since an objective counts as met only when every concept is.",
       "crosswalkNav": "Compare frameworks",
       "published": "Published",

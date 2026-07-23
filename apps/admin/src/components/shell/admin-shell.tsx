@@ -3,6 +3,7 @@
 'use client'
 
 import {
+  ArrowLeftRight,
   Presentation,
   BookOpen,
   GitCompareArrows,
@@ -69,6 +70,12 @@ const NAV: NavItem[] = [
     key: 'coverage',
     Icon: LayoutDashboard,
     href: '/authoring/coverage',
+    show: (c) => c.canManageContent,
+  },
+  {
+    key: 'crosswalk',
+    Icon: ArrowLeftRight,
+    href: '/authoring/crosswalk',
     show: (c) => c.canManageContent,
   },
   { key: 'explainer', Icon: Presentation, href: '/explainer', show: (c) => c.canManageContent },

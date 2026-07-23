@@ -238,8 +238,8 @@ async function main(): Promise<void> {
     framework: {
       slug: 'cambridge-primary-math-s2',
       name: {
-        en: 'Cambridge Primary Mathematics — Stage 2 (Number)',
-        vi: 'Cambridge Toán Tiểu học — Stage 2 (Số)',
+        en: 'Cambridge Primary Mathematics — Stage 2 (≈ Grade 1) · Number',
+        vi: 'Cambridge Toán Tiểu học — Stage 2 (≈ Lớp 1) · Số',
       },
       kind: 'CURRICULUM',
       locale: 'en',

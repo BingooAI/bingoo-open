@@ -4,9 +4,24 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ArrowLeftRight } from 'lucide-react'
+import {
+  ArrowLeftRight,
+  ArrowRight,
+  CheckCircle2,
+  CircleAlert,
+  CircleDashed,
+  LayoutGrid,
+  List,
+} from 'lucide-react'
 import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, Spinner } from '@bingoo.ai/ui-web'
-import { useCrosswalk, useFrameworks, type CrosswalkDto } from '@/lib/authoring-queries'
+import {
+  useCrosswalk,
+  useFrameworks,
+  type CrosswalkDto,
+  type FrameworkReportDto,
+  type GapStatus,
+  type ObjectiveGapDto,
+} from '@/lib/authoring-queries'
 import { cn } from '@/lib/cn'
 
 /**
@@ -29,6 +44,8 @@ export function CrosswalkView() {
   // Mặc định chiều MOET Lớp 1 → Cambridge Stage 2 (câu chuyện rõ nhất: học VN sang Cambridge thiếu gì).
   const [from, setFrom] = useState('moet-primary-math-g1')
   const [to, setTo] = useState('cambridge-primary-math-s2')
+  // Venn = trực quan theo CHỦ ĐỀ; Danh sách = scale được cho CẢ MÔN (Venn nhiều KC là chịu).
+  const [view, setView] = useState<'venn' | 'list'>('venn')
   const cw = useCrosswalk(from, to)
 
   const swap = () => {
@@ -122,9 +139,41 @@ export function CrosswalkView() {
             </CardContent>
           </Card>
 
-          {/* BẢN ĐỒ ĐỐI CHIẾU — biểu đồ VENN: chương trình đang học ∩ chương trình mới; trùng ở giữa,
-              cần bổ sung ở rìa phải. Đọc bằng vùng — hình chuẩn cho "so hai tập". */}
-          <CrosswalkVenn data={cw.data} />
+          {/* Chọn cách xem: Venn (trực quan, hợp theo chủ đề) hay Danh sách (scale cho cả môn). */}
+          <div className="flex items-center gap-1 rounded-lg border border-border bg-surface p-1 text-[13px] sm:w-fit">
+            <button
+              type="button"
+              onClick={() => setView('venn')}
+              className={cn(
+                'inline-flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 transition-colors sm:flex-none',
+                view === 'venn'
+                  ? 'bg-primary-soft font-medium text-primary-soft-foreground'
+                  : 'text-foreground-muted hover:bg-surface-muted',
+              )}
+            >
+              <LayoutGrid className="size-3.5" />
+              {t('crosswalkViewVenn')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setView('list')}
+              className={cn(
+                'inline-flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 transition-colors sm:flex-none',
+                view === 'list'
+                  ? 'bg-primary-soft font-medium text-primary-soft-foreground'
+                  : 'text-foreground-muted hover:bg-surface-muted',
+              )}
+            >
+              <List className="size-3.5" />
+              {t('crosswalkViewList')}
+            </button>
+          </div>
+
+          {view === 'venn' ? (
+            <CrosswalkVenn data={cw.data} />
+          ) : (
+            <CrosswalkList data={cw.data} report={report} />
+          )}
         </>
       )}
     </div>
@@ -253,5 +302,131 @@ function CrosswalkVenn({ data }: { data: CrosswalkDto }) {
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+// ── Dạng DANH SÁCH — scale được cho CẢ MÔN (Venn chỉ hợp theo chủ đề, nhiều KC là chịu) ─────────
+const STATUS_STYLE: Record<GapStatus, string> = {
+  achieved: 'text-success',
+  partial: 'text-warning',
+  none: 'text-danger',
+}
+
+function StatusIcon({ status }: { status: GapStatus }) {
+  const cls = cn('size-4 shrink-0', STATUS_STYLE[status])
+  if (status === 'achieved') return <CheckCircle2 className={cls} />
+  if (status === 'partial') return <CircleAlert className={cls} />
+  return <CircleDashed className={cls} />
+}
+
+function GapObjective({
+  o,
+  kcTitle,
+  missingLabel,
+}: {
+  o: ObjectiveGapDto
+  kcTitle: Map<string, string>
+  missingLabel: string
+}) {
+  return (
+    <li className="flex gap-2">
+      <StatusIcon status={o.status} />
+      <div className="min-w-0">
+        <div className="text-[13px]">
+          {o.code ? <span className="font-mono text-foreground-subtle">{o.code} </span> : null}
+          <span className="font-medium text-foreground">{o.title}</span>
+        </div>
+        {o.missing.length > 0 ? (
+          <div className="mt-1 flex flex-wrap items-center gap-1">
+            <span className="text-[11px] uppercase tracking-wide text-foreground-subtle">
+              {missingLabel}:
+            </span>
+            {o.missing.map((k) => (
+              <Badge key={k} color="danger" tone="outline" size="sm">
+                {kcTitle.get(k) ?? k}
+              </Badge>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </li>
+  )
+}
+
+/** Danh sách đối chiếu — chịu tải tốt khi CẢ MÔN có hàng trăm KC: mục tiêu còn thiếu (kèm khái niệm
+ *  phải học) · phần trùng · phần đã có. Không hình học, chỉ danh sách cuộn được. */
+function CrosswalkList({ data, report }: { data: CrosswalkDto; report: FrameworkReportDto }) {
+  const t = useTranslations('admin.authoring')
+  const kcTitle = new Map(data.kcs.map((k) => [k.slug, k.title]))
+  const missing = report.objectives.filter((o) => o.status !== 'achieved')
+  const achieved = report.objectives.filter((o) => o.status === 'achieved')
+  const shared = data.kcs.filter((k) => k.side === 'both')
+
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card className="border-danger/25">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <ArrowRight className="size-4 text-danger" />
+            {t('crosswalkGapTitle', { name: data.b.name })}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {missing.length === 0 ? (
+            <p className="text-sm text-foreground-muted">{t('crosswalkNoGap')}</p>
+          ) : (
+            <ul className="space-y-2.5">
+              {missing.map((o) => (
+                <GapObjective key={o.slug} o={o} kcTitle={kcTitle} missingLabel={t('crosswalkMissing')} />
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+
+      <div className="space-y-4">
+        <Card className="border-accent-teal/25">
+          <CardHeader>
+            <CardTitle className="text-base">{t('crosswalkOverlap')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {shared.length === 0 ? (
+              <p className="text-sm text-foreground-subtle">{t('crosswalkNoOverlap')}</p>
+            ) : (
+              <div className="flex flex-wrap gap-1.5">
+                {shared.map((k) => (
+                  <Badge key={k.slug} color="teal" tone="soft">
+                    {k.title}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {achieved.length > 0 ? (
+          <Card className="border-success/25">
+            <CardHeader>
+              <CardTitle className="text-base">
+                {t('crosswalkAchievedTitle', { name: data.a.name })}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="grid gap-1 sm:grid-cols-2">
+                {achieved.map((o) => (
+                  <li key={o.slug} className="flex items-baseline gap-2 text-[13px]">
+                    <StatusIcon status="achieved" />
+                    <span>
+                      {o.code ? <span className="font-mono text-foreground-subtle">{o.code} </span> : null}
+                      <span className="text-foreground">{o.title}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        ) : null}
+      </div>
+    </div>
   )
 }
