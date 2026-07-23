@@ -2,17 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ArrowRight, ArrowLeftRight, CheckCircle2, CircleDashed, CircleAlert } from 'lucide-react'
+import { ArrowLeftRight, CheckCircle2, CircleDashed, Target, type LucideIcon } from 'lucide-react'
 import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, Spinner } from '@bingoo.ai/ui-web'
-import {
-  useCrosswalk,
-  useFrameworks,
-  type CrosswalkKcDto,
-  type GapStatus,
-  type ObjectiveGapDto,
-} from '@/lib/authoring-queries'
+import { useCrosswalk, useFrameworks, type CrosswalkKcDto } from '@/lib/authoring-queries'
 import { cn } from '@/lib/cn'
 
 /**
@@ -22,19 +16,6 @@ import { cn } from '@/lib/cn'
  * mục tiêu của khung ĐÍCH mà KC nó đòi chưa có trong vốn khung NGUỒN. Đúng câu hỏi crosswalk +
  * chuyển khung mà không cần dịch hồ sơ — báo cáo tính thẳng trên KC nền.
  */
-
-const STATUS_STYLE: Record<GapStatus, { dot: string; badge: 'success' | 'warning' | 'danger' }> = {
-  achieved: { dot: 'text-success', badge: 'success' },
-  partial: { dot: 'text-warning', badge: 'warning' },
-  none: { dot: 'text-danger', badge: 'danger' },
-}
-
-function StatusIcon({ status }: { status: GapStatus }) {
-  const cls = cn('size-4 shrink-0', STATUS_STYLE[status].dot)
-  if (status === 'achieved') return <CheckCircle2 className={cls} />
-  if (status === 'partial') return <CircleAlert className={cls} />
-  return <CircleDashed className={cls} />
-}
 
 function frameworkLabel(name: Record<string, string>, slug: string): string {
   return name.vi ?? name.en ?? slug
@@ -50,12 +31,6 @@ export function CrosswalkView() {
   const [to, setTo] = useState('cambridge-primary-math-s2')
   const cw = useCrosswalk(from, to)
 
-  const kcTitle = useMemo(() => {
-    const m = new Map<string, string>()
-    for (const k of cw.data?.kcs ?? []) m.set(k.slug, k.title)
-    return m
-  }, [cw.data])
-
   const swap = () => {
     setFrom(to)
     setTo(from)
@@ -63,8 +38,6 @@ export function CrosswalkView() {
 
   const report = cw.data?.aToB // aToB = from → to (khung đích đọc qua vốn KC khung nguồn)
   const shared = cw.data?.sharedKcs ?? []
-  const missingObjs = (report?.objectives ?? []).filter((o) => o.status !== 'achieved')
-  const achievedObjs = (report?.objectives ?? []).filter((o) => o.status === 'achieved')
 
   const Select = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
     <select
@@ -149,185 +122,201 @@ export function CrosswalkView() {
             </CardContent>
           </Card>
 
-          {/* BẢN ĐỒ ĐỐI CHIẾU — kiểu Venn phẳng: 3 vùng, đọc bằng VỊ TRÍ + màu, không cạnh chỉ rối */}
-          <OverlapPartition kcs={cw.data.kcs} sourceName={cw.data.a.name} targetName={cw.data.b.name} />
-
-          {/* CHI TIẾT: mục tiêu khung ĐÍCH chưa đạt + khái niệm còn thiếu — việc phải dạy khi chuyển */}
-          <Card className="border-danger/25">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <ArrowRight className="size-4 text-danger" />
-                {t('crosswalkGapTitle', { name: cw.data.b.name })}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {missingObjs.length === 0 ? (
-                <p className="text-sm text-foreground-muted">{t('crosswalkNoGap')}</p>
-              ) : (
-                <ul className="grid gap-2.5 sm:grid-cols-2">
-                  {missingObjs.map((o) => (
-                    <GapRow key={o.slug} o={o} kcTitle={kcTitle} missingLabel={t('crosswalkMissing')} />
-                  ))}
-                </ul>
-              )}
-            </CardContent>
-          </Card>
-
-          {achievedObjs.length > 0 ? (
-            <Card className="border-success/25">
-              <CardHeader>
-                <CardTitle className="text-base">
-                  {t('crosswalkAchievedTitle', { name: cw.data.a.name })}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="grid gap-1 sm:grid-cols-2">
-                  {achievedObjs.map((o) => (
-                    <li key={o.slug} className="flex items-baseline gap-2 text-[13px]">
-                      <StatusIcon status="achieved" />
-                      <span>
-                        {o.code ? <span className="font-mono text-foreground-subtle">{o.code} </span> : null}
-                        <span className="text-foreground">{o.title}</span>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          ) : null}
+          {/* BẢN ĐỒ ĐỐI CHIẾU — mind-map: khung ĐÍCH ở giữa, tỏa ra 3 nhánh (đã có · cần học · chỉ
+              khung nguồn). Đọc "cái nào trùng, cái nào cần" bằng nhánh + màu, không phải đám chỉ rối. */}
+          <CrosswalkMindmap
+            centerName={cw.data.b.name}
+            have={cw.data.kcs.filter((k) => k.side === 'both')}
+            need={cw.data.kcs.filter((k) => k.side === 'b')}
+            sourceOnly={cw.data.kcs.filter((k) => k.side === 'a')}
+          />
         </>
       )}
     </div>
   )
 }
 
-function GapRow({
-  o,
-  kcTitle,
-  missingLabel,
-}: {
-  o: ObjectiveGapDto
-  kcTitle: Map<string, string>
-  missingLabel: string
-}) {
-  return (
-    <li className="flex gap-2">
-      <StatusIcon status={o.status} />
-      <div className="min-w-0">
-        <div className="text-[13px]">
-          {o.code ? <span className="font-mono text-foreground-subtle">{o.code} </span> : null}
-          <span className="font-medium text-foreground">{o.title}</span>
-        </div>
-        {o.missing.length > 0 ? (
-          <div className="mt-1 flex flex-wrap items-center gap-1">
-            <span className="text-[11px] uppercase tracking-wide text-foreground-subtle">
-              {missingLabel}:
-            </span>
-            {o.missing.map((k) => (
-              <Badge key={k} color="danger" tone="outline" size="sm">
-                {kcTitle.get(k) ?? k}
-              </Badge>
-            ))}
-          </div>
-        ) : null}
-      </div>
-    </li>
-  )
-}
-
-// Ba vùng như một VENN phẳng — đọc bằng vị trí + màu: chỉ nguồn · TRÙNG (giữa) · chỉ đích (phải học).
-const ZONE = {
-  source: {
-    border: 'border-primary/25',
-    text: 'text-primary',
-    badge: 'primary' as const,
-    chip: 'border-primary/20 bg-primary-soft/40',
-  },
-  shared: {
-    border: 'border-accent-teal/40',
+// Ba nhánh của mind-map: ĐÃ CÓ (trùng, teal) · CẦN HỌC (coral) · CHỈ KHUNG NGUỒN (primary).
+const BRANCH = {
+  have: {
     text: 'text-accent-teal',
+    border: 'border-accent-teal/40',
+    bg: 'bg-accent-teal-soft/25',
+    dot: 'bg-accent-teal',
     badge: 'teal' as const,
-    chip: 'border-accent-teal/25 bg-accent-teal-soft/50',
+    stroke: 'var(--color-accent-teal)',
   },
-  target: {
-    border: 'border-accent-coral/30',
+  need: {
     text: 'text-accent-coral',
+    border: 'border-accent-coral/40',
+    bg: 'bg-accent-coral-soft/25',
+    dot: 'bg-accent-coral',
     badge: 'coral' as const,
-    chip: 'border-accent-coral/25 bg-accent-coral-soft/40',
+    stroke: 'var(--color-accent-coral)',
+  },
+  source: {
+    text: 'text-primary',
+    border: 'border-primary/35',
+    bg: 'bg-primary-soft/30',
+    dot: 'bg-primary',
+    badge: 'primary' as const,
+    stroke: 'var(--color-primary)',
   },
 }
+type BranchTone = (typeof BRANCH)[keyof typeof BRANCH]
 
-function Zone({
+function Branch({
+  headerRef,
+  tone,
+  Icon,
   title,
   items,
-  z,
-  emphasize,
+  align,
 }: {
+  headerRef: React.Ref<HTMLDivElement>
+  tone: BranchTone
+  Icon: LucideIcon
   title: string
   items: CrosswalkKcDto[]
-  z: (typeof ZONE)[keyof typeof ZONE]
-  emphasize?: boolean
+  align: 'left' | 'right'
 }) {
+  const right = align === 'right'
   return (
-    <div
-      className={cn(
-        'rounded-xl border p-3',
-        z.border,
-        emphasize && 'bg-accent-teal-soft/10 ring-1 ring-accent-teal/25',
-      )}
-    >
-      <div className="mb-2 flex items-center gap-2">
-        <h4 className={cn('text-[11px] font-semibold uppercase tracking-wide', z.text)}>{title}</h4>
-        <Badge color={z.badge} tone="soft" size="sm">
+    <div className={cn('flex flex-col gap-2', right ? 'lg:items-end' : 'lg:items-start')}>
+      <div
+        ref={headerRef}
+        className={cn('inline-flex items-center gap-1.5 rounded-full border px-3 py-1', tone.border, tone.bg)}
+      >
+        <Icon className={cn('size-3.5', tone.text)} />
+        <span className={cn('text-[12px] font-semibold uppercase tracking-wide', tone.text)}>{title}</span>
+        <Badge color={tone.badge} tone="soft" size="sm">
           {items.length}
         </Badge>
       </div>
       {items.length === 0 ? (
         <span className="text-[12px] text-foreground-subtle">—</span>
       ) : (
-        <div className="flex flex-wrap gap-1.5">
+        <ul className={cn('flex w-full flex-col gap-1.5', right && 'lg:items-end')}>
           {items.map((k) => (
-            <span
+            <li
               key={k.slug}
-              className={cn('rounded-md border px-2 py-1 text-[12px] leading-tight text-foreground', z.chip)}
+              className={cn(
+                'flex items-center gap-2 rounded-xl border border-border bg-surface px-3 py-1.5 text-[13px] text-foreground shadow-sm',
+                right && 'lg:flex-row-reverse lg:text-right',
+              )}
             >
+              <span className={cn('size-2 shrink-0 rounded-full', tone.dot)} />
               {k.title}
-            </span>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   )
 }
 
-/** Bản đồ đối chiếu kiểu Venn phẳng — thấy TỔNG ngay: cái nào trùng, cái nào chỉ một khung. */
-function OverlapPartition({
-  kcs,
-  sourceName,
-  targetName,
+/** Mind-map đối chiếu: khung ĐÍCH ở giữa, tỏa ra ĐÃ CÓ (trùng) · CẦN HỌC · CHỈ KHUNG NGUỒN. Đường
+ *  cong nối tâm → từng nhánh được đo từ vị trí thật (ref) nên co giãn theo bề rộng. */
+function CrosswalkMindmap({
+  centerName,
+  have,
+  need,
+  sourceOnly,
 }: {
-  kcs: CrosswalkKcDto[]
-  sourceName: string
-  targetName: string
+  centerName: string
+  have: CrosswalkKcDto[]
+  need: CrosswalkKcDto[]
+  sourceOnly: CrosswalkKcDto[]
 }) {
   const t = useTranslations('admin.authoring')
+  const wrap = useRef<HTMLDivElement>(null)
+  const center = useRef<HTMLDivElement>(null)
+  const haveH = useRef<HTMLDivElement>(null)
+  const needH = useRef<HTMLDivElement>(null)
+  const srcH = useRef<HTMLDivElement>(null)
+  const [paths, setPaths] = useState<{ d: string; stroke: string }[]>([])
+
+  useEffect(() => {
+    const measure = () => {
+      const w = wrap.current
+      const c = center.current
+      if (!w || !c) return
+      const wr = w.getBoundingClientRect()
+      const cr = c.getBoundingClientRect()
+      const cx = cr.left + cr.width / 2 - wr.left
+      const cy = cr.top + cr.height / 2 - wr.top
+      const curve = (el: HTMLDivElement | null, toLeft: boolean, stroke: string) => {
+        if (!el) return null
+        const r = el.getBoundingClientRect()
+        const hx = (toLeft ? r.right : r.left) - wr.left
+        const hy = r.top + r.height / 2 - wr.top
+        const k = (hx - cx) * 0.5
+        return { d: `M ${cx} ${cy} C ${cx + k} ${cy}, ${hx - k} ${hy}, ${hx} ${hy}`, stroke }
+      }
+      setPaths(
+        [
+          curve(srcH.current, true, BRANCH.source.stroke),
+          curve(haveH.current, false, BRANCH.have.stroke),
+          curve(needH.current, false, BRANCH.need.stroke),
+        ].filter((p): p is { d: string; stroke: string } => p !== null),
+      )
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    if (wrap.current) ro.observe(wrap.current)
+    return () => ro.disconnect()
+  }, [have, need, sourceOnly, centerName])
+
   return (
     <Card>
-      <CardHeader className="flex flex-row items-baseline justify-between gap-2">
+      <CardHeader>
         <CardTitle className="text-base">{t('crosswalkGraphTitle')}</CardTitle>
-        <span className="truncate text-[12px] text-foreground-subtle">
-          {sourceName} · {targetName}
-        </span>
       </CardHeader>
-      <CardContent className="grid items-start gap-3 md:grid-cols-3">
-        <Zone title={t('crosswalkZoneSource')} items={kcs.filter((k) => k.side === 'a')} z={ZONE.source} />
-        <Zone
-          title={t('crosswalkLegShared')}
-          items={kcs.filter((k) => k.side === 'both')}
-          z={ZONE.shared}
-          emphasize
-        />
-        <Zone title={t('crosswalkZoneTarget')} items={kcs.filter((k) => k.side === 'b')} z={ZONE.target} />
+      <CardContent>
+        <div ref={wrap} className="relative">
+          <svg className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
+            {paths.map((p, i) => (
+              <path key={i} d={p.d} fill="none" stroke={p.stroke} strokeWidth={2} strokeOpacity={0.5} />
+            ))}
+          </svg>
+          <div className="relative grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1.5fr)] lg:items-center">
+            {/* TRÁI: chỉ khung nguồn (bạn đã có, khung mới không cần) */}
+            <Branch
+              headerRef={srcH}
+              tone={BRANCH.source}
+              Icon={Target}
+              title={t('crosswalkZoneSource')}
+              items={sourceOnly}
+              align="right"
+            />
+            {/* GIỮA: khung ĐÍCH */}
+            <div
+              ref={center}
+              className="mx-auto grid aspect-square w-40 place-items-center rounded-full border-2 border-border bg-surface p-5 text-center shadow-md"
+            >
+              <span className="text-[13px] font-semibold leading-snug text-foreground">{centerName}</span>
+            </div>
+            {/* PHẢI: đã có (trùng) + cần học */}
+            <div className="flex flex-col gap-8">
+              <Branch
+                headerRef={haveH}
+                tone={BRANCH.have}
+                Icon={CheckCircle2}
+                title={t('crosswalkMindHave')}
+                items={have}
+                align="left"
+              />
+              <Branch
+                headerRef={needH}
+                tone={BRANCH.need}
+                Icon={CircleDashed}
+                title={t('crosswalkMindNeed')}
+                items={need}
+                align="left"
+              />
+            </div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   )

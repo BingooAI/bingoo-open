@@ -897,6 +897,8 @@
       "crosswalkLegShared": "Trùng (cả hai)",
       "crosswalkZoneSource": "Chỉ khung đang học",
       "crosswalkZoneTarget": "Chỉ khung mới — cần học",
+      "crosswalkMindHave": "Đã có",
+      "crosswalkMindNeed": "Cần học",
       "crosswalkPartialHint": "Một phần: mục tiêu đòi nhiều KC nhưng học sinh chỉ nắm được vài cái — ca nguy hiểm nhất, vì 'đạt' chỉ khi có ĐỦ mọi KC (tính theo AND).",
       "crosswalkNav": "Đối chiếu khung",
       "published": "Đã phát hành",
