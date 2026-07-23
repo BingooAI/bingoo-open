@@ -11,6 +11,7 @@ import { validate } from '../lib/validate'
 import { requireRole } from '../auth'
 import { ingestSource } from '../services/authoring-ingest.service'
 import { applyAuthoredFramework } from '../services/authoring.service'
+import { GraphBody } from './authoring.schema'
 import type { FrameworkMeta } from '../repos/authoring.repo'
 import type { CompiledObjective } from '@bingoo.ai/authoring'
 import { generateLessonContent } from '../services/content-generate.service'
@@ -75,19 +76,6 @@ import type { EngineSnapshot, LearnerPersona, TeacherPersona } from '@bingoo.ai/
 // Biên soạn nội dung = quyền tác giả (CONTENT_EDITOR) hoặc ADMIN. requireRole tự chặn chưa-đăng-nhập.
 const authorGuard = requireRole('CONTENT_EDITOR', 'ADMIN')
 
-const KINDS = [
-  'OBJECTIVE',
-  'OUTCOME',
-  'SKILL',
-  'KNOWLEDGE',
-  'PROCEDURE',
-  'BEHAVIOR',
-  'ATTITUDE',
-  'DISPOSITION',
-] as const
-const RELS = ['PREREQUISITE', 'ENABLES', 'COMPOSES', 'ALIGNS', 'VARIANT_OF', 'MAPS_TO'] as const
-const MODES = ['REQUIRED', 'RECOMMENDED'] as const
-
 const SourceBody = z.object({
   id: z.string().min(1),
   kind: z.enum(['pdf', 'zip-images', 'text']),
@@ -104,48 +92,6 @@ const SourceBody = z.object({
     )
     .min(1),
   threshold: z.number().min(0).max(1).optional(),
-})
-
-const GraphBody = z.object({
-  nodes: z
-    .array(
-      z.object({
-        slug: z.string().min(1),
-        title: z.record(z.string(), z.string()),
-        kind: z.enum(KINDS),
-        parent: z.string().optional(),
-        level: z.number().int().optional(),
-      }),
-    )
-    .min(1),
-  edges: z.array(
-    z.object({
-      from: z.string().min(1),
-      to: z.string().min(1),
-      mode: z.enum(MODES),
-      relType: z.enum(RELS).optional(),
-      weight: z.number().optional(),
-    }),
-  ),
-  // Tuỳ chọn: bền hoá Framework + objectives + MAPS_TO cùng lúc.
-  framework: z
-    .object({
-      slug: z.string().min(1),
-      name: z.record(z.string(), z.string()),
-      kind: z.enum(['CURRICULUM', 'CREDENTIAL', 'JOB_PROFILE']),
-      locale: z.string().min(1),
-    })
-    .optional(),
-  objectives: z
-    .array(
-      z.object({
-        slug: z.string().min(1),
-        title: z.record(z.string(), z.string()),
-        code: z.string().optional(),
-        mapsTo: z.array(z.string()).default([]),
-      }),
-    )
-    .optional(),
 })
 
 // Nguồn → framework: slug/name để dựng Framework thật (kèm objectives có mã) chứ không chỉ competency rời.

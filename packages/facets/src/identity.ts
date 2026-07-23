@@ -25,19 +25,35 @@ export interface IdentityResult {
 
 const norm = (v: string): string => v.trim().toLowerCase()
 
-/** Chuẩn hoá theo alias của môn (dữ liệu): "listening" → "listen". */
+/**
+ * A facet axis value is usable only if it is a non-blank STRING. Facets arrive LOOSELY — from LLM
+ * extraction, hand editing, and external CASE packages — so a value may be `null`, a number, an
+ * object, or `""`. Such a value is treated as ABSENT rather than normalised, so an invariant that
+ * REQUIRES the axis reports it missing (a proper validation error) instead of throwing on `.trim()`
+ * — which would turn a malformed facet into a 500 at the `/apply` gate.
+ */
+const str = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() !== '' ? v : undefined)
+
+/** `scope` is usable only if it is a plain object; `null`/array/scalar is treated as absent. */
+const isScope = (v: unknown): v is Readonly<Record<string, string | number>> =>
+  typeof v === 'object' && v !== null && !Array.isArray(v)
+
+/** Chuẩn hoá theo alias của môn (dữ liệu): "listening" → "listen". Bền với facets sai kiểu. */
 export function normalizeFacets(f: Facets, profile?: DomainProfile): Facets {
   const alias = (axis: string, v: string): string => {
     const map = profile?.aliases?.[axis]
     const n = norm(v)
     return map?.[n] ?? n
   }
+  const object = str(f.object)
+  const channel = str(f.channel)
+  const representation = str(f.representation)
   return {
-    ...(f.object !== undefined ? { object: alias('object', f.object) } : {}),
-    ...(f.channel !== undefined ? { channel: alias('channel', f.channel) } : {}),
+    ...(object !== undefined ? { object: alias('object', object) } : {}),
+    ...(channel !== undefined ? { channel: alias('channel', channel) } : {}),
     ...(f.bloom !== undefined ? { bloom: f.bloom } : {}),
-    ...(f.scope !== undefined ? { scope: normScope(f.scope) } : {}),
-    ...(f.representation !== undefined ? { representation: alias('representation', f.representation) } : {}),
+    ...(isScope(f.scope) ? { scope: normScope(f.scope) } : {}),
+    ...(representation !== undefined ? { representation: alias('representation', representation) } : {}),
     ...(f.transfer !== undefined ? { transfer: f.transfer } : {}),
     ...(f.fluency !== undefined ? { fluency: f.fluency } : {}),
   }

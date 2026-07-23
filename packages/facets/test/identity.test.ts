@@ -12,6 +12,7 @@ import {
   facetKey,
   normalizeFacets,
   type DomainProfile,
+  type Facets,
 } from '../src/index'
 
 const math: DomainProfile = {
@@ -99,5 +100,43 @@ describe('compareIdentity', () => {
     )
     expect(r.verdict).toBe('DIFFERENT')
     expect(r.axes).toContain('channel')
+  })
+})
+
+describe('facets sai kiểu (loose từ LLM/CASE) — bền, không ném 500', () => {
+  // Facets vào LỎNG (LLM sinh, biên tập tay, gói CASE ngoài). Giá trị sai kiểu phải coi như VẮNG,
+  // KHÔNG được ném — nếu không, cổng bất biến (I1/I8) crash 500 thay vì báo "thiếu facet" (400).
+  const bad = [
+    { object: null },
+    { object: 123 },
+    { object: { nested: true } },
+    { object: '' },
+    { channel: null },
+    { representation: 42 },
+    { scope: null },
+    { scope: [1, 2] },
+    { scope: 'x' },
+  ] as unknown as Facets[]
+
+  it('normalizeFacets không ném với mọi giá trị sai kiểu', () => {
+    for (const f of bad) expect(() => normalizeFacets(f)).not.toThrow()
+  })
+
+  it('facetKey + compareIdentity không ném với giá trị sai kiểu', () => {
+    for (const f of bad) {
+      expect(() => facetKey(f)).not.toThrow()
+      expect(() => compareIdentity(f, { object: 'addition', scope: { max: 20 } })).not.toThrow()
+    }
+  })
+
+  it('giá trị sai kiểu bị coi như VẮNG (để I8 báo thiếu, không crash)', () => {
+    expect(normalizeFacets({ object: null } as unknown as Facets).object).toBeUndefined()
+    expect(normalizeFacets({ scope: null } as unknown as Facets).scope).toBeUndefined()
+    expect(normalizeFacets({ object: '  ' } as unknown as Facets).object).toBeUndefined()
+  })
+
+  it('giá trị đúng vẫn chuẩn hoá bình thường (không hồi quy)', () => {
+    expect(normalizeFacets({ object: '  Addition  ' }).object).toBe('addition')
+    expect(normalizeFacets({ scope: { max: 20 } }).scope).toEqual({ max: 20 })
   })
 })
