@@ -332,11 +332,14 @@ export function GraphCanvas({
   edges,
   legend,
   height = 520,
+  onSelect,
 }: {
   nodes: GNode[]
   edges: GEdge[]
   legend?: { color: string; label: string }[]
   height?: number
+  /** Bắn ra node đang chọn (slug) mỗi khi đổi — để cha hiện panel DIỄN GIẢI. `null` khi bỏ chọn. */
+  onSelect?: (id: string | null) => void
 }) {
   const [mode, setMode] = useState<Layout>('layered')
   const [dir, setDir] = useState<Direction>('top-down')
@@ -345,6 +348,13 @@ export function GraphCanvas({
   const [sel, setSel] = useState<string | null>(null)
   const [full, setFull] = useState(false)
   const drag = useRef<{ x: number; y: number; px: number; py: number } | null>(null)
+
+  // Báo lựa chọn ra ngoài qua ref → effect chỉ chạy khi `sel` đổi (không phụ thuộc identity onSelect).
+  const onSelectRef = useRef(onSelect)
+  onSelectRef.current = onSelect
+  useEffect(() => {
+    onSelectRef.current?.(sel)
+  }, [sel])
 
   const allGroups = useMemo(
     () => [...new Set(nodes.map(groupKey).filter((k): k is string => k !== undefined))],

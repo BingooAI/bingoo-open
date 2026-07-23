@@ -615,6 +615,10 @@ export interface GraphViewDto {
     title: Record<string, string>
     kind: string
     strand?: string
+    /** 6 trục facets — thứ quyết định hai KC có phải một; hiện khi bấm node để diễn giải. */
+    facets?: Record<string, unknown>
+    /** Mã hiển thị của objective (vd 1Nc.02). */
+    code?: string
   }[]
   edges: { from: string; to: string; relType: string; mode: string }[]
 }

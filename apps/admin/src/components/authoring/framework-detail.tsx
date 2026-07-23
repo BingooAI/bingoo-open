@@ -23,6 +23,7 @@ import {
 } from '@bingoo.ai/ui-web'
 import { GraphCanvas, type GEdge, type GNode } from './graph-canvas'
 import { CaseViewer } from './case-viewer'
+import { NodeExplain } from './node-explain'
 import {
   useCaseExport,
   useCreateVersion,
@@ -43,6 +44,7 @@ export function FrameworkDetail({ slug }: { slug: string }) {
   const publish = usePublishVersion(slug)
   const caseExport = useCaseExport(slug)
   const [viewing, setViewing] = useState<{ semver: string; data: CaseExportDto } | null>(null)
+  const [selectedNode, setSelectedNode] = useState<string | null>(null)
 
   const onErr = (e: unknown) =>
     toast({
@@ -206,28 +208,41 @@ export function FrameworkDetail({ slug }: { slug: string }) {
               <Spinner />
             </div>
           ) : graph.data ? (
-            <GraphCanvas
-              nodes={graph.data.nodes.map((n): GNode => ({
-                id: n.slug,
-                label: n.title.vi ?? n.title.en ?? n.slug,
-                kind: n.kind,
-                band: n.kind === 'OBJECTIVE' ? 0 : 1,
-                // Mạch kiến thức → gom nhóm & thu gọn. Khung lớn (Cambridge: 289 mục tiêu) vào là
-                // thấy các MẠCH trước, bung ra từng mạch một.
-                ...(n.strand ? { group: n.strand } : {}),
-              }))}
-              edges={graph.data.edges.map((e): GEdge => ({
-                from: e.from,
-                to: e.to,
-                relType: e.relType,
-              }))}
-              height={560}
-              legend={[
-                { color: 'var(--color-primary)', label: 'Mục tiêu' },
-                { color: 'var(--color-accent-sunbeam)', label: 'Kỹ năng' },
-                { color: 'var(--color-accent-coral)', label: 'Kiến thức' },
-              ]}
-            />
+            <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
+              <GraphCanvas
+                nodes={graph.data.nodes.map((n): GNode => ({
+                  id: n.slug,
+                  label: n.title.vi ?? n.title.en ?? n.slug,
+                  kind: n.kind,
+                  band: n.kind === 'OBJECTIVE' ? 0 : 1,
+                  // Mạch kiến thức → gom nhóm & thu gọn. Khung lớn (Cambridge: 289 mục tiêu) vào là
+                  // thấy các MẠCH trước, bung ra từng mạch một.
+                  ...(n.strand ? { group: n.strand } : {}),
+                }))}
+                edges={graph.data.edges.map((e): GEdge => ({
+                  from: e.from,
+                  to: e.to,
+                  relType: e.relType,
+                }))}
+                height={560}
+                legend={[
+                  { color: 'var(--color-primary)', label: 'Mục tiêu' },
+                  { color: 'var(--color-accent-sunbeam)', label: 'Kỹ năng' },
+                  { color: 'var(--color-accent-coral)', label: 'Kiến thức' },
+                ]}
+                onSelect={setSelectedNode}
+              />
+              {/* DIỄN GIẢI (XAI): bấm một node trên đồ thị → panel giải thích bên phải (dính khi cuộn) */}
+              <div className="lg:sticky lg:top-4 lg:self-start">
+                {selectedNode ? (
+                  <NodeExplain slug={selectedNode} nodes={graph.data.nodes} edges={graph.data.edges} />
+                ) : (
+                  <div className="rounded-lg border border-dashed border-border p-4 text-[13px] text-foreground-subtle">
+                    {t('explainSelectHint')}
+                  </div>
+                )}
+              </div>
+            </div>
           ) : (
             <EmptyState title={t('empty')} />
           )}

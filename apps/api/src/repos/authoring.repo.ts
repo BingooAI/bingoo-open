@@ -226,7 +226,17 @@ export async function getFrameworkDetail(slug: string): Promise<FrameworkDetail 
 }
 
 export interface GraphView {
-  readonly nodes: { id: string; slug: string; title: unknown; kind: string }[]
+  readonly nodes: {
+    id: string
+    slug: string
+    title: unknown
+    kind: string
+    strand?: string
+    // Facets + code cho panel DIỄN GIẢI khi người soạn bấm một node: facets là thứ quyết định
+    // hai KC có phải một (phải thấy để duyệt); code là mã hiển thị của objective.
+    facets?: unknown
+    code?: string
+  }[]
   readonly edges: { from: string; to: string; relType: string; mode: string }[]
 }
 
@@ -257,7 +267,7 @@ export async function getFrameworkGraph(slug: string): Promise<GraphView | null>
       where: { id: { in: ids } },
       // `strand` = MẠCH kiến thức. Nó là thứ duy nhất cho phép gom nhóm/thu gọn đồ thị — không có nó
       // thì một khung thật (289 mục tiêu) chỉ hiện ra được dưới dạng một đám chỉ rối.
-      select: { id: true, slug: true, title: true, kind: true, strand: true },
+      select: { id: true, slug: true, title: true, kind: true, strand: true, facets: true, code: true },
     }),
     db.capabilityRelation.findMany({
       where: { fromId: { in: ids }, toId: { in: ids } },
@@ -282,6 +292,8 @@ export async function getFrameworkGraph(slug: string): Promise<GraphView | null>
         title: n.title,
         kind: n.kind,
         ...(strand ? { strand } : {}),
+        ...(n.facets != null ? { facets: n.facets } : {}),
+        ...(n.code != null ? { code: n.code } : {}),
       }
     }),
     edges: rels.flatMap((r) => {
