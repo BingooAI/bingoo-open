@@ -7,7 +7,14 @@
 
 import { db, type Prisma } from '@bingoo.ai/db'
 import type { CompiledObjective, ExistingConcept, ExistingKc } from '@bingoo.ai/authoring'
-import type { CompetencyKind, FrameworkKind, GraphData, SkillNode } from '@bingoo.ai/knowledge-engine'
+import type {
+  CompetencyKind,
+  FrameworkKind,
+  GraphData,
+  LateralEdgeRef,
+  SkillNode,
+} from '@bingoo.ai/knowledge-engine'
+import { cloneObjectivesForward, formatSemver, nextSemver } from '@bingoo.ai/knowledge-engine'
 import type { DomainProfile, Facets } from '@bingoo.ai/facets'
 import { deriveKcStrands } from './strand'
 
@@ -45,6 +52,9 @@ export async function persistFramework(
   })
 
   // Mỗi lần áp = một bản phát hành mới (DRAFT); patch = số bản hiện có (unique major.minor.patch).
+  // GHI CHÚ: ngữ nghĩa versioning của đường /apply (nên tái dùng DRAFT hay đẻ mới, dọn objective ma)
+  // là một QUYẾT ĐỊNH THIẾT KẾ còn treo — xem docs/internal. Ở đây giữ nguyên hành vi cũ, chỉ sửa nhánh
+  // "tạo version mới" (createFrameworkVersion) để nó không còn ra bản RỖNG.
   const count = await db.frameworkVersion.count({ where: { frameworkId: framework.id } })
   const version = await db.frameworkVersion.create({
     data: {
@@ -292,36 +302,158 @@ export async function createFrameworkVersion(
   const latest = await db.frameworkVersion.findFirst({
     where: { frameworkId: fw.id },
     orderBy: [{ major: 'desc' }, { minor: 'desc' }, { patch: 'desc' }],
-    select: { major: true, minor: true, patch: true },
+    select: { id: true, major: true, minor: true, patch: true },
   })
-  const base = latest ?? { major: 1, minor: 0, patch: -1 }
-  const next =
-    release === 'MAJOR'
-      ? { major: base.major + 1, minor: 0, patch: 0 }
-      : release === 'MINOR'
-        ? { major: base.major, minor: base.minor + 1, patch: 0 }
-        : { major: base.major, minor: base.minor, patch: base.patch + 1 }
+  const next = nextSemver(latest, release)
 
-  const v = await db.frameworkVersion.create({
-    data: { frameworkId: fw.id, ...next, releaseType: release, status: 'DRAFT' },
-    select: {
-      id: true,
-      major: true,
-      minor: true,
-      patch: true,
-      status: true,
-      publishedAt: true,
-      createdAt: true,
+  // Create-version + nhân objective là MỘT giao dịch: lỗi giữa chừng KHÔNG để lại version nửa vời
+  // (vài objective clone, thiếu cạnh). Bản mới KHÔNG rỗng → publish không ra framework rỗng.
+  const { v, objectives } = await db.$transaction(
+    async (tx) => {
+      const v = await tx.frameworkVersion.create({
+        data: { frameworkId: fw.id, ...next, releaseType: release, status: 'DRAFT' },
+        select: {
+          id: true,
+          major: true,
+          minor: true,
+          patch: true,
+          status: true,
+          publishedAt: true,
+          createdAt: true,
+        },
+      })
+      const objectives = latest ? await cloneObjectivesIntoVersion(tx, fw.id, latest.id, v.id, next) : 0
+      return { v, objectives }
     },
-  })
+    { timeout: 20_000 },
+  )
+
   return {
     id: v.id,
-    semver: `${v.major}.${v.minor}.${v.patch}`,
+    semver: formatSemver(next),
     status: v.status,
     publishedAt: v.publishedAt,
     createdAt: v.createdAt,
-    objectives: 0,
+    objectives,
   }
+}
+
+/**
+ * Sao objective của một FrameworkVersion sang version mới: `cloneObjectivesForward` (thuần) tính kế
+ * hoạch, rồi ghi. Objective clone mang slug@x.y.z, version+1, supersedesId=nguồn, COPY
+ * title/code/stage/strand từ nguồn. Cạnh MAPS_TO/ALIGNS sao lên clone nhưng TRỎ VỀ CÙNG concept nền.
+ */
+async function cloneObjectivesIntoVersion(
+  tx: Prisma.TransactionClient,
+  frameworkId: string,
+  sourceVersionId: string,
+  newVersionId: string,
+  toVersion: { readonly major: number; readonly minor: number; readonly patch: number },
+): Promise<number> {
+  // STRIP hậu tố @x.y.z: nếu nguồn đã là bản versioned (base@1.1.0), slug mới phải từ base — không
+  // chồng "@1.1.0@1.2.0" khi tạo version từ một bản đã versioned.
+  const baseSlug = (s: string): string => s.replace(/@\d+\.\d+\.\d+$/, '')
+
+  const sources = await tx.competency.findMany({
+    where: { frameworkVersionId: sourceVersionId, kind: 'OBJECTIVE' },
+    select: {
+      id: true,
+      slug: true,
+      version: true,
+      title: true,
+      code: true,
+      stage: true,
+      strand: true,
+      subject: true,
+    },
+  })
+  if (sources.length === 0) return 0
+  const srcByBase = new Map(sources.map((s) => [baseSlug(s.slug), s]))
+  const baseById = new Map(sources.map((s) => [s.id, baseSlug(s.slug)]))
+
+  // Cạnh lateral (MAPS_TO/ALIGNS) từ objective nguồn. toSlug PHẢI là concept nền — bỏ cạnh trỏ tới
+  // OBJECTIVE (crosswalk là objective→concept; trỏ objective là dữ liệu sai, clone sẽ lẫn version).
+  const rels = await tx.capabilityRelation.findMany({
+    where: { fromId: { in: sources.map((s) => s.id) }, relType: { in: ['MAPS_TO', 'ALIGNS'] } },
+    select: { fromId: true, toId: true, relType: true, mode: true, weight: true },
+  })
+  const toRows = await tx.competency.findMany({
+    where: { id: { in: [...new Set(rels.map((r) => r.toId))] } },
+    select: { id: true, slug: true, kind: true },
+  })
+  const toById = new Map(toRows.map((r) => [r.id, r]))
+
+  const edges: LateralEdgeRef[] = []
+  for (const r of rels) {
+    const fromSlug = baseById.get(r.fromId)
+    const to = toById.get(r.toId)
+    if (!fromSlug || !to) continue
+    if (to.kind === 'OBJECTIVE') continue
+    edges.push({
+      fromSlug,
+      toSlug: to.slug,
+      relType: r.relType as 'MAPS_TO' | 'ALIGNS',
+      mode: r.mode,
+      ...(r.weight != null ? { weight: r.weight } : {}),
+    })
+  }
+
+  const existing = await tx.competency.findMany({ select: { slug: true } })
+  const plan = cloneObjectivesForward(
+    sources.map((s) => ({ id: s.id, slug: baseSlug(s.slug), version: s.version })),
+    edges,
+    toVersion,
+    newVersionId,
+    new Set(existing.map((e) => e.slug)),
+  )
+
+  // Tạo objective clone — COPY title/code/stage/strand/subject từ nguồn (clone không được mất stage/mã).
+  for (const o of plan.objectives) {
+    const src = srcByBase.get(o.sourceSlug)
+    if (!src) continue
+    await tx.competency.create({
+      data: {
+        slug: o.newSlug,
+        kind: 'OBJECTIVE',
+        title: src.title as Prisma.InputJsonValue,
+        ...(src.code != null ? { code: src.code } : {}),
+        ...(src.stage != null ? { stage: src.stage } : {}),
+        ...(src.strand != null ? { strand: src.strand } : {}),
+        ...(src.subject != null ? { subject: src.subject } : {}),
+        version: o.newVersion,
+        supersedesId: o.supersedesId,
+        frameworkId,
+        frameworkVersionId: newVersionId,
+      },
+    })
+  }
+
+  // Tạo cạnh clone (newSlug → concept nền GIỮ NGUYÊN).
+  const idRows = await tx.competency.findMany({
+    where: {
+      slug: { in: [...plan.objectives.map((o) => o.newSlug), ...new Set(plan.edges.map((e) => e.toSlug))] },
+    },
+    select: { id: true, slug: true },
+  })
+  const idBySlug = new Map(idRows.map((r) => [r.slug, r.id]))
+  for (const e of plan.edges) {
+    const fromId = idBySlug.get(e.fromSlug)
+    const toId = idBySlug.get(e.toSlug)
+    if (!fromId || !toId) continue
+    await tx.capabilityRelation.upsert({
+      where: { fromId_toId_relType: { fromId, toId, relType: e.relType } },
+      create: {
+        fromId,
+        toId,
+        relType: e.relType,
+        mode: e.mode,
+        ...(e.weight != null ? { weight: e.weight } : {}),
+      },
+      update: { mode: e.mode, ...(e.weight != null ? { weight: e.weight } : {}) },
+    })
+  }
+
+  return plan.objectives.length
 }
 
 /** Phát hành: DRAFT → PUBLISHED; các bản PUBLISHED cũ của cùng framework → DEPRECATED. */
