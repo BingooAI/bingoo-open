@@ -157,7 +157,7 @@ interface ZoneItem {
 
 function VennZone({ header, items, tone }: { header: string; items: ZoneItem[]; tone: VennTone }) {
   return (
-    <div className="flex flex-col items-center gap-1.5 text-center">
+    <div className="flex flex-col items-center gap-2.5 text-center">
       <span
         className={cn(
           'inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide',
@@ -176,7 +176,7 @@ function VennZone({ header, items, tone }: { header: string; items: ZoneItem[]; 
           <span
             key={k.slug}
             className={cn(
-              'max-w-[12rem] rounded-lg border bg-surface/85 px-2 py-1 text-[11px] leading-tight text-foreground shadow-sm backdrop-blur-sm',
+              'max-w-[13rem] rounded-full border bg-surface/90 px-3 py-1.5 text-[11px] leading-tight text-foreground shadow-sm backdrop-blur-sm',
               tone.chip,
             )}
           >
@@ -216,30 +216,30 @@ function CrosswalkVenn({ data }: { data: CrosswalkDto }) {
           <span className="min-w-0 truncate text-primary">◖ {data.a.name}</span>
           <span className="min-w-0 truncate text-right text-accent-coral">{data.b.name} ◗</span>
         </div>
-        {/* Khung tỉ lệ 3:2 == viewBox 300×200 → circle TRÒN thật, canh đúng 3 cột. */}
-        <div className="relative mx-auto aspect-[3/2] w-full max-w-3xl">
+        {/* Khung tỉ lệ 7:5 == viewBox 350×250 → circle TRÒN thật, canh đúng 3 cột, đủ cao cho ~6 chip. */}
+        <div className="relative mx-auto aspect-[7/5] w-full max-w-4xl">
           <svg
             aria-hidden
-            viewBox="0 0 300 200"
+            viewBox="0 0 350 250"
             preserveAspectRatio="none"
             className="absolute inset-0 h-full w-full"
           >
             <circle
-              cx="102"
-              cy="100"
-              r="90"
+              cx="120"
+              cy="125"
+              r="115"
               fill="var(--color-primary)"
-              fillOpacity="0.07"
+              fillOpacity="0.06"
               stroke="var(--color-primary)"
               strokeOpacity="0.35"
               strokeWidth="1.2"
             />
             <circle
-              cx="198"
-              cy="100"
-              r="90"
+              cx="230"
+              cy="125"
+              r="115"
               fill="var(--color-accent-coral)"
-              fillOpacity="0.07"
+              fillOpacity="0.06"
               stroke="var(--color-accent-coral)"
               strokeOpacity="0.35"
               strokeWidth="1.2"
