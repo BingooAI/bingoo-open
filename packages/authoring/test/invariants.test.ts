@@ -81,6 +81,23 @@ describe('I1 — không phân biệt được hai KC → CỔNG NGƯỜI DUYỆT
   it('khác object → không va chạm', () => {
     expect(codes(graph([kc('parity'), kc('addition')]))).not.toContain('I1_IDENTITY_COLLISION')
   })
+  it('nộp LẠI đúng KC đã có (cùng slug) → KHÔNG va chạm (idempotent; một slug ⇔ một kiến thức)', () => {
+    const v = checkInvariants(graph([kc('count-100', { facets: { object: 'counting' } })]), {
+      profiles,
+      existing: [kc('count-100', { facets: { object: 'counting' } })],
+    })
+    expect(v.map((x) => x.code)).not.toContain('I1_IDENTITY_COLLISION')
+  })
+  it('CẬP NHẬT facets của một KC (cùng slug) → bản nộp thắng, không tự-va-chạm', () => {
+    const v = checkInvariants(
+      graph([kc('count-100', { facets: { object: 'counting', channel: 'compute' } })]),
+      {
+        profiles,
+        existing: [kc('count-100', { facets: { object: 'counting' } })],
+      },
+    )
+    expect(v.map((x) => x.code)).not.toContain('I1_IDENTITY_COLLISION')
+  })
 })
 
 describe('I4/I5 — OBJECTIVE phải neo được vào bằng chứng', () => {

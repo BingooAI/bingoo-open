@@ -136,7 +136,16 @@ export function checkInvariants(graph: GraphData, opts: InvariantOpts = {}): Vio
 
   // ── I1: MỘT kiến thức ⇔ MỘT slug. Trùng định danh (cùng facets) = KC trùng.
   // So bằng CẤU TRÚC, không bằng ngưỡng chuỗi.
-  const all = [...(opts.existing ?? []), ...kcs]
+  //
+  // Khử trùng theo slug TRƯỚC (bản đang nộp thắng bản đã có): một node nộp lại cùng slug với KC đã
+  // có KHÔNG phải trùng — theo chính nguyên tắc "một slug ⇔ một kiến thức", đó là bản CẬP NHẬT của
+  // đúng KC đó. Không khử thì re-author (hay áp lại cùng đồ thị) = KC "đụng chính nó", cổng chặn oan
+  // và idempotency mà applyAuthoredFramework hứa thành dối. Chỉ HAI slug KHÁC nhau cùng facets mới là
+  // trùng định danh thật.
+  const bySlug = new Map<Slug, SkillNode>()
+  for (const n of opts.existing ?? []) bySlug.set(n.slug, n)
+  for (const n of kcs) bySlug.set(n.slug, n)
+  const all = [...bySlug.values()]
   const byKey = new Map<string, SkillNode[]>()
   for (const n of all) {
     const f = facetsOf(n)
