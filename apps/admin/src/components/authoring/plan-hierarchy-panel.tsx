@@ -238,6 +238,19 @@ function PlanRow({
 
       {open && plan ? (
         <div className="mt-3 space-y-4 border-t border-border pt-3">
+          {(plan.aiModel ?? plan.promptId) ? (
+            // TRUY VẾT (XAI): bản này do model nào + prompt nào (id@hash template hiệu lực) sinh ra.
+            <div className="text-[11px] text-foreground-subtle">
+              {t('planProvenance')} <span className="font-medium">{plan.aiModel ?? '—'}</span>
+              {plan.promptId ? (
+                <span className="font-mono">
+                  {' · '}
+                  {plan.promptId}
+                  {plan.promptHash ? `@${plan.promptHash}` : ''}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
           {renderDoc(plan.doc)}
           <div className="border-t border-border/60 pt-3">
             <div className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-foreground-subtle">

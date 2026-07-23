@@ -851,6 +851,7 @@
       "planUnitPrefix": "Unit",
       "planGateCourse": "Duyệt kế hoạch khoá trước thì mới sinh được kế hoạch unit.",
       "planDraft": "Nháp",
+      "planProvenance": "Sinh bởi",
       "planApprovedBadge": "Đã duyệt",
       "planGen": "Sinh",
       "planRegen": "Sinh lại",

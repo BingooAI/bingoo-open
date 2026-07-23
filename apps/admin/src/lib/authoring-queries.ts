@@ -837,6 +837,10 @@ export interface StoredPlanDto {
   version: number
   quality: HierQualityDto | null
   approvedBy: string | null
+  // PROVENANCE: model + prompt (id + hash) đã sinh bản này — null nếu không do AI / bản cũ.
+  aiModel: string | null
+  promptId: string | null
+  promptHash: string | null
 }
 
 /** Cây kế hoạch của khoá — mọi cấp + trạng thái duyệt (để gate UI). */
