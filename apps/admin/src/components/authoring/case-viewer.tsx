@@ -4,8 +4,9 @@
 
 import { useMemo, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
-import { ArrowRight, Download, Hash, Languages, Layers, Link2, X } from 'lucide-react'
+import { ArrowRight, Download, Hash, Languages, Layers, Link2, Search, X } from 'lucide-react'
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@bingoo.ai/ui-web'
+import { ObjectiveTrace } from './objective-trace'
 import {
   downloadCasePackage,
   type CaseAssociation,
@@ -268,6 +269,7 @@ function ObjectiveDetail({
   const s = statementOf(item, locale)
   const level = levelOf(item)
   const strand = item.conceptKeywords?.[0]
+  const [showTrace, setShowTrace] = useState(false)
 
   return (
     <div className="space-y-3 rounded-lg border border-border bg-surface p-4">
@@ -297,6 +299,29 @@ function ObjectiveDetail({
             <Languages className="mt-[3px] size-3 shrink-0" />
             {s.secondary}
           </p>
+        ) : null}
+      </div>
+
+      {/* Xem CĂN CỨ — vì sao có mục tiêu này (trích nguồn, mở đúng trang, tô đúng dòng) */}
+      <div>
+        <button
+          type="button"
+          onClick={() => setShowTrace((v) => !v)}
+          aria-expanded={showTrace}
+          className={cn(
+            'focus-ring inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium transition-colors',
+            showTrace
+              ? 'border-primary bg-primary-soft text-primary-soft-foreground'
+              : 'border-primary/40 text-primary hover:bg-primary-soft',
+          )}
+        >
+          <Search className="size-3" />
+          {t('tbWhy')}
+        </button>
+        {showTrace ? (
+          <div className="mt-2">
+            <ObjectiveTrace slug={item.identifier} onClose={() => setShowTrace(false)} />
+          </div>
         ) : null}
       </div>
 

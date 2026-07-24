@@ -37,8 +37,21 @@ export default function PdfViewer({
 }) {
   const t = useTranslations('admin.authoring')
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const [state, setState] = useState<'loading' | 'error' | 'ready'>('loading')
   const [dims, setDims] = useState<{ w: number; h: number }>({ w: 0, h: 0 })
+
+  // Tự CUỘN tới dòng đã tô — người duyệt thấy ngay, không phải tìm giữa trang.
+  useEffect(() => {
+    if (state !== 'ready' || rects.length === 0 || dims.h === 0) return
+    const c = scrollRef.current
+    const r = rects[0]
+    if (!c || !r) return
+    c.scrollTo({
+      top: Math.max(0, r.y * dims.h - c.clientHeight / 2 + (r.h * dims.h) / 2),
+      behavior: 'smooth',
+    })
+  }, [state, dims, rects])
 
   useEffect(() => {
     let cancelled = false
@@ -76,6 +89,7 @@ export default function PdfViewer({
       aria-modal="true"
     >
       <div
+        ref={scrollRef}
         className="relative max-h-[90vh] max-w-[92vw] overflow-auto rounded-lg bg-surface p-3 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -101,11 +115,11 @@ export default function PdfViewer({
         ) : null}
 
         <div className="relative" style={{ display: state === 'ready' ? 'block' : 'none' }}>
-          <canvas ref={canvasRef} className="block max-w-full rounded" />
+          <canvas ref={canvasRef} className="block rounded" />
           {rects.map((r, i) => (
             <div
               key={i}
-              className="pointer-events-none absolute rounded-sm bg-warning/25 ring-1 ring-warning/70"
+              className="pointer-events-none absolute rounded-sm bg-warning/40 ring-2 ring-warning"
               style={{
                 left: `${r.x * dims.w}px`,
                 top: `${r.y * dims.h}px`,

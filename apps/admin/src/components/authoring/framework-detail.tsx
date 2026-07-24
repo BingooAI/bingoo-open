@@ -21,6 +21,8 @@ import {
   TR,
   useToast,
 } from '@bingoo.ai/ui-web'
+import { Search } from 'lucide-react'
+import { cn } from '@/lib/cn'
 import { GraphCanvas, type GEdge, type GNode } from './graph-canvas'
 import { CaseViewer } from './case-viewer'
 import { NodeExplain } from './node-explain'
@@ -186,29 +188,34 @@ export function FrameworkDetail({ slug }: { slug: string }) {
           {f.objectives.length === 0 ? (
             <EmptyState title={t('empty')} />
           ) : (
-            <>
-              <ul className="space-y-2">
-                {f.objectives.map((o) => (
-                  <li key={o.slug} className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <ul className="space-y-2">
+              {f.objectives.map((o) => (
+                <li key={o.slug} className="space-y-2 border-b border-border/40 pb-2 last:border-0 last:pb-0">
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                     {o.code ? <Badge tone="soft">{o.code}</Badge> : null}
                     <span className="text-sm text-foreground">{o.title.vi ?? o.title.en ?? o.slug}</span>
                     <span className="font-mono text-xs text-foreground-muted">{o.slug}</span>
                     <button
                       type="button"
                       onClick={() => setTracing((s) => (s === o.slug ? null : o.slug))}
-                      className="focus-ring ml-auto shrink-0 rounded px-1.5 py-0.5 text-xs text-primary hover:bg-primary-soft"
+                      aria-expanded={tracing === o.slug}
+                      className={cn(
+                        'focus-ring ml-auto inline-flex shrink-0 items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium transition-colors',
+                        tracing === o.slug
+                          ? 'border-primary bg-primary-soft text-primary-soft-foreground'
+                          : 'border-primary/40 text-primary hover:bg-primary-soft',
+                      )}
                     >
+                      <Search className="size-3" />
                       {t('tbWhy')}
                     </button>
-                  </li>
-                ))}
-              </ul>
-              {tracing ? (
-                <div className="mt-3">
-                  <ObjectiveTrace slug={tracing} onClose={() => setTracing(null)} />
-                </div>
-              ) : null}
-            </>
+                  </div>
+                  {tracing === o.slug ? (
+                    <ObjectiveTrace slug={o.slug} onClose={() => setTracing(null)} />
+                  ) : null}
+                </li>
+              ))}
+            </ul>
           )}
         </CardContent>
       </Card>
