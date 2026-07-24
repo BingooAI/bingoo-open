@@ -894,6 +894,9 @@
       "tbVerdictRejected": "Rejected",
       "tbVerdictEdited": "Edited during review",
       "tbOverridden": "The reviewer decided differently from the machine.",
+      "tbOpenDoc": "Open the document at the exact line (page {page})",
+      "tbOpenAtPage": "Page {page} in your document",
+      "tbViewerFailed": "Couldn't open the document.",
       "facetAxis": {
         "object": "Object",
         "channel": "Channel",

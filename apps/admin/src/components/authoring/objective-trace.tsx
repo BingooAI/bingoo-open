@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client'
 
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
+import dynamic from 'next/dynamic'
 import { useLocale, useTranslations } from 'next-intl'
 import {
+  BookOpen,
   CheckCircle2,
   Clock,
   FileSearch,
@@ -15,8 +17,22 @@ import {
   X,
 } from 'lucide-react'
 import { Spinner } from '@bingoo.ai/ui-web'
-import { useObjectiveTrace, type ObjectiveTraceDto, type TraceSourceLaneDto } from '@/lib/authoring-queries'
+import {
+  useObjectiveTrace,
+  type ObjectiveTraceDto,
+  type RectDto,
+  type TraceSourceLaneDto,
+} from '@/lib/authoring-queries'
 import { cn } from '@/lib/cn'
+
+// pdf.js chỉ chạy client (DOMMatrix/canvas) + lazy để không vào bundle chính.
+const PdfViewer = dynamic(() => import('./pdf-viewer'), { ssr: false })
+
+interface ViewerTarget {
+  documentId: string
+  page: number
+  rects: RectDto[]
+}
 
 /**
  * TRUY NGƯỢC "vì sao có mục tiêu này" — cho NGƯỜI DUYỆT (R5), không chuyên kỹ thuật.
@@ -92,20 +108,43 @@ function ExcerptView({ lane }: { lane: TraceSourceLaneDto }) {
   )
 }
 
-function SourceLane({ d, t }: { d: ObjectiveTraceDto; t: (k: string) => string }) {
-  if (d.source && d.source.verifiedNow) {
+type TFn = (key: string, values?: Record<string, string | number>) => string
+
+function SourceLane({
+  d,
+  t,
+  onOpenViewer,
+}: {
+  d: ObjectiveTraceDto
+  t: TFn
+  onOpenViewer: (v: ViewerTarget) => void
+}) {
+  const src = d.source
+  if (src && src.verifiedNow) {
+    const loc = src.locator
+    const docId = src.documentId
     return (
       <Lane tone="success" icon={FileText} title={t('tbSourceFoundTitle')}>
         {t('tbSourceFoundBody')}
-        <ExcerptView lane={d.source} />
+        <ExcerptView lane={src} />
+        {loc?.kind === 'pdf' && docId ? (
+          <button
+            type="button"
+            onClick={() => onOpenViewer({ documentId: docId, page: loc.page, rects: loc.rects })}
+            className="focus-ring mt-2 inline-flex items-center gap-1.5 rounded-md bg-success-soft px-2 py-1 text-[12px] font-medium text-success hover:bg-success/20"
+          >
+            <BookOpen className="size-3.5" />
+            {t('tbOpenDoc', { page: loc.page })}
+          </button>
+        ) : null}
       </Lane>
     )
   }
-  if (d.source && !d.source.verifiedNow) {
+  if (src && !src.verifiedNow) {
     return (
       <Lane tone="warning" icon={FileSearch} title={t('tbSourceUnverifiedTitle')}>
         {t('tbSourceUnverifiedBody')}
-        <ExcerptView lane={d.source} />
+        <ExcerptView lane={src} />
       </Lane>
     )
   }
@@ -116,7 +155,7 @@ function SourceLane({ d, t }: { d: ObjectiveTraceDto; t: (k: string) => string }
   )
 }
 
-function StructuralLane({ s, t }: { s: ObjectiveTraceDto['structural'][number]; t: (k: string) => string }) {
+function StructuralLane({ s, t }: { s: ObjectiveTraceDto['structural'][number]; t: TFn }) {
   if (s.checkCode !== 'coverage:nonempty') return null
   return s.passedNow ? (
     <Lane tone="info" icon={ShieldCheck} title={t('tbStructPassTitle')}>
@@ -140,9 +179,11 @@ export function ObjectiveTrace({ slug, onClose }: { slug: string; onClose?: () =
   const t = useTranslations('admin.authoring')
   const locale = useLocale()
   const q = useObjectiveTrace(slug)
+  const [viewer, setViewer] = useState<ViewerTarget | null>(null)
 
   return (
     <div className="space-y-3 rounded-lg border border-border bg-surface p-4">
+      {viewer ? <PdfViewer {...viewer} onClose={() => setViewer(null)} /> : null}
       <div className="flex items-start justify-between gap-2">
         <h4 className="text-sm font-semibold text-foreground">{t('tbTitle')}</h4>
         {onClose ? (
@@ -176,7 +217,7 @@ export function ObjectiveTrace({ slug, onClose }: { slug: string; onClose?: () =
             </div>
           ) : null}
 
-          <SourceLane d={q.data} t={t} />
+          <SourceLane d={q.data} t={t} onOpenViewer={setViewer} />
           {q.data.structural.map((s) => (
             <StructuralLane key={s.checkCode} s={s} t={t} />
           ))}

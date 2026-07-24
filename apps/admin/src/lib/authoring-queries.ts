@@ -651,6 +651,14 @@ export function useFrameworkGraph(slug: string) {
 }
 
 // ── TRUY NGUỒN một mục tiêu (mirror decision-trace.service.ts) ────────────────
+export interface RectDto {
+  x: number
+  y: number
+  w: number
+  h: number
+}
+export type SourceLocatorDto =
+  { kind: 'pdf'; page: number; rects: RectDto[] } | { kind: 'text'; start: number; end: number }
 export interface TraceSourceLaneDto {
   quote: string
   chunkId?: string
@@ -659,6 +667,9 @@ export interface TraceSourceLaneDto {
   charEnd?: number
   verifiedAtWrite: boolean
   verifiedNow: boolean
+  documentId?: string
+  pageCount?: number
+  locator?: SourceLocatorDto
 }
 export interface TraceStructuralLaneDto {
   checkCode: string

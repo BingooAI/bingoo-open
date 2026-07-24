@@ -894,6 +894,9 @@
       "tbVerdictRejected": "Đã bị bác",
       "tbVerdictEdited": "Đã được sửa lại khi duyệt",
       "tbOverridden": "Người duyệt đã quyết khác máy đề xuất.",
+      "tbOpenDoc": "Mở tài liệu, xem đúng dòng (trang {page})",
+      "tbOpenAtPage": "Trang {page} trong tài liệu của bạn",
+      "tbViewerFailed": "Không mở được tài liệu.",
       "facetAxis": {
         "object": "Đối tượng",
         "channel": "Kênh",
