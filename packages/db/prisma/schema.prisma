@@ -1399,6 +1399,9 @@ model SourceDocument {
   frameworkVersionId String?
   storageKey         String? // trỏ file gốc trên object storage (tuỳ chọn cho demo)
   excerptText        String // văn bản đã trích xuất (OCR) — thứ được đối chiếu + hiện cho người duyệt
+  // Băm nội dung bytes gốc — khoá cache index vị-trí + phát hiện tài liệu đổi (toạ độ cũ hết đúng).
+  contentHash        String?
+  pageCount          Int?
   createdAt          DateTime @default(now())
 
   @@index([frameworkVersionId])
@@ -1453,23 +1456,30 @@ model DecisionRecord {
 /// false → hiện màu yếu, không bao giờ tô "từ tài liệu". STRUCTURAL_CHECK giữ kết
 /// quả ĐÓNG BĂNG lúc quyết định để đối chiếu với lần kiểm lại (đồ thị có thể đã đổi).
 model DecisionEvidence {
-  id            String               @id @default(cuid())
-  decisionId    String
-  decision      DecisionRecord       @relation(fields: [decisionId], references: [id], onDelete: Cascade)
-  kind          DecisionEvidenceKind
-  basis         EvidenceBasis
-  method        String // nơi sinh chính xác: "quote" | "rule:compareScope" | "invariant:I6" | …
+  id                String               @id @default(cuid())
+  decisionId        String
+  decision          DecisionRecord       @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+  kind              DecisionEvidenceKind
+  basis             EvidenceBasis
+  method            String // nơi sinh chính xác: "quote" | "rule:compareScope" | "invariant:I6" | …
   // SOURCE_SPAN — câu trích đối chiếu vào SourceDocument
-  quote         String?
-  chunkId       String?
-  quoteVerified Boolean?             @default(false)
-  charStart     Int?
-  charEnd       Int?
+  quote             String?
+  chunkId           String?
+  quoteVerified     Boolean?             @default(false)
+  charStart         Int?
+  charEnd           Int?
   // STRUCTURAL_CHECK — kết quả đóng băng lúc quyết định
-  checkCode     String? // "scope:subset" | "I6_ORDERING_CYCLE" | "coverage:nonempty"
-  passed        Boolean?
-  detail        Json? // output compareScope / axes[] / cyclePath[] — để render lại + đối chiếu
-  createdAt     DateTime             @default(now())
+  checkCode         String? // "scope:subset" | "I6_ORDERING_CYCLE" | "coverage:nonempty"
+  passed            Boolean?
+  detail            Json? // output compareScope / axes[] / cyclePath[] — để render lại + đối chiếu
+  // NEO VỊ TRÍ trong tài liệu (SOURCE_SPAN) — để "mở đúng trang, tô đúng dòng". `anchorLocator` là
+  // SourceLocator (union theo định dạng: {kind:'pdf',page,rects[]} | {kind:'text',start,end}…).
+  // CHỈ vẽ khung khi câu khớp EXACT + duy nhất; mơ hồ/nhiều cột → giữ trang, không toạ độ (không vẽ bừa).
+  // `anchorContentHash` chốt toạ độ theo đúng bản tài liệu đã trích — tài liệu đổi thì tính lại.
+  anchorKind        String? // 'pdf' | 'text' | … (khớp SourceLocator.kind)
+  anchorLocator     Json?
+  anchorContentHash String?
+  createdAt         DateTime             @default(now())
 
   @@index([decisionId])
   @@index([kind])
