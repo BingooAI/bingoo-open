@@ -52,6 +52,7 @@ import {
   frameworkFromPrompt,
   frameworkFromText,
 } from '../services/authoring-framework.service'
+import { getObjectiveTrace } from '../services/decision-trace.service'
 import { courseShellFromBook, courseShellFromPrompt } from '../services/course-shell.service'
 import { alignSource } from '../services/alignment.service'
 import { applyAlignDecisions, listAlignHistory } from '../services/alignment-apply.service'
@@ -699,6 +700,14 @@ export const authoring = new Hono<AppEnv>()
     const g = await getFrameworkGraph(c.req.param('slug'))
     if (!g) throw AppError.notFound('Không có framework này.')
     return ok(c, g)
+  })
+  // TRUY NGUỒN một mục tiêu: thẻ "vì sao có mục tiêu này" + kiểm-lại-sống đối chiếu bản đóng băng.
+  .get('/trace/objective/:slug', authorGuard, async (c) => {
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    const trace = await getObjectiveTrace(c.req.param('slug'))
+    if (!trace) throw AppError.notFound('Chưa có vết truy nguồn cho mục tiêu này.')
+    return ok(c, trace)
   })
   .post(
     '/framework/:slug/version',
