@@ -52,7 +52,7 @@ const FOLD: Readonly<Record<string, string>> = {
   ' ': ' ',
 }
 
-interface Folded {
+export interface Folded {
   readonly text: string
   /** `map[i]` = chỉ số trong chuỗi gốc (đã NFC) của ký tự thứ i trong `text`. */
   readonly map: readonly number[]
@@ -61,8 +61,9 @@ interface Folded {
 /**
  * Gập một chuỗi ĐÃ NFC để so khớp: nháy/gạch → ASCII, chuỗi khoảng trắng → một dấu cách. Giữ
  * `map` để một vị trí khớp trong `text` quay ngược được về chỉ số trong nguồn gốc (tô sáng).
+ * Export để bộ neo vị-trí (anchor.ts) dùng CÙNG một phép gập trên chuỗi ghép của các đơn vị.
  */
-function fold(src: string): Folded {
+export function foldForMatch(src: string): Folded {
   let text = ''
   const map: number[] = []
   let prevSpace = false
@@ -97,14 +98,14 @@ export function normalizeSource(extracted: string): string {
  * về khớp với `normalizeSource(source)`.
  */
 export function verifyQuote(quote: string, source: string): QuoteMatch {
-  const q = fold(quote.normalize('NFC'))
+  const q = foldForMatch(quote.normalize('NFC'))
   const needle = q.text.trim()
   const words = needle.split(' ').filter(Boolean)
   if (needle.length < MIN_CHARS || words.length < MIN_WORDS) {
     return { status: 'too_short' }
   }
 
-  const src = fold(source.normalize('NFC'))
+  const src = foldForMatch(source.normalize('NFC'))
   const at = src.text.indexOf(needle)
   if (at === -1) return { status: 'not_found' }
 
