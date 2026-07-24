@@ -33,6 +33,9 @@ const nextConfig = {
     '@bingoo.ai/explainer',
     '@bingoo.ai/manipulatives',
     '@bingoo.ai/explainer-web',
+    '@bingoo.ai/authoring',
+    '@bingoo.ai/facets',
+    '@bingoo.ai/knowledge-engine',
   ],
   // Lint is a dedicated gate (`pnpm lint`) + enforced on commit; keep builds fast.
   eslint: { ignoreDuringBuilds: true },

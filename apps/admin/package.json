@@ -15,9 +15,11 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\""
   },
   "dependencies": {
+    "@bingoo.ai/authoring": "workspace:^",
     "@bingoo.ai/core": "workspace:*",
     "@bingoo.ai/explainer": "workspace:*",
     "@bingoo.ai/explainer-web": "workspace:*",
+    "@bingoo.ai/facets": "workspace:^",
     "@bingoo.ai/i18n": "workspace:*",
     "@bingoo.ai/tokens": "workspace:*",
     "@bingoo.ai/ui-web": "workspace:*",

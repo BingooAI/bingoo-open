@@ -73,6 +73,9 @@ importers:
 
   apps/admin:
     dependencies:
+      '@bingoo.ai/authoring':
+        specifier: workspace:^
+        version: link:../../packages/authoring
       '@bingoo.ai/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -82,6 +85,9 @@ importers:
       '@bingoo.ai/explainer-web':
         specifier: workspace:*
         version: link:../../packages/explainer-web
+      '@bingoo.ai/facets':
+        specifier: workspace:^
+        version: link:../../packages/facets
       '@bingoo.ai/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n

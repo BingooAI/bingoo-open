@@ -897,6 +897,12 @@
       "tbOpenDoc": "Open the document at the exact line (page {page})",
       "tbOpenAtPage": "Page {page} in your document",
       "tbViewerFailed": "Couldn't open the document.",
+      "relWhy": "Why this relationship?",
+      "relProven": "Machine-checked: the smaller fits inside the larger → the smaller is usually learned first. Certain about the range (not an absolute must).",
+      "relContradicted": "⚠ The order looks BACKWARDS — the earlier one is wider than the later one. Worth another look.",
+      "relJudgment": "The machine can't prove this order (different objects, or the ranges aren't comparable). It's only sure the learning chain doesn't loop. Why one comes first is the author's/AI's pedagogical judgment — please confirm.",
+      "relMapping": "This objective is MEASURED by that knowledge. The machine checks: all of the knowledge is required to count as met — miss one and it isn't. Why exactly these pieces is the author's/AI's call — please confirm.",
+      "relLateral": "A related link set by the author/AI — not a required learning order.",
       "facetAxis": {
         "object": "Object",
         "channel": "Channel",

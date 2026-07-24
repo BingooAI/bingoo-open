@@ -897,6 +897,12 @@
       "tbOpenDoc": "Mở tài liệu, xem đúng dòng (trang {page})",
       "tbOpenAtPage": "Trang {page} trong tài liệu của bạn",
       "tbViewerFailed": "Không mở được tài liệu.",
+      "relWhy": "Vì sao có quan hệ này?",
+      "relProven": "Máy tự tính: cái nhỏ nằm gọn trong cái lớn → thường học phần nhỏ trước. Chắc về phạm vi (không phải bắt buộc tuyệt đối).",
+      "relContradicted": "⚠ Thứ tự có vẻ NGƯỢC — cái đứng trước lại rộng hơn cái đứng sau. Nên xem lại.",
+      "relJudgment": "Máy KHÔNG tự chứng minh được thứ tự này (khác đối tượng, hoặc không so được phạm vi). Máy chỉ chắc: chuỗi học không quay vòng. Còn 'vì sao học trước' là phán đoán sư phạm của người soạn/AI — cần thầy cô xác nhận.",
+      "relMapping": "Mục tiêu này được ĐO bằng kiến thức đó. Máy kiểm: phải đủ MỌI kiến thức mới coi là đạt, thiếu một là chưa đạt. Còn 'vì sao đúng những kiến thức này' là người soạn/AI quyết — cần xác nhận.",
+      "relLateral": "Quan hệ liên quan do người soạn/AI gán — không phải thứ tự học bắt buộc.",
       "facetAxis": {
         "object": "Đối tượng",
         "channel": "Kênh",

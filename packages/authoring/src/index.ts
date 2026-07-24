@@ -40,6 +40,7 @@ export {
   type Anchor,
   type MatchQuality,
 } from './anchor'
+export { explainRelation, type RelationExplanation, type RelationBasis } from './relation-explain'
 export { trigrams, diceSimilarity } from './trigram'
 export { dedupeConcepts, type DedupResult, type Merge } from './dedup'
 export { compileDraft, type CompiledFramework, type CompiledObjective } from './compile'

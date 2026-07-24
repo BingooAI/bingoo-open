@@ -2,10 +2,30 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client'
 
+import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Hash, Layers, Link2, Sparkles } from 'lucide-react'
+import { HelpCircle, Hash, Layers, Link2, Sparkles } from 'lucide-react'
 import { Badge } from '@bingoo.ai/ui-web'
+import { explainRelation, type RelationBasis } from '@bingoo.ai/authoring'
+import type { Facets } from '@bingoo.ai/facets'
 import type { GraphViewDto } from '@/lib/authoring-queries'
+import { cn } from '@/lib/cn'
+
+// Cạnh nào MÁY chứng được thứ tự, cạnh nào là phán đoán người soạn — câu {vi,en} theo mã.
+const REL_KEY: Record<RelationBasis, string> = {
+  'ordering-proven': 'relProven',
+  'ordering-contradicted': 'relContradicted',
+  'ordering-judgment': 'relJudgment',
+  mapping: 'relMapping',
+  lateral: 'relLateral',
+}
+const REL_TONE: Record<RelationBasis, string> = {
+  'ordering-proven': 'text-info',
+  'ordering-contradicted': 'text-danger',
+  'ordering-judgment': 'text-warning',
+  mapping: 'text-info',
+  lateral: 'text-foreground-subtle',
+}
 
 /**
  * DIỄN GIẢI một node khi người soạn bấm vào đồ thị khung (XAI).
@@ -21,13 +41,20 @@ type Edge = GraphViewDto['edges'][number]
 
 const loc = (t: Record<string, string>): string => t.vi ?? t.en ?? ''
 
+// facets của node (GraphViewDto để mở) → kiểu Facets cho explainRelation. compareScope tự chịu được
+// khoá phi-số/thiếu, nên cast lỏng là an toàn.
+const facetsOf = (n?: Node): Facets | undefined => n?.facets as unknown as Facets | undefined
+
 // Thứ tự trục facets ổn định (khớp @bingoo.ai/facets FACET_AXES) — nhãn lấy qua i18n.
 const FACET_AXES = ['object', 'channel', 'bloom', 'scope', 'representation'] as const
 
-/** Một quan hệ nhìn từ góc node đang chọn: khoá nhãn thường + node đầu kia. */
+/** Một quan hệ nhìn từ góc node đang chọn: nhãn thường + node đầu kia + cạnh gốc (để giải thích). */
 interface Rel {
   labelKey: string
   other: string
+  from: string
+  to: string
+  relType: string
 }
 
 function relationsOf(slug: string, edges: Edge[]): Rel[] {
@@ -37,27 +64,30 @@ function relationsOf(slug: string, edges: Edge[]): Rel[] {
     const isTo = e.to === slug
     if (!isFrom && !isTo) continue
     const other = isFrom ? e.to : e.from
-    switch (e.relType) {
+    const relType = e.relType ?? ''
+    let labelKey: string
+    switch (relType) {
       case 'MAPS_TO':
         // objective → KC: mục tiêu "đo bằng" KC; KC "phục vụ" mục tiêu.
-        out.push({ labelKey: isFrom ? 'explainRelMeasuredBy' : 'explainRelServes', other })
+        labelKey = isFrom ? 'explainRelMeasuredBy' : 'explainRelServes'
         break
       case 'PREREQUISITE':
       case 'ENABLES':
-        out.push({ labelKey: isFrom ? 'explainRelOpens' : 'explainRelNeeds', other })
+        labelKey = isFrom ? 'explainRelOpens' : 'explainRelNeeds'
         break
       case 'COMPOSES':
-        out.push({ labelKey: isFrom ? 'explainRelPartOf' : 'explainRelContains', other })
+        labelKey = isFrom ? 'explainRelPartOf' : 'explainRelContains'
         break
       case 'ALIGNS':
-        out.push({ labelKey: 'explainRelAligns', other })
+        labelKey = 'explainRelAligns'
         break
       case 'VARIANT_OF':
-        out.push({ labelKey: 'explainRelVariant', other })
+        labelKey = 'explainRelVariant'
         break
       default:
-        out.push({ labelKey: 'explainRelRelated', other })
+        labelKey = 'explainRelRelated'
     }
+    out.push({ labelKey, other, from: e.from, to: e.to, relType })
   }
   return out
 }
@@ -75,6 +105,7 @@ function facetValue(v: unknown): string {
 
 export function NodeExplain({ slug, nodes, edges }: { slug: string; nodes: Node[]; edges: Edge[] }) {
   const t = useTranslations('admin.authoring')
+  const [openRel, setOpenRel] = useState<number | null>(null)
   const enumLabel = (ns: string, k: string): string => (t.has(`${ns}.${k}`) ? t(`${ns}.${k}`) : k)
 
   const node = nodes.find((n) => n.slug === slug)
@@ -141,10 +172,35 @@ export function NodeExplain({ slug, nodes, edges }: { slug: string; nodes: Node[
           <ul className="space-y-1">
             {relations.map((r, i) => {
               const other = byId.get(r.other)
+              const ex = explainRelation(facetsOf(byId.get(r.from)), facetsOf(byId.get(r.to)), r.relType)
+              const open = openRel === i
               return (
-                <li key={i} className="flex items-baseline gap-1.5 text-[12px] leading-snug">
-                  <span className="shrink-0 text-foreground-muted">{t(r.labelKey)}</span>
-                  <span className="text-foreground">{other ? loc(other.title) || other.slug : r.other}</span>
+                <li key={i} className="text-[12px] leading-snug">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="shrink-0 text-foreground-muted">{t(r.labelKey)}</span>
+                    <span className="text-foreground">
+                      {other ? loc(other.title) || other.slug : r.other}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setOpenRel(open ? null : i)}
+                      aria-label={t('relWhy')}
+                      aria-expanded={open}
+                      className="focus-ring ml-auto shrink-0 rounded p-0.5 text-foreground-subtle hover:text-primary"
+                    >
+                      <HelpCircle className="size-3" />
+                    </button>
+                  </div>
+                  {open ? (
+                    <p
+                      className={cn(
+                        'mt-1 rounded-md border border-border/60 bg-surface-muted p-2 text-[11px] leading-relaxed',
+                        REL_TONE[ex.basis],
+                      )}
+                    >
+                      {t(REL_KEY[ex.basis])}
+                    </p>
+                  ) : null}
                 </li>
               )
             })}
