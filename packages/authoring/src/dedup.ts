@@ -12,6 +12,10 @@ export interface Merge {
   readonly into: Slug
   readonly reason: 'existing' | 'within-batch'
   readonly similarity: number
+  // Tiêu đề (chuẩn hoá EN) hai phía — để thẻ CONCEPT_IDENTITY đọc được "X coi là cùng Y" mà không
+  // phải tra ngược concept đã bị gộp mất. Gộp do TRIGRAM là quyết định KHÔNG cấu trúc, phải truy được.
+  readonly fromTitle: string
+  readonly intoTitle: string
 }
 
 export interface DedupResult {
@@ -47,24 +51,31 @@ export function dedupeConcepts(
     const title = titleOf(c)
 
     // (1) vs existing
-    let best: { slug: Slug; sim: number } | null = null
+    let best: { slug: Slug; sim: number; title: string } | null = null
     for (const e of existing) {
       if (e.kind && e.kind !== c.kind) continue
       const sim = diceSimilarity(title, e.title)
-      if (sim >= threshold && (!best || sim > best.sim)) best = { slug: e.slug, sim }
+      if (sim >= threshold && (!best || sim > best.sim)) best = { slug: e.slug, sim, title: e.title }
     }
     if (best) {
       alias.set(c.tempId, best.slug)
-      merges.push({ tempId: c.tempId, into: best.slug, reason: 'existing', similarity: best.sim })
+      merges.push({
+        tempId: c.tempId,
+        into: best.slug,
+        reason: 'existing',
+        similarity: best.sim,
+        fromTitle: title,
+        intoTitle: best.title,
+      })
       continue
     }
 
     // (2) vs kept in batch
-    let dup: { slug: Slug; sim: number } | null = null
+    let dup: { slug: Slug; sim: number; title: string } | null = null
     for (const k of kept) {
       if (k.kind !== c.kind) continue
       const sim = diceSimilarity(title, titleOf(k))
-      if (sim >= threshold && (!dup || sim > dup.sim)) dup = { slug: k.slug as Slug, sim }
+      if (sim >= threshold && (!dup || sim > dup.sim)) dup = { slug: k.slug as Slug, sim, title: titleOf(k) }
     }
     if (dup) {
       alias.set(c.tempId, dup.slug)
@@ -73,6 +84,8 @@ export function dedupeConcepts(
         into: dup.slug,
         reason: 'within-batch',
         similarity: dup.sim,
+        fromTitle: title,
+        intoTitle: dup.title,
       })
       continue
     }

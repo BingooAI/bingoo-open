@@ -7,7 +7,7 @@
 
 import { describe, expect, it } from 'vitest'
 import type { CompiledObjective } from '@bingoo.ai/authoring'
-import { buildObjectiveTrace } from '../src/services/decision-trace.service'
+import { buildConceptIdentityTrace, buildObjectiveTrace } from '../src/services/decision-trace.service'
 
 const EXCERPT = 'Số và phép tính — Lớp 1. Đếm, đọc, viết các số trong phạm vi 10; 20; 100. So sánh các số.'
 
@@ -54,5 +54,24 @@ describe('buildObjectiveTrace', () => {
     const t = buildObjectiveTrace(objWith({ mapsTo: [] }), EXCERPT)
     expect(t.evidence.find((e) => e.kind === 'STRUCTURAL_CHECK')?.passed).toBe(false)
     expect(t.checksFailed).toContain('coverage:nonempty')
+  })
+})
+
+describe('buildConceptIdentityTrace (đóng điểm mù trigram)', () => {
+  it('gộp trigram → CONCEPT_IDENTITY, TRIGRAM/AI_INFERRED, có % trong lý do, gắn vào KC sống sót', () => {
+    const t = buildConceptIdentityTrace({
+      tempId: 'c3',
+      into: 'count-within-100',
+      reason: 'within-batch',
+      similarity: 0.82,
+      fromTitle: 'Count up to 100',
+      intoTitle: 'Count within 100',
+    })
+    expect(t.artifact).toBe('CONCEPT_IDENTITY')
+    expect(t.method).toBe('TRIGRAM')
+    expect(t.basis).toBe('AI_INFERRED') // KHÔNG phải STRUCTURAL — đó là điểm cần cảnh báo
+    expect(t.subjectSlug).toBe('count-within-100')
+    expect(t.reason.vi).toContain('82%')
+    expect(t.claim.en).toContain('SAME')
   })
 })

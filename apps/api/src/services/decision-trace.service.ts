@@ -15,7 +15,7 @@
  * KHÔNG phải "kiểm hụt".
  */
 
-import { normalizeSource, verifyQuote, type CompiledObjective } from '@bingoo.ai/authoring'
+import { normalizeSource, verifyQuote, type CompiledObjective, type Merge } from '@bingoo.ai/authoring'
 import { db, type Prisma } from '@bingoo.ai/db'
 
 export type EvidenceBasis = 'FROM_SOURCE' | 'STRUCTURAL' | 'AI_INFERRED'
@@ -169,6 +169,68 @@ export async function writeObjectiveTraces(
     })
   }
   return { records: objectives.length, sourceDocumentId: source.id }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ĐÓNG ĐIỂM MÙ TRIGRAM — dedupeConcepts tự gộp hai khái niệm khi tên GẦN GIỐNG (ngưỡng 0.72),
+// KHÔNG người, KHÔNG cấu trúc, và trước đây KHÔNG để lại vết. Một walk "sao hai cái này là một?"
+// rơi vào hư không. Nay mỗi lần gộp phát một thẻ CONCEPT_IDENTITY — gắn rõ TRIGRAM/AI_INFERRED,
+// verdict PENDING (chờ người duyệt). KHÔNG có bằng chứng cấu trúc: đó chính là điểm cần cảnh báo.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface ConceptIdentityTraceInput {
+  readonly artifact: 'CONCEPT_IDENTITY'
+  readonly subjectSlug: string
+  readonly claim: { readonly vi: string; readonly en: string }
+  readonly reason: { readonly vi: string; readonly en: string }
+  readonly method: 'TRIGRAM'
+  readonly basis: 'AI_INFERRED'
+}
+
+export function buildConceptIdentityTrace(m: Merge): ConceptIdentityTraceInput {
+  const pct = Math.round(m.similarity * 100)
+  return {
+    artifact: 'CONCEPT_IDENTITY',
+    // Gắn vào KC SỐNG SÓT: hỏi "cái gì đã gộp vào đây?" thì tra theo slug này.
+    subjectSlug: m.into,
+    claim: {
+      vi: `"${m.fromTitle}" được coi là CÙNG một kiến thức với "${m.intoTitle}".`,
+      en: `"${m.fromTitle}" is treated as the SAME knowledge as "${m.intoTitle}".`,
+    },
+    reason: {
+      vi: `Máy tự gộp vì hai tên GẦN GIỐNG nhau (giống ${pct}%) — KHÔNG phải kết luận cấu trúc, cần thầy/cô xác nhận đúng là một.`,
+      en: `Auto-merged because the two names are NEARLY identical (${pct}% similar) — not a structural finding; a reviewer should confirm they really are one.`,
+    },
+    method: 'TRIGRAM',
+    basis: 'AI_INFERRED',
+  }
+}
+
+/**
+ * Ghi thẻ CONCEPT_IDENTITY cho MỌI lần gộp trigram của một bản phát hành. Idempotent theo
+ * frameworkVersionId. Không có evidence row (trigram không sinh SOURCE_SPAN/STRUCTURAL_CHECK) —
+ * độ giống nằm trong `reason`; verdict để PENDING vì đây là thứ cần người duyệt nhất.
+ */
+export async function writeConceptIdentityTraces(
+  frameworkVersionId: string,
+  merges: readonly Merge[],
+): Promise<number> {
+  await db.decisionRecord.deleteMany({ where: { artifact: 'CONCEPT_IDENTITY', frameworkVersionId } })
+  for (const m of merges) {
+    const t = buildConceptIdentityTrace(m)
+    await db.decisionRecord.create({
+      data: {
+        artifact: t.artifact,
+        subjectSlug: t.subjectSlug,
+        claim: t.claim as unknown as Prisma.InputJsonValue,
+        reason: t.reason as unknown as Prisma.InputJsonValue,
+        method: t.method,
+        basis: t.basis,
+        frameworkVersionId,
+      },
+    })
+  }
+  return merges.length
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
