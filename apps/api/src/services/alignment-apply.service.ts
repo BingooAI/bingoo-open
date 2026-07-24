@@ -53,8 +53,10 @@ export interface AlignApplyResult {
  * khung mới đơn giản là không tồn tại — nên câu hỏi "vì sao hai thứ này là một?" và "ai chốt?" biến
  * mất cùng nó. Đây là bảng duy nhất trả lời được, và cũng là dữ liệu để biết máy đề xuất sai chỗ nào.
  */
-async function recordDecision(d: AlignDecisionInput, decidedById?: string): Promise<void> {
-  await db.alignmentDecision.create({
+// Trả về id của bản ghi vừa tạo — thêm THUẦN: caller hiện bỏ qua, nhưng thẻ truy-nguồn
+// CONCEPT_IDENTITY (bước sau) sẽ back-ref vào đây để "vì sao hai thứ là một?" đi ngược được.
+async function recordDecision(d: AlignDecisionInput, decidedById?: string): Promise<string> {
+  const row = await db.alignmentDecision.create({
     data: {
       sourceSlug: d.slug,
       sourceTitle: d.title as Prisma.InputJsonValue,
@@ -69,6 +71,7 @@ async function recordDecision(d: AlignDecisionInput, decidedById?: string): Prom
       ...(decidedById ? { decidedById } : {}),
     },
   })
+  return row.id
 }
 
 export async function applyAlignDecisions(

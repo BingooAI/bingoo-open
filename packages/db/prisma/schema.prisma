@@ -96,6 +96,7 @@ model User {
   relTo              Relationship[]      @relation("relTo")
   auditLogs          AuditLog[]
   alignmentDecisions AlignmentDecision[]
+  decisionRecords    DecisionRecord[]
 
   // Profile facets (§3.8) — 1:0..1, "enabled" when the user takes that role.
   learnerProfile      LearnerProfile?
@@ -1335,6 +1336,144 @@ model AlignmentDecision {
   @@index([targetSlug])
   @@index([verdict])
   @@map("alignment_decision")
+}
+
+// ── Truy nguồn quyết định (Decision trace) ───────────────────────────────────
+//
+// XAI THẬT, không phải provenance ("model X sinh ra cái này"). Mỗi kết luận của AI
+// — objective này TỒN TẠI, objective cần những kiến thức nào, cạnh "học trước",
+// hai concept là MỘT — là một "thẻ vì sao" (DecisionRecord) mang bằng chứng KIỂM
+// ĐƯỢC (DecisionEvidence): câu trích đã verify vào nguồn + kết quả kiểm cấu trúc
+// ĐÓNG BĂNG lúc quyết định. Ba thứ tách BẠCH nhau, không trộn vào một chuỗi mờ:
+//   • bằng chứng máy tự tính / trích được  → basis STRUCTURAL | FROM_SOURCE
+//   • câu AI TỰ lý giải (`reason`)          → LUÔN AI_INFERRED, không tính là bằng chứng
+//   • phán quyết của NGƯỜI (`verdict`)      → mới là thứ được thi hành (R5)
+//
+// Đây là các NODE của đồ thị truy-ngược. Cạnh "được-suy-ra-từ" (DecisionLink) để
+// DÀNH tới khi cần walk nhiều tầng — MVP suy cạnh lúc đọc từ slug phẳng. Không có
+// thang tin cậy: một "chắc chắn" chỉ được cấp khi ≥2 làn độc lập cùng có, nếu
+// không nó sẽ do AI-tự-chấm-AI. EMPIRICAL cố tình CHƯA khai enum — đừng ship
+// taxonomy giàu hơn thứ sinh ra nó.
+
+enum DecisionArtifact {
+  OBJECTIVE_EXISTS // vì sao objective này tồn tại (trích từ nguồn)
+  OBJECTIVE_COVERAGE // vì sao objective cần đúng những KC này
+  PREREQ_EDGE // vì sao X phải học trước Y
+  CONCEPT_IDENTITY // vì sao hai concept là MỘT (gồm cả merge do trigram)
+}
+
+enum DecisionMethod {
+  LLM // AI đề xuất
+  RULE_SCOPE // suy từ bao hàm scope (compareScope)
+  RULE_INVARIANT // cổng bất biến (checkInvariants I1–I8)
+  TRIGRAM // gộp do độ giống trigram (điểm mù dedup, ghi lại để không âm thầm)
+  HUMAN // người duyệt quyết
+}
+
+enum EvidenceBasis {
+  FROM_SOURCE // tìm thấy nguyên văn trong tài liệu — người duyệt tự soi được
+  STRUCTURAL // máy tự tính (bao hàm scope, không quay vòng…) — phản chứng được
+  AI_INFERRED // chỉ AI nói — không kiểm được, luôn là màu yếu nhất
+}
+
+enum DecisionEvidenceKind {
+  SOURCE_SPAN // câu trích đối chiếu vào SourceDocument
+  STRUCTURAL_CHECK // kết quả kiểm cấu trúc đóng băng lúc quyết định
+}
+
+enum DecisionVerdict {
+  PENDING // chưa ai duyệt
+  CONFIRMED // người duyệt xác nhận
+  REJECTED // người duyệt bác
+  EDITED // người duyệt sửa lại
+}
+
+/// NGUỒN đã trích xuất để đối chiếu câu trích. KIỂM ĐƯỢC nghĩa là câu trích phải
+/// tìm thấy NGUYÊN VĂN trong `excerptText` này. `storageKey` trỏ object storage đã
+/// cấu hình — file của CHÍNH người tự host (R8: không hạ tầng riêng của Bingoo).
+/// Demo chỉ lưu excerpt được trích, KHÔNG lưu nguyên cuốn (§1: không phân phối lại
+/// nguyên văn tài liệu bên thứ ba). `frameworkVersionId` là ref PHẲNG (không FK) —
+/// trail phải sống sót độc lập với vòng đời artifact.
+model SourceDocument {
+  id                 String   @id @default(cuid())
+  frameworkVersionId String?
+  storageKey         String? // trỏ file gốc trên object storage (tuỳ chọn cho demo)
+  excerptText        String // văn bản đã trích xuất (OCR) — thứ được đối chiếu + hiện cho người duyệt
+  createdAt          DateTime @default(now())
+
+  @@index([frameworkVersionId])
+  @@map("source_document")
+}
+
+/// Một "thẻ vì sao" cho một kết luận của AI. Mirror mẫu proposed-vs-người của
+/// AlignmentDecision (đo được máy sai bao nhiêu). Khoá bằng slug PHẲNG (không FK):
+/// một SAME-merge xoá concept thua, nên trail phải chịu được slug "mồ côi" — đúng
+/// lý do AlignmentDecision cũng keying bằng slug.
+model DecisionRecord {
+  id                  String             @id @default(cuid())
+  artifact            DecisionArtifact
+  subjectSlug         String // objective slug, hoặc phía `from` của cạnh/mapping
+  objectSlug          String? // phía `to` (KC cho coverage, đích cho prereq/identity)
+  relType             String? // phân biệt cạnh: PREREQUISITE | MAPS_TO | ALIGNS
+  claim               Json // kết luận {vi,en} (R4) — câu người duyệt đọc
+  reason              Json? // câu AI TỰ lý giải {vi,en} — LUÔN AI_INFERRED, không là bằng chứng
+  method              DecisionMethod
+  basis               EvidenceBasis
+  /// Tóm tắt denormalize để render danh sách khỏi join (chi tiết ở DecisionEvidence).
+  checksPassed        String[]           @default([])
+  checksFailed        String[]           @default([])
+  /// Phán quyết của NGƯỜI (R5) — mới là thứ thi hành. `overridden` = người khác máy.
+  verdict             DecisionVerdict    @default(PENDING)
+  overridden          Boolean            @default(false)
+  decidedById         String?
+  decidedBy           User?              @relation(fields: [decidedById], references: [id], onDelete: SetNull)
+  decidedAt           DateTime?
+  /// Provenance (tái dùng cột AuthoringPlan) — model + prompt nào đã sinh.
+  aiModel             String?
+  promptHash          String?
+  /// Ref PHẲNG (không FK) tới bản phát hành khung, tới nguồn, và tới AlignmentDecision
+  /// mà một thẻ CONCEPT_IDENTITY tóm tắt (null khi merge do trigram — thẻ tự đứng).
+  frameworkVersionId  String?
+  sourceDocumentId    String?
+  alignmentDecisionId String?
+  evidence            DecisionEvidence[]
+  createdAt           DateTime           @default(now())
+
+  @@index([artifact, subjectSlug])
+  @@index([subjectSlug])
+  @@index([objectSlug])
+  @@index([frameworkVersionId])
+  @@index([verdict])
+  @@map("decision_record")
+}
+
+/// Mỏ neo KIỂM ĐƯỢC của một thẻ (0..N). Đây là thứ biến "vì sao" thành PHẢN-CHỨNG-
+/// ĐƯỢC thay vì kể chuyện. `quoteVerified` MẶC ĐỊNH false — chỉ true sau khi khớp
+/// byte-for-byte câu trích vào `excerptText` lúc chạy; một câu AI bịa sẽ mãi là
+/// false → hiện màu yếu, không bao giờ tô "từ tài liệu". STRUCTURAL_CHECK giữ kết
+/// quả ĐÓNG BĂNG lúc quyết định để đối chiếu với lần kiểm lại (đồ thị có thể đã đổi).
+model DecisionEvidence {
+  id            String               @id @default(cuid())
+  decisionId    String
+  decision      DecisionRecord       @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+  kind          DecisionEvidenceKind
+  basis         EvidenceBasis
+  method        String // nơi sinh chính xác: "quote" | "rule:compareScope" | "invariant:I6" | …
+  // SOURCE_SPAN — câu trích đối chiếu vào SourceDocument
+  quote         String?
+  chunkId       String?
+  quoteVerified Boolean?             @default(false)
+  charStart     Int?
+  charEnd       Int?
+  // STRUCTURAL_CHECK — kết quả đóng băng lúc quyết định
+  checkCode     String? // "scope:subset" | "I6_ORDERING_CYCLE" | "coverage:nonempty"
+  passed        Boolean?
+  detail        Json? // output compareScope / axes[] / cyclePath[] — để render lại + đối chiếu
+  createdAt     DateTime             @default(now())
+
+  @@index([decisionId])
+  @@index([kind])
+  @@map("decision_evidence")
 }
 
 /// Vector NGỮ NGHĨA của KC — dùng để TRUY HỒI ứng viên đối chiếu, và CHỈ để truy hồi.
