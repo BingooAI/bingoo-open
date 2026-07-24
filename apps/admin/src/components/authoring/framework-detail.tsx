@@ -24,6 +24,7 @@ import {
 import { GraphCanvas, type GEdge, type GNode } from './graph-canvas'
 import { CaseViewer } from './case-viewer'
 import { NodeExplain } from './node-explain'
+import { ObjectiveTrace } from './objective-trace'
 import {
   useCaseExport,
   useCreateVersion,
@@ -45,6 +46,7 @@ export function FrameworkDetail({ slug }: { slug: string }) {
   const caseExport = useCaseExport(slug)
   const [viewing, setViewing] = useState<{ semver: string; data: CaseExportDto } | null>(null)
   const [selectedNode, setSelectedNode] = useState<string | null>(null)
+  const [tracing, setTracing] = useState<string | null>(null)
 
   const onErr = (e: unknown) =>
     toast({
@@ -184,15 +186,29 @@ export function FrameworkDetail({ slug }: { slug: string }) {
           {f.objectives.length === 0 ? (
             <EmptyState title={t('empty')} />
           ) : (
-            <ul className="space-y-2">
-              {f.objectives.map((o) => (
-                <li key={o.slug} className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  {o.code ? <Badge tone="soft">{o.code}</Badge> : null}
-                  <span className="text-sm text-foreground">{o.title.vi ?? o.title.en ?? o.slug}</span>
-                  <span className="font-mono text-xs text-foreground-muted">{o.slug}</span>
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul className="space-y-2">
+                {f.objectives.map((o) => (
+                  <li key={o.slug} className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    {o.code ? <Badge tone="soft">{o.code}</Badge> : null}
+                    <span className="text-sm text-foreground">{o.title.vi ?? o.title.en ?? o.slug}</span>
+                    <span className="font-mono text-xs text-foreground-muted">{o.slug}</span>
+                    <button
+                      type="button"
+                      onClick={() => setTracing((s) => (s === o.slug ? null : o.slug))}
+                      className="focus-ring ml-auto shrink-0 rounded px-1.5 py-0.5 text-xs text-primary hover:bg-primary-soft"
+                    >
+                      {t('tbWhy')}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {tracing ? (
+                <div className="mt-3">
+                  <ObjectiveTrace slug={tracing} onClose={() => setTracing(null)} />
+                </div>
+              ) : null}
+            </>
           )}
         </CardContent>
       </Card>

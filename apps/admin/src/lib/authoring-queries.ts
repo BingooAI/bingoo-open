@@ -650,6 +650,43 @@ export function useFrameworkGraph(slug: string) {
   })
 }
 
+// ── TRUY NGUỒN một mục tiêu (mirror decision-trace.service.ts) ────────────────
+export interface TraceSourceLaneDto {
+  quote: string
+  chunkId?: string
+  excerpt: string
+  charStart?: number
+  charEnd?: number
+  verifiedAtWrite: boolean
+  verifiedNow: boolean
+}
+export interface TraceStructuralLaneDto {
+  checkCode: string
+  passedAtWrite: boolean
+  passedNow: boolean
+  detail?: unknown
+}
+export interface ObjectiveTraceDto {
+  slug: string
+  claim: Record<string, string>
+  basis: 'FROM_SOURCE' | 'STRUCTURAL' | 'AI_INFERRED'
+  verdict: string
+  overridden: boolean
+  decidedAt: string | null
+  source: TraceSourceLaneDto | null
+  structural: TraceStructuralLaneDto[]
+  drift: boolean
+}
+
+/** Vết "vì sao có mục tiêu này" — chỉ chạy khi có slug được chọn. */
+export function useObjectiveTrace(slug: string | null) {
+  return useQuery({
+    queryKey: ['authoring', 'trace', slug] as const,
+    queryFn: () => api.get<ObjectiveTraceDto>(`/authoring/trace/objective/${encodeURIComponent(slug ?? '')}`),
+    enabled: slug !== null,
+  })
+}
+
 // ── CROSSWALK hai khung (mirror crosswalk.repo.ts) ───────────────────────────
 export type GapStatus = 'achieved' | 'partial' | 'none'
 export interface CrosswalkObjectiveDto {
