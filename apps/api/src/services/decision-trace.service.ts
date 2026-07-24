@@ -15,7 +15,17 @@
  * KHÔNG phải "kiểm hụt".
  */
 
-import { normalizeSource, verifyQuote, type CompiledObjective, type Merge } from '@bingoo.ai/authoring'
+import {
+  locateInUnits,
+  normalizeSource,
+  verifyQuote,
+  type CompiledObjective,
+  type Merge,
+  type PositionedUnit,
+  type SourceLocator,
+} from '@bingoo.ai/authoring'
+import { readFile } from 'node:fs/promises'
+import { resolve, sep } from 'node:path'
 import { db, type Prisma } from '@bingoo.ai/db'
 
 export type EvidenceBasis = 'FROM_SOURCE' | 'STRUCTURAL' | 'AI_INFERRED'
@@ -106,6 +116,33 @@ export function buildObjectiveTrace(o: CompiledObjective, excerpt: string): Trac
 export { normalizeSource }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// PHỤC VỤ BYTES tài liệu cho viewer. `storageKey` là đường dẫn TƯƠNG ĐỐI trong thư mục gốc cấu hình
+// (SOURCE_DOC_ROOT). R8: self-hoster trỏ tới file của họ; KHÔNG hạ tầng Bingoo. Chống path traversal.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function sourceDocRoot(): string {
+  return resolve(process.env.SOURCE_DOC_ROOT ?? resolve(process.cwd(), '../..'))
+}
+
+/** Đường dẫn tuyệt đối trong SOURCE_DOC_ROOT cho một storageKey — dùng chung seed + serve. */
+export function resolveSourcePath(storageKey: string): string {
+  return resolve(sourceDocRoot(), storageKey)
+}
+
+export async function getSourceDocumentBytes(id: string): Promise<Uint8Array | null> {
+  const doc = await db.sourceDocument.findUnique({ where: { id }, select: { storageKey: true } })
+  if (!doc?.storageKey) return null
+  const root = sourceDocRoot()
+  const abs = resolve(root, doc.storageKey)
+  if (abs !== root && !abs.startsWith(root + sep)) return null // chặn ../../ ra ngoài gốc
+  try {
+    return new Uint8Array(await readFile(abs))
+  } catch {
+    return null
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // GHI (server-side) — seed/công cụ gọi TRỰC TIẾP. KHÔNG nối vào /apply: đường duyệt
 // giữ nguyên như cũ (yêu cầu phản biện), tránh plumb evidence qua round-trip client.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -113,6 +150,19 @@ export { normalizeSource }
 export interface WriteTraceResult {
   readonly records: number
   readonly sourceDocumentId: string
+  readonly anchored: number
+}
+
+/**
+ * NEO tài liệu (tuỳ chọn): nếu truyền, mỗi câu trích được ĐỊNH VỊ trong tài liệu (`locateInUnits`)
+ * để "mở đúng trang, tô đúng dòng". `storageKey` cho viewer biết lấy bytes ở đâu. KHÔNG truyền =
+ * chỉ excerpt như cũ.
+ */
+export interface AnchorContext {
+  readonly units: readonly PositionedUnit[]
+  readonly contentHash: string
+  readonly pageCount?: number
+  readonly storageKey?: string
 }
 
 /**
@@ -124,6 +174,7 @@ export async function writeObjectiveTraces(
   frameworkVersionId: string,
   objectives: readonly CompiledObjective[],
   sourceText: string,
+  anchorCtx?: AnchorContext,
 ): Promise<WriteTraceResult> {
   const excerpt = normalizeSource(sourceText)
   const slugs = objectives.map((o) => o.slug)
@@ -134,11 +185,23 @@ export async function writeObjectiveTraces(
   await db.sourceDocument.deleteMany({ where: { frameworkVersionId } })
 
   const source = await db.sourceDocument.create({
-    data: { frameworkVersionId, excerptText: excerpt },
+    data: {
+      frameworkVersionId,
+      excerptText: excerpt,
+      ...(anchorCtx?.contentHash ? { contentHash: anchorCtx.contentHash } : {}),
+      ...(anchorCtx?.pageCount !== undefined ? { pageCount: anchorCtx.pageCount } : {}),
+      ...(anchorCtx?.storageKey ? { storageKey: anchorCtx.storageKey } : {}),
+    },
   })
 
+  let anchored = 0
   for (const o of objectives) {
     const t = buildObjectiveTrace(o, excerpt)
+    // NEO: định vị câu trích trong tài liệu. Chỉ lưu locator khi định vị CHẮC CHẮN (locateInUnits
+    // tự từ chối khi trùng/nhảy cột) — không tô khung bừa.
+    const quote = o.evidence?.[0]?.quote
+    const anchor = anchorCtx && quote !== undefined ? locateInUnits(quote, anchorCtx.units) : undefined
+    if (anchor?.locator) anchored++
     await db.decisionRecord.create({
       data: {
         artifact: t.artifact,
@@ -163,12 +226,20 @@ export async function writeObjectiveTraces(
             ...(e.checkCode !== undefined ? { checkCode: e.checkCode } : {}),
             ...(e.passed !== undefined ? { passed: e.passed } : {}),
             ...(e.detail !== undefined ? { detail: e.detail as unknown as Prisma.InputJsonValue } : {}),
+            // Neo vị-trí CHỈ trên SOURCE_SPAN và CHỈ khi định vị chắc chắn.
+            ...(e.kind === 'SOURCE_SPAN' && anchor?.locator
+              ? {
+                  anchorKind: anchor.locator.kind,
+                  anchorLocator: anchor.locator as unknown as Prisma.InputJsonValue,
+                  ...(anchorCtx?.contentHash ? { anchorContentHash: anchorCtx.contentHash } : {}),
+                }
+              : {}),
           })),
         },
       },
     })
   }
-  return { records: objectives.length, sourceDocumentId: source.id }
+  return { records: objectives.length, sourceDocumentId: source.id, anchored }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -248,6 +319,10 @@ export interface TraceSourceLane {
   readonly charEnd?: number
   readonly verifiedAtWrite: boolean
   readonly verifiedNow: boolean
+  /** NEO tài liệu: viewer lấy bytes qua `documentId`, mở đúng `locator.page` + tô `locator.rects`. */
+  readonly documentId?: string
+  readonly pageCount?: number
+  readonly locator?: SourceLocator
 }
 
 export interface TraceStructuralLane {
@@ -303,6 +378,12 @@ export async function getObjectiveTrace(slug: string): Promise<ObjectiveTraceVie
       ...(span.charEnd != null ? { charEnd: span.charEnd } : {}),
       verifiedAtWrite: span.quoteVerified ?? false,
       verifiedNow: m.status === 'verified',
+      documentId: doc.id,
+      ...(doc.pageCount != null ? { pageCount: doc.pageCount } : {}),
+      // Neo chỉ dùng nếu tài liệu KHÔNG đổi kể từ lúc tính (contentHash khớp) — không thì rects cũ có thể lệch.
+      ...(span.anchorLocator && span.anchorContentHash === doc.contentHash
+        ? { locator: span.anchorLocator as unknown as SourceLocator }
+        : {}),
     }
   }
 

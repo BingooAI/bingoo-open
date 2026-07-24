@@ -22,9 +22,12 @@
  * Chạy:  cd apps/api && set -a; . ./.env; set +a; pnpm exec tsx src/scripts/seed-crosswalk-demo.ts
  */
 
+import { readFileSync } from 'node:fs'
 import type { GraphData, SkillEdge, SkillNode } from '@bingoo.ai/knowledge-engine'
 import type { CompiledObjective } from '@bingoo.ai/authoring'
 import { applyAuthoredFramework } from '../services/authoring.service'
+import { contentHashOf, pdfPositionedUnits } from '../services/pdf-anchor.service'
+import { resolveSourcePath, writeObjectiveTraces } from '../services/decision-trace.service'
 
 // ── KC nền CHUNG (within-100 / Stage 2–Lớp 1). object+channel bắt buộc; scope để phân biệt định danh.
 const kc = (
@@ -231,6 +234,26 @@ const MOET: CompiledObjective[] = [
   ]),
 ]
 
+// Câu mục tiêu VERBATIM từ Thông tư 32/2018/TT-BGDĐT (văn bản quy phạm pháp luật — Luật SHTT loại
+// khỏi bảo hộ quyền tác giả, không phải giáo trình có bản quyền như §1 canh). Dùng để định vị đúng
+// DÒNG trong PDF khi seed → "mở đúng trang, tô đúng dòng".
+const QUOTE_BY_CODE: Record<string, string> = {
+  '1Ss1': 'Count, read, and write numbers within 10; within 20; within 100.',
+  '1Ss2': 'Recognise tens and ones, and round tens.',
+  '1Ss3': 'Recognise how to compare and order numbers within 100 (in groups of no more than 4 numbers).',
+  '1St1': 'Recognise the meaning of addition and subtraction.',
+  '1St2': 'Perform addition and subtraction (without regrouping) of numbers within 100.',
+  '1St4': 'Perform mental addition and subtraction within 10.',
+}
+const withQuote = (o: CompiledObjective): CompiledObjective => {
+  const q = o.code ? QUOTE_BY_CODE[o.code] : undefined
+  return q ? { ...o, evidence: [{ chunkId: 'circular32', quote: q }] } : o
+}
+const MOET_ANCHORED = MOET.map(withQuote)
+
+// Đường dẫn PDF nguồn — TƯƠNG ĐỐI gốc repo (SOURCE_DOC_ROOT). Gitignore (*.pdf); có trên máy dev.
+const PDF_KEY = 'Math_Circular32_P1_Grade1-5_EN.pdf'
+
 async function main(): Promise<void> {
   // Mỗi khung KHAI cùng đồ thị KC nền (I1 khử trùng cùng-slug → idempotent) + objectives của khung.
   const cam = await applyAuthoredFramework({
@@ -259,9 +282,29 @@ async function main(): Promise<void> {
       kind: 'CURRICULUM',
       locale: 'vi',
     },
-    objectives: MOET,
+    objectives: MOET_ANCHORED,
   })
   console.log('MOET Grade 1:', JSON.stringify(moet.framework))
+
+  // NEO TÀI LIỆU — đọc Circular32 (trên máy dev), định vị từng câu trong PDF → ghi thẻ + toạ độ.
+  // KHÔNG AI. Không có PDF (clone công khai) → bỏ qua, panel vẫn chạy với excerpt.
+  const fvid = moet.framework?.frameworkVersionId
+  if (fvid) {
+    try {
+      const bytes = new Uint8Array(readFileSync(resolveSourcePath(PDF_KEY)))
+      const { units, pageCount } = await pdfPositionedUnits(bytes)
+      const sourceText = units.map((u) => u.text).join(' ')
+      const t = await writeObjectiveTraces(fvid, MOET_ANCHORED, sourceText, {
+        units,
+        contentHash: contentHashOf(bytes),
+        pageCount,
+        storageKey: PDF_KEY,
+      })
+      console.log(`Neo Circular32: ${t.records} thẻ, ${t.anchored} có toạ độ (mở đúng trang, tô đúng dòng).`)
+    } catch (e) {
+      console.log(`Bỏ qua neo tài liệu (không thấy ${PDF_KEY}): ${(e as Error).message}`)
+    }
+  }
 
   const camKcs = new Set(CAMBRIDGE.flatMap((o) => o.mapsTo))
   const moetKcs = new Set(MOET.flatMap((o) => o.mapsTo))

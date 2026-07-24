@@ -52,7 +52,7 @@ import {
   frameworkFromPrompt,
   frameworkFromText,
 } from '../services/authoring-framework.service'
-import { getObjectiveTrace } from '../services/decision-trace.service'
+import { getObjectiveTrace, getSourceDocumentBytes } from '../services/decision-trace.service'
 import { courseShellFromBook, courseShellFromPrompt } from '../services/course-shell.service'
 import { alignSource } from '../services/alignment.service'
 import { applyAlignDecisions, listAlignHistory } from '../services/alignment-apply.service'
@@ -708,6 +708,16 @@ export const authoring = new Hono<AppEnv>()
     const trace = await getObjectiveTrace(c.req.param('slug'))
     if (!trace) throw AppError.notFound('Chưa có vết truy nguồn cho mục tiêu này.')
     return ok(c, trace)
+  })
+  // BYTES tài liệu nguồn cho viewer (mở đúng trang, tô đúng dòng). Staff-gated.
+  .get('/source/:id/file', authorGuard, async (c) => {
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    const bytes = await getSourceDocumentBytes(c.req.param('id'))
+    if (!bytes) throw AppError.notFound('Không có tệp nguồn (hoặc chưa cấu hình SOURCE_DOC_ROOT).')
+    c.header('content-type', 'application/pdf')
+    c.header('cache-control', 'private, max-age=600')
+    return c.body(bytes.buffer as ArrayBuffer)
   })
   .post(
     '/framework/:slug/version',
