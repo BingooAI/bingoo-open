@@ -3,7 +3,7 @@
 /** Biên dịch bản nháp → GraphData + objectives (đầu ra engine-ready). */
 
 import type { FrameworkKind, GraphData, SkillEdge, SkillNode, Slug } from '@bingoo.ai/knowledge-engine'
-import type { IngestDraft, LocalizedText } from './model'
+import type { EvidenceRef, IngestDraft, LocalizedText } from './model'
 import { dedupeConcepts, type DedupResult } from './dedup'
 import { canonicalTitle, mintSlug, slugify } from './slug'
 
@@ -12,6 +12,8 @@ export interface CompiledObjective {
   readonly title: LocalizedText
   readonly code?: string
   readonly mapsTo: readonly Slug[]
+  /** Câu nguồn mục tiêu này được trích ra (đã kiểm) — làn "từ tài liệu" của thẻ truy nguồn. */
+  readonly evidence?: readonly EvidenceRef[]
 }
 
 export interface CompiledFramework {
@@ -94,6 +96,7 @@ export function compileDraft(
         title: o.title,
         mapsTo,
         ...(o.code !== undefined ? { code: o.code } : {}),
+        ...(o.evidence !== undefined ? { evidence: o.evidence } : {}),
       })
     }
   }

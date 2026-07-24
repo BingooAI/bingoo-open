@@ -29,10 +29,18 @@ export interface RawSource {
   readonly chunks: readonly SourceChunk[]
 }
 
-/** Trích dẫn nguồn để truy vết một khái niệm về đâu trong sách (audit học thuật). */
+/** Trích dẫn nguồn để truy vết một khái niệm/mục tiêu về đâu trong sách (audit học thuật). */
 export interface EvidenceRef {
   readonly chunkId: string
   readonly quote: string
+  /**
+   * Kết quả KIỂM câu trích tại chỗ (verifyQuote): `verified=true` CHỈ khi câu này tìm thấy nguyên
+   * văn trong nguồn. Không set = chưa kiểm. Đây là thứ cho phép tô "từ tài liệu" thay vì "AI đoán".
+   */
+  readonly verified?: boolean
+  /** Offset trong nguồn ĐÃ chuẩn hoá (normalizeSource) — để tô sáng đúng đoạn cho người duyệt. */
+  readonly charStart?: number
+  readonly charEnd?: number
 }
 
 /** Khái niệm ứng viên do máy trích (chưa gán slug ổn định). */

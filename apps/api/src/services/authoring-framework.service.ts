@@ -15,8 +15,10 @@ import {
   hasBlockingViolation,
   runIngest,
   validateDraft,
+  verifyQuote,
   type ConceptDraft,
   type EdgeDraft,
+  type EvidenceRef,
   type FrameworkDraft,
   type IngestDraft,
   type LocalizedText,
@@ -161,12 +163,24 @@ function titleKey(t: LocalizedText): string {
   return t.en ?? t.vi ?? Object.values(t)[0] ?? ''
 }
 
+// Câu nguồn của một mục tiêu, ĐÃ KIỂM tại chỗ. verified=true chỉ khi tìm thấy nguyên văn trong
+// chunk nó được trích ra — nếu không, vẫn giữ câu nhưng đánh dấu chưa kiểm (UI để "AI đoán", màu vàng).
+function objectiveEvidence(chunkId: string, quote: string, chunkText: string): EvidenceRef {
+  const m = verifyQuote(quote, chunkText)
+  return {
+    chunkId,
+    quote,
+    verified: m.status === 'verified',
+    ...(m.charStart !== undefined ? { charStart: m.charStart, charEnd: m.charEnd } : {}),
+  }
+}
+
 /**
  * Trích OBJECTIVES (outcome CÓ MÃ, vd "1Nc.01") từ nguồn chuẩn + map vào khái niệm đã trích.
  * BẮT BUỘC cho nguồn là khung chương trình: nếu bỏ, /apply sẽ KHÔNG ghi Framework/MAPS_TO.
  */
 async function extractObjectives(
-  chunks: readonly string[],
+  chunks: readonly { id: string; text: string }[],
   concepts: readonly ConceptDraft[],
   aiKey?: string,
 ): Promise<ObjectiveDraft[]> {
@@ -207,13 +221,15 @@ async function extractObjectives(
     return [...a, ...b]
   }
 
-  for (const [ci, text] of chunks.entries()) {
-    for (const raw of await askObjectives(text, `chunk${ci}`, 0)) {
+  for (const [ci, chunk] of chunks.entries()) {
+    for (const raw of await askObjectives(chunk.text, `chunk${ci}`, 0)) {
       const ob = rec(raw)
       const mapsToTempIds = strArr(ob.mapsToTitles)
         .map((tt) => byTitle.get(tt))
         .filter((id): id is string => id !== undefined)
       if (mapsToTempIds.length === 0) continue // không neo được → bỏ (tránh mục tiêu mồ côi, I5)
+      const quote = str(ob.sourceQuote)
+      const evidence = quote ? [objectiveEvidence(chunk.id, quote, chunk.text)] : undefined
       out.push({
         tempId: `o${n++}`,
         title: loc(ob.title),
@@ -221,6 +237,7 @@ async function extractObjectives(
         ...(str(ob.stage) ? { stage: str(ob.stage) } : {}),
         ...(str(ob.strand) ? { strand: str(ob.strand) } : {}),
         mapsToTempIds,
+        ...(evidence ? { evidence } : {}),
       })
     }
   }
@@ -256,7 +273,7 @@ async function frameworkFromSource(
   const base = await runIngest(source, ports)
 
   const objectives = await extractObjectives(
-    source.chunks.map((c) => c.text ?? '').filter((t) => t.length > 0),
+    source.chunks.filter((c) => (c.text ?? '').length > 0).map((c) => ({ id: c.id, text: c.text as string })),
     base.concepts,
     opts?.aiKey,
   )
