@@ -172,6 +172,8 @@ export interface FrameworkDetail {
     title: unknown
     code: string | null
     versionId: string | null
+    /** Trạng thái căn cứ: 'verified' = có nguồn trích được; 'review' = AI suy đoán, cần duyệt. */
+    status?: 'verified' | 'review'
   }[]
 }
 
@@ -203,6 +205,17 @@ export async function getFrameworkDetail(slug: string): Promise<FrameworkDetail 
     },
   })
   if (!fw) return null
+
+  // Trạng thái căn cứ mỗi mục tiêu — glanceable "cái nào có nguồn, cái nào cần duyệt" khỏi bấm.
+  const objSlugs = fw.objectives.map((o) => o.slug)
+  const traces = await db.decisionRecord.findMany({
+    where: { artifact: 'OBJECTIVE_EXISTS', subjectSlug: { in: objSlugs } },
+    select: { subjectSlug: true, basis: true },
+    orderBy: { createdAt: 'desc' },
+  })
+  const basisBySlug = new Map<string, string>()
+  for (const tr of traces) if (!basisBySlug.has(tr.subjectSlug)) basisBySlug.set(tr.subjectSlug, tr.basis)
+
   return {
     slug: fw.slug,
     name: fw.name,
@@ -216,12 +229,16 @@ export async function getFrameworkDetail(slug: string): Promise<FrameworkDetail 
       createdAt: v.createdAt,
       objectives: v._count.objectives,
     })),
-    objectives: fw.objectives.map((o) => ({
-      slug: o.slug,
-      title: o.title,
-      code: o.code,
-      versionId: o.frameworkVersionId,
-    })),
+    objectives: fw.objectives.map((o) => {
+      const basis = basisBySlug.get(o.slug)
+      return {
+        slug: o.slug,
+        title: o.title,
+        code: o.code,
+        versionId: o.frameworkVersionId,
+        ...(basis ? { status: basis === 'FROM_SOURCE' ? ('verified' as const) : ('review' as const) } : {}),
+      }
+    }),
   }
 }
 

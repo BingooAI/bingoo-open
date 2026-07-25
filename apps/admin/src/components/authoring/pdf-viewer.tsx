@@ -72,7 +72,9 @@ export default function PdfViewer({
         if (cancelled) return
         setDims({ w: viewport.width, h: viewport.height })
         setState('ready')
-      } catch {
+      } catch (e) {
+        // Lộ lý do thật ra Console để chẩn (fetch 4xx? worker pdf.js? render?) — người dùng mở DevTools thấy.
+        console.error('[pdf-viewer] mở tài liệu lỗi:', e)
         if (!cancelled) setState('error')
       }
     })()

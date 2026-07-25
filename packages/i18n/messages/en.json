@@ -903,6 +903,8 @@
       "relJudgment": "The machine can't prove this order (different objects, or the ranges aren't comparable). It's only sure the learning chain doesn't loop. Why one comes first is the author's/AI's pedagogical judgment — please confirm.",
       "relMapping": "This objective is MEASURED by that knowledge. The machine checks: all of the knowledge is required to count as met — miss one and it isn't. Why exactly these pieces is the author's/AI's call — please confirm.",
       "relLateral": "A related link set by the author/AI — not a required learning order.",
+      "objVerified": "Grounded",
+      "objReview": "Needs review",
       "facetAxis": {
         "object": "Object",
         "channel": "Channel",

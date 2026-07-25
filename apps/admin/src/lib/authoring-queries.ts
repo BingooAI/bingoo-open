@@ -606,6 +606,8 @@ export interface FrameworkDetailDto {
     title: Record<string, string>
     code: string | null
     versionId: string | null
+    /** 'verified' = có nguồn trích được; 'review' = AI suy đoán, cần duyệt. */
+    status?: 'verified' | 'review'
   }[]
 }
 export interface GraphViewDto {

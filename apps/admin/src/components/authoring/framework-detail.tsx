@@ -21,7 +21,7 @@ import {
   TR,
   useToast,
 } from '@bingoo.ai/ui-web'
-import { Search } from 'lucide-react'
+import { CheckCircle2, Search, TriangleAlert } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { GraphCanvas, type GEdge, type GNode } from './graph-canvas'
 import { CaseViewer } from './case-viewer'
@@ -195,6 +195,17 @@ export function FrameworkDetail({ slug }: { slug: string }) {
                     {o.code ? <Badge tone="soft">{o.code}</Badge> : null}
                     <span className="text-sm text-foreground">{o.title.vi ?? o.title.en ?? o.slug}</span>
                     <span className="font-mono text-xs text-foreground-muted">{o.slug}</span>
+                    {o.status === 'verified' ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-[11px] font-medium text-success">
+                        <CheckCircle2 className="size-3" />
+                        {t('objVerified')}
+                      </span>
+                    ) : o.status === 'review' ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-warning-soft px-2 py-0.5 text-[11px] font-medium text-warning">
+                        <TriangleAlert className="size-3" />
+                        {t('objReview')}
+                      </span>
+                    ) : null}
                     <button
                       type="button"
                       onClick={() => setTracing((s) => (s === o.slug ? null : o.slug))}

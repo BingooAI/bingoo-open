@@ -903,6 +903,8 @@
       "relJudgment": "Máy KHÔNG tự chứng minh được thứ tự này (khác đối tượng, hoặc không so được phạm vi). Máy chỉ chắc: chuỗi học không quay vòng. Còn 'vì sao học trước' là phán đoán sư phạm của người soạn/AI — cần thầy cô xác nhận.",
       "relMapping": "Mục tiêu này được ĐO bằng kiến thức đó. Máy kiểm: phải đủ MỌI kiến thức mới coi là đạt, thiếu một là chưa đạt. Còn 'vì sao đúng những kiến thức này' là người soạn/AI quyết — cần xác nhận.",
       "relLateral": "Quan hệ liên quan do người soạn/AI gán — không phải thứ tự học bắt buộc.",
+      "objVerified": "Có căn cứ",
+      "objReview": "Cần duyệt",
       "facetAxis": {
         "object": "Đối tượng",
         "channel": "Kênh",
