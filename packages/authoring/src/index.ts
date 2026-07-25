@@ -54,6 +54,14 @@ export {
   type AxisAgreement,
   type FuzzySimilarity,
 } from './claim-explain'
+export {
+  applyCollisionDecisions,
+  type CollisionDecision,
+  type DistinguishAxis,
+  type AppliedDecision,
+  type RejectedDecision,
+  type ResolveResult,
+} from './resolve-collision'
 export { trigrams, diceSimilarity } from './trigram'
 export { dedupeConcepts, type DedupResult, type Merge } from './dedup'
 export { compileDraft, type CompiledFramework, type CompiledObjective } from './compile'
