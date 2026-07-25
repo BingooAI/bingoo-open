@@ -1,19 +1,21 @@
 // SPDX-FileCopyrightText: 2026 Bingoo.ai
 // SPDX-License-Identifier: Apache-2.0
 /**
- * SEED DEMO CROSSWALK — Cambridge Primary Maths Stage 2 ↔ GDPT 2018 (MOET) Toán Lớp 1.
+ * SEED DEMO CROSSWALK — khung mẫu "Khung B" ↔ GDPT 2018 (MOET) Toán Lớp 1.
  *
  * Dựng một lát cắt "Số & Phép tính" của HAI khung để minh hoạ ba thứ người dùng hỏi:
  *   1) TÍNH CHẶT CHẼ / LIÊN KẾT — các KC nền nối nhau bằng cạnh TIÊN QUYẾT (đếm → so sánh → cộng trừ;
  *      đếm bước → nhân → chia/bảng cửu chương). Đồ thị không còn là bãi node rời.
  *   2) CROSSWALK — hai khung KHÔNG nối objective↔objective (repo cấm: authoring.repo.ts:387).
  *      "Trùng" thể hiện bằng việc objective của cả hai khung cùng MAPS_TO MỘT KC nền chung.
- *   3) GAP khi chuyển khung — KC mà Cambridge Stage 2 phủ nhưng MOET Lớp 1 KHÔNG: chẵn/lẻ, nhân,
- *      chia, bảng cửu chương, phân số, đếm bước. Học xong MOET Lớp 1 sang Cambridge là thiếu đúng
- *      những KC đó (đọc qua FrameworkReport — báo cáo tính theo KC nền, không cần dịch hồ sơ).
+ *   3) GAP khi chuyển khung — KC mà Khung B phủ nhưng MOET Lớp 1 KHÔNG: chẵn/lẻ, nhân, chia,
+ *      bảng cửu chương, phân số, đếm bước. Học xong MOET Lớp 1 sang Khung B là thiếu đúng những
+ *      KC đó (đọc qua FrameworkReport — báo cáo tính theo KC nền, không cần dịch hồ sơ).
  *
- * BẢN QUYỀN: phát biểu ở đây là DIỄN GIẢI LẠI bằng lời của mình + mã/cấu trúc (dữ kiện). KHÔNG trích
- * nguyên văn từ PDF Cambridge (có bản quyền) hay Thông tư 32. Titles ĐỦ song ngữ {vi,en} (R4).
+ * BẢN QUYỀN: "Khung B" là dữ liệu BỊA (xem chú thích tại DEMO_FRAMEWORK_B) — repo công khai không
+ * mang mã/phát biểu của khung thương mại nào. Phía MOET trích Thông tư 32 (văn bản quy phạm pháp
+ * luật — Luật SHTT loại khỏi bảo hộ quyền tác giả). Khung thật đi qua luồng upload, không qua seed.
+ * Titles ĐỦ song ngữ {vi,en} (R4).
  *
  * Đi qua CỔNG BẤT BIẾN (applyAuthoredFramework → checkInvariants I1–I8): mỗi KC math khai đủ trục
  * bắt buộc object+channel, và (object,scope) khác nhau nên không trùng định danh 15 KC Stage 1 sẵn có.
@@ -99,7 +101,7 @@ const KCS: SkillNode[] = [
     'compute',
     { max: 100 },
   ),
-  // ── Chỉ Cambridge Stage 2 phủ (MOET Lớp 1 chưa) — đây là GAP khi chuyển MOET → Cambridge:
+  // ── Chỉ Khung B phủ (MOET Lớp 1 chưa) — đây là GAP khi chuyển MOET → Khung B:
   kc(
     'cw-even-odd-100',
     'Even and odd numbers to 100',
@@ -172,38 +174,93 @@ const obj = (slug: string, code: string, en: string, vi: string, mapsTo: string[
   mapsTo,
 })
 
-// ── Cambridge Primary Maths — Stage 2 (Number). Objective → KC nền (paraphrase).
-const CAMBRIDGE: CompiledObjective[] = [
-  obj('cam-s2-2nc01', '2Nc.01', 'Count objects to 100', 'Đếm vật đến 100', ['cw-count-100']),
-  obj('cam-s2-2nc04', '2Nc.04', 'Count in ones, twos, fives or tens to 100', 'Đếm theo 1, 2, 5, 10 đến 100', [
+/**
+ * Khung THỨ HAI của demo — **dữ liệu bịa, không phải khung thật của ai**.
+ *
+ * Chỗ này từng mang mã + phát biểu nguyên văn của một khung tiểu học thương mại. Đó là tài sản
+ * trí tuệ của bên thứ ba, và repo này công khai (§1 đã bỏ `test/fixtures/cambridge-moet.ts` vì
+ * đúng lý do đó — giữ lại ở đây thì chỉ là cùng một vi phạm ở chỗ khó thấy hơn).
+ *
+ * Demo không cần một khung thật để chứng minh điều nó muốn chứng minh: cái cần là HAI khung khác
+ * nhau cùng chứng nhận một số KC nền (→ "trùng") và một khung phủ thêm KC khung kia không có
+ * (→ "lệch"). Một khung bịa làm việc đó y hệt, và người đọc seed biết ngay đây là dữ liệu mẫu.
+ *
+ * Muốn chạy demo trên khung thật: upload PDF của khung đó qua luồng "Sinh khung năng lực" — đó là
+ * đường dành cho khung thật, và tài liệu ở lại máy người dùng thay vì vào git.
+ */
+const DEMO_FRAMEWORK_B: CompiledObjective[] = [
+  obj(
+    'demo-b-n01',
+    'D2.N.01',
+    'Count a group of objects up to one hundred',
+    'Đếm một nhóm vật đến một trăm',
+    ['cw-count-100'],
+  ),
+  obj('demo-b-n02', 'D2.N.02', 'Count forward in twos, fives and tens', 'Đếm tiến theo 2, 5 và 10', [
     'cw-skip-count-100',
   ]),
-  obj('cam-s2-2nc05', '2Nc.05', 'Recognise even and odd numbers to 100', 'Nhận biết số chẵn, số lẻ đến 100', [
+  obj('demo-b-n03', 'D2.N.03', 'Tell an even number from an odd number', 'Phân biệt số chẵn với số lẻ', [
     'cw-even-odd-100',
   ]),
-  obj('cam-s2-2ni01', '2Ni.01', 'Read and write numbers to 100', 'Đọc và viết số đến 100', ['cw-count-100']),
-  obj('cam-s2-2ni02', '2Ni.02', 'Link addition and subtraction', 'Liên hệ phép cộng và phép trừ', [
-    'cw-meaning-addsub',
+  obj('demo-b-n04', 'D2.N.04', 'Read a numeral and write it down', 'Đọc một chữ số và viết lại', [
+    'cw-count-100',
   ]),
   obj(
-    'cam-s2-2ni04',
-    '2Ni.04',
-    'Add and subtract two-digit numbers without regrouping',
-    'Cộng, trừ số hai chữ số không nhớ',
+    'demo-b-n05',
+    'D2.N.05',
+    'Treat adding and taking away as opposite moves',
+    'Coi thêm vào và bớt ra là hai chiều ngược nhau',
+    ['cw-meaning-addsub'],
+  ),
+  obj(
+    'demo-b-n06',
+    'D2.N.06',
+    'Add and take away two-digit numbers with no carrying',
+    'Cộng và bớt số hai chữ số mà không phải nhớ',
     ['cw-addsub-100'],
   ),
-  obj('cam-s2-2ni05', '2Ni.05', 'Understand multiplication', 'Hiểu phép nhân', ['cw-multiply']),
-  obj('cam-s2-2ni06', '2Ni.06', 'Understand division', 'Hiểu phép chia', ['cw-divide']),
-  obj('cam-s2-2ni07', '2Ni.07', 'Know the 2, 5 and 10 times tables', 'Thuộc bảng nhân 2, 5, 10', [
-    'cw-times-tables',
-  ]),
-  obj('cam-s2-2np01', '2Np.01', 'Understand place value to 100', 'Hiểu giá trị vị trí đến 100', [
-    'cw-place-value-100',
-  ]),
-  obj('cam-s2-2np02', '2Np.02', 'Compare and order numbers to 100', 'So sánh và sắp thứ tự số đến 100', [
-    'cw-compare-100',
-  ]),
-  obj('cam-s2-2nf02', '2Nf.02', 'Understand a quarter', 'Hiểu một phần tư', ['cw-unit-fraction']),
+  obj(
+    'demo-b-n07',
+    'D2.N.07',
+    'Read multiplying as repeated groups',
+    'Hiểu nhân là gộp nhiều nhóm bằng nhau',
+    ['cw-multiply'],
+  ),
+  obj(
+    'demo-b-n08',
+    'D2.N.08',
+    'Read dividing as sharing into equal groups',
+    'Hiểu chia là chia thành nhóm đều',
+    ['cw-divide'],
+  ),
+  obj(
+    'demo-b-n09',
+    'D2.N.09',
+    'Recall the two, five and ten multiplication facts',
+    'Nhớ các phép nhân với 2, 5 và 10',
+    ['cw-times-tables'],
+  ),
+  obj(
+    'demo-b-n10',
+    'D2.N.10',
+    'Split a two-digit number into tens and ones',
+    'Tách số hai chữ số thành chục và đơn vị',
+    ['cw-place-value-100'],
+  ),
+  obj(
+    'demo-b-n11',
+    'D2.N.11',
+    'Put numbers up to one hundred in order',
+    'Sắp các số đến một trăm theo thứ tự',
+    ['cw-compare-100'],
+  ),
+  obj(
+    'demo-b-n12',
+    'D2.N.12',
+    'Name one part out of four equal parts',
+    'Gọi tên một phần trong bốn phần bằng nhau',
+    ['cw-unit-fraction'],
+  ),
 ]
 
 // ── GDPT 2018 (MOET, Thông tư 32) — Toán Lớp 1 (Số & Phép tính). Chỉ phủ phần OVERLAP.
@@ -256,20 +313,20 @@ const PDF_KEY = 'Math_Circular32_P1_Grade1-5_EN.pdf'
 
 async function main(): Promise<void> {
   // Mỗi khung KHAI cùng đồ thị KC nền (I1 khử trùng cùng-slug → idempotent) + objectives của khung.
-  const cam = await applyAuthoredFramework({
+  const other = await applyAuthoredFramework({
     graph: GRAPH,
     framework: {
-      slug: 'cambridge-primary-math-s2',
+      slug: 'demo-primary-math-stage-b',
       name: {
-        en: 'Cambridge Primary Mathematics — Stage 2 (≈ Grade 1) · Number',
-        vi: 'Cambridge Toán Tiểu học — Stage 2 (≈ Lớp 1) · Số',
+        en: 'Demo Primary Mathematics — Stage B (≈ Grade 1) · Number [sample data]',
+        vi: 'Khung mẫu Toán Tiểu học — Bậc B (≈ Lớp 1) · Số [dữ liệu mẫu]',
       },
       kind: 'CURRICULUM',
       locale: 'en',
     },
-    objectives: CAMBRIDGE,
+    objectives: DEMO_FRAMEWORK_B,
   })
-  console.log('Cambridge Stage 2:', JSON.stringify(cam.framework), '| KC seeded:', cam.nodes)
+  console.log('Khung B (mẫu):', JSON.stringify(other.framework), '| KC seeded:', other.nodes)
 
   const moet = await applyAuthoredFramework({
     graph: GRAPH,
@@ -306,12 +363,12 @@ async function main(): Promise<void> {
     }
   }
 
-  const camKcs = new Set(CAMBRIDGE.flatMap((o) => o.mapsTo))
+  const otherKcs = new Set(DEMO_FRAMEWORK_B.flatMap((o) => o.mapsTo))
   const moetKcs = new Set(MOET.flatMap((o) => o.mapsTo))
-  const overlap = [...camKcs].filter((k) => moetKcs.has(k))
-  const gap = [...camKcs].filter((k) => !moetKcs.has(k))
+  const overlap = [...otherKcs].filter((k) => moetKcs.has(k))
+  const gap = [...otherKcs].filter((k) => !moetKcs.has(k))
   console.log(`\nCROSSWALK overlap (cả hai khung cùng MAPS_TO): ${overlap.length} KC → ${overlap.join(', ')}`)
-  console.log(`GAP MOET→Cambridge (KC chỉ Cambridge phủ): ${gap.length} KC → ${gap.join(', ')}`)
+  console.log(`GAP MOET→Khung B (KC chỉ Khung B phủ): ${gap.length} KC → ${gap.join(', ')}`)
 }
 
 await main()
