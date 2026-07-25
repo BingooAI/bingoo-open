@@ -17,7 +17,7 @@ import {
   hasBlockingViolation,
   runIngest,
   validateDraft,
-  verifyQuote,
+  verifyEvidence,
   type ClaimExplanation,
   type CollisionDecision,
   type CompiledObjective,
@@ -177,17 +177,11 @@ function titleKey(t: LocalizedText): string {
   return t.en ?? t.vi ?? Object.values(t)[0] ?? ''
 }
 
-// Câu nguồn của một mục tiêu, ĐÃ KIỂM tại chỗ. verified=true chỉ khi tìm thấy nguyên văn trong
-// chunk nó được trích ra — nếu không, vẫn giữ câu nhưng đánh dấu chưa kiểm (UI để "AI đoán", màu vàng).
-function objectiveEvidence(chunkId: string, quote: string, chunkText: string): EvidenceRef {
-  const m = verifyQuote(quote, chunkText)
-  return {
-    chunkId,
-    quote,
-    verified: m.status === 'verified',
-    ...(m.charStart !== undefined ? { charStart: m.charStart, charEnd: m.charEnd } : {}),
-  }
-}
+// Câu nguồn của một mục tiêu, ĐÃ KIỂM tại chỗ — qua đúng hàm mà đường trích kiến thức dùng. Trước
+// đây đây là một bản sao riêng, và bản sao là lý do hai đường lệch nhau: mục tiêu được kiểm, kiến
+// thức thì không, suốt một thời gian dài mà không có gì báo.
+const objectiveEvidence = (chunkId: string, quote: string, chunkText: string): EvidenceRef =>
+  verifyEvidence({ chunkId, quote }, chunkText)
 
 /**
  * Trích OBJECTIVES (outcome CÓ MÃ, vd "1Nc.01") từ nguồn chuẩn + map vào khái niệm đã trích.
@@ -480,7 +474,15 @@ export async function resolveFrameworkCollisions(input: {
 
   const [profiles, existing] = await Promise.all([loadDomainProfiles(), loadExistingNodes()])
   const violations = checkInvariants(resolved.graph, { profiles, existing })
-  const issues = validateDraft({ graph: resolved.graph, objectives: resolved.objectives, dedup: EMPTY_DEDUP })
+  const issues = validateDraft({
+    graph: resolved.graph,
+    objectives: resolved.objectives,
+    // Bản nháp đi vòng qua trình duyệt nên bằng chứng của kiến thức không còn ở đây — khai rỗng thay
+    // vì bịa. `validateDraft` chỉ đọc `graph`, nên không mất gì; nhưng khai rỗng là nói thật về việc
+    // đường này không mang bằng chứng, chứ không giả vờ có.
+    concepts: [],
+    dedup: EMPTY_DEDUP,
+  })
 
   return {
     graph: resolved.graph,

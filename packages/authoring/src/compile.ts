@@ -16,9 +16,29 @@ export interface CompiledObjective {
   readonly evidence?: readonly EvidenceRef[]
 }
 
+/**
+ * Một KIẾN THỨC sau compile, kèm thứ mà đồ thị không chở được.
+ *
+ * `SkillNode` là hợp đồng của engine và engine không đọc bằng chứng, nên nó không có chỗ cho câu
+ * trích. Trước đây điều đó có nghĩa là câu trích của kiến thức chết ngay ở compile: pipeline kiểm nó
+ * xong rồi không ai nhận. Danh sách này là chỗ nhận — song song với đồ thị, khoá theo slug ĐÃ SỐNG
+ * SÓT sau dedup, nên một kiến thức bị gộp không để lại bằng chứng mồ côi.
+ */
+export interface CompiledConcept {
+  readonly slug: Slug
+  readonly title: LocalizedText
+  readonly kind: SkillNode['kind']
+  readonly facets?: Readonly<Record<string, unknown>>
+  readonly evidence: readonly EvidenceRef[]
+  /** Độ tin cậy AI tự khai. Hiện được, nhưng không bao giờ là bằng chứng. */
+  readonly confidence?: number
+}
+
 export interface CompiledFramework {
   readonly graph: GraphData
   readonly objectives: readonly CompiledObjective[]
+  /** Bằng chứng nguồn của từng kiến thức — đồ thị không chở được, nên nó đi đường này. */
+  readonly concepts: readonly CompiledConcept[]
   readonly framework?: {
     readonly slug: string
     readonly name: LocalizedText
@@ -53,6 +73,15 @@ export function compileDraft(
     ...(c.subject !== undefined ? { subject: c.subject } : {}),
     // engine giữ facets OPAQUE (không đọc) → cast sang record.
     ...(c.facets !== undefined ? { facets: c.facets as Readonly<Record<string, unknown>> } : {}),
+  }))
+
+  const concepts: CompiledConcept[] = dedup.concepts.map((c) => ({
+    slug: c.slug as Slug,
+    title: c.title,
+    kind: c.kind,
+    ...(c.facets !== undefined ? { facets: c.facets as Readonly<Record<string, unknown>> } : {}),
+    evidence: c.evidence,
+    ...(c.confidence !== undefined ? { confidence: c.confidence } : {}),
   }))
 
   const edges: SkillEdge[] = []
@@ -104,6 +133,7 @@ export function compileDraft(
   return {
     graph: { nodes, edges },
     objectives,
+    concepts,
     ...(draft.framework
       ? {
           framework: {

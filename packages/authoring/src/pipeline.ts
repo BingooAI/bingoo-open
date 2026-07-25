@@ -5,6 +5,7 @@
 import type { CompetencyKind } from '@bingoo.ai/knowledge-engine'
 import type { ConceptDraft, EdgeDraft, IngestDraft, LocalizedText, RawSource } from './model'
 import { canonicalTitle } from './slug'
+import { verifyEvidence } from './quote'
 import type { AuthoringPorts, ConceptCandidate } from './ports'
 
 // TIẾNG ANH LÀ GỐC — PHẢI dùng chung `canonicalTitle` với slug/dedup/adapter.
@@ -49,7 +50,11 @@ export async function runIngest(source: RawSource, ports: AuthoringPorts): Promi
         tempId,
         title: cand.title,
         kind,
-        evidence: cand.evidence,
+        // KIỂM ngay tại đây, khi còn đúng đoạn văn bản mà câu này được trích ra. Kiểm muộn hơn là
+        // kiểm vào một đoạn khác (chunk đã bị chia lại, hoặc cả tài liệu ghép lại) và kết quả không
+        // còn nói được điều gì. Đường mục tiêu vốn đã kiểm; đường kiến thức thì chưa — nên đến giờ
+        // mọi câu trích của kiến thức đều "chưa biết", và câu AI bịa không có cách nào lộ ra.
+        evidence: cand.evidence.map((e) => verifyEvidence(e, text)),
         ...(cand.description !== undefined ? { description: cand.description } : {}),
         ...(cand.strand !== undefined ? { strand: cand.strand } : {}),
         ...(cand.subject !== undefined ? { subject: cand.subject } : {}),

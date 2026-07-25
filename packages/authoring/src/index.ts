@@ -31,7 +31,14 @@ export type {
 } from './ports'
 
 export { slugify, mintSlug, canonicalTitle } from './slug'
-export { verifyQuote, normalizeSource, foldForMatch, type QuoteMatch, type QuoteStatus } from './quote'
+export {
+  verifyQuote,
+  verifyEvidence,
+  normalizeSource,
+  foldForMatch,
+  type QuoteMatch,
+  type QuoteStatus,
+} from './quote'
 export {
   locateInUnits,
   type SourceLocator,
@@ -64,7 +71,7 @@ export {
 } from './resolve-collision'
 export { trigrams, diceSimilarity } from './trigram'
 export { dedupeConcepts, type DedupResult, type Merge } from './dedup'
-export { compileDraft, type CompiledFramework, type CompiledObjective } from './compile'
+export { compileDraft, type CompiledFramework, type CompiledObjective, type CompiledConcept } from './compile'
 export { validateDraft, hasBlockingIssue, type DraftIssue, type IssueSeverity } from './validate'
 export { applyReview, type ReviewDecision } from './review'
 export { runIngest } from './pipeline'

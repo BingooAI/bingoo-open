@@ -113,3 +113,33 @@ export function verifyQuote(quote: string, source: string): QuoteMatch {
   const charEnd = (src.map[at + needle.length - 1] as number) + 1
   return { status: 'verified', charStart, charEnd }
 }
+
+/**
+ * KIỂM một câu trích tại chỗ và đóng băng kết quả vào chính bằng chứng đó.
+ *
+ * Một chỗ duy nhất cho cả hai đường trích. Trước đây mục tiêu được kiểm còn kiến thức thì không —
+ * cùng một loại bằng chứng, cùng một cách kiểm, mà một bên bỏ trống. Hệ quả: mọi câu trích của kiến
+ * thức đều ở trạng thái "chưa biết", nên không có cách nào phân biệt câu AI chép đúng khỏi câu AI
+ * bịa. Bất đối xứng đó là lý do hàm này tồn tại thay vì hai bản sao.
+ *
+ * `verified=false` KHÔNG có nghĩa "câu sai" — nghĩa là không tìm thấy nguyên văn trong đoạn nguồn
+ * này. Câu vẫn được giữ để người duyệt tự đọc và tự xử; chỉ có điều nó không được tô "từ tài liệu".
+ */
+export function verifyEvidence(
+  evidence: { readonly chunkId: string; readonly quote: string },
+  sourceText: string,
+): {
+  readonly chunkId: string
+  readonly quote: string
+  readonly verified: boolean
+  readonly charStart?: number
+  readonly charEnd?: number
+} {
+  const m = verifyQuote(evidence.quote, sourceText)
+  return {
+    chunkId: evidence.chunkId,
+    quote: evidence.quote,
+    verified: m.status === 'verified',
+    ...(m.charStart !== undefined ? { charStart: m.charStart, charEnd: m.charEnd } : {}),
+  }
+}
