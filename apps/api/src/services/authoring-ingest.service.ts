@@ -17,6 +17,7 @@ import {
   type RawSource,
 } from '@bingoo.ai/authoring'
 import { buildAuthoringPorts } from './authoring-adapters'
+import { describeCollisions, type CollisionView } from './authoring-framework.service'
 import { loadDomainProfiles, loadExistingConcepts, loadExistingNodes } from '../repos/authoring.repo'
 
 export interface IngestResult {
@@ -39,6 +40,13 @@ export interface IngestResult {
     message: string
     slugs: string[]
   }[]
+  /**
+   * Chỗ máy KHÔNG PHÂN BIỆT ĐƯỢC hai kiến thức, kèm so-từng-trục để người duyệt chốt.
+   *
+   * Vi phạm I1 đã có trong `violations`, nhưng ở đó nó là một dòng chữ. Người duyệt cần biết TRỤC
+   * NÀO trùng — đó vừa là lý do máy bí, vừa là chỗ họ phải bổ sung nếu hai cái thật sự khác nhau.
+   */
+  readonly collisions?: readonly CollisionView[]
   /** Có lỗi chặn (issue HOẶC vi phạm bất biến) → chưa được phép áp vào đồ thị. */
   readonly blocking: boolean
 }
@@ -64,6 +72,7 @@ export async function ingestSource(
       message: v.message,
       slugs: [...v.slugs],
     })),
+    collisions: describeCollisions(compiled.graph, violations),
     blocking: hasBlockingIssue(issues) || hasBlockingViolation(violations),
   }
 }

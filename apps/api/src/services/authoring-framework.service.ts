@@ -9,13 +9,18 @@
  */
 
 import {
+  applyCollisionDecisions,
   checkInvariants,
   compileDraft,
+  explainClaim,
   hasBlockingIssue,
   hasBlockingViolation,
   runIngest,
   validateDraft,
   verifyQuote,
+  type ClaimExplanation,
+  type CollisionDecision,
+  type CompiledObjective,
   type ConceptDraft,
   type EdgeDraft,
   type EvidenceRef,
@@ -24,8 +29,16 @@ import {
   type LocalizedText,
   type ObjectiveDraft,
   type RawSource,
+  type RejectedDecision,
 } from '@bingoo.ai/authoring'
-import type { CompetencyKind, FrameworkKind, PrereqMode, RelType } from '@bingoo.ai/knowledge-engine'
+import type {
+  CompetencyKind,
+  FrameworkKind,
+  GraphData,
+  PrereqMode,
+  RelType,
+  SkillNode,
+} from '@bingoo.ai/knowledge-engine'
 import { getAi, getVision } from '../providers'
 import { renderPrompt } from '../prompts'
 import { loadDomainProfiles, loadExistingConcepts, loadExistingNodes } from '../repos/authoring.repo'
@@ -154,6 +167,7 @@ export async function frameworkFromPrompt(
       message: v.message,
       slugs: [...v.slugs],
     })),
+    collisions: describeCollisions(compiled.graph, violations),
     blocking: hasBlockingIssue(issues) || hasBlockingViolation(violations),
   }
 }
@@ -302,6 +316,7 @@ async function frameworkFromSource(
       message: v.message,
       slugs: [...v.slugs],
     })),
+    collisions: describeCollisions(compiled.graph, violations),
     blocking: hasBlockingIssue(issues) || hasBlockingViolation(violations),
   }
 }
@@ -383,3 +398,109 @@ export async function frameworkFromText(
   const chunks = chunkText(text).map((t, i) => ({ id: `c${i}`, order: i, text: t }))
   return frameworkFromSource({ id: 'text-source', kind: 'text', locale, chunks }, locale, opts)
 }
+
+// ── CỔNG NGƯỜI DUYỆT: chốt khi máy không phân biệt được hai kiến thức ──────────────────────────────
+
+/**
+ * Một chỗ máy bí, kèm ĐỦ thứ để người duyệt chốt.
+ *
+ * Không phải một dòng cảnh báo. Người duyệt cần thấy hai kiến thức đó là gì và TRỤC NÀO trùng —
+ * vì "trùng khít mọi trục" mới là lý do máy bí, và cũng chính là chỗ họ phải bổ sung nếu chúng khác.
+ */
+export interface CollisionView {
+  readonly slugs: readonly [string, string]
+  readonly titles: readonly [LocalizedText, LocalizedText]
+  /** Từ engine giải thích dùng chung — cùng thứ mọi mặt khác của hệ dùng, không phải bản riêng. */
+  readonly explanation: ClaimExplanation
+}
+
+const facetsOf = (n: SkillNode | undefined): Record<string, unknown> =>
+  (n?.facets ?? {}) as Record<string, unknown>
+
+/**
+ * Dịch vi phạm I1 thành thứ hiện được cho người duyệt.
+ *
+ * Vi phạm chỉ mang hai slug; câu chữ của nó dành cho log. Chỗ này tra lại node để lấy nhan đề và
+ * chạy engine giải thích để có so-từng-trục — người duyệt đọc "trục nào trùng", không phải một mã lỗi.
+ */
+export function describeCollisions(
+  graph: GraphData,
+  violations: readonly { code: string; slugs: readonly string[] }[],
+): CollisionView[] {
+  const bySlug = new Map(graph.nodes.map((n) => [n.slug as string, n]))
+  const out: CollisionView[] = []
+  for (const v of violations) {
+    if (v.code !== 'I1_IDENTITY_COLLISION') continue
+    const [a, b] = v.slugs
+    if (a === undefined || b === undefined) continue
+    const na = bySlug.get(a)
+    const nb = bySlug.get(b)
+    out.push({
+      slugs: [a, b],
+      titles: [na?.title ?? { en: a }, nb?.title ?? { en: b }],
+      explanation: explainClaim({
+        claimKind: 'CONCEPT_IDENTITY',
+        fromFacets: facetsOf(na),
+        toFacets: facetsOf(nb),
+      }),
+    })
+  }
+  return out
+}
+
+export interface ResolveCollisionsResult {
+  readonly graph: GraphData
+  readonly objectives: readonly CompiledObjective[]
+  readonly applied: number
+  readonly rejected: readonly RejectedDecision[]
+  readonly issues: readonly { code: string; severity: string; message: string }[]
+  readonly violations: readonly { code: string; severity: string; message: string; slugs: string[] }[]
+  readonly collisions: readonly CollisionView[]
+  readonly blocking: boolean
+}
+
+/**
+ * Thi hành quyết định của người duyệt rồi KIỂM LẠI — kiểm ở đây, không ở trình duyệt.
+ *
+ * Bất biến cần `profiles` (trục bắt buộc từng môn) và ĐỒ THỊ ĐANG CÓ để bắt trùng với KC cũ, chứ
+ * không chỉ trong lô. Trình duyệt không có hai thứ đó, nên nếu để nó tự tuyên "hết vi phạm" thì
+ * người duyệt bấm Ghi và bị server chặn — hoặc tệ hơn, lọt một trùng định danh với KC đã có.
+ *
+ * Hàm KHÔNG ghi gì. Người duyệt còn phải bấm Ghi.
+ */
+export async function resolveFrameworkCollisions(input: {
+  readonly graph: GraphData
+  readonly objectives: readonly CompiledObjective[]
+  readonly decisions: readonly CollisionDecision[]
+}): Promise<ResolveCollisionsResult> {
+  const resolved = applyCollisionDecisions(
+    { graph: input.graph, objectives: input.objectives },
+    input.decisions,
+  )
+
+  const [profiles, existing] = await Promise.all([loadDomainProfiles(), loadExistingNodes()])
+  const violations = checkInvariants(resolved.graph, { profiles, existing })
+  const issues = validateDraft({ graph: resolved.graph, objectives: resolved.objectives, dedup: EMPTY_DEDUP })
+
+  return {
+    graph: resolved.graph,
+    objectives: resolved.objectives,
+    applied: resolved.applied.length,
+    rejected: resolved.rejected,
+    issues: issues.map((i) => ({ code: i.code, severity: i.severity, message: i.message })),
+    violations: violations.map((v) => ({
+      code: v.code,
+      severity: v.severity,
+      message: v.message,
+      slugs: [...v.slugs],
+    })),
+    collisions: describeCollisions(resolved.graph, violations),
+    blocking: hasBlockingIssue(issues) || hasBlockingViolation(violations),
+  }
+}
+
+/**
+ * `validateDraft` nhận cả bản nháp đã compile, nhưng chỉ đọc `graph`. Ở đây bản nháp đến từ trình
+ * duyệt nên không còn dấu vết dedup — dựng một cái rỗng thay vì bịa số liệu gộp.
+ */
+const EMPTY_DEDUP = { concepts: [], alias: new Map<string, never>(), merges: [] } as never

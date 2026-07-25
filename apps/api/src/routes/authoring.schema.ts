@@ -74,3 +74,38 @@ export const GraphBody = z.object({
     .optional(),
 })
 export type GraphBody = z.infer<typeof GraphBody>
+
+/**
+ * Quyết định của NGƯỜI DUYỆT khi máy không phân biệt được hai kiến thức (I1).
+ *
+ * Đúng hai lối mà chính bất biến nêu: gộp làm một, hoặc nói ra trục làm chúng khác nhau. `scope`
+ * KHÔNG có trong danh sách trục — nó là dữ liệu cấu trúc ({max:100}), sửa bằng một chuỗi gõ tay là
+ * mở đường cho phạm vi rác đi thẳng vào chỗ suy ra thứ tự học.
+ */
+const DISTINGUISH_AXES = ['object', 'channel', 'representation', 'bloom', 'transfer', 'fluency'] as const
+
+export const CollisionDecisionBody = z.discriminatedUnion('kind', [
+  z.object({
+    kind: z.literal('merge'),
+    keep: z.string().min(1),
+    drop: z.string().min(1),
+  }),
+  z.object({
+    kind: z.literal('distinguish'),
+    slug: z.string().min(1),
+    axis: z.enum(DISTINGUISH_AXES),
+    value: z.string().min(1).max(64),
+  }),
+])
+
+/**
+ * Bản nháp + quyết định. Bản nháp đi vòng qua trình duyệt nên phải khai lại đủ — nhưng KIỂM LẠI thì
+ * ở server, vì bất biến cần hồ sơ môn và đồ thị đang có, hai thứ trình duyệt không có.
+ */
+export const ResolveCollisionsBody = z.object({
+  nodes: GraphBody.shape.nodes,
+  edges: GraphBody.shape.edges,
+  objectives: GraphBody.shape.objectives,
+  decisions: z.array(CollisionDecisionBody).max(200),
+})
+export type ResolveCollisionsBody = z.infer<typeof ResolveCollisionsBody>

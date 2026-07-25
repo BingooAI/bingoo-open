@@ -7,12 +7,14 @@ import { useTranslations } from 'next-intl'
 import { Button, Callout, Textarea, useToast } from '@bingoo.ai/ui-web'
 import { Dropzone } from './dropzone'
 import { Stepper, type StepDef, type StepState } from './stepper'
+import { CollisionGate } from './collision-gate'
 import {
   useApplyFramework,
   useExtractText,
   useFrameworkFromPrompt,
   useFrameworkFromText,
   type IngestResultDto,
+  type ResolveCollisionsResultDto,
 } from '@/lib/authoring-queries'
 import { cn } from '@/lib/cn'
 
@@ -65,6 +67,27 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
     const onSuccess = (r: IngestResultDto) => setDraft(r)
     if (mode === 'pdf') fromText.mutate({ text }, { onSuccess, onError: onErr })
     else fromPrompt.mutate({ topic }, { onSuccess, onError: onErr })
+  }
+
+  /**
+   * Kết quả CHỐT thay vào bản nháp đang xem.
+   *
+   * Server trả bản nháp đã chốt kèm kết quả kiểm lại, nên chỗ này lấy hết: đồ thị mới, mục tiêu
+   * mới, và các vi phạm CÒN LẠI. Giữ lại vi phạm cũ thì nút Ghi vẫn tắt dù người duyệt đã xử xong.
+   */
+  const onResolved = (r: ResolveCollisionsResultDto) => {
+    setDraft((prev) =>
+      prev
+        ? {
+            ...prev,
+            compiled: { ...prev.compiled, graph: r.graph, objectives: r.objectives },
+            issues: r.issues,
+            violations: r.violations,
+            collisions: r.collisions,
+            blocking: r.blocking,
+          }
+        : prev,
+    )
   }
 
   const runApply = () => {
@@ -239,20 +262,27 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
                           ))}
                         </div>
                       ) : (
-                        <span className="text-[10px] text-danger">
-                          chưa khai facet — không phân biệt được với KC khác
-                        </span>
+                        <span className="text-[10px] text-danger">{t('fwNoMarks')}</span>
                       )}
                     </li>
                   )
                 })}
             </ul>
 
+            {/* CỔNG CHỐT — chỗ máy bí phải xử được ngay tại đây, không thì nút Ghi tắt vĩnh viễn. */}
+            {draft.collisions?.length ? (
+              <CollisionGate
+                compiled={draft.compiled}
+                collisions={draft.collisions}
+                onResolved={onResolved}
+              />
+            ) : null}
+
             {/* VI PHẠM BẤT BIẾN — xem TRƯỚC, không đợi bấm Duyệt mới bị chặn. */}
             {draft.violations?.length ? (
               <Callout
                 variant={draft.violations.some((v) => v.severity === 'error') ? 'danger' : 'warning'}
-                title={`Vi phạm bất biến (${draft.violations.length})`}
+                title={t('fwRuleBreaks', { n: draft.violations.length })}
               >
                 <ul className="list-disc space-y-1 pl-4 text-sm">
                   {draft.violations.slice(0, 6).map((v, k) => (
@@ -266,7 +296,7 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
 
             {/* CẢNH BÁO PIPELINE — nuốt cảnh báo là lý do đồ thị từng mất sạch cạnh mà không ai biết. */}
             {draft.warnings?.length ? (
-              <Callout variant="warning" title={`Cảnh báo pipeline (${draft.warnings.length})`}>
+              <Callout variant="warning" title={t('fwExtractWarn', { n: draft.warnings.length })}>
                 <ul className="list-disc space-y-1 pl-4 text-xs">
                   {draft.warnings.slice(0, 5).map((w, k) => (
                     <li key={k}>{w}</li>

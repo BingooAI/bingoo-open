@@ -65,6 +65,54 @@ export interface IngestResultDto {
   warnings: string[]
   /** Vi phạm bất biến, XEM TRƯỚC khi ghi. */
   violations: ViolationDto[]
+  /** Chỗ máy KHÔNG phân biệt được hai kiến thức — kèm so-từng-trục để người duyệt chốt. */
+  collisions?: CollisionDto[]
+  blocking: boolean
+}
+
+/** So một trục facet giữa hai kiến thức. `same=false` khi khác HOẶC khi một bên không khai. */
+export interface AxisAgreementDto {
+  axis: string
+  same: boolean
+  a?: string
+  b?: string
+}
+
+/**
+ * Máy bí ở đâu, và bí vì sao.
+ *
+ * Không phải điểm giống. Trùng khít MỌI trục mới là lý do máy không có cơ sở tách hai kiến thức —
+ * và cũng chính là chỗ người duyệt phải bổ sung nếu chúng thật sự khác nhau.
+ */
+export interface CollisionDto {
+  slugs: [string, string]
+  titles: [Record<string, string>, Record<string, string>]
+  explanation: {
+    tier: string
+    basis: string
+    facets?: {
+      axes: AxisAgreementDto[]
+      sameCount: number
+      comparedCount: number
+      indistinguishable: boolean
+      scope: string
+    }
+  }
+}
+
+/** Đúng hai lối mà bất biến nêu ra: gộp làm một, hoặc nói ra trục làm chúng khác. */
+export type CollisionDecisionDto =
+  | { kind: 'merge'; keep: string; drop: string }
+  | { kind: 'distinguish'; slug: string; axis: string; value: string }
+
+export interface ResolveCollisionsResultDto {
+  graph: { nodes: GraphNodeDto[]; edges: GraphEdgeDto[] }
+  objectives: ObjectiveDto[]
+  applied: number
+  rejected: { code: string }[]
+  issues: DraftIssueDto[]
+  violations: ViolationDto[]
+  collisions: CollisionDto[]
   blocking: boolean
 }
 
@@ -150,6 +198,25 @@ export function useApplyFramework() {
         edges: compiled.graph.edges,
         ...(compiled.framework ? { framework: compiled.framework } : {}),
         ...(compiled.objectives.length ? { objectives: compiled.objectives } : {}),
+      }),
+  })
+}
+
+/**
+ * Gửi quyết định của người duyệt lên server rồi lấy kết quả KIỂM LẠI.
+ *
+ * Kiểm lại phải ở server: bất biến cần hồ sơ môn và đồ thị đang có để bắt trùng với KC cũ, chứ
+ * không chỉ trong lô — trình duyệt không có hai thứ đó, nên nếu để nó tự tuyên "hết vi phạm" thì
+ * người duyệt bấm Ghi và bị chặn, hoặc tệ hơn là lọt một trùng định danh với KC đã có.
+ */
+export function useResolveCollisions() {
+  return useMutation({
+    mutationFn: (input: { compiled: IngestResultDto['compiled']; decisions: CollisionDecisionDto[] }) =>
+      api.post<ResolveCollisionsResultDto>('/authoring/framework/resolve-collisions', {
+        nodes: input.compiled.graph.nodes,
+        edges: input.compiled.graph.edges,
+        ...(input.compiled.objectives.length ? { objectives: input.compiled.objectives } : {}),
+        decisions: input.decisions,
       }),
   })
 }

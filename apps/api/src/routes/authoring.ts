@@ -11,7 +11,7 @@ import { validate } from '../lib/validate'
 import { requireRole } from '../auth'
 import { ingestSource } from '../services/authoring-ingest.service'
 import { applyAuthoredFramework } from '../services/authoring.service'
-import { GraphBody } from './authoring.schema'
+import { GraphBody, ResolveCollisionsBody } from './authoring.schema'
 import type { FrameworkMeta } from '../repos/authoring.repo'
 import type { CompiledObjective } from '@bingoo.ai/authoring'
 import { generateLessonContent } from '../services/content-generate.service'
@@ -49,6 +49,7 @@ import {
   chunkText,
   extractSourceText,
   frameworkFromPdf,
+  resolveFrameworkCollisions,
   frameworkFromPrompt,
   frameworkFromText,
 } from '../services/authoring-framework.service'
@@ -904,4 +905,27 @@ export const authoring = new Hono<AppEnv>()
       },
     })
     return ok(c, res)
+  })
+
+  /**
+   * NGƯỜI DUYỆT CHỐT chỗ máy không phân biệt được hai kiến thức, rồi KIỂM LẠI.
+   *
+   * Bất biến I1 chặn việc ghi khi hai kiến thức trùng khít mọi trục, và chặn đúng. Nhưng trước
+   * route này người duyệt chỉ đọc được lời cảnh báo: nút Ghi tắt, không lối nào đi tiếp — trên một
+   * chương trình thật thì trùng trục xảy ra thường xuyên, nên đó là đường cụt, không phải lan can.
+   *
+   * KHÔNG ghi gì. Trả bản nháp đã chốt + kết quả kiểm lại; người duyệt vẫn phải bấm Ghi.
+   */
+  .post('/framework/resolve-collisions', authorGuard, validate('json', ResolveCollisionsBody), async (c) => {
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    const b = c.req.valid('json')
+    return ok(
+      c,
+      await resolveFrameworkCollisions({
+        graph: { nodes: b.nodes, edges: b.edges } as GraphData,
+        objectives: (b.objectives ?? []) as CompiledObjective[],
+        decisions: b.decisions,
+      }),
+    )
   })
