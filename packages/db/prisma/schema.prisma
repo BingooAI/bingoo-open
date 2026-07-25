@@ -1360,6 +1360,9 @@ enum DecisionArtifact {
   OBJECTIVE_COVERAGE // vì sao objective cần đúng những KC này
   PREREQ_EDGE // vì sao X phải học trước Y
   CONCEPT_IDENTITY // vì sao hai concept là MỘT (gồm cả merge do trigram)
+  CONCEPT_EXISTS // vì sao KC này tồn tại — cùng làn nguồn như OBJECTIVE_EXISTS, trước đây không ghi
+  LESSON_MAPPING // vì sao bài trong SÁCH người dùng upload dạy đúng KC này
+  KC_PROPOSED // KC phát hiện từ sách mà khung chưa có (AI đề xuất; verdict=REJECTED nghĩa là bị lọc)
 }
 
 enum DecisionMethod {
@@ -1397,6 +1400,12 @@ enum DecisionVerdict {
 model SourceDocument {
   id                 String   @id @default(cuid())
   frameworkVersionId String?
+  /// Sách của một KHOÁ (ref phẳng, không FK — sống sót khi khoá bị đổi tên/xoá).
+  ///
+  /// Vì sao cần cột riêng thay vì dùng chung `frameworkVersionId`: một tài liệu chương trình neo vào
+  /// bản phát hành khung, còn một cuốn SÁCH neo vào khoá học dùng nó. Nhét cả hai vào một cột thì
+  /// hàm ghi thẻ cho mục tiêu (xoá-rồi-ghi theo frameworkVersionId) sẽ xoá luôn tài liệu sách.
+  courseSlug         String?
   storageKey         String? // trỏ file gốc trên object storage (tuỳ chọn cho demo)
   excerptText        String // văn bản đã trích xuất (OCR) — thứ được đối chiếu + hiện cho người duyệt
   // Băm nội dung bytes gốc — khoá cache index vị-trí + phát hiện tài liệu đổi (toạ độ cũ hết đúng).
@@ -1405,6 +1414,7 @@ model SourceDocument {
   createdAt          DateTime @default(now())
 
   @@index([frameworkVersionId])
+  @@index([courseSlug])
   @@map("source_document")
 }
 
