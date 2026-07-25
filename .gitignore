@@ -56,9 +56,11 @@ logs/
 # Local-only assistant notes (see CLAUDE.md)
 CLAUDE.md
 
-# Third-party reference material — copyrighted books/papers, read in place only.
-# Never commit: this repository is public and git history is permanent.
+# Third-party reference material — copyrighted books/papers/curricula, read in place only.
+# Never commit: this repository is public and git history is permanent. Curriculum source
+# PDFs (Cambridge, MOET) dropped at the repo root for import are covered by the broad rule.
 docs/**/*.pdf
+*.pdf
 
 # Brand source kit — shipped assets live in apps/*/public/brand; this is the working kit.
 /bingoo-brand/
