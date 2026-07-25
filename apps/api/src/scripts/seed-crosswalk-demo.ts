@@ -26,10 +26,10 @@
 
 import { readFileSync } from 'node:fs'
 import type { GraphData, SkillEdge, SkillNode } from '@bingoo.ai/knowledge-engine'
-import type { CompiledObjective } from '@bingoo.ai/authoring'
+import type { CompiledConcept, CompiledObjective } from '@bingoo.ai/authoring'
 import { applyAuthoredFramework } from '../services/authoring.service'
 import { contentHashOf, pdfPositionedUnits } from '../services/pdf-anchor.service'
-import { resolveSourcePath, writeObjectiveTraces } from '../services/decision-trace.service'
+import { resolveSourcePath, writeClaimTraces } from '../services/decision-trace.service'
 
 // ── KC nền CHUNG (within-100 / Stage 2–Lớp 1). object+channel bắt buộc; scope để phân biệt định danh.
 const kc = (
@@ -50,6 +50,10 @@ const kc = (
 })
 
 const KCS: SkillNode[] = [
+  // Cùng ĐỐI TƯỢNG với cw-count-100, phạm vi HẸP HƠN. Có cặp này thì thứ tự học giữa chúng là thứ
+  // MÁY TỰ CHỨNG ĐƯỢC (đếm đến 20 nằm gọn trong đếm đến 100), không phải phán đoán — nên panel giải
+  // thích có một ví dụ thật cho làn "chứng được", cạnh những cạnh chỉ là phán đoán.
+  kc('cw-count-20', 'Count within 20', 'Đếm trong phạm vi 20', 'counting', 'compute', { max: 20 }),
   kc('cw-count-100', 'Count within 100', 'Đếm trong phạm vi 100', 'counting', 'compute', { max: 100 }),
   kc(
     'cw-place-value-100',
@@ -152,6 +156,8 @@ const pre = (from: string, to: string): SkillEdge => ({
   weight: 1,
 })
 const EDGES: SkillEdge[] = [
+  // Thứ tự MÁY CHỨNG ĐƯỢC: cùng đối tượng "đếm", phạm vi 20 ⊂ 100.
+  pre('cw-count-20', 'cw-count-100'),
   pre('cw-count-100', 'cw-place-value-100'),
   pre('cw-count-100', 'cw-compare-100'),
   pre('cw-count-100', 'cw-skip-count-100'),
@@ -302,6 +308,38 @@ const QUOTE_BY_CODE: Record<string, string> = {
   '1St2': 'Perform addition and subtraction (without regrouping) of numbers within 100.',
   '1St4': 'Perform mental addition and subtraction within 10.',
 }
+/**
+ * Câu nguồn cho KIẾN THỨC — cũng từ Thông tư 32.
+ *
+ * Cố tình KHÔNG phủ hết: vài kiến thức có câu trích (làn nguồn sáng, mở đúng trang được), vài cái
+ * không (làn nguồn để trống, và panel nói thẳng "không trích từ tài liệu nào"). Một demo mà mọi ô
+ * đều xanh thì không cho thấy hệ trung thực ở đâu — chỗ nó dám để trống mới là chỗ đáng xem.
+ */
+const KC_QUOTE: Record<string, string> = {
+  'cw-count-20': 'Count, read, and write numbers within 10; within 20; within 100.',
+  'cw-count-100': 'Count, read, and write numbers within 10; within 20; within 100.',
+  'cw-place-value-100': 'Recognise tens and ones, and round tens.',
+  'cw-compare-100':
+    'Recognise how to compare and order numbers within 100 (in groups of no more than 4 numbers).',
+  'cw-meaning-addsub': 'Recognise the meaning of addition and subtraction.',
+  'cw-addsub-100': 'Perform addition and subtraction (without regrouping) of numbers within 100.',
+  'cw-mental-10': 'Perform mental addition and subtraction within 10.',
+  // cw-skip-count-100, cw-even-odd-100, cw-multiply, cw-divide, cw-times-tables, cw-unit-fraction:
+  // KHÔNG có câu trích — chương trình lớp 1 không phủ chúng, nên để trống là đúng sự thật.
+}
+
+/** KC + câu nguồn → CompiledConcept, dạng mà hàm ghi thẻ nhận. */
+const CONCEPTS: CompiledConcept[] = KCS.map((n) => {
+  const q = KC_QUOTE[n.slug]
+  return {
+    slug: n.slug,
+    title: n.title,
+    kind: n.kind,
+    ...(n.facets !== undefined ? { facets: n.facets } : {}),
+    evidence: q !== undefined ? [{ chunkId: 'circular32', quote: q }] : [],
+  }
+})
+
 const withQuote = (o: CompiledObjective): CompiledObjective => {
   const q = o.code ? QUOTE_BY_CODE[o.code] : undefined
   return q ? { ...o, evidence: [{ chunkId: 'circular32', quote: q }] } : o
@@ -351,12 +389,17 @@ async function main(): Promise<void> {
       const bytes = new Uint8Array(readFileSync(resolveSourcePath(PDF_KEY)))
       const { units, pageCount } = await pdfPositionedUnits(bytes)
       const sourceText = units.map((u) => u.text).join(' ')
-      const t = await writeObjectiveTraces(fvid, MOET_ANCHORED, sourceText, {
-        units,
-        contentHash: contentHashOf(bytes),
-        pageCount,
-        storageKey: PDF_KEY,
-      })
+      const t = await writeClaimTraces(
+        fvid,
+        { objectives: MOET_ANCHORED, concepts: CONCEPTS, edges: EDGES },
+        sourceText,
+        {
+          units,
+          contentHash: contentHashOf(bytes),
+          pageCount,
+          storageKey: PDF_KEY,
+        },
+      )
       console.log(`Neo Circular32: ${t.records} thẻ, ${t.anchored} có toạ độ (mở đúng trang, tô đúng dòng).`)
     } catch (e) {
       console.log(`Bỏ qua neo tài liệu (không thấy ${PDF_KEY}): ${(e as Error).message}`)

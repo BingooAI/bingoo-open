@@ -5,7 +5,12 @@
  * Chặn chu trình tiên quyết trước khi ghi (đồ thị phải là DAG). Sau ghi → invalidate cache graph.
  */
 
-import { checkInvariants, hasBlockingViolation, type CompiledObjective } from '@bingoo.ai/authoring'
+import {
+  checkInvariants,
+  hasBlockingViolation,
+  type CompiledConcept,
+  type CompiledObjective,
+} from '@bingoo.ai/authoring'
 import type { GraphData } from '@bingoo.ai/knowledge-engine'
 import {
   loadDomainProfiles,
@@ -19,6 +24,7 @@ import {
 import { indexKcEmbeddings } from '../repos/competency-embedding.repo'
 import { invalidateGraphCache } from './knowledge.service'
 import { AppError } from '../lib/errors'
+import { writeClaimTraces, type WriteTraceResult } from './decision-trace.service'
 
 /**
  * CỔNG BẤT BIẾN — chạy TOÀN BỘ bất biến (I1–I8) trước khi ghi, không chỉ kiểm chu trình.
@@ -52,6 +58,8 @@ export async function applyAuthoredGraph(graph: GraphData): Promise<PersistResul
 
 export interface ApplyFrameworkResult extends PersistResult {
   readonly framework?: FrameworkPersistResult
+  /** Thẻ căn cứ đã ghi. Vắng = không truyền tài liệu nguồn, nên không có gì để đối chiếu. */
+  readonly traces?: WriteTraceResult
 }
 
 /** Áp trọn: đồ thị KC + (tuỳ chọn) Framework/FrameworkVersion/objectives + MAPS_TO. */
@@ -59,6 +67,14 @@ export async function applyAuthoredFramework(input: {
   graph: GraphData
   framework?: FrameworkMeta
   objectives?: readonly CompiledObjective[]
+  /** Bằng chứng nguồn của kiến thức — đồ thị không chở được, nên nó đi đường riêng. */
+  concepts?: readonly CompiledConcept[]
+  /**
+   * Tài liệu nguồn. CÓ thì mỗi khẳng định được đối chiếu lại vào đây và có thẻ căn cứ; KHÔNG có thì
+   * khung vẫn ghi được nhưng không mục nào trả lời được "vì sao có nó" — và đó là sự thật, không
+   * phải thiếu sót cần che.
+   */
+  source?: { readonly text: string; readonly storageKey?: string }
 }): Promise<ApplyFrameworkResult> {
   await assertInvariants(input.graph)
   const result = await persistGraph(input.graph)
@@ -66,6 +82,27 @@ export async function applyAuthoredFramework(input: {
     input.framework && input.objectives
       ? await persistFramework(input.framework, input.objectives)
       : undefined
+
+  /**
+   * THẺ CĂN CỨ — ghi ngay khi áp, không để seed là chỗ duy nhất có.
+   *
+   * Trước đây `writeObjectiveTraces` chỉ được seed gọi, nên khung nào đi qua giao diện cũng ra một
+   * đồ thị không có một dòng căn cứ nào: nút "Xem căn cứ" mở ra trống. Ghi ở đây nghĩa là BẤT KỲ
+   * khung nào người dùng upload cũng có căn cứ, không riêng dữ liệu mẫu.
+   */
+  let traces: WriteTraceResult | undefined
+  if (framework && input.source) {
+    traces = await writeClaimTraces(
+      framework.frameworkVersionId,
+      {
+        ...(input.objectives ? { objectives: input.objectives } : {}),
+        ...(input.concepts ? { concepts: input.concepts } : {}),
+      },
+      input.source.text,
+      // Neo toạ độ cần file gốc; đường /apply chưa có bytes nên chỉ đối chiếu văn bản. Câu trích vẫn
+      // được kiểm và vẫn tô "từ tài liệu" — chỉ chưa mở được đúng trang.
+    )
+  }
 
   // Nhúng KC vào chỉ mục NGỮ NGHĨA — khung ĐẦU TIÊN dựng vốn KC canonical, nên nếu không nhúng ở đây
   // thì khung THỨ HAI không có gì để truy hồi khi trigram bó tay (khác ngôn ngữ, khác cách diễn đạt).
@@ -88,5 +125,5 @@ export async function applyAuthoredFramework(input: {
   }
 
   invalidateGraphCache()
-  return { ...result, ...(framework ? { framework } : {}) }
+  return { ...result, ...(framework ? { framework } : {}), ...(traces ? { traces } : {}) }
 }

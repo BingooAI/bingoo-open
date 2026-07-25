@@ -13,7 +13,7 @@ import { ingestSource } from '../services/authoring-ingest.service'
 import { applyAuthoredFramework } from '../services/authoring.service'
 import { GraphBody, ResolveCollisionsBody } from './authoring.schema'
 import type { FrameworkMeta } from '../repos/authoring.repo'
-import type { CompiledObjective } from '@bingoo.ai/authoring'
+import type { CompiledConcept, CompiledObjective } from '@bingoo.ai/authoring'
 import { generateLessonContent } from '../services/content-generate.service'
 import { generateOneItem } from '../services/content-item-gen.service'
 import { allPrimitives, primitiveInfos, recommendPrimitives } from '../services/primitive-info.service'
@@ -891,6 +891,8 @@ export const authoring = new Hono<AppEnv>()
       graph: { nodes: b.nodes, edges: b.edges } as GraphData,
       ...(b.framework ? { framework: b.framework as FrameworkMeta } : {}),
       ...(b.objectives ? { objectives: b.objectives as CompiledObjective[] } : {}),
+      ...(b.concepts ? { concepts: b.concepts as CompiledConcept[] } : {}),
+      ...(b.source ? { source: b.source } : {}),
     })
     // DẤU VẾT: ai GHI đồ thị năng lực (xương sống bằng chứng) — bao nhiêu node/cạnh, khung nào.
     await writeAudit({

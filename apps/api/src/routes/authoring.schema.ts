@@ -27,6 +27,24 @@ const KINDS = [
 const RELS = ['PREREQUISITE', 'ENABLES', 'COMPOSES', 'ALIGNS', 'VARIANT_OF', 'MAPS_TO'] as const
 const MODES = ['REQUIRED', 'RECOMMENDED'] as const
 
+/**
+ * CÂU NGUỒN đã kiểm.
+ *
+ * Trước đây trường này không có trong schema, nên nó bị cắt IM LẶNG ngay tại đây: pipeline đối chiếu
+ * câu trích vào tài liệu, đánh dấu đã kiểm, rồi bằng chứng chết trên đường dây. Đó là lý do nhãn
+ * "có căn cứ" chỉ từng xuất hiện trên dữ liệu seed — dữ liệu đi qua giao diện không bao giờ mang
+ * được căn cứ tới server.
+ */
+const EvidenceBody = z.array(
+  z.object({
+    chunkId: z.string().min(1),
+    quote: z.string().min(1),
+    verified: z.boolean().optional(),
+    charStart: z.number().int().optional(),
+    charEnd: z.number().int().optional(),
+  }),
+)
+
 export const GraphBody = z.object({
   nodes: z
     .array(
@@ -69,9 +87,36 @@ export const GraphBody = z.object({
         title: z.record(z.string(), z.string()),
         code: z.string().optional(),
         mapsTo: z.array(z.string()).default([]),
+        evidence: EvidenceBody.optional(),
       }),
     )
     .optional(),
+  /**
+   * Bằng chứng nguồn của từng KIẾN THỨC — đi song song với `nodes`, không nằm trong đó.
+   *
+   * Hợp đồng đồ thị không có chỗ cho bằng chứng (engine không đọc nó), nên nhồi vào `nodes` là làm
+   * bẩn một hợp đồng đang sạch. Danh sách riêng, khoá theo slug.
+   */
+  concepts: z
+    .array(
+      z.object({
+        slug: z.string().min(1),
+        title: z.record(z.string(), z.string()),
+        kind: z.enum(KINDS),
+        facets: z.record(z.string(), z.unknown()).optional(),
+        evidence: EvidenceBody.default([]),
+        confidence: z.number().optional(),
+      }),
+    )
+    .optional(),
+  /**
+   * Đoạn nguồn để ĐỐI CHIẾU LẠI câu trích lúc ghi.
+   *
+   * Không tin cờ `verified` gửi từ trình duyệt: nó đi qua chỗ mà bất cứ ai cũng sửa được. Ghi thẻ
+   * phải kiểm lại vào chính đoạn văn bản SẼ ĐƯỢC LƯU cùng thẻ, nếu không thì "đã kiểm" chỉ là một
+   * ô tích mà không ai kiểm.
+   */
+  source: z.object({ text: z.string().min(1), storageKey: z.string().max(512).optional() }).optional(),
 })
 export type GraphBody = z.infer<typeof GraphBody>
 
