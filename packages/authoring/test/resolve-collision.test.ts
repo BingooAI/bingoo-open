@@ -232,3 +232,108 @@ describe('nhiều quyết định áp lần lượt theo đúng thứ tự ngư�
     )
   })
 })
+
+describe('lối BỎ CẠNH — chuỗi học quay vòng', () => {
+  /** Vòng thật gặp khi trích một khung tiểu học: tách-gộp-số ↔ cộng-trừ, mỗi cái đòi cái kia trước. */
+  const cyclic = (): GraphData => ({
+    nodes: [
+      kc('decompose-10-20', 'Decompose numbers 10-20', { object: 'place-value', channel: 'compute' }),
+      kc('add-subtract-20', 'Add and subtract within 20', { object: 'addition', channel: 'compute' }),
+    ],
+    edges: [
+      {
+        from: 'decompose-10-20' as Slug,
+        to: 'add-subtract-20' as Slug,
+        relType: 'PREREQUISITE',
+        mode: 'REQUIRED',
+        weight: 1,
+      },
+      {
+        from: 'add-subtract-20' as Slug,
+        to: 'decompose-10-20' as Slug,
+        relType: 'PREREQUISITE',
+        mode: 'REQUIRED',
+        weight: 1,
+      },
+    ],
+  })
+  const cycles = (g: GraphData) => checkInvariants(g, {}).filter((v) => v.code === 'I6_ORDERING_CYCLE')
+
+  it('máy thấy vòng nhưng KHÔNG tự gỡ — nó không biết mắt nào sai', () => {
+    expect(cycles(cyclic())).toHaveLength(1)
+    const r = applyCollisionDecisions({ graph: cyclic(), objectives: [] }, [])
+    expect(cycles(r.graph)).toHaveLength(1) // không quyết định → vẫn chặn
+  })
+
+  it('người duyệt chỉ mắt sai → vòng hết, mắt còn lại giữ nguyên', () => {
+    const r = applyCollisionDecisions({ graph: cyclic(), objectives: [] }, [
+      { kind: 'drop-edge', from: 'add-subtract-20' as Slug, to: 'decompose-10-20' as Slug },
+    ])
+    expect(cycles(r.graph)).toHaveLength(0)
+    expect(r.graph.edges).toHaveLength(1)
+    expect(r.graph.edges[0]?.from).toBe('decompose-10-20')
+    expect(r.applied[0]?.effect.edgesDropped).toBe(1)
+  })
+
+  it('cạnh không có thật → BÁO, không im lặng', () => {
+    const r = applyCollisionDecisions({ graph: cyclic(), objectives: [] }, [
+      { kind: 'drop-edge', from: 'decompose-10-20' as Slug, to: 'khong-co' as Slug },
+    ])
+    expect(r.rejected[0]?.code).toBe('unknown-edge')
+  })
+})
+
+describe('lối BỎ MỤC — thứ trích ra không phải kiến thức dạy được', () => {
+  /** Đặc điểm tư duy chung ("specialising", "conjecturing") lọt vào thành kiến thức khi trích khung. */
+  const withNoise = (): GraphData => ({
+    nodes: [
+      kc('count-100', 'Count within 100', { object: 'counting', channel: 'compute', scope: { max: 100 } }),
+      kc('specialising', 'Specialising', { object: 'thinking', channel: 'apply' }),
+    ],
+    edges: [
+      {
+        from: 'specialising' as Slug,
+        to: 'count-100' as Slug,
+        relType: 'PREREQUISITE',
+        mode: 'REQUIRED',
+        weight: 1,
+      },
+    ],
+  })
+
+  it('bỏ mục + mọi quan hệ của nó, và GIỮ LẠI lý do', () => {
+    const r = applyCollisionDecisions({ graph: withNoise(), objectives: [] }, [
+      {
+        kind: 'drop-concept',
+        slug: 'specialising' as Slug,
+        reason: 'Đặc điểm tư duy chung, không phải kiến thức dạy được',
+      },
+    ])
+    expect(r.graph.nodes.map((n) => n.slug)).toEqual(['count-100'])
+    expect(r.graph.edges).toHaveLength(0)
+    expect(r.applied[0]?.effect.reason).toContain('tư duy chung')
+  })
+
+  it('mục tiêu đang đo bằng mục bị bỏ thì gỡ tham chiếu — không để mục tiêu mồ côi', () => {
+    const objs: CompiledObjective[] = [
+      {
+        slug: 'obj-a' as Slug,
+        title: { en: 'A', vi: 'A' },
+        mapsTo: ['specialising' as Slug, 'count-100' as Slug],
+      },
+    ]
+    const r = applyCollisionDecisions({ graph: withNoise(), objectives: objs }, [
+      { kind: 'drop-concept', slug: 'specialising' as Slug, reason: 'không phải kiến thức dạy được' },
+    ])
+    expect(r.objectives[0]?.mapsTo).toEqual(['count-100'])
+    expect(r.applied[0]?.effect.objectivesRewired).toBe(1)
+  })
+
+  it('bỏ mà KHÔNG nêu lý do → từ chối; "vì sao khung không có cái này" phải còn câu trả lời', () => {
+    const r = applyCollisionDecisions({ graph: withNoise(), objectives: [] }, [
+      { kind: 'drop-concept', slug: 'specialising' as Slug, reason: '  ' },
+    ])
+    expect(r.rejected[0]?.code).toBe('empty-value')
+    expect(r.graph.nodes).toHaveLength(2)
+  })
+})

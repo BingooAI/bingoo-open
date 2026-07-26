@@ -141,6 +141,20 @@ export const CollisionDecisionBody = z.discriminatedUnion('kind', [
     axis: z.enum(DISTINGUISH_AXES),
     value: z.string().min(1).max(64),
   }),
+  // Gỡ một mắt của chuỗi quay vòng — máy thấy vòng nhưng không biết mắt nào sai.
+  z.object({
+    kind: z.literal('drop-edge'),
+    from: z.string().min(1),
+    to: z.string().min(1),
+    relType: z.string().max(32).optional(),
+  }),
+  // Loại một mục không phải kiến thức dạy được. Lý do BẮT BUỘC: bỏ mà không ghi lại thì
+  // "vì sao khung không có cái này" mất luôn câu trả lời.
+  z.object({
+    kind: z.literal('drop-concept'),
+    slug: z.string().min(1),
+    reason: z.string().min(1).max(280),
+  }),
 ])
 
 /**

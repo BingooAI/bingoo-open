@@ -13,10 +13,16 @@
  * cổng thì không phải lan can, nó là bức tường — và bức tường thì người ta trèo qua bằng cách tắt
  * kiểm tra.
  *
- * Đây là cái cổng, đúng hai lối mà chính I1 nêu ra:
+ * Đây là cái cổng. Hai lối đầu là hai lối mà chính I1 nêu ra; hai lối sau cho những thứ khác cũng
+ * chặn việc ghi và cũng chỉ người mới gỡ được:
  *
  *   GỘP        — đúng là một kiến thức. Cạnh và ánh xạ của cái bị gộp chuyển hết về cái giữ lại.
  *   PHÂN BIỆT  — là hai kiến thức khác nhau, và người duyệt NÓI RA điều gì làm chúng khác.
+ *   BỎ CẠNH    — chuỗi học quay vòng (I6). Máy phát hiện được vòng nhưng KHÔNG biết mắt nào sai;
+ *                chọn hộ là đoán, và một cạnh thứ tự đặt sai thì kéo lệch cả lộ trình học.
+ *   BỎ MỤC     — thứ trích ra không phải một kiến thức dạy được (tiêu đề mục, câu dẫn, đặc điểm
+ *                tư duy chung). Bỏ mà KHÔNG ghi lại thì "vì sao khung không có cái này" mất luôn
+ *                câu trả lời — nên lý do đi kèm quyết định, không phải một nút xoá lặng lẽ.
  *
  * Thuần, tất định, không quyết định thay ai: nó chỉ THI HÀNH quyết định đã có. Không suy ra lối nào
  * nên chọn, và không tự chọn khi thiếu quyết định — vì đó lại đúng là việc I1 cấm.
@@ -43,6 +49,10 @@ export type CollisionDecision =
       readonly axis: DistinguishAxis
       readonly value: string
     }
+  /** Gỡ một mắt của chuỗi quay vòng. Người duyệt chỉ ra mắt nào không đúng là thứ tự học. */
+  | { readonly kind: 'drop-edge'; readonly from: Slug; readonly to: Slug; readonly relType?: string }
+  /** Loại một mục không phải kiến thức dạy được. `reason` bắt buộc — bỏ thì phải nói vì sao. */
+  | { readonly kind: 'drop-concept'; readonly slug: Slug; readonly reason: string }
 
 export interface AppliedDecision {
   readonly decision: CollisionDecision
@@ -53,13 +63,15 @@ export interface AppliedDecision {
     readonly edgesDropped: number
     readonly objectivesRewired: number
     readonly facetChanged?: { readonly axis: DistinguishAxis; readonly from?: string; readonly to: string }
+    /** Lý do người duyệt nêu khi loại một mục — giữ lại để trả lời "vì sao khung không có cái này". */
+    readonly reason?: string
   }
 }
 
 export interface RejectedDecision {
   readonly decision: CollisionDecision
   /** MÃ, không phải câu chữ — UI dựng câu {vi,en} (R4). */
-  readonly code: 'unknown-slug' | 'same-slug' | 'not-a-concept' | 'empty-value'
+  readonly code: 'unknown-slug' | 'same-slug' | 'not-a-concept' | 'empty-value' | 'unknown-edge'
 }
 
 export interface ResolveResult {
@@ -151,6 +163,69 @@ export function applyCollisionDecisions(
           edgesRewired: rewired,
           edgesDropped: dropped,
           objectivesRewired: objRewired,
+        },
+      })
+      continue
+    }
+
+    if (decision.kind === 'drop-edge') {
+      const before = edges.length
+      edges = edges.filter(
+        (e) =>
+          !(
+            e.from === decision.from &&
+            e.to === decision.to &&
+            (decision.relType === undefined || e.relType === decision.relType)
+          ),
+      )
+      if (edges.length === before) {
+        rejected.push({ decision, code: 'unknown-edge' })
+        continue
+      }
+      applied.push({
+        decision,
+        effect: {
+          nodesRemoved: [],
+          edgesRewired: 0,
+          edgesDropped: before - edges.length,
+          objectivesRewired: 0,
+        },
+      })
+      continue
+    }
+
+    if (decision.kind === 'drop-concept') {
+      const node = nodes.find((n) => n.slug === decision.slug)
+      if (node === undefined) {
+        rejected.push({ decision, code: 'unknown-slug' })
+        continue
+      }
+      if (node.kind === 'OBJECTIVE') {
+        rejected.push({ decision, code: 'not-a-concept' })
+        continue
+      }
+      if (decision.reason.trim().length === 0) {
+        rejected.push({ decision, code: 'empty-value' })
+        continue
+      }
+      nodes = nodes.filter((n) => n.slug !== decision.slug)
+      const beforeE = edges.length
+      edges = edges.filter((e) => e.from !== decision.slug && e.to !== decision.slug)
+      // Mục tiêu mất một mảnh nó đo bằng → phải bỏ tham chiếu, nếu không I5 coi nó là mồ côi.
+      let objRewired = 0
+      objectives = objectives.map((o) => {
+        if (!o.mapsTo.includes(decision.slug)) return o
+        objRewired += 1
+        return { ...o, mapsTo: o.mapsTo.filter((t) => t !== decision.slug) }
+      })
+      applied.push({
+        decision,
+        effect: {
+          nodesRemoved: [decision.slug],
+          edgesRewired: 0,
+          edgesDropped: beforeE - edges.length,
+          objectivesRewired: objRewired,
+          reason: decision.reason.trim(),
         },
       })
       continue
