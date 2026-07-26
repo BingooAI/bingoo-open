@@ -11,11 +11,13 @@ import { requireAuth } from '../auth'
 import {
   certifyLearner,
   getLearnerFrontier,
+  getLearnerGapReport,
   getNextSession,
+  listFrameworkStages,
   recordLearnerEvidence,
 } from '../services/knowledge.service'
 import { gradeAndFold } from '../services/content-grade.service'
-import { getCrosswalk, getLearnerFrameworkReport } from '../repos/crosswalk.repo'
+import { getCrosswalk, getLearnerFrameworkReport, listLearnerFrameworks } from '../repos/crosswalk.repo'
 import { loadExposure } from '../repos/content-item.repo'
 import { dueReview, reviewFlashcard } from '../services/srs.service'
 
@@ -67,6 +69,16 @@ const CertifyBody = z.object({
 })
 
 export const knowledge = new Hono<AppEnv>()
+  /**
+   * DANH SÁCH CHƯƠNG TRÌNH — chỉ tên, để màn hình chọn được thứ ĐANG CÓ.
+   *
+   * Thiếu nó thì phía người học không còn cách nào ngoài ghim cứng slug vào mã nguồn, và đúng chuyện
+   * đó đã hỏng: một slug ghim sẵn không còn tồn tại, trang chỉ hiện mỗi chữ "thất bại" trong khi
+   * mọi thứ khác vẫn chạy bình thường.
+   */
+  .get('/framework', requireAuth, async (c) => {
+    return ok(c, await listLearnerFrameworks())
+  })
   // CHUYỂN KHUNG cho NGƯỜI HỌC: học chương trình này, sang chương trình kia còn thiếu gì.
   // Dữ liệu khung (không nhạy cảm) — chỉ cần đăng nhập, không cần quyền biên soạn. Đối chiếu qua
   // KC nền dùng chung; nếu học viên đã có mastery thật thì `/framework/:slug/report` đọc theo họ.
@@ -81,6 +93,20 @@ export const knowledge = new Hono<AppEnv>()
     const r = await getLearnerFrameworkReport(user.id, c.req.param('slug'))
     if (!r) throw AppError.notFound('Không có chương trình này.')
     return ok(c, r)
+  })
+  // LỖ HỔNG theo khung: như /report nhưng tách "đã đo mà chưa tới" khỏi "chưa ai đo", và
+  // không cho mục tiêu kiểu thái độ mang điểm số. `stage` là nhãn riêng của từng khung, so
+  // bằng chuỗi — bỏ trống thì đọc cả khung.
+  .get('/framework/:slug/gap', requireAuth, async (c) => {
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    const stage = c.req.query('stage')
+    const r = await getLearnerGapReport(user.id, c.req.param('slug'), stage)
+    if (!r) throw AppError.notFound('Không có chương trình này.')
+    return ok(c, r)
+  })
+  .get('/framework/:slug/stages', requireAuth, async (c) => {
+    return ok(c, await listFrameworkStages(c.req.param('slug')))
   })
   .post('/evidence', requireAuth, validate('json', EvidenceBody), async (c) => {
     const user = c.get('user')

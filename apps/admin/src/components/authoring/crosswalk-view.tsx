@@ -17,12 +17,14 @@ import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, Spinner } 
 import {
   useCrosswalk,
   useFrameworks,
+  type CrosswalkDifferenceDto,
   type CrosswalkDto,
   type FrameworkReportDto,
   type GapStatus,
   type ObjectiveGapDto,
 } from '@/lib/authoring-queries'
 import { cn } from '@/lib/cn'
+import { AXIS_KEY } from '@/lib/facet-labels'
 
 /**
  * ĐỐI CHIẾU HAI KHUNG cho NGƯỜI DẠY — "học theo khung này, chuyển sang khung kia còn thiếu gì".
@@ -41,9 +43,20 @@ export function CrosswalkView() {
   const frameworks = useFrameworks()
   const opts = frameworks.data ?? []
 
-  // Mặc định chiều MOET Lớp 1 → Cambridge Stage 2 (câu chuyện rõ nhất: học VN sang Cambridge thiếu gì).
-  const [from, setFrom] = useState('moet-primary-math-g1')
-  const [to, setTo] = useState('cambridge-primary-math-s2')
+  /**
+   * Chiều mặc định lấy từ DANH SÁCH ĐANG CÓ, không ghim cứng slug.
+   *
+   * Trước đây hai slug được ghim thẳng vào đây, và một trong hai không còn tồn tại. Hỏng ra rất khó
+   * lần: ô chọn không tìm thấy giá trị của nó nên trình duyệt hiện MỤC ĐẦU DANH SÁCH, tức là màn
+   * hình nói đã chọn một khung có thật trong khi truy vấn đang hỏi một khung không có. Người dùng
+   * đọc được "đã chọn đúng hai khung" rồi nhận về một chữ "thất bại" trống không.
+   *
+   * Nên: state rỗng cho tới khi danh sách về, rồi lấy hai khung đầu. Không có gì để ghim sai nữa.
+   */
+  const [fromSel, setFrom] = useState('')
+  const [toSel, setTo] = useState('')
+  const from = fromSel || (opts[0]?.slug ?? '')
+  const to = toSel || (opts.find((o) => o.slug !== from)?.slug ?? '')
   // Venn = trực quan theo CHỦ ĐỀ; Danh sách = scale được cho CẢ MÔN (Venn nhiều KC là chịu).
   const [view, setView] = useState<'venn' | 'list'>('venn')
   const cw = useCrosswalk(from, to)
@@ -106,7 +119,12 @@ export function CrosswalkView() {
           <Spinner />
         </div>
       ) : cw.isError || !cw.data || !report ? (
-        <EmptyState title={t('failed')} />
+        // Một chữ "thất bại" trống không khiến người dùng không có gì để làm tiếp — và lần hỏng thật
+        // vừa rồi là "không có khung này", tức là câu trả lời nằm ngay trong lỗi mà không ai thấy.
+        <EmptyState
+          title={t('failed')}
+          description={cw.error instanceof Error ? cw.error.message : undefined}
+        />
       ) : (
         <>
           {/* Thước đo nhanh: chuyển khung đạt bao nhiêu % */}
@@ -174,6 +192,9 @@ export function CrosswalkView() {
           ) : (
             <CrosswalkList data={cw.data} report={report} />
           )}
+
+          {/* Cả hai cách xem đều cần phần này: hai cách trên nói CÁI GÌ lệch, chỗ này nói VÌ SAO. */}
+          <CrosswalkWhy data={cw.data} />
         </>
       )}
     </div>
@@ -204,7 +225,31 @@ interface ZoneItem {
   code: string
 }
 
-function VennZone({ header, items, tone }: { header: string; items: ZoneItem[]; tone: VennTone }) {
+/**
+ * Số nhãn một vòng hiện sẵn.
+ *
+ * Không phải để "cho gọn": một vòng 23 nhãn thì không đọc được, và nó tràn ra ngoài cả hình. Một
+ * chương trình thật đưa vào là chạm ngưỡng này ngay lần đầu. Phần còn lại KHÔNG mất — nó thành một
+ * chip đếm bấm được ngay tại chỗ, nên không ai phải rời màn hình để biết mình đang không thấy gì.
+ */
+const VENN_MAX = 6
+
+function VennZone({
+  header,
+  items,
+  tone,
+  moreLabel,
+  lessLabel,
+}: {
+  header: string
+  items: ZoneItem[]
+  tone: VennTone
+  moreLabel: (n: number) => string
+  lessLabel: string
+}) {
+  const [open, setOpen] = useState(false)
+  const shown = open ? items : items.slice(0, VENN_MAX)
+  const hidden = items.length - shown.length
   return (
     <div className="flex flex-col items-center gap-2.5 text-center">
       <span
@@ -221,18 +266,35 @@ function VennZone({ header, items, tone }: { header: string; items: ZoneItem[]; 
       {items.length === 0 ? (
         <span className="text-[12px] text-foreground-subtle">—</span>
       ) : (
-        items.map((k) => (
-          <span
-            key={k.slug}
-            className={cn(
-              'max-w-[13rem] rounded-full border bg-surface/90 px-3 py-1.5 text-[11px] leading-tight text-foreground shadow-sm backdrop-blur-sm',
-              tone.chip,
-            )}
-          >
-            {k.code ? <span className={cn('mr-1 font-mono font-semibold', tone.code)}>{k.code}</span> : null}
-            {k.title}
-          </span>
-        ))
+        <>
+          {shown.map((k) => (
+            <span
+              key={k.slug}
+              className={cn(
+                'max-w-[13rem] rounded-full border bg-surface/90 px-3 py-1.5 text-[11px] leading-tight text-foreground shadow-sm backdrop-blur-sm',
+                tone.chip,
+              )}
+            >
+              {k.code ? (
+                <span className={cn('mr-1 font-mono font-semibold', tone.code)}>{k.code}</span>
+              ) : null}
+              {k.title}
+            </span>
+          ))}
+          {hidden > 0 || open ? (
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              className={cn(
+                'focus-ring rounded-full border border-dashed bg-surface/80 px-3 py-1.5 text-[11px] font-medium backdrop-blur-sm transition-colors hover:bg-surface-muted',
+                tone.chip,
+                tone.text,
+              )}
+            >
+              {open ? lessLabel : moreLabel(hidden)}
+            </button>
+          ) : null}
+        </>
       )}
     </div>
   )
@@ -253,6 +315,11 @@ function CrosswalkVenn({ data }: { data: CrosswalkDto }) {
   const left = zone('a', (s) => srcCode.get(s) ?? '')
   const mid = zone('both', (s) => [srcCode.get(s), tgtCode.get(s)].filter(Boolean).join(' ↔ '))
   const right = zone('b', (s) => tgtCode.get(s) ?? '')
+  // Nhãn của chip đếm — một chỗ, ba vùng dùng chung.
+  const chip = {
+    moreLabel: (n: number): string => t('crosswalkVennMore', { n }),
+    lessLabel: t('crosswalkVennLess'),
+  }
 
   return (
     <Card>
@@ -265,8 +332,13 @@ function CrosswalkVenn({ data }: { data: CrosswalkDto }) {
           <span className="min-w-0 truncate text-primary">◖ {data.a.name}</span>
           <span className="min-w-0 truncate text-right text-accent-coral">{data.b.name} ◗</span>
         </div>
-        {/* Khung tỉ lệ 7:5 == viewBox 350×250 → circle TRÒN thật, canh đúng 3 cột, đủ cao cho ~6 chip. */}
-        <div className="relative mx-auto aspect-[7/5] w-full max-w-4xl">
+        {/*
+          CHỮ quyết định chiều cao, hình vẽ CHẠY THEO — không phải ngược lại.
+          Trước đây khung bị ghim tỉ lệ 7:5 và khối chữ đặt tuyệt đối bên trong, nên vòng nào nhiều
+          nhãn hơn sức chứa là chữ tràn ra ngoài cả thẻ. Nay khối chữ nằm trong dòng chảy bình
+          thường, hình nền căng theo nó, và `min-h` giữ hình không dẹt khi cả hai bên đều ít nhãn.
+        */}
+        <div className="relative mx-auto min-h-[22rem] w-full max-w-4xl">
           <svg
             aria-hidden
             viewBox="0 0 350 250"
@@ -294,10 +366,10 @@ function CrosswalkVenn({ data }: { data: CrosswalkDto }) {
               strokeWidth="1.2"
             />
           </svg>
-          <div className="absolute inset-0 grid grid-cols-3 items-center gap-1 px-3 py-4">
-            <VennZone header={t('crosswalkVennLeft')} items={left} tone={VENN.left} />
-            <VennZone header={t('crosswalkVennMid')} items={mid} tone={VENN.mid} />
-            <VennZone header={t('crosswalkVennRight')} items={right} tone={VENN.right} />
+          <div className="relative grid grid-cols-3 items-center gap-1 px-3 py-6">
+            <VennZone header={t('crosswalkVennLeft')} items={left} tone={VENN.left} {...chip} />
+            <VennZone header={t('crosswalkVennMid')} items={mid} tone={VENN.mid} {...chip} />
+            <VennZone header={t('crosswalkVennRight')} items={right} tone={VENN.right} {...chip} />
           </div>
         </div>
       </CardContent>
@@ -355,6 +427,105 @@ function GapObjective({
 
 /** Danh sách đối chiếu — chịu tải tốt khi CẢ MÔN có hàng trăm KC: mục tiêu còn thiếu (kèm khái niệm
  *  phải học) · phần trùng · phần đã có. Không hình học, chỉ danh sách cuộn được. */
+const MATCH_KEY: Record<string, string> = {
+  object: 'xwMatchObject',
+  'object-part': 'xwMatchObjectPart',
+  wording: 'xwMatchWording',
+}
+const SCOPE_KEY: Record<string, string> = {
+  subset: 'xwScopeSubset',
+  superset: 'xwScopeSuperset',
+  equal: 'xwScopeEqual',
+  incomparable: 'xwScopeIncomparable',
+}
+
+/**
+ * VÌ SAO KHÁC — phần mà một danh sách "chỉ bên này có" không tự nói được.
+ *
+ * Đọc một cột toàn những thứ bên kia không có thì kết luận tự nhiên là bên kia thiếu sót. Phần lớn
+ * thì không: cùng một điều ở phạm vi khác (đếm đến 20 với đếm đến 100), hoặc học qua kênh khác
+ * (nhận biết với tính). Chỗ này đặt cặp cạnh nhau và nói ra điều làm chúng khác — kể cả nói rằng
+ * cặp này chỉ ghép được nhờ giống chữ, tức là đừng tin nhiều.
+ */
+function CrosswalkWhy({ data }: { data: CrosswalkDto }) {
+  const t = useTranslations('admin.authoring')
+  const diffs = data.differences ?? []
+  if (diffs.length === 0) return null
+  const nameOf = (side: 'a' | 'b'): string => (side === 'a' ? data.a.name : data.b.name)
+
+  const row = (d: CrosswalkDifferenceDto) => {
+    const axes = (d.explanation?.facets?.axes ?? []).filter(
+      (ax) => !ax.same && ax.a !== undefined && ax.b !== undefined,
+    )
+    return (
+      <li
+        key={`${d.side}-${d.slug}`}
+        className="rounded-md border border-border bg-surface-muted px-2.5 py-2"
+      >
+        <div className="text-sm font-medium text-foreground">{d.title}</div>
+        <div className="text-[11px] text-foreground-subtle">{t('xwOnlyIn', { name: nameOf(d.side) })}</div>
+        {d.nearest ? (
+          <>
+            <div className="mt-1.5 text-[13px] text-foreground">
+              <span className="text-foreground-subtle">{t('xwNearest')}: </span>
+              {d.nearest.title}
+              {d.matchedBy ? (
+                <span
+                  className={cn(
+                    'ml-1.5 rounded border px-1 py-0.5 text-[10px]',
+                    d.matchedBy === 'wording'
+                      ? 'border-warning/50 bg-warning-soft text-warning'
+                      : 'border-border text-foreground-subtle',
+                  )}
+                >
+                  {t(MATCH_KEY[d.matchedBy] ?? 'xwMatchObject')}
+                </span>
+              ) : null}
+            </div>
+            {d.scope ? (
+              <div className="mt-1 text-xs text-foreground-muted">
+                {t(SCOPE_KEY[d.scope] ?? 'xwScopeIncomparable')}
+              </div>
+            ) : null}
+            {axes.length > 0 ? (
+              <ul className="mt-1 flex flex-wrap gap-1">
+                {axes.map((ax) => (
+                  <li
+                    key={ax.axis}
+                    className="rounded border border-border px-1.5 py-0.5 text-[11px] text-foreground-subtle"
+                  >
+                    {t(AXIS_KEY[ax.axis] ?? 'axObject')}:{' '}
+                    <span className="font-mono">
+                      {ax.a} / {ax.b}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </>
+        ) : (
+          <div className="mt-1 text-xs text-foreground-muted">{t('xwNoCounterpart')}</div>
+        )}
+      </li>
+    )
+  }
+
+  return (
+    <Card className="border-border">
+      <CardHeader>
+        <CardTitle className="text-base">{t('xwWhyTitle', { n: diffs.length })}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <p className="text-sm text-foreground-muted">{t('xwWhyIntro')}</p>
+        <div className="grid gap-2 lg:grid-cols-2">
+          <ul className="space-y-2">{diffs.filter((d) => d.side === 'a').map(row)}</ul>
+          <ul className="space-y-2">{diffs.filter((d) => d.side === 'b').map(row)}</ul>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
 function CrosswalkList({ data, report }: { data: CrosswalkDto; report: FrameworkReportDto }) {
   const t = useTranslations('admin.authoring')
   const kcTitle = new Map(data.kcs.map((k) => [k.slug, k.title]))

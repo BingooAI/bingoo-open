@@ -13,13 +13,13 @@ import { cn } from '@/lib/cn'
  * mình cần gì thêm". Đọc crosswalk qua KC nền dùng chung (không dịch hồ sơ). Giọng khích lệ: nhấn
  * "bạn đã sẵn sàng bao nhiêu %" và "đã có gì" trước, rồi mới tới "cần học thêm" như một danh sách nhẹ.
  *
- * Demo cố định chiều MOET Lớp 1 → Cambridge Stage 2 (câu chuyện rõ nhất). Nếu học viên có mastery
- * thật thì đọc `/knowledge/framework/:slug/report` theo chính họ — cùng một hàm lõi ở backend.
+ * Hai chương trình lấy từ DANH SÁCH ĐANG CÓ, không ghim cứng. Ghim cứng đã hỏng một lần đúng theo
+ * kiểu khó lần nhất: một trong hai slug không còn tồn tại, nên trang chỉ hiện mỗi chữ "thất bại"
+ * trong khi mọi thứ khác vẫn chạy. Nếu học viên có mastery thật thì đọc
+ * `/knowledge/framework/:slug/report` theo chính họ — cùng một hàm lõi ở backend.
  */
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000'
-const FROM = 'moet-primary-math-g1'
-const TO = 'cambridge-primary-math-s2'
 
 type Status = 'achieved' | 'partial' | 'none'
 interface ObjGap {
@@ -138,15 +138,22 @@ export default function SwitchFrameworkPage() {
   useEffect(() => {
     let alive = true
     // Hono app mount ở `/` (không phải `/api`; chỉ better-auth ở /api/auth). Route: /knowledge/...
-    fetch(`${API}/knowledge/crosswalk/${FROM}/${TO}`, { credentials: 'include' })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((j: { data: Crosswalk }) => {
-        if (alive) {
-          setData(j.data)
-          setState('ready')
-        }
-      })
-      .catch(() => alive && setState('error'))
+    const run = async (): Promise<void> => {
+      const list = await fetch(`${API}/knowledge/framework`, { credentials: 'include' })
+      if (!list.ok) throw new Error(String(list.status))
+      const { data: fws } = (await list.json()) as { data: { slug: string }[] }
+      const from = fws[0]?.slug
+      const to = fws.find((f) => f.slug !== from)?.slug
+      if (from === undefined || to === undefined) throw new Error('need-two-frameworks')
+      const r = await fetch(`${API}/knowledge/crosswalk/${from}/${to}`, { credentials: 'include' })
+      if (!r.ok) throw new Error(String(r.status))
+      const j = (await r.json()) as { data: Crosswalk }
+      if (alive) {
+        setData(j.data)
+        setState('ready')
+      }
+    }
+    void run().catch(() => alive && setState('error'))
     return () => {
       alive = false
     }

@@ -27,6 +27,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Button, Callout } from '@bingoo.ai/ui-web'
 import { cn } from '@/lib/cn'
+import { AXIS_KEY, DISTINGUISH_AXES } from '@/lib/facet-labels'
 import {
   useResolveCollisions,
   type CollisionDecisionDto,
@@ -35,19 +36,6 @@ import {
   type IngestResultDto,
   type ResolveCollisionsResultDto,
 } from '@/lib/authoring-queries'
-
-/** Dấu hiệu người duyệt được phép bổ sung. Phạm vi KHÔNG có ở đây — nó là dữ liệu có cấu trúc. */
-const DISTINGUISH_AXES = ['object', 'channel', 'representation', 'bloom', 'transfer', 'fluency'] as const
-
-const AXIS_KEY: Record<string, string> = {
-  object: 'axObject',
-  channel: 'axChannel',
-  bloom: 'axBloom',
-  scope: 'axScope',
-  representation: 'axRepresentation',
-  transfer: 'axTransfer',
-  fluency: 'axFluency',
-}
 
 const label = (t: ReturnType<typeof useTranslations>, m: Record<string, string>, fallback: string): string =>
   m.vi ?? m.en ?? Object.values(m)[0] ?? fallback

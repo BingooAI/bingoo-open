@@ -17,6 +17,8 @@
  */
 
 import { db } from '@bingoo.ai/db'
+import { diceSimilarity, explainClaim, type ClaimExplanation } from '@bingoo.ai/authoring'
+import type { Facets } from '@bingoo.ai/facets'
 import { deriveKcStrands } from './strand'
 
 const enTitle = (t: unknown, fallback: string): string => {
@@ -97,6 +99,42 @@ export interface CrosswalkReport {
   readonly aToB: FrameworkReport
   /** Chuyển B→A: objective của A đọc qua vốn KC của B. */
   readonly bToA: FrameworkReport
+  /**
+   * VÌ SAO một kiến thức chỉ có ở một bên.
+   *
+   * "Trùng" thì tự nó giải thích: cùng một kiến thức nền, hai khung cùng trỏ về. "Khác" thì không —
+   * một danh sách những cái chỉ có ở bên A đọc lên giống như bên B thiếu sót, mà phần lớn không
+   * phải: hai bên nói cùng một điều ở phạm vi khác nhau (đếm đến 20 với đếm đến 100), hoặc qua một
+   * kênh khác (nhận biết với tính).
+   *
+   * Nên mỗi kiến thức lệch được ghép với cái gần nó nhất ở bên kia, kèm so-từng-dấu-hiệu và phán
+   * quyết bao hàm phạm vi. Người đọc thấy "khác ở phạm vi: đến 20 với đến 100", không phải một ô
+   * trống.
+   */
+  readonly differences: readonly CrosswalkDifference[]
+}
+
+/** Một kiến thức chỉ có ở một bên, ghép với cái gần nhất bên kia và LÝ DO chúng không là một. */
+export interface CrosswalkDifference {
+  readonly slug: string
+  readonly title: string
+  readonly side: 'a' | 'b'
+  /** Cái gần nhất ở bên kia. Vắng nghĩa là không nấc nào với tới — lệch hẳn, và nói thẳng là lệch hẳn. */
+  readonly nearest?: { readonly slug: string; readonly title: string }
+  /**
+   * Cặp này thành cặp NHỜ ĐÂU — `object` chắc nhất, `wording` chỉ là giống chữ.
+   *
+   * Thiếu nó thì ba mức tin cậy rất khác nhau đọc lên y hệt, và một cặp ghép được vì tình cờ trùng
+   * mấy từ trông ngang hàng với một cặp cùng đối tượng, cùng phạm vi.
+   */
+  readonly matchedBy?: 'object' | 'object-part' | 'wording'
+  /** Từ engine giải thích dùng chung — cùng thứ mà cổng chốt và sổ căn cứ dùng. */
+  readonly explanation?: ClaimExplanation
+  /**
+   * Phạm vi bao nhau theo chiều nào. Đây là chỗ trả lời được câu hỏi hữu ích nhất của người dạy:
+   * học bên này rồi sang bên kia thì HỤT phần nào, hay THỪA.
+   */
+  readonly scope?: 'equal' | 'subset' | 'superset' | 'incomparable'
 }
 
 interface FrameworkKcMap {
@@ -267,7 +305,109 @@ export async function getCrosswalk(aSlug: string, bSlug: string): Promise<Crossw
     edges,
     aToB: frameworkReport(a.kcSet, b),
     bToA: frameworkReport(b.kcSet, a),
+    differences: explainDifferences(kcs),
   }
+}
+
+/** Dưới mức này thì hai tiêu đề chỉ tình cờ dùng chung vài chữ — ghép vào là bịa ra một cặp. */
+const WORDING_FLOOR = 0.34
+
+/**
+ * Ghép mỗi kiến thức lệch với cái gần nhất bên kia, rồi để engine giải thích nói vì sao khác.
+ *
+ * Ba nấc, và NẤC NÀO ghép được thì nói ra bằng nấc đó — người đọc cần biết cặp này do đâu mà thành
+ * cặp, vì mức tin cậy của ba nấc khác hẳn nhau:
+ *
+ *   `object`      — cùng đối tượng, chắc nhất.
+ *   `object-part` — đối tượng ghép: "phép cộng" gặp "phép cộng và phép trừ". Chỉ so đối tượng bằng
+ *                   khớp chuỗi nguyên thì hai cái này thành không liên quan, và đó là cặp rõ ràng
+ *                   nhất mà một người dạy muốn thấy khi đối chiếu hai chương trình.
+ *   `wording`     — chỉ giống chữ. Yếu, nên có ngưỡng sàn và được đánh dấu là chỉ giống chữ.
+ *
+ * Không nấc nào với tới thì để TRỐNG. Bịa ra một cặp tệ hơn im lặng: nó khiến hai thứ không liên
+ * quan trông như một cặp đang chờ ai đó cân nhắc.
+ */
+function explainDifferences(kcs: readonly CrosswalkKc[]): CrosswalkDifference[] {
+  const bySide = (s: 'a' | 'b'): CrosswalkKc[] => kcs.filter((k) => k.side === s)
+  const objectOf = (k: CrosswalkKc): string | undefined => {
+    const o = (k.facets as Facets | undefined)?.object
+    return typeof o === 'string' ? o : undefined
+  }
+  /** "addition+subtraction" → {addition, subtraction}. Đối tượng ghép là chuyện thường trên tài liệu thật. */
+  const parts = (o: string | undefined): Set<string> =>
+    new Set(
+      (o ?? '')
+        .split(/[+/,]/)
+        .map((p) => p.trim())
+        .filter(Boolean),
+    )
+  const closestByTitle = (k: CrosswalkKc, pool: readonly CrosswalkKc[]): CrosswalkKc | undefined =>
+    pool.length === 0
+      ? undefined
+      : pool.reduce((best, x) =>
+          diceSimilarity(k.title, x.title) > diceSimilarity(k.title, best.title) ? x : best,
+        )
+
+  const out: CrosswalkDifference[] = []
+  for (const side of ['a', 'b'] as const) {
+    const other = bySide(side === 'a' ? 'b' : 'a')
+    for (const k of bySide(side)) {
+      const obj = objectOf(k)
+      const mine = parts(obj)
+
+      let matchedBy: CrosswalkDifference['matchedBy'] = 'object'
+      let nearest = closestByTitle(k, obj !== undefined ? other.filter((x) => objectOf(x) === obj) : [])
+      if (nearest === undefined && mine.size > 0) {
+        matchedBy = 'object-part'
+        nearest = closestByTitle(
+          k,
+          other.filter((x) => [...parts(objectOf(x))].some((p) => mine.has(p))),
+        )
+      }
+      if (nearest === undefined) {
+        matchedBy = 'wording'
+        const byWord = closestByTitle(k, other)
+        nearest = byWord && diceSimilarity(k.title, byWord.title) >= WORDING_FLOOR ? byWord : undefined
+      }
+
+      if (nearest === undefined) {
+        out.push({ slug: k.slug, title: k.title, side })
+        continue
+      }
+      const explanation = explainClaim({
+        claimKind: 'CONCEPT_IDENTITY',
+        fromFacets: (k.facets ?? {}) as Facets,
+        toFacets: (nearest.facets ?? {}) as Facets,
+      })
+      out.push({
+        slug: k.slug,
+        title: k.title,
+        side,
+        nearest: { slug: nearest.slug, title: nearest.title },
+        matchedBy,
+        explanation,
+        ...(explanation.facets?.scope !== undefined
+          ? { scope: explanation.facets.scope as CrosswalkDifference['scope'] }
+          : {}),
+      })
+    }
+  }
+  return out
+}
+
+/**
+ * Chương trình nào ĐANG CÓ để chọn — chỉ những khung thật sự có yêu cầu cần đạt.
+ *
+ * Lọc theo "có mục tiêu" là cố ý: một khung rỗng (tạo hụt, hoặc bản nháp bỏ dở) hiện trong ô chọn
+ * thì người dùng chọn được và nhận về một bảng đối chiếu trắng, không hiểu vì sao.
+ */
+export async function listLearnerFrameworks(): Promise<{ slug: string; name: string }[]> {
+  const rows = await db.framework.findMany({
+    where: { objectives: { some: {} } },
+    select: { slug: true, name: true },
+    orderBy: { slug: 'asc' },
+  })
+  return rows.map((f) => ({ slug: f.slug, name: enTitle(f.name, f.slug) }))
 }
 
 /** Người HỌC chuyển sang một khung: đọc khung đó qua KC người học ĐÃ NẮM (SkillState ≥ ngưỡng). */

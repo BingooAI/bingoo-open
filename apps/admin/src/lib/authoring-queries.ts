@@ -822,6 +822,23 @@ export interface FrameworkReportDto {
   objectives: ObjectiveGapDto[]
   summary: { achieved: number; partial: number; none: number; total: number; percent: number }
 }
+/**
+ * VÌ SAO một kiến thức chỉ có ở một bên.
+ *
+ * Danh sách "chỉ bên A có" đọc lên như bên B thiếu sót, mà phần lớn không phải: hai bên nói cùng
+ * một điều ở phạm vi khác nhau, hoặc qua một kênh khác. `matchedBy` nói cặp này thành cặp nhờ đâu —
+ * thiếu nó thì một cặp ghép được vì tình cờ trùng chữ trông ngang hàng với một cặp cùng đối tượng.
+ */
+export interface CrosswalkDifferenceDto {
+  slug: string
+  title: string
+  side: 'a' | 'b'
+  nearest?: { slug: string; title: string }
+  matchedBy?: 'object' | 'object-part' | 'wording'
+  scope?: 'equal' | 'subset' | 'superset' | 'incomparable'
+  explanation?: { tier: string; basis: string; facets?: { axes: AxisAgreementDto[] } }
+}
+
 export interface CrosswalkDto {
   a: { slug: string; name: string; objectives: CrosswalkObjectiveDto[] }
   b: { slug: string; name: string; objectives: CrosswalkObjectiveDto[] }
@@ -830,6 +847,7 @@ export interface CrosswalkDto {
   edges: { from: string; to: string; relType: string }[]
   aToB: FrameworkReportDto
   bToA: FrameworkReportDto
+  differences: CrosswalkDifferenceDto[]
 }
 
 /** Đối chiếu hai khung (KC trùng + thiếu gì khi chuyển). Chỉ chạy khi chọn đủ A ≠ B. */
