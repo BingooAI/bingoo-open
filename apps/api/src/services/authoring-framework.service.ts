@@ -540,15 +540,23 @@ export async function resolveFrameworkCollisions(input: {
 
   const [profiles, existing] = await Promise.all([loadDomainProfiles(), loadExistingNodes()])
   const violations = checkInvariants(resolved.graph, { profiles, existing })
-  const issues = validateDraft({
-    graph: resolved.graph,
-    objectives: resolved.objectives,
-    // Bản nháp đi vòng qua trình duyệt nên bằng chứng của kiến thức không còn ở đây — khai rỗng thay
-    // vì bịa. `validateDraft` chỉ đọc `graph`, nên không mất gì; nhưng khai rỗng là nói thật về việc
-    // đường này không mang bằng chứng, chứ không giả vờ có.
-    concepts: [],
-    dedup: EMPTY_DEDUP,
-  })
+  const issues = validateDraft(
+    {
+      graph: resolved.graph,
+      objectives: resolved.objectives,
+      // Bản nháp đi vòng qua trình duyệt nên bằng chứng của kiến thức không còn ở đây — khai rỗng thay
+      // vì bịa. `validateDraft` chỉ đọc `graph`, nên không mất gì; nhưng khai rỗng là nói thật về việc
+      // đường này không mang bằng chứng, chứ không giả vờ có.
+      concepts: [],
+      dedup: EMPTY_DEDUP,
+    },
+    {
+      // Dedup không còn, nhưng KHO thì còn — và đó mới là câu trả lời thật cho "kiến thức này đã có
+      // chưa". Thiếu chỗ này thì mọi liên kết dùng chung khung biến thành lỗi ở đúng lần chạy thứ
+      // hai, tức là ngay khi người duyệt vừa chốt xong.
+      existingSlugs: new Set(existing.map((n) => n.slug as string)),
+    },
+  )
 
   return {
     graph: resolved.graph,
