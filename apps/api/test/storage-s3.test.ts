@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Bingoo.ai
 // SPDX-License-Identifier: Apache-2.0
 import { afterEach, describe, expect, it } from 'vitest'
-import { resolveR2Config, resolveS3Config } from '../src/providers/storage/adapters/s3'
+import { r2Adapter, resolveR2Config, resolveS3Config } from '../src/providers/storage/adapters/s3'
 
 /**
  * The S3 client itself is not worth testing — it is someone else's, and testing it would mean
@@ -130,5 +130,39 @@ describe('R2 keeps working exactly as before', () => {
   it('still reports which R2 variable is missing', () => {
     process.env.R2_ACCOUNT_ID = 'abc123'
     expect(() => resolveR2Config()).toThrow(/R2_BUCKET/)
+  })
+})
+
+/**
+ * URL ký sẵn KHÔNG được mang theo một lời khai về nội dung, vì lúc ký chưa có nội dung nào.
+ *
+ * SDK bản mới mặc định tính CRC32 cho lệnh ghi. Với URL ký sẵn thì thứ bị ký vào là CRC32 của chuỗi
+ * RỖNG, gắn lên một URL sẽ dùng để tải tệp thật. R2 đo được là bỏ qua nó; kho khác thì không hứa
+ * như vậy, và cùng một mã nguồn này phải chạy trên MinIO, Garage, B2, Wasabi, AWS.
+ *
+ * Ký URL là việc offline nên khoá giả là đủ — không cần chạm tới kho nào.
+ */
+describe('URL ký sẵn không khai checksum của thân rỗng', () => {
+  const signUpload = async (): Promise<string> => {
+    process.env.R2_ACCOUNT_ID = 'abc123'
+    process.env.R2_ACCESS_KEY_ID = 'k'
+    process.env.R2_SECRET_ACCESS_KEY = 's'
+    process.env.R2_BUCKET = 'bingoo'
+    const port = r2Adapter.create()
+    const { url } = await port.createSignedUploadUrl({ key: 'a/b.pdf', contentType: 'application/pdf' })
+    return url
+  }
+
+  it('không có tham số checksum nào trong URL tải lên', async () => {
+    const url = await signUpload()
+    expect(url).not.toContain('x-amz-checksum-crc32')
+    expect(url).not.toContain('x-amz-sdk-checksum-algorithm')
+  })
+
+  it('vẫn là một URL ký hợp lệ, không phải một chuỗi rỗng', async () => {
+    const url = await signUpload()
+    expect(url).toContain('X-Amz-Signature=')
+    expect(url).toContain('X-Amz-Expires=')
+    expect(url).toContain('https://bingoo.abc123.r2.cloudflarestorage.com/a/b.pdf')
   })
 })

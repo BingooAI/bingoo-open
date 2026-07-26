@@ -25,7 +25,7 @@ import type { PutObjectInput, SignedUrlInput, StoragePort } from '../port'
  *   deployments keep working with the environment they already have.
  */
 
-interface S3Config {
+export interface S3Config {
   readonly endpoint: string | undefined
   readonly region: string
   readonly bucket: string
@@ -105,6 +105,24 @@ function makePort(config: S3Config): StoragePort {
     ...(config.endpoint !== undefined ? { endpoint: config.endpoint } : {}),
     forcePathStyle: config.forcePathStyle,
     credentials: { accessKeyId: config.accessKeyId, secretAccessKey: config.secretAccessKey },
+    /**
+     * Đừng ký một checksum mô tả THÂN RỖNG vào URL dành cho một tệp chưa tồn tại.
+     *
+     * Từ bản ~3.729 SDK mặc định tính CRC32 cho lệnh ghi. Gửi thẳng từ server thì đúng — nó có sẵn
+     * nội dung. Ký sẵn thì không: lúc ký chưa có byte nào, nên thứ chui vào chữ ký là
+     * `x-amz-checksum-crc32=AAAAAA==`, tức CRC32 của chuỗi rỗng, gắn lên một URL sẽ dùng để tải
+     * một tệp vài trăm KB.
+     *
+     * ĐÃ ĐO trên R2: nó BỎ QUA tham số này, PUT vẫn trả 200. Nên đây không phải thứ đang chặn ai
+     * cả, và chỗ này không được nói rằng nó là — nhưng một kho khác thì đối xử khác, và AWS S3
+     * kiểm khi thấy header/tham số checksum. Cùng một mã nguồn phải chạy được trên MinIO, Garage,
+     * B2, Wasabi, AWS: một lời khai sai về nội dung, nằm sẵn trong chữ ký, là thứ chỉ lộ ra ở kho
+     * của người khác chứ không lộ ở đây.
+     *
+     * `WHEN_REQUIRED` = chỉ tính khi chính lệnh đó bắt buộc.
+     */
+    requestChecksumCalculation: 'WHEN_REQUIRED',
+    responseChecksumValidation: 'WHEN_REQUIRED',
   })
   const { bucket, defaultTtl, publicBase } = config
 
