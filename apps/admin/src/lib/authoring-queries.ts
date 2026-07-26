@@ -67,6 +67,8 @@ export interface IngestResultDto {
   violations: ViolationDto[]
   /** Chỗ máy KHÔNG phân biệt được hai kiến thức — kèm so-từng-trục để người duyệt chốt. */
   collisions?: CollisionDto[]
+  /** Chuỗi học quay vòng — kèm từng mắt, vì máy thấy vòng nhưng không biết mắt nào sai. */
+  cycles?: CycleDto[]
   blocking: boolean
 }
 
@@ -100,10 +102,32 @@ export interface CollisionDto {
   }
 }
 
-/** Đúng hai lối mà bất biến nêu ra: gộp làm một, hoặc nói ra trục làm chúng khác. */
+/**
+ * MỘT MẮT của chuỗi quay vòng.
+ *
+ * `tier` là bậc trung thực của chính mắt đó: mắt "chắc" (máy tự chứng được thứ tự) thì đừng gỡ,
+ * mắt "phán đoán" mới là chỗ nên xem lại. Không có nó thì người duyệt gỡ theo cảm tính.
+ */
+export interface CycleLinkDto {
+  from: string
+  to: string
+  relType: string
+  titles: [Record<string, string>, Record<string, string>]
+  explanation: { tier: string; basis: string; machineProven?: boolean }
+}
+
+export interface CycleDto {
+  path: string[]
+  links: CycleLinkDto[]
+}
+
+/** Bốn lối người duyệt được dùng khi máy bí. Hai lối đầu cho trùng định danh, hai lối sau cho vòng
+ * và cho thứ trích ra nhưng không phải kiến thức dạy được. */
 export type CollisionDecisionDto =
   | { kind: 'merge'; keep: string; drop: string }
   | { kind: 'distinguish'; slug: string; axis: string; value: string }
+  | { kind: 'drop-edge'; from: string; to: string; relType?: string }
+  | { kind: 'drop-concept'; slug: string; reason: string }
 
 export interface ResolveCollisionsResultDto {
   graph: { nodes: GraphNodeDto[]; edges: GraphEdgeDto[] }
@@ -113,6 +137,7 @@ export interface ResolveCollisionsResultDto {
   issues: DraftIssueDto[]
   violations: ViolationDto[]
   collisions: CollisionDto[]
+  cycles: CycleDto[]
   blocking: boolean
 }
 

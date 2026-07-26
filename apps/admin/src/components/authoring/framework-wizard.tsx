@@ -270,10 +270,11 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
             </ul>
 
             {/* CỔNG CHỐT — chỗ máy bí phải xử được ngay tại đây, không thì nút Ghi tắt vĩnh viễn. */}
-            {draft.collisions?.length ? (
+            {draft.collisions?.length || draft.cycles?.length ? (
               <CollisionGate
                 compiled={draft.compiled}
-                collisions={draft.collisions}
+                collisions={draft.collisions ?? []}
+                cycles={draft.cycles ?? []}
                 onResolved={onResolved}
               />
             ) : null}

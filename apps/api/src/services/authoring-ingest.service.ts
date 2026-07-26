@@ -17,7 +17,12 @@ import {
   type RawSource,
 } from '@bingoo.ai/authoring'
 import { buildAuthoringPorts } from './authoring-adapters'
-import { describeCollisions, type CollisionView } from './authoring-framework.service'
+import {
+  describeCollisions,
+  describeCycles,
+  type CollisionView,
+  type CycleView,
+} from './authoring-framework.service'
 import { loadDomainProfiles, loadExistingConcepts, loadExistingNodes } from '../repos/authoring.repo'
 
 export interface IngestResult {
@@ -47,6 +52,15 @@ export interface IngestResult {
    * NÀO trùng — đó vừa là lý do máy bí, vừa là chỗ họ phải bổ sung nếu hai cái thật sự khác nhau.
    */
   readonly collisions?: readonly CollisionView[]
+  /**
+   * CHUỖI HỌC QUAY VÒNG, kèm bậc trung thực của TỪNG MẮT.
+   *
+   * Cùng lý do như trên: I6 trong `violations` chỉ là một dòng "a → b → c → a". Máy thấy được vòng
+   * nhưng không biết mắt nào sai — xét riêng thì mắt nào cũng hợp lệ. Cái nó biết được là mắt nào
+   * có căn cứ và mắt nào chỉ là phán đoán, nên người duyệt cần thấy từng mắt để gỡ đúng cái yếu
+   * nhất, thay vì gỡ bừa một cạnh rồi kéo lệch cả lộ trình học.
+   */
+  readonly cycles?: readonly CycleView[]
   /** Có lỗi chặn (issue HOẶC vi phạm bất biến) → chưa được phép áp vào đồ thị. */
   readonly blocking: boolean
 }
@@ -73,6 +87,7 @@ export async function ingestSource(
       slugs: [...v.slugs],
     })),
     collisions: describeCollisions(compiled.graph, violations),
+    cycles: describeCycles(compiled.graph, violations),
     blocking: hasBlockingIssue(issues) || hasBlockingViolation(violations),
   }
 }

@@ -3,7 +3,7 @@
 'use client'
 
 /**
- * CHỖ THẦY CÔ CHỐT khi máy không phân biệt được hai kiến thức.
+ * CHỖ THẦY CÔ CHỐT khi máy bí.
  *
  * Quy tắc định danh chặn việc ghi đồ thị khi hai kiến thức giống nhau ở mọi dấu hiệu, và chặn đúng:
  * hai thứ thật sự khác nhau vẫn có thể giống nhau ở mọi dấu hiệu, nên máy tự gộp là làm hỏng căn cứ
@@ -11,9 +11,16 @@
  * nút Ghi tắt, không lối nào đi tiếp. Trên một chương trình thật thì trùng dấu hiệu xảy ra thường
  * xuyên, nên đó là đường cụt, không phải lan can.
  *
- * Chỗ này hiện đủ để chốt: hai kiến thức là gì, DẤU HIỆU NÀO trùng (một con số phần trăm không nói
- * được điều đó), và đúng hai lối mà quy tắc nêu ra. Quyết định gửi lên server để KIỂM LẠI — kiểm ở
- * trình duyệt là kiểm thiếu, vì nó không có hồ sơ môn lẫn đồ thị đang có.
+ * Cùng một đường cụt xảy ra với hai thứ nữa, và chỗ này mở lối cho cả ba:
+ *
+ *   TRÙNG DẤU HIỆU — gộp, phân biệt, hoặc nói rằng nó vốn không phải kiến thức dạy được.
+ *   QUAY VÒNG      — đường học vòng lại chính nó. Máy thấy vòng, không thấy mắt nào sai; nó chỉ
+ *                    nói được mắt nào tự chứng được và mắt nào là phán đoán, nên từng mắt hiện
+ *                    kèm bậc đó để người duyệt gỡ đúng cái yếu nhất.
+ *
+ * Hiện đủ để chốt: cái gì đang vướng, VÌ SAO máy bí (một con số phần trăm không nói được điều đó),
+ * và các lối đi. Quyết định gửi lên server để KIỂM LẠI — kiểm ở trình duyệt là kiểm thiếu, vì nó
+ * không có hồ sơ môn lẫn đồ thị đang có.
  */
 
 import { useState } from 'react'
@@ -24,6 +31,7 @@ import {
   useResolveCollisions,
   type CollisionDecisionDto,
   type CollisionDto,
+  type CycleDto,
   type IngestResultDto,
   type ResolveCollisionsResultDto,
 } from '@/lib/authoring-queries'
@@ -47,30 +55,45 @@ const label = (t: ReturnType<typeof useTranslations>, m: Record<string, string>,
 export function CollisionGate({
   compiled,
   collisions,
+  cycles = [],
   onResolved,
 }: {
   compiled: IngestResultDto['compiled']
   collisions: readonly CollisionDto[]
+  cycles?: readonly CycleDto[]
   onResolved: (r: ResolveCollisionsResultDto) => void
 }) {
   const t = useTranslations('admin.authoring')
   const resolve = useResolveCollisions()
   const [decisions, setDecisions] = useState<CollisionDecisionDto[]>([])
   const [drafts, setDrafts] = useState<Record<string, { axis: string; value: string }>>({})
+  const [reasons, setReasons] = useState<Record<string, string>>({})
   const [note, setNote] = useState<{ applied: number; left: number; rejected: number } | null>(null)
 
-  if (collisions.length === 0 && !note) return null
+  if (collisions.length === 0 && cycles.length === 0 && !note) return null
 
   const key = (c: CollisionDto): string => `${c.slugs[0]}|${c.slugs[1]}`
+  const touches = (d: CollisionDecisionDto, c: CollisionDto): boolean => {
+    if (d.kind === 'merge') {
+      return (
+        (d.keep === c.slugs[0] && d.drop === c.slugs[1]) || (d.keep === c.slugs[1] && d.drop === c.slugs[0])
+      )
+    }
+    if (d.kind === 'drop-edge') return false // vòng, không phải trùng dấu hiệu
+    return d.slug === c.slugs[0] || d.slug === c.slugs[1]
+  }
   const decidedFor = (c: CollisionDto): CollisionDecisionDto | undefined =>
-    decisions.find((d) =>
-      d.kind === 'merge'
-        ? (d.keep === c.slugs[0] && d.drop === c.slugs[1]) || (d.keep === c.slugs[1] && d.drop === c.slugs[0])
-        : d.slug === c.slugs[0] || d.slug === c.slugs[1],
-    )
+    decisions.find((d) => touches(d, c))
 
   const put = (c: CollisionDto, d: CollisionDecisionDto) =>
     setDecisions((prev) => [...prev.filter((p) => p !== decidedFor(c)), d])
+
+  /** Một mắt của vòng chỉ có một quyết định: gỡ hoặc không. Bấm lại là bỏ chọn. */
+  const toggleLink = (from: string, to: string) =>
+    setDecisions((prev) => {
+      const hit = prev.find((d) => d.kind === 'drop-edge' && d.from === from && d.to === to)
+      return hit ? prev.filter((d) => d !== hit) : [...prev, { kind: 'drop-edge', from, to }]
+    })
 
   const submit = () => {
     if (decisions.length === 0) return
@@ -78,9 +101,14 @@ export function CollisionGate({
       { compiled, decisions },
       {
         onSuccess: (r) => {
-          setNote({ applied: r.applied, left: r.collisions.length, rejected: r.rejected.length })
+          setNote({
+            applied: r.applied,
+            left: r.collisions.length + r.cycles.length,
+            rejected: r.rejected.length,
+          })
           setDecisions([])
           setDrafts({})
+          setReasons({})
           onResolved(r)
         },
       },
@@ -222,9 +250,118 @@ export function CollisionGate({
                 </Button>
               </div>
             </div>
+
+            {/* LỐI 3 — vốn không phải kiến thức. Lý do BẮT BUỘC: bỏ lặng lẽ là mất câu trả lời
+                cho "vì sao khung không có cái này". */}
+            <div className="space-y-1.5 border-t border-border/60 pt-2.5">
+              <div className="text-xs font-semibold text-foreground">{t('colNotKnowledge')}</div>
+              <p className="text-xs text-foreground-muted">{t('colNotKnowledgeHint')}</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  value={reasons[key(c)] ?? ''}
+                  placeholder={t('colReasonPh')}
+                  aria-label={t('colReasonPh')}
+                  onChange={(e) => setReasons((p) => ({ ...p, [key(c)]: e.target.value }))}
+                  className="focus-ring min-w-[16rem] flex-1 rounded-md border border-border bg-surface px-2 py-1 text-xs text-foreground"
+                />
+                {[0, 1].map((i) => {
+                  const slug = c.slugs[i] ?? ''
+                  const reason = (reasons[key(c)] ?? '').trim()
+                  const active = chosen?.kind === 'drop-concept' && chosen.slug === slug
+                  return (
+                    <Button
+                      key={slug}
+                      size="sm"
+                      variant={active ? 'primary' : 'secondary'}
+                      disabled={reason.length === 0}
+                      onClick={() => put(c, { kind: 'drop-concept', slug, reason })}
+                    >
+                      {t('colDrop')}: {label(t, c.titles[i] ?? {}, slug)}
+                    </Button>
+                  )
+                })}
+              </div>
+            </div>
           </div>
         )
       })}
+
+      {/* ── CHUỖI HỌC QUAY VÒNG ────────────────────────────────────────────────────────────────── */}
+      {cycles.length > 0 ? (
+        <Callout variant="warning" title={t('cycTitle', { n: cycles.length })}>
+          <p className="text-sm">{t('cycIntro')}</p>
+        </Callout>
+      ) : null}
+
+      {cycles.map((cy) => (
+        <div key={cy.path.join('>')} className="space-y-3 rounded-lg border border-warning/50 bg-surface p-3">
+          <div>
+            <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-foreground-subtle">
+              {t('cycPath')}
+            </div>
+            <ol className="flex flex-wrap items-center gap-1 text-sm text-foreground">
+              {cy.links.map((l, i) => (
+                <li key={`${l.from}>${l.to}`} className="flex items-center gap-1">
+                  <span className="rounded bg-surface-muted px-1.5 py-0.5">
+                    {label(t, l.titles[0], l.from)}
+                  </span>
+                  <span aria-hidden className="text-foreground-subtle">
+                    →
+                  </span>
+                  {i === cy.links.length - 1 ? (
+                    <span className="rounded bg-surface-muted px-1.5 py-0.5">
+                      {label(t, l.titles[1], l.to)}
+                    </span>
+                  ) : null}
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          {/* TỪNG MẮT kèm bậc trung thực — gỡ mắt phán đoán, đừng gỡ mắt máy tự chứng được. */}
+          <ul className="space-y-1.5">
+            {cy.links.map((l) => {
+              const proven = l.explanation.machineProven === true
+              const picked = decisions.some(
+                (d) => d.kind === 'drop-edge' && d.from === l.from && d.to === l.to,
+              )
+              return (
+                <li
+                  key={`${l.from}|${l.to}`}
+                  className={cn(
+                    'flex flex-wrap items-center gap-2 rounded-md border px-2.5 py-2',
+                    picked ? 'border-danger/50 bg-danger-soft' : 'border-border bg-surface-muted',
+                  )}
+                >
+                  <span className="text-sm text-foreground">
+                    {label(t, l.titles[0], l.from)}{' '}
+                    <span className="text-foreground-subtle">{t('cycBefore')}</span>{' '}
+                    {label(t, l.titles[1], l.to)}
+                  </span>
+                  <span
+                    className={cn(
+                      'rounded border px-1.5 py-0.5 text-[11px]',
+                      proven
+                        ? 'border-success/50 bg-success-soft text-success'
+                        : 'border-warning/50 bg-warning-soft text-warning',
+                    )}
+                  >
+                    {proven ? t('cycProven') : t('cycJudged')}
+                  </span>
+                  <Button
+                    size="sm"
+                    variant={picked ? 'primary' : 'secondary'}
+                    className="ml-auto"
+                    onClick={() => toggleLink(l.from, l.to)}
+                  >
+                    {t('cycDrop')}
+                  </Button>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      ))}
 
       {decisions.length > 0 ? (
         <div className="flex flex-wrap items-center gap-2">

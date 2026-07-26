@@ -168,6 +168,7 @@ export async function frameworkFromPrompt(
       slugs: [...v.slugs],
     })),
     collisions: describeCollisions(compiled.graph, violations),
+    cycles: describeCycles(compiled.graph, violations),
     blocking: hasBlockingIssue(issues) || hasBlockingViolation(violations),
   }
 }
@@ -311,6 +312,7 @@ async function frameworkFromSource(
       slugs: [...v.slugs],
     })),
     collisions: describeCollisions(compiled.graph, violations),
+    cycles: describeCycles(compiled.graph, violations),
     blocking: hasBlockingIssue(issues) || hasBlockingViolation(violations),
   }
 }
@@ -442,6 +444,68 @@ export function describeCollisions(
   return out
 }
 
+/**
+ * MỘT MẮT của chuỗi quay vòng, kèm bậc trung thực của chính nó.
+ *
+ * Máy phát hiện được vòng nhưng KHÔNG biết mắt nào sai — cả n mắt đều "hợp lệ" xét riêng. Điều nó
+ * biết được là mắt nào có căn cứ và mắt nào chỉ là phán đoán, nên chỗ này chạy engine giải thích
+ * cho từng mắt: người duyệt gỡ mắt yếu nhất chứ không gỡ bừa.
+ */
+export interface CycleLinkView {
+  readonly from: string
+  readonly to: string
+  readonly relType: string
+  readonly titles: readonly [LocalizedText, LocalizedText]
+  readonly explanation: ClaimExplanation
+}
+
+export interface CycleView {
+  /** Đường đi của vòng, mắt cuối quay về mắt đầu. */
+  readonly path: readonly string[]
+  readonly links: readonly CycleLinkView[]
+}
+
+/**
+ * Dịch vi phạm I6 thành thứ chốt được.
+ *
+ * Vi phạm chỉ mang đường đi dạng slug. Chỗ này tra lại nhan đề và giải thích từng mắt, vì "gỡ mắt
+ * nào" là câu hỏi phải trả lời bằng căn cứ chứ không bằng thứ tự xuất hiện.
+ */
+export function describeCycles(
+  graph: GraphData,
+  violations: readonly { code: string; slugs: readonly string[] }[],
+): CycleView[] {
+  const bySlug = new Map(graph.nodes.map((n) => [n.slug as string, n]))
+  const out: CycleView[] = []
+  for (const v of violations) {
+    if (v.code !== 'I6_ORDERING_CYCLE') continue
+    const path = [...v.slugs]
+    const links: CycleLinkView[] = []
+    for (let i = 0; i + 1 < path.length; i += 1) {
+      const from = path[i]
+      const to = path[i + 1]
+      if (from === undefined || to === undefined) continue
+      const edge = graph.edges.find((e) => e.from === from && e.to === to)
+      const nf = bySlug.get(from)
+      const nt = bySlug.get(to)
+      links.push({
+        from,
+        to,
+        relType: edge?.relType ?? 'PREREQUISITE',
+        titles: [nf?.title ?? { en: from }, nt?.title ?? { en: to }],
+        explanation: explainClaim({
+          claimKind: 'ORDERING_EDGE',
+          relType: edge?.relType ?? 'PREREQUISITE',
+          fromFacets: facetsOf(nf),
+          toFacets: facetsOf(nt),
+        }),
+      })
+    }
+    out.push({ path, links })
+  }
+  return out
+}
+
 export interface ResolveCollisionsResult {
   readonly graph: GraphData
   readonly objectives: readonly CompiledObjective[]
@@ -450,6 +514,8 @@ export interface ResolveCollisionsResult {
   readonly issues: readonly { code: string; severity: string; message: string }[]
   readonly violations: readonly { code: string; severity: string; message: string; slugs: string[] }[]
   readonly collisions: readonly CollisionView[]
+  /** Chuỗi học quay vòng — cũng chặn ghi, và cũng chỉ người mới gỡ được. */
+  readonly cycles: readonly CycleView[]
   readonly blocking: boolean
 }
 
@@ -497,6 +563,7 @@ export async function resolveFrameworkCollisions(input: {
       slugs: [...v.slugs],
     })),
     collisions: describeCollisions(resolved.graph, violations),
+    cycles: describeCycles(resolved.graph, violations),
     blocking: hasBlockingIssue(issues) || hasBlockingViolation(violations),
   }
 }
