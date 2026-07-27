@@ -419,7 +419,7 @@ export const media = new Hono<AppEnv>()
     async (c) => {
       const { subject, asset } = await loadAssetForAccess(c, 'EDIT')
       const meta = c.req.valid('json')
-      const updated = await completeAsset(asset.id, meta)
+      await completeAsset(asset.id, meta)
       if (meta.checksum || meta.byteSize) {
         await putRendition(asset.id, {
           kind: 'ORIGINAL',
@@ -439,7 +439,19 @@ export const media = new Hono<AppEnv>()
       void enrichAsset(asset.id, { embedOnly: true }).catch((e) =>
         console.error('[media] auto-enrich failed', e),
       )
-      return ok(c, updated)
+      /**
+       * ĐỌC LẠI rồi dựng URL — không trả thẳng dòng vừa cập nhật.
+       *
+       * `completeAsset` là một lệnh update trần: nó trả về đúng bản ghi tài sản, KHÔNG kèm rendition
+       * nào. Mọi route media khác đều đi qua `serializeAsset`, chỗ này thì không, nên phía gọi nhận
+       * được một tài sản không có đường dẫn tới chính tệp vừa tải lên — và báo "không lấy được URL"
+       * ngay sau khi tệp đã nằm yên trong kho. Nghe như tải lên hỏng, trong khi nó đã xong.
+       *
+       * Đọc lại là bắt buộc chứ không phải cho gọn: `putRendition` ở trên vừa ghi rendition ORIGINAL,
+       * sau thời điểm `completeAsset` chụp ảnh bản ghi.
+       */
+      const saved = await getAssetById(asset.id)
+      return ok(c, saved ? await serializeAsset(saved, true) : null)
     },
   )
 
