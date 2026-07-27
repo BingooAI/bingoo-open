@@ -7,7 +7,11 @@
 
 import { describe, expect, it } from 'vitest'
 import type { CompiledObjective } from '@bingoo.ai/authoring'
-import { buildConceptIdentityTrace, buildObjectiveTrace } from '../src/services/decision-trace.service'
+import {
+  buildConceptIdentityTrace,
+  buildEdgeOrderingTrace,
+  buildObjectiveTrace,
+} from '../src/services/decision-trace.service'
 
 const EXCERPT = 'Số và phép tính — Lớp 1. Đếm, đọc, viết các số trong phạm vi 10; 20; 100. So sánh các số.'
 
@@ -73,5 +77,44 @@ describe('buildConceptIdentityTrace (đóng điểm mù trigram)', () => {
     expect(t.subjectSlug).toBe('count-within-100')
     expect(t.reason.vi).toContain('82%')
     expect(t.claim.en).toContain('SAME')
+  })
+})
+
+/**
+ * LÀN THỨ-TỰ-ĐỌC — engine tính được từ đầu, và suốt một thời gian dài không ai truyền vào lẫn đọc ra.
+ *
+ * Nó YẾU: cách người ta sắp trang không phải lý lẽ dạy học. Nhưng ở đúng những cạnh mà máy không
+ * chứng được gì từ dấu hiệu, đây là thứ duy nhất còn đối chiếu được — và chiều NGƯỢC của nó có sức
+ * nặng thật: tài liệu xếp A sau B trong khi khung khai A học trước B là chỗ phải nhìn lại.
+ */
+describe('thứ tự đọc trong tài liệu', () => {
+  const side = (t: string, facets: Record<string, unknown>) => ({
+    title: { en: t, vi: t },
+    facets,
+    grounded: true,
+  })
+  const A = side('Count within 20', { object: 'counting', channel: 'compute', scope: { max: 20 } })
+  const B = side('Add within 20', { object: 'addition', channel: 'compute', scope: { max: 20 } })
+  const lanes = (ro?: { fromOrder: number; toOrder: number }) =>
+    buildEdgeOrderingTrace({ from: 'a', to: 'b' }, A, B, ro).evidence
+
+  it('không biết vị trí hai đầu → làn VẮNG hẳn, không đoán bừa', () => {
+    // Đoán một vị trí ở đây là bịa ra một căn cứ, và bịa căn cứ tệ hơn hẳn thiếu căn cứ.
+    expect(lanes().some((e) => e.checkCode === 'order:reading')).toBe(false)
+  })
+
+  it('tài liệu xếp cùng chiều → làn có mặt, đạt', () => {
+    const l = lanes({ fromOrder: 100, toOrder: 500 })?.find((e) => e.checkCode === 'order:reading')
+    expect(l?.passed).toBe(true)
+  })
+
+  it('tài liệu xếp NGƯỢC chiều → làn có mặt, không đạt', () => {
+    const l = lanes({ fromOrder: 500, toOrder: 100 })?.find((e) => e.checkCode === 'order:reading')
+    expect(l?.passed).toBe(false)
+  })
+
+  it('làn thứ tự đọc KHÔNG được khai là bằng chứng từ nguồn — nó chỉ là cách sắp trang', () => {
+    const l = lanes({ fromOrder: 100, toOrder: 500 })?.find((e) => e.checkCode === 'order:reading')
+    expect(l?.basis).toBe('AI_INFERRED')
   })
 })

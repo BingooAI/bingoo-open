@@ -905,6 +905,8 @@
       "tbStructOrderJudgment": "Máy không tự chứng được thứ tự này; đây là phán đoán sư phạm, cần thầy cô xác nhận.",
       "tbStructRequiredAll": "Muốn tính là đạt thì phải có ĐỦ mọi phần được liệt kê — thiếu một phần là chưa đạt.",
       "tbStructRequiredMissing": "Mảnh này không còn được nối vào mục tiêu — phần đo đã đổi sau lần duyệt.",
+      "tbStructReadingPass": "Chính tài liệu cũng xếp mục này trước mục kia. Đây chỉ là cách sắp trang, không phải lý lẽ dạy học — nhưng nó không mâu thuẫn.",
+      "tbStructReadingFail": "Tài liệu lại xếp mục này SAU mục kia, ngược với thứ tự đang khai. Cách sắp trang không phải lý lẽ dạy học, nhưng chỗ ngược nhau thì nên xem lại.",
       "tbStructUnknown": "Hệ thống có ghi một lần tự kiểm ở đây, nhưng chưa có lời giải thích cho nó.",
       "tbStructNotRechecked": "Đây là kết quả lúc duyệt; hôm nay hệ thống chưa kiểm lại được.",
       "tbSourceMachineTitle": "Máy tự đối chiếu, không trích từ tài liệu",

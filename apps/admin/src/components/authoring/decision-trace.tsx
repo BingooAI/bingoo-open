@@ -108,6 +108,8 @@ const CHECK_KEY: Record<string, { pass: string; fail: string; failTone: Tone }> 
     fail: 'tbStructRequiredMissing',
     failTone: 'danger',
   },
+  // Tài liệu xếp ngược hẳn với thứ tự đang khai — yếu, nhưng đáng nhìn lại, nên vàng chứ không đỏ.
+  'order:reading': { pass: 'tbStructReadingPass', fail: 'tbStructReadingFail', failTone: 'warning' },
 }
 
 const VERDICT_KEY: Record<string, string> = {

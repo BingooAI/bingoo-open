@@ -76,6 +76,14 @@ const CHECK_ORDER_REVERSED = 'scope:superset'
 const CHECK_ORDER_JUDGMENT = 'order:judgment'
 /** Đạt mục tiêu đòi ĐỦ mọi mảnh (MAPS_TO là REQUIRED — bất biến I4). */
 const CHECK_REQUIRED_ALL = 'coverage:required-all'
+/**
+ * Chính TÀI LIỆU xếp cái nào trước.
+ *
+ * Không phải bằng chứng sư phạm — người ta xếp trang vì nhiều lý do. Nhưng khi máy không chứng được
+ * gì từ dấu hiệu, đây là thứ DUY NHẤT còn kiểm được, và nó có sức nặng thật theo chiều NGƯỢC: tài
+ * liệu đặt A sau B trong khi khung khai A học trước B là một mâu thuẫn đáng nhìn lại.
+ */
+const CHECK_READING_ORDER = 'order:reading'
 
 /**
  * Dựng thẻ OBJECTIVE_EXISTS cho một mục tiêu, đối chiếu câu trích vào `excerpt` (đoạn nguồn ĐÃ
@@ -220,6 +228,8 @@ export function buildEdgeOrderingTrace(
     readonly facets?: Readonly<Record<string, unknown>>
     readonly grounded: boolean
   },
+  /** Vị trí câu trích của hai đầu TRONG tài liệu. Vắng khi một đầu không có câu trích đã kiểm. */
+  readingOrder?: { readonly fromOrder: number; readonly toOrder: number },
 ): TraceRecordInput {
   const relType = edge.relType ?? 'PREREQUISITE'
   const ex = explainClaim({
@@ -228,6 +238,7 @@ export function buildEdgeOrderingTrace(
     ...(from.facets !== undefined ? { fromFacets: from.facets as Facets } : {}),
     ...(to.facets !== undefined ? { toFacets: to.facets as Facets } : {}),
     inputsVerified: from.grounded && to.grounded,
+    ...(readingOrder !== undefined ? { readingOrder } : {}),
   })
 
   const fv = from.title.vi ?? from.title.en ?? edge.from
@@ -273,6 +284,25 @@ export function buildEdgeOrderingTrace(
           axes: ex.facets?.axes ?? [],
         },
       },
+      /**
+       * Làn THỨ TỰ ĐỌC — chỉ ghi khi biết được, và ghi cả khi nó NÓI NGƯỢC.
+       *
+       * Engine vốn tính được làn này từ đầu và chưa ai truyền vào, nên nó chưa từng xuất hiện ở
+       * đâu. Nó yếu — cách xếp trang không phải lý lẽ dạy học — nhưng ở đúng những cạnh mà máy
+       * không chứng được gì thì đây là thứ duy nhất còn đối chiếu được, và một tài liệu xếp ngược
+       * hẳn với thứ tự đang khai là điều người duyệt phải thấy.
+       */
+      ...(ex.readingOrderAgrees !== undefined
+        ? [
+            {
+              kind: 'STRUCTURAL_CHECK' as const,
+              basis: 'AI_INFERRED' as const,
+              method: 'rule:readingOrder',
+              checkCode: CHECK_READING_ORDER,
+              passed: ex.readingOrderAgrees,
+            },
+          ]
+        : []),
     ],
   }
 }
@@ -449,6 +479,18 @@ export async function writeClaimTraces(
       return [c.slug as string, q !== undefined && verifyQuote(q, excerpt).status === 'verified']
     }),
   )
+  /**
+   * Câu trích của một kiến thức nằm ở đâu TRONG tài liệu.
+   *
+   * `undefined` khi không có câu trích, hoặc câu trích không tìm lại được — và khi đó làn thứ-tự-đọc
+   * phải VẮNG hẳn chứ không được đoán bừa một vị trí. Đoán ở đây là bịa ra một căn cứ.
+   */
+  const quoteOffset = (c: CompiledConcept | undefined): number | undefined => {
+    const q = c?.evidence[0]?.quote
+    if (q === undefined) return undefined
+    const m = verifyQuote(q, excerpt)
+    return m.status === 'verified' ? m.charStart : undefined
+  }
   const side = (slug: string) => {
     const c = byS.get(slug)
     return {
@@ -471,7 +513,19 @@ export async function writeClaimTraces(
     // không có facet hai đầu thì thẻ chỉ nói được "AI bảo thế", mà điều đó thẻ nào cũng nói được.
     ...(claims.edges ?? [])
       .filter((e) => byS.has(e.from) && byS.has(e.to))
-      .map((e) => ({ record: buildEdgeOrderingTrace(e, side(e.from), side(e.to)) })),
+      .map((e) => {
+        // Vị trí câu trích trong CHÍNH đoạn nguồn đã chuẩn hoá — cùng thước đo cho cả hai đầu.
+        const fo = quoteOffset(byS.get(e.from))
+        const to = quoteOffset(byS.get(e.to))
+        return {
+          record: buildEdgeOrderingTrace(
+            e,
+            side(e.from),
+            side(e.to),
+            fo !== undefined && to !== undefined ? { fromOrder: fo, toOrder: to } : undefined,
+          ),
+        }
+      }),
     // Mục tiêu gồm kiến thức nào — một thẻ cho MỖI cặp.
     ...objectives.flatMap((o) =>
       o.mapsTo
@@ -784,6 +838,14 @@ export function recheck(
       })
       return ex.relation?.basis === 'ordering-proven'
     }
+    /**
+     * Thứ tự đọc KHÔNG kiểm lại được ở đây.
+     *
+     * Nó phụ thuộc đoạn nguồn lúc trích, mà đoạn đó đã đóng băng cùng thẻ. Trả `undefined` để tấm
+     * thẻ nói thẳng "đây là kết quả lúc duyệt" — chứ không phát lại giá trị cũ như một lần kiểm mới.
+     */
+    case CHECK_READING_ORDER:
+      return undefined
     default:
       return undefined
   }

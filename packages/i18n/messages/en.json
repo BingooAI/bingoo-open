@@ -905,6 +905,8 @@
       "tbStructOrderJudgment": "The machine cannot prove this order; it is a teaching judgement and needs a teacher to confirm it.",
       "tbStructRequiredAll": "To count as met, every listed piece is required — miss one and it is not met.",
       "tbStructRequiredMissing": "This piece is no longer linked to the objective — what it measures has changed since review.",
+      "tbStructReadingPass": "The document itself puts this one before the other. That is page order, not a teaching argument — but nothing contradicts it.",
+      "tbStructReadingFail": "The document puts this one AFTER the other, the opposite of the order written down. Page order is not a teaching argument, but a contradiction is worth a look.",
       "tbStructUnknown": "The system recorded a self-check here, but there is no plain-language explanation for it yet.",
       "tbStructNotRechecked": "This is the result at review time; the system could not re-check it today.",
       "tbSourceMachineTitle": "Worked out by the machine, not quoted from a document",
