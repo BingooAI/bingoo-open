@@ -59,6 +59,23 @@ export interface IngestResultDto {
     graph: { nodes: GraphNodeDto[]; edges: GraphEdgeDto[] }
     objectives: ObjectiveDto[]
     framework?: FrameworkMetaDto
+    /**
+     * Kết quả khử trùng lặp, gồm những chỗ máy TỰ GỘP hai khái niệm làm một.
+     *
+     * Đây là quyết định nặng nhất máy được phép tự làm — gộp sai thì hai kiến thức khác nhau vĩnh
+     * viễn thành một và không có tín hiệu nào báo về sau. Máy chủ vẫn luôn gửi kèm; chỗ này không
+     * khai ra nên nó chưa từng được gửi ngược lại lúc duyệt, và mỗi lần gộp trôi qua không dấu vết.
+     */
+    dedup?: {
+      merges: {
+        tempId: string
+        into: string
+        reason: 'existing' | 'within-batch'
+        similarity: number
+        fromTitle: string
+        intoTitle: string
+      }[]
+    }
     /** Bằng chứng nguồn của từng KIẾN THỨC — hợp đồng đồ thị không chở được nên nó đi danh sách riêng. */
     concepts?: {
       slug: string
@@ -218,18 +235,6 @@ export function useFrameworkFromPrompt() {
   })
 }
 
-export function useFrameworkFromPdf() {
-  return useMutation({
-    mutationFn: async (input: { file: File; locale?: string }) => {
-      const { url } = await uploadPdfAndGetUrl(input.file)
-      return api.post<IngestResultDto>('/authoring/framework/from-pdf', {
-        pdf: url,
-        locale: input.locale ?? 'vi',
-      })
-    },
-  })
-}
-
 /** Duyệt: ghi đồ thị + framework + objectives + MAPS_TO. */
 /**
  * Duyệt: ghi đồ thị + khung + mục tiêu + ánh xạ, VÀ tài liệu nguồn.
@@ -252,6 +257,7 @@ export function useApplyFramework() {
         ...(input.compiled.framework ? { framework: input.compiled.framework } : {}),
         ...(input.compiled.objectives.length ? { objectives: input.compiled.objectives } : {}),
         ...(input.compiled.concepts?.length ? { concepts: input.compiled.concepts } : {}),
+        ...(input.compiled.dedup?.merges.length ? { merges: input.compiled.dedup.merges } : {}),
         ...(input.source?.text ? { source: input.source } : {}),
       }),
   })
@@ -808,7 +814,13 @@ export interface TraceStructuralLaneDto {
 }
 
 /** Bốn loại thẻ đọc được — khớp với TraceArtifact ở phía máy chủ. */
-export type TraceArtifactDto = 'OBJECTIVE_EXISTS' | 'CONCEPT_EXISTS' | 'PREREQ_EDGE' | 'OBJECTIVE_COVERAGE'
+export type TraceArtifactDto =
+  | 'OBJECTIVE_EXISTS'
+  | 'CONCEPT_EXISTS'
+  | 'PREREQ_EDGE'
+  | 'OBJECTIVE_COVERAGE'
+  /** Máy tự gộp hai khái niệm — không có làn nguồn lẫn làn tự kiểm; lời giải thích ở cột lý do. */
+  | 'CONCEPT_IDENTITY'
 
 export interface DecisionTraceDto {
   id: string

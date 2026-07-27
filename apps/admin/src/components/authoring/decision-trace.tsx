@@ -14,6 +14,7 @@ import {
   FileText,
   ShieldCheck,
   ShieldX,
+  Sparkles,
   TriangleAlert,
   X,
 } from 'lucide-react'
@@ -77,6 +78,7 @@ const TITLE_KEY: Record<TraceArtifactDto, string> = {
   CONCEPT_EXISTS: 'tbTitleConcept',
   PREREQ_EDGE: 'tbTitlePrereq',
   OBJECTIVE_COVERAGE: 'tbTitleCoverage',
+  CONCEPT_IDENTITY: 'tbTitleIdentity',
 }
 
 /**
@@ -282,7 +284,20 @@ export function DecisionTraceCard({ trace, onClose }: { trace: DecisionTraceDto;
         </div>
       ) : null}
 
-      <SourceLane d={trace} t={t} onOpenViewer={setViewer} />
+      {/*
+        LỜI MÁY TỰ LÝ GIẢI — luôn là phán đoán, không bao giờ là bằng chứng.
+        Với thẻ "hai thứ này là một" thì đây là TẤT CẢ những gì có: trigram không sinh ra câu trích
+        lẫn phép tự kiểm nào. Không vẽ nó thì tấm thẻ mở ra trống trơn, và một quyết định gộp — thứ
+        nặng nhất máy được phép tự làm — trông như chưa từng xảy ra.
+      */}
+      {trace.reason ? (
+        <Lane tone="warning" icon={Sparkles} title={t('tbReasonTitle')}>
+          {trace.reason[locale] ?? trace.reason.vi ?? trace.reason.en}
+        </Lane>
+      ) : null}
+
+      {/* Thẻ gộp không có làn nguồn — vẽ một ô "không lấy từ tài liệu nào" ở đó là nói thừa. */}
+      {trace.artifact === 'CONCEPT_IDENTITY' ? null : <SourceLane d={trace} t={t} onOpenViewer={setViewer} />}
       {trace.structural.map((s) => (
         <StructuralLane key={s.checkCode} s={s} t={t} />
       ))}

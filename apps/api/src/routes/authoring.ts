@@ -13,7 +13,7 @@ import { ingestSource } from '../services/authoring-ingest.service'
 import { applyAuthoredFramework } from '../services/authoring.service'
 import { GraphBody, ResolveCollisionsBody } from './authoring.schema'
 import type { FrameworkMeta } from '../repos/authoring.repo'
-import type { CompiledConcept, CompiledObjective } from '@bingoo.ai/authoring'
+import type { CompiledConcept, CompiledObjective, Merge } from '@bingoo.ai/authoring'
 import { generateLessonContent } from '../services/content-generate.service'
 import { generateOneItem } from '../services/content-item-gen.service'
 import { allPrimitives, primitiveInfos, recommendPrimitives } from '../services/primitive-info.service'
@@ -63,8 +63,8 @@ import {
  * Bốn loại thẻ đọc được. Dùng thẳng giá trị trong cơ sở dữ liệu, không đặt bí danh — một bảng tra
  * bí danh là một chỗ nữa để lệch, và đây là đường chỉ nhân sự nội bộ mở.
  *
- * CONCEPT_IDENTITY cố ý KHÔNG có mặt: thẻ loại đó ghi mà không kèm bằng chứng nào, nên cả hai làn
- * của tấm thẻ sẽ trống — lời giải thích của nó nằm ở cột `reason`, cần một cách hiện khác.
+ * CONCEPT_IDENTITY không có làn nguồn lẫn làn tự kiểm: trigram không sinh ra thứ gì kiểm được. Lời
+ * giải thích của nó nằm ở cột `reason`, và tấm thẻ vẽ đúng cột đó.
  */
 const TraceArtifactParam = z.enum(['OBJECTIVE_EXISTS', 'CONCEPT_EXISTS', 'PREREQ_EDGE', 'OBJECTIVE_COVERAGE'])
 import { courseShellFromBook, courseShellFromPrompt } from '../services/course-shell.service'
@@ -931,6 +931,7 @@ export const authoring = new Hono<AppEnv>()
       ...(b.objectives ? { objectives: b.objectives as CompiledObjective[] } : {}),
       ...(b.concepts ? { concepts: b.concepts as CompiledConcept[] } : {}),
       ...(b.source ? { source: b.source } : {}),
+      ...(b.merges ? { merges: b.merges as Merge[] } : {}),
     })
     // DẤU VẾT: ai GHI đồ thị năng lực (xương sống bằng chứng) — bao nhiêu node/cạnh, khung nào.
     await writeAudit({

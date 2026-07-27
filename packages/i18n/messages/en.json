@@ -897,6 +897,8 @@
       "tbTitleConcept": "Why this piece of knowledge exists",
       "tbTitlePrereq": "Why this one comes first",
       "tbTitleCoverage": "Why this objective needs that knowledge",
+      "tbTitleIdentity": "Why these two were treated as one",
+      "tbReasonTitle": "The machine's own account — needs a person to confirm",
       "tbEmptyAny": "No evidence stored for this yet — import from a document, or run the sample data.",
       "tbStructIdentityPass": "This says plainly what it is about, so it cannot be confused with the one next to it.",
       "tbStructIdentityFail": "It doesn't say what it is about — two entries could be the same without the machine noticing.",

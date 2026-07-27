@@ -117,6 +117,24 @@ export const GraphBody = z.object({
    * ô tích mà không ai kiểm.
    */
   source: z.object({ text: z.string().min(1), storageKey: z.string().max(512).optional() }).optional(),
+  /**
+   * Những chỗ máy TỰ GỘP hai khái niệm làm một.
+   *
+   * Quyết định nặng nhất máy được phép tự làm, và trước đây nó không đi qua đường dây này nên xảy
+   * ra hoàn toàn im lặng. Có ở đây thì mỗi lần gộp để lại một thẻ người duyệt lật lại được.
+   */
+  merges: z
+    .array(
+      z.object({
+        tempId: z.string().min(1),
+        into: z.string().min(1),
+        reason: z.enum(['existing', 'within-batch']),
+        similarity: z.number(),
+        fromTitle: z.string(),
+        intoTitle: z.string(),
+      }),
+    )
+    .optional(),
 })
 export type GraphBody = z.infer<typeof GraphBody>
 

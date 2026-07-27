@@ -27,9 +27,11 @@ import { AppError } from '../lib/errors'
 import {
   fetchStoredBytes,
   writeClaimTraces,
+  writeConceptIdentityTraces,
   type AnchorContext,
   type WriteTraceResult,
 } from './decision-trace.service'
+import type { Merge } from '@bingoo.ai/authoring'
 import { contentHashOf, pdfPositionedUnits } from './pdf-anchor.service'
 
 /** Định vị từng câu trong PDF để thẻ mở được đúng trang. `undefined` khi không làm được — và đó là
@@ -95,6 +97,14 @@ export async function applyAuthoredFramework(input: {
    * phải thiếu sót cần che.
    */
   source?: { readonly text: string; readonly storageKey?: string }
+  /**
+   * Những chỗ máy TỰ GỘP hai khái niệm làm một khi biên khung.
+   *
+   * Đây là quyết định nặng nhất mà máy được phép tự làm: gộp sai thì hai kiến thức khác nhau vĩnh
+   * viễn thành một, và không có tín hiệu nào báo lỗi về sau. Chỗ ghi thẻ cho nó có sẵn từ lâu và
+   * KHÔNG AI GỌI, nên nó xảy ra hoàn toàn im lặng.
+   */
+  merges?: readonly Merge[]
 }): Promise<ApplyFrameworkResult> {
   await assertInvariants(input.graph)
   const result = await persistGraph(input.graph)
@@ -148,6 +158,11 @@ export async function applyAuthoredFramework(input: {
        */
       await buildAnchorContext(input.source.storageKey),
     )
+  }
+
+  // Máy tự gộp hai khái niệm → một thẻ mỗi lần, để người duyệt còn lật lại được.
+  if (framework && input.merges && input.merges.length > 0) {
+    await writeConceptIdentityTraces(framework.frameworkVersionId, input.merges)
   }
 
   // Nhúng KC vào chỉ mục NGỮ NGHĨA — khung ĐẦU TIÊN dựng vốn KC canonical, nên nếu không nhúng ở đây

@@ -897,6 +897,8 @@
       "tbTitleConcept": "Vì sao có kiến thức này",
       "tbTitlePrereq": "Vì sao học cái này trước",
       "tbTitleCoverage": "Vì sao mục tiêu này cần kiến thức đó",
+      "tbTitleIdentity": "Vì sao hai thứ này bị coi là một",
+      "tbReasonTitle": "Máy tự lý giải — cần người xác nhận",
       "tbEmptyAny": "Chưa lưu căn cứ cho mục này — nhập lại từ tài liệu, hoặc chạy dữ liệu mẫu.",
       "tbStructIdentityPass": "Mục này nói rõ nó dạy về CÁI GÌ, nên không lẫn với mục bên cạnh.",
       "tbStructIdentityFail": "Chưa nói rõ nó dạy về cái gì — hai mục có thể là một mà máy không nhận ra.",

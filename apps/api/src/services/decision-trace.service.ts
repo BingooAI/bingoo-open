@@ -715,7 +715,16 @@ export interface TraceStructuralLane {
   readonly detail?: unknown
 }
 
-export type TraceArtifact = 'OBJECTIVE_EXISTS' | 'CONCEPT_EXISTS' | 'PREREQ_EDGE' | 'OBJECTIVE_COVERAGE'
+export type TraceArtifact =
+  | 'OBJECTIVE_EXISTS'
+  | 'CONCEPT_EXISTS'
+  | 'PREREQ_EDGE'
+  | 'OBJECTIVE_COVERAGE'
+  /**
+   * Máy TỰ GỘP hai khái niệm. Thẻ loại này KHÔNG có làn nguồn lẫn làn tự kiểm — trigram không sinh
+   * ra thứ gì kiểm được — nên toàn bộ lời giải thích nằm ở cột `reason`, và tấm thẻ phải vẽ nó.
+   */
+  | 'CONCEPT_IDENTITY'
 
 export interface DecisionTraceView {
   readonly id: string
