@@ -28,6 +28,7 @@ import {
 import { getAi, getEmbedding, getVision } from '../providers'
 import { renderPrompt } from '../prompts'
 import { modelFor } from '../config/models'
+import { parseModelJson } from '../lib/model-json'
 
 const KINDS: readonly CompetencyKind[] = [
   'OBJECTIVE',
@@ -54,16 +55,6 @@ const rec = (v: unknown): Record<string, unknown> =>
   v && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : {}
 
 /** Lấy object JSON đầu tiên trong text model; hỏng cú pháp → undefined. */
-function firstJson(text: string): Record<string, unknown> | undefined {
-  const m = text.match(/\{[\s\S]*\}/)
-  if (!m) return undefined
-  try {
-    const v: unknown = JSON.parse(m[0])
-    return v && typeof v === 'object' ? (v as Record<string, unknown>) : undefined
-  } catch {
-    return undefined
-  }
-}
 
 function asLocalized(raw: unknown): Record<string, string> | undefined {
   if (!raw || typeof raw !== 'object') return undefined
@@ -228,7 +219,7 @@ export function buildAuthoringPorts(opts?: {
     })
 
     if (res.finishReason !== 'max_tokens') {
-      return sanitizeConcepts(firstJson(res.text), chunkId)
+      return sanitizeConcepts(parseModelJson(res.text, `Trích khái niệm hỏng ở đoạn "${chunkId}"`), chunkId)
     }
 
     const lines = text.split('\n')
@@ -284,7 +275,10 @@ export function buildAuthoringPorts(opts?: {
           throw new Error(`Đề xuất cạnh bị CẮT vì hết token (lô ${i}). Giảm BATCH.`)
         }
 
-        for (const e of sanitizeEdgesById(firstJson(res.text), titleById)) {
+        for (const e of sanitizeEdgesById(
+          parseModelJson(res.text, `Đề xuất quan hệ hỏng ở lô ${i}`),
+          titleById,
+        )) {
           const k = `${e.fromTitle}→${e.toTitle}:${e.relType}`
           if (seen.has(k)) continue
           seen.add(k)

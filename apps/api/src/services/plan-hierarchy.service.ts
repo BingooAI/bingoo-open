@@ -13,6 +13,7 @@ import { getCourse } from '../repos/course.repo'
 import { getPlan, isApproved, savePlan, type StoredPlan } from '../repos/plan-hierarchy.repo'
 import { AppError } from '../lib/errors'
 import { modelFor } from '../config/models'
+import { parseModelJson } from '../lib/model-json'
 
 // ── coerce helpers (plans là TS interface, không Zod) ────────────────────────
 const rec = (v: unknown): Record<string, unknown> =>
@@ -35,16 +36,6 @@ const locArr = (v: unknown): Loc[] =>
   arr(v)
     .map((x) => loc(x))
     .filter((l) => (l.en ?? '').length > 0 || (l.vi ?? '').length > 0)
-
-function firstJson(text: string): Record<string, unknown> {
-  const m = text.match(/\{[\s\S]*\}/)
-  if (!m) return {}
-  try {
-    return rec(JSON.parse(m[0]))
-  } catch {
-    return {}
-  }
-}
 
 const throwIfTruncated = (finishReason: string | undefined): void => {
   if (finishReason === 'max_tokens')
@@ -141,7 +132,11 @@ export async function generateCoursePlan(input: {
   })
   throwIfTruncated(res.finishReason)
 
-  const doc = sanitizeCoursePlan(firstJson(res.text), input.courseSlug, shellUnits)
+  const doc = sanitizeCoursePlan(
+    parseModelJson(res.text, 'Không sinh được kế hoạch'),
+    input.courseSlug,
+    shellUnits,
+  )
   const quality = coursePlanQuality(doc, shellUnits)
   const plan = await savePlan({
     courseSlug: input.courseSlug,
@@ -254,7 +249,12 @@ export async function generateUnitPlan(input: {
   })
   throwIfTruncated(res.finishReason)
 
-  const doc = sanitizeUnitPlan(firstJson(res.text), input.courseSlug, input.unitSlug, shellLessons)
+  const doc = sanitizeUnitPlan(
+    parseModelJson(res.text, 'Không sinh được kế hoạch'),
+    input.courseSlug,
+    input.unitSlug,
+    shellLessons,
+  )
   const quality = unitPlanQuality(doc, shellLessons)
   const plan = await savePlan({
     courseSlug: input.courseSlug,

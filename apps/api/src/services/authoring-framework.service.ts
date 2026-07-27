@@ -46,6 +46,7 @@ import { loadDomainProfiles, loadExistingConcepts, loadExistingNodes } from '../
 import { buildAuthoringPorts } from './authoring-adapters'
 import type { IngestResult } from './authoring-ingest.service'
 import { modelFor } from '../config/models'
+import { parseModelJson } from '../lib/model-json'
 
 // Model RẺ cho trích xuất có cấu trúc (xem authoring-adapters). Đổi bằng env, không đụng code.
 
@@ -77,16 +78,6 @@ function loc(v: unknown): LocalizedText {
   const out: Record<string, string> = {}
   for (const [k, val] of Object.entries(o)) if (typeof val === 'string' && val.trim()) out[k] = val.trim()
   return Object.keys(out).length ? out : { en: '', vi: '' }
-}
-
-function firstJson(text: string): Record<string, unknown> {
-  const m = text.match(/\{[\s\S]*\}/)
-  if (!m) return {}
-  try {
-    return rec(JSON.parse(m[0]))
-  } catch {
-    return {}
-  }
 }
 
 /** LLM output → IngestDraft (evidence rỗng vì sinh từ chủ đề, không từ nguồn trích). */
@@ -152,7 +143,7 @@ export async function frameworkFromPrompt(
     model: modelFor('extraction'),
     maxTokens: 4000,
   })
-  const draft = sanitizeDraft(firstJson(res.text), locale)
+  const draft = sanitizeDraft(parseModelJson(res.text, 'Không sinh được khung'), locale)
   const existing = await loadExistingConcepts()
   const compiled = compileDraft(draft, existing)
   const issues = validateDraft(compiled)
@@ -217,7 +208,8 @@ async function extractObjectives(
       model: modelFor('extraction'),
       maxTokens: 8000,
     })
-    if (res.finishReason !== 'max_tokens') return arr(firstJson(res.text).objectives).map(rec)
+    if (res.finishReason !== 'max_tokens')
+      return arr(parseModelJson(res.text, 'Không sinh được khung').objectives).map(rec)
 
     const lines = text.split('\n')
     if (depth >= 4 || lines.length < 2) {

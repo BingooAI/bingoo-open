@@ -33,6 +33,7 @@ const PRIMITIVE_CATALOGUE = contentReadyPrimitives()
 import { getAi } from '../providers'
 import { renderPrompt } from '../prompts'
 import { modelFor } from '../config/models'
+import { parseModelJson } from '../lib/model-json'
 
 /**
  * CHI PHÍ: tách model cho khâu sinh nội dung. Mặc định Sonnet (nội dung học cần chất lượng hơn
@@ -61,16 +62,6 @@ function loc(v: unknown, fallback = ''): LocalizedText {
   const out: Record<string, string> = {}
   for (const [k, val] of Object.entries(o)) if (typeof val === 'string' && val.trim()) out[k] = val.trim()
   return Object.keys(out).length ? out : { en: fallback, vi: fallback }
-}
-
-function firstJson(text: string): Record<string, unknown> {
-  const m = text.match(/\{[\s\S]*\}/)
-  if (!m) return {}
-  try {
-    return rec(JSON.parse(m[0]))
-  } catch {
-    return {}
-  }
 }
 
 function sanitizeKP(raw: unknown, index: number, kcs: readonly Slug[]): KnowledgePoint {
@@ -273,7 +264,7 @@ export async function generateLessonPlan(input: {
   if (res.finishReason === 'max_tokens') {
     throw new Error('Sinh kế hoạch bị CẮT vì hết token — bài quá nhiều KC, hãy tách bớt.')
   }
-  const o = firstJson(res.text)
+  const o = parseModelJson(res.text, 'Không sinh được kế hoạch bài')
 
   const teaches = strArr(o.teaches).length ? strArr(o.teaches) : [...input.kcs]
   const kps = arr(o.knowledgePoints).map((kp, i) => sanitizeKP(kp, i, input.kcs))

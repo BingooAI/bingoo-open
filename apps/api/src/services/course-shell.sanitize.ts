@@ -30,15 +30,6 @@ function loc(v: unknown, fallback = ''): LocalizedText {
 }
 
 /** Lấy khối JSON đầu tiên trong text LLM; hỏng → {} (lớp gọi phải tự bắt trường hợp rỗng, không nuốt). */
-export function firstJson(text: string): Record<string, unknown> {
-  const m = text.match(/\{[\s\S]*\}/)
-  if (!m) return {}
-  try {
-    return rec(JSON.parse(m[0]))
-  } catch {
-    return {}
-  }
-}
 
 export interface SanitizedCourse {
   readonly plan: CoursePlan

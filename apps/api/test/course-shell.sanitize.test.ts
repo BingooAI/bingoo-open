@@ -7,7 +7,8 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import { firstJson, sanitizeCourse } from '../src/services/course-shell.sanitize'
+import { sanitizeCourse } from '../src/services/course-shell.sanitize'
+import { ModelReplyError, parseModelJson } from '../src/lib/model-json'
 
 const allowed = new Set(['count-to-10', 'add-within-20', 'parity'])
 
@@ -94,11 +95,29 @@ describe('nguồn PROMPT — không có "cấu trúc gốc" để trung thành �
   })
 })
 
-describe('firstJson — cắt JSON là hỏng TO, không nuốt', () => {
-  it('không có JSON → {} (lớp gọi phải tự ném lỗi rỗng)', () => {
-    expect(firstJson('xin lỗi tôi không thể')).toEqual({})
+/**
+ * Câu trả lời hỏng phải DỪNG, không được biến thành một vật rỗng đi tiếp.
+ *
+ * Test cũ ở đây khai đúng ý ("cắt JSON là hỏng TO, không nuốt") rồi ghim CHÍNH cái hành vi nuốt:
+ * nó khẳng định hỏng thì trả `{}`, và ghi chú "lớp gọi phải tự ném lỗi rỗng" — mà không lớp gọi nào
+ * làm thế. Bốn chỗ trong repo chép đoạn ấy, và cả bốn đều đi tiếp với vật rỗng: kế hoạch bài, kế
+ * hoạch khoá, vỏ khoá từ sách, bản nháp khung. Cái tệ nhất là kế hoạch bài — nó được LƯU kèm tên
+ * model và dấu vân prompt, tức hồ sơ khai rằng AI soạn ra một thứ AI chưa từng trả về.
+ */
+describe('câu trả lời hỏng thì DỪNG, không đi tiếp với vật rỗng', () => {
+  it('không có JSON → ném, và nói rõ bước nào hỏng', () => {
+    expect(() => parseModelJson('xin lỗi tôi không thể', 'Không dựng được vỏ khoá học')).toThrow(
+      /Không dựng được vỏ khoá học/,
+    )
   })
-  it('JSON cắt dở → {} (KHÔNG được coi là vỏ khoá hợp lệ)', () => {
-    expect(firstJson('{"units":[{"title":{"en":"A"}')).toEqual({})
+
+  it('JSON cắt dở → ném, KHÔNG coi là vỏ khoá hợp lệ', () => {
+    expect(() => parseModelJson('{"units":[{"title":{"en":"A"}', 'Không dựng được vỏ khoá học')).toThrow(
+      ModelReplyError,
+    )
+  })
+
+  it('JSON đọc được thì trả về đúng nội dung', () => {
+    expect(parseModelJson('{"a":1}', 'x')).toEqual({ a: 1 })
   })
 })

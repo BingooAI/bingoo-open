@@ -13,7 +13,8 @@ import { renderPrompt } from '../prompts'
 import { loadConceptVocab, type ConceptVocabItem } from '../repos/authoring.repo'
 import { saveCourse, type SavedCourse } from '../repos/course.repo'
 import { AppError } from '../lib/errors'
-import { firstJson, sanitizeCourse } from './course-shell.sanitize'
+import { sanitizeCourse } from './course-shell.sanitize'
+import { parseModelJson } from '../lib/model-json'
 import { modelFor } from '../config/models'
 
 /**
@@ -123,7 +124,7 @@ export async function courseShellFromPrompt(input: CourseShellInput): Promise<Co
   })
   throwIfTruncated(res.finishReason, 'rút gọn mô tả hoặc thu hẹp stage')
 
-  const { plan } = sanitizeCourse(firstJson(res.text), allowed, {
+  const { plan } = sanitizeCourse(parseModelJson(res.text, 'Không dựng được vỏ khoá học'), allowed, {
     ...(input.frameworkVersionId !== undefined ? { frameworkVersionId: input.frameworkVersionId } : {}),
   })
   assertNonEmpty(plan)
@@ -166,10 +167,14 @@ export async function courseShellFromBook(
   })
   throwIfTruncated(res.finishReason, 'sách quá dài, tách theo phần/chương rồi sinh từng phần')
 
-  const { plan, unmappedLessons } = sanitizeCourse(firstJson(res.text), allowed, {
-    preserveStructure: true, // sách là sự thật về cấu trúc — giữ mọi bài, đúng thứ tự
-    ...(input.frameworkVersionId !== undefined ? { frameworkVersionId: input.frameworkVersionId } : {}),
-  })
+  const { plan, unmappedLessons } = sanitizeCourse(
+    parseModelJson(res.text, 'Không dựng được vỏ khoá học'),
+    allowed,
+    {
+      preserveStructure: true, // sách là sự thật về cấu trúc — giữ mọi bài, đúng thứ tự
+      ...(input.frameworkVersionId !== undefined ? { frameworkVersionId: input.frameworkVersionId } : {}),
+    },
+  )
   assertNonEmpty(plan)
 
   const saved = await saveCourse(plan, input.createdBy, input.frameworkVersionId)
