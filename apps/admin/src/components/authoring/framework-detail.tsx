@@ -26,7 +26,7 @@ import { cn } from '@/lib/cn'
 import { GraphCanvas, type GEdge, type GNode } from './graph-canvas'
 import { CaseViewer } from './case-viewer'
 import { NodeExplain } from './node-explain'
-import { ObjectiveTrace } from './objective-trace'
+import { DecisionTrace } from './decision-trace'
 import {
   useCaseExport,
   useCreateVersion,
@@ -222,7 +222,11 @@ export function FrameworkDetail({ slug }: { slug: string }) {
                     </button>
                   </div>
                   {tracing === o.slug ? (
-                    <ObjectiveTrace slug={o.slug} onClose={() => setTracing(null)} />
+                    <DecisionTrace
+                      artifact="OBJECTIVE_EXISTS"
+                      subject={o.slug}
+                      onClose={() => setTracing(null)}
+                    />
                   ) : null}
                 </li>
               ))}

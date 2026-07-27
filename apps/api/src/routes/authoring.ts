@@ -53,7 +53,20 @@ import {
   frameworkFromPrompt,
   frameworkFromText,
 } from '../services/authoring-framework.service'
-import { getObjectiveTrace, getSourceDocumentBytes } from '../services/decision-trace.service'
+import {
+  getDecisionTraces,
+  getObjectiveTrace,
+  getSourceDocumentBytes,
+} from '../services/decision-trace.service'
+
+/**
+ * Bốn loại thẻ đọc được. Dùng thẳng giá trị trong cơ sở dữ liệu, không đặt bí danh — một bảng tra
+ * bí danh là một chỗ nữa để lệch, và đây là đường chỉ nhân sự nội bộ mở.
+ *
+ * CONCEPT_IDENTITY cố ý KHÔNG có mặt: thẻ loại đó ghi mà không kèm bằng chứng nào, nên cả hai làn
+ * của tấm thẻ sẽ trống — lời giải thích của nó nằm ở cột `reason`, cần một cách hiện khác.
+ */
+const TraceArtifactParam = z.enum(['OBJECTIVE_EXISTS', 'CONCEPT_EXISTS', 'PREREQ_EDGE', 'OBJECTIVE_COVERAGE'])
 import { courseShellFromBook, courseShellFromPrompt } from '../services/course-shell.service'
 import { alignSource } from '../services/alignment.service'
 import { applyAlignDecisions, listAlignHistory } from '../services/alignment-apply.service'
@@ -709,6 +722,31 @@ export const authoring = new Hono<AppEnv>()
     const trace = await getObjectiveTrace(c.req.param('slug'))
     if (!trace) throw AppError.notFound('Chưa có vết truy nguồn cho mục tiêu này.')
     return ok(c, trace)
+  })
+  /**
+   * TRUY NGUỒN một chỗ BẤT KỲ — bốn loại thẻ đi chung một đường.
+   *
+   * Đăng ký SAU đường `/trace/objective/:slug` là bắt buộc: Hono khớp theo thứ tự đăng ký, nên nếu
+   * đường này đứng trước thì `/trace/objective/x` rơi vào đây với `artifact: 'objective'`, và một
+   * endpoint đang chạy tốt biến thành lỗi 400.
+   *
+   * Trả DANH SÁCH và trả 200 cả khi rỗng: một mục tiêu có nhiều thẻ phủ (mỗi mảnh kiến thức một
+   * thẻ), còn "chưa có thẻ nào" là trạng thái thường của người duyệt chứ không phải chuyện hỏng.
+   */
+  .get('/trace/:artifact/:subject', authorGuard, async (c) => {
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    const parsed = TraceArtifactParam.safeParse(c.req.param('artifact'))
+    if (!parsed.success) throw AppError.badRequest('Loại thẻ căn cứ không hợp lệ.')
+    const object = c.req.query('object')
+    return ok(
+      c,
+      await getDecisionTraces({
+        artifact: parsed.data,
+        subjectSlug: c.req.param('subject'),
+        ...(object ? { objectSlug: object } : {}),
+      }),
+    )
   })
   // BYTES tài liệu nguồn cho viewer (mở đúng trang, tô đúng dòng). Staff-gated.
   .get('/source/:id/file', authorGuard, async (c) => {

@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { ArrowRight, Download, Hash, Languages, Layers, Link2, Search, X } from 'lucide-react'
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@bingoo.ai/ui-web'
-import { ObjectiveTrace } from './objective-trace'
+import { DecisionTrace } from './decision-trace'
 import {
   downloadCasePackage,
   type CaseAssociation,
@@ -320,7 +320,11 @@ function ObjectiveDetail({
         </button>
         {showTrace ? (
           <div className="mt-2">
-            <ObjectiveTrace slug={item.identifier} onClose={() => setShowTrace(false)} />
+            <DecisionTrace
+              artifact="OBJECTIVE_EXISTS"
+              subject={item.identifier}
+              onClose={() => setShowTrace(false)}
+            />
           </div>
         ) : null}
       </div>

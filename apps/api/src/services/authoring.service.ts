@@ -97,6 +97,23 @@ export async function applyAuthoredFramework(input: {
       {
         ...(input.objectives ? { objectives: input.objectives } : {}),
         ...(input.concepts ? { concepts: input.concepts } : {}),
+        /**
+         * CẠNH THỨ TỰ — thiếu chỗ này thì "vì sao học cái này trước" chỉ tồn tại ở dữ liệu mẫu.
+         *
+         * `writeClaimTraces` vốn nhận cạnh và dựng thẻ cho từng cạnh, nhưng đường duyệt chưa bao
+         * giờ truyền vào; chỉ script seed truyền. Nên mọi khung người dùng tự nhập đều ra một đồ
+         * thị có thứ tự học mà không một cạnh nào nói được vì sao nó nằm đúng chiều đó — đúng câu
+         * hỏi khó nhất và đắt nhất trong cả ba.
+         *
+         * Lọc bỏ MAPS_TO: cạnh đó là "mục tiêu đo bằng mảnh nào", đã có loại thẻ riêng lo.
+         */
+        edges: input.graph.edges
+          .filter((e) => (e.relType ?? 'PREREQUISITE') !== 'MAPS_TO')
+          .map((e) => ({
+            from: e.from as string,
+            to: e.to as string,
+            ...(e.relType !== undefined ? { relType: e.relType } : {}),
+          })),
       },
       input.source.text,
       // Neo toạ độ cần file gốc; đường /apply chưa có bytes nên chỉ đối chiếu văn bản. Câu trích vẫn

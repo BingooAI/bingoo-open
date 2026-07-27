@@ -20,7 +20,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import { execFileSync } from 'node:child_process'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, extname, join, resolve } from 'node:path'
 
@@ -63,9 +63,17 @@ const TEXT_EXT = new Set([
  */
 const SELF = ['apps/api/test/copyright-guard.test.ts']
 
+/**
+ * `git ls-files` liệt kê cả file đã XOÁ trên đĩa nhưng chưa đưa vào index. Đọc thẳng thì cả hàng rào
+ * ném lỗi giữa chừng — và một hàng rào ném lỗi trông y hệt một hàng rào bắt được vi phạm, nên người
+ * ta mất thời gian đi tìm nội dung có bản quyền không hề tồn tại.
+ *
+ * File không còn trên đĩa thì không chứa được chữ nào; bỏ qua ở đây không nới lỏng gì cả — git vẫn
+ * chặn ở lần commit sau, và lần chạy tiếp theo lại quét đủ.
+ */
 const textFiles = (): { path: string; text: string }[] =>
   tracked()
-    .filter((p) => TEXT_EXT.has(extname(p)) && !SELF.includes(p))
+    .filter((p) => TEXT_EXT.has(extname(p)) && !SELF.includes(p) && existsSync(join(REPO, p)))
     .map((p) => ({ path: p, text: readFileSync(join(REPO, p), 'utf8') }))
 
 /**

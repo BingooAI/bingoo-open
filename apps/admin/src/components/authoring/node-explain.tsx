@@ -10,6 +10,7 @@ import { explainRelation, type RelationBasis } from '@bingoo.ai/authoring'
 import type { Facets } from '@bingoo.ai/facets'
 import type { GraphViewDto } from '@/lib/authoring-queries'
 import { cn } from '@/lib/cn'
+import { DecisionTrace } from './decision-trace'
 
 // Cạnh nào MÁY chứng được thứ tự, cạnh nào là phán đoán người soạn — câu {vi,en} theo mã.
 const REL_KEY: Record<RelationBasis, string> = {
@@ -106,6 +107,7 @@ function facetValue(v: unknown): string {
 export function NodeExplain({ slug, nodes, edges }: { slug: string; nodes: Node[]; edges: Edge[] }) {
   const t = useTranslations('admin.authoring')
   const [openRel, setOpenRel] = useState<number | null>(null)
+  const [openSelf, setOpenSelf] = useState(false)
   const enumLabel = (ns: string, k: string): string => (t.has(`${ns}.${k}`) ? t(`${ns}.${k}`) : k)
 
   const node = nodes.find((n) => n.slug === slug)
@@ -142,7 +144,28 @@ export function NodeExplain({ slug, nodes, edges }: { slug: string; nodes: Node[
         ) : null}
       </div>
 
-      <p className="text-sm font-medium leading-relaxed text-foreground">{loc(node.title) || node.slug}</p>
+      <div className="flex items-start gap-2">
+        <p className="flex-1 text-sm font-medium leading-relaxed text-foreground">
+          {loc(node.title) || node.slug}
+        </p>
+        {/* Đường DUY NHẤT tới thẻ "vì sao có kiến thức này" — trước đây nó được ghi rồi nằm im. */}
+        <button
+          type="button"
+          onClick={() => setOpenSelf((v) => !v)}
+          aria-label={t('tbWhyConcept')}
+          aria-expanded={openSelf}
+          className="focus-ring mt-0.5 shrink-0 rounded p-0.5 text-foreground-subtle hover:text-primary"
+        >
+          <HelpCircle className="size-3.5" />
+        </button>
+      </div>
+      {openSelf ? (
+        <DecisionTrace
+          artifact={node.kind === 'OBJECTIVE' ? 'OBJECTIVE_EXISTS' : 'CONCEPT_EXISTS'}
+          subject={node.slug}
+          onClose={() => setOpenSelf(false)}
+        />
+      ) : null}
 
       {/* FACETS — danh tính KC. Người duyệt phải thấy vì sao đây là KC riêng, không phải cái khác. */}
       {shownFacets.length ? (
@@ -192,14 +215,23 @@ export function NodeExplain({ slug, nodes, edges }: { slug: string; nodes: Node[
                     </button>
                   </div>
                   {open ? (
-                    <p
-                      className={cn(
-                        'mt-1 rounded-md border border-border/60 bg-surface-muted p-2 text-[11px] leading-relaxed',
-                        REL_TONE[ex.basis],
-                      )}
-                    >
-                      {t(REL_KEY[ex.basis])}
-                    </p>
+                    <div className="mt-1 space-y-2">
+                      {/* Câu tính SỐNG — luôn có, kể cả khi chưa lưu thẻ nào cho cạnh này. */}
+                      <p
+                        className={cn(
+                          'rounded-md border border-border/60 bg-surface-muted p-2 text-[11px] leading-relaxed',
+                          REL_TONE[ex.basis],
+                        )}
+                      >
+                        {t(REL_KEY[ex.basis])}
+                      </p>
+                      {/* Và thẻ ĐÃ LƯU lúc duyệt: câu trích, tự kiểm, lệch, phán quyết của người. */}
+                      <DecisionTrace
+                        artifact={r.relType === 'MAPS_TO' ? 'OBJECTIVE_COVERAGE' : 'PREREQ_EDGE'}
+                        subject={r.from}
+                        object={r.to}
+                      />
+                    </div>
                   ) : null}
                 </li>
               )

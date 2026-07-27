@@ -769,26 +769,53 @@ export interface TraceStructuralLaneDto {
   checkCode: string
   passedAtWrite: boolean
   passedNow: boolean
+  /** Hôm nay có kiểm lại được thật không — không có thì tấm thẻ phải nói là chưa kiểm, không được vẽ như vừa kiểm xong. */
+  liveChecked: boolean
   detail?: unknown
 }
-export interface ObjectiveTraceDto {
-  slug: string
+
+/** Bốn loại thẻ đọc được — khớp với TraceArtifact ở phía máy chủ. */
+export type TraceArtifactDto = 'OBJECTIVE_EXISTS' | 'CONCEPT_EXISTS' | 'PREREQ_EDGE' | 'OBJECTIVE_COVERAGE'
+
+export interface DecisionTraceDto {
+  id: string
+  artifact: TraceArtifactDto
+  subjectSlug: string
+  objectSlug: string | null
+  relType: string | null
   claim: Record<string, string>
+  reason: Record<string, string> | null
+  method: string
   basis: 'FROM_SOURCE' | 'STRUCTURAL' | 'AI_INFERRED'
   verdict: string
   overridden: boolean
   decidedAt: string | null
+  createdAt: string
+  supersededCount: number
   source: TraceSourceLaneDto | null
   structural: TraceStructuralLaneDto[]
   drift: boolean
 }
 
-/** Vết "vì sao có mục tiêu này" — chỉ chạy khi có slug được chọn. */
-export function useObjectiveTrace(slug: string | null) {
+/**
+ * Thẻ căn cứ cho MỘT chỗ bất kỳ — bốn loại chung một đường.
+ *
+ * Trả danh sách: một mục tiêu có thể có nhiều thẻ phủ (mỗi mảnh kiến thức một thẻ), và danh sách rỗng
+ * là trạng thái bình thường chứ không phải lỗi.
+ */
+export function useDecisionTraces(a: {
+  artifact: TraceArtifactDto
+  subject: string | null
+  object?: string
+}) {
   return useQuery({
-    queryKey: ['authoring', 'trace', slug] as const,
-    queryFn: () => api.get<ObjectiveTraceDto>(`/authoring/trace/objective/${encodeURIComponent(slug ?? '')}`),
-    enabled: slug !== null,
+    queryKey: ['authoring', 'trace', a.artifact, a.subject, a.object ?? null] as const,
+    queryFn: () =>
+      api.get<DecisionTraceDto[]>(
+        `/authoring/trace/${a.artifact}/${encodeURIComponent(a.subject ?? '')}` +
+          (a.object ? `?object=${encodeURIComponent(a.object)}` : ''),
+      ),
+    enabled: a.subject !== null,
   })
 }
 

@@ -621,88 +621,270 @@ export interface TraceStructuralLane {
   readonly checkCode: string
   readonly passedAtWrite: boolean
   readonly passedNow: boolean
+  /**
+   * Hôm nay có kiểm lại được thật không.
+   *
+   * Trước đây một mã kiểm không nhận ra sẽ ĐỘI LẠI giá trị đóng băng vào `passedNow`, và giao diện
+   * vẽ nó y như một lần kiểm vừa chạy xong. Lúc chỉ một trong sáu mã có đường chạy thì không ai
+   * thấy; mở cả bốn loại thẻ ra thì nó thành lời nói dối mặc định. Có cờ này thì tấm thẻ nói được
+   * "đây là kết quả lúc duyệt, hôm nay chưa kiểm lại" thay vì giả vờ đã kiểm.
+   */
+  readonly liveChecked: boolean
   readonly detail?: unknown
 }
 
-export interface ObjectiveTraceView {
-  readonly slug: string
+export type TraceArtifact = 'OBJECTIVE_EXISTS' | 'CONCEPT_EXISTS' | 'PREREQ_EDGE' | 'OBJECTIVE_COVERAGE'
+
+export interface DecisionTraceView {
+  readonly id: string
+  readonly artifact: TraceArtifact
+  readonly subjectSlug: string
+  readonly objectSlug: string | null
+  readonly relType: string | null
   readonly claim: unknown
+  /** Câu AI tự lý giải — LUÔN là phán đoán, không phải bằng chứng. Chỉ hiện khi có. */
+  readonly reason: unknown | null
+  readonly method: string
   readonly basis: EvidenceBasis
   readonly verdict: string
   readonly overridden: boolean
   readonly decidedAt: string | null
+  readonly createdAt: string
+  /**
+   * Còn bao nhiêu bản CŨ cho cùng một chỗ.
+   *
+   * Nhập lại khung lần nữa sinh thế hệ thẻ mới. Bản mới nhất thắng, nhưng giấu hẳn số bản cũ thì
+   * người đọc không biết tấm thẻ trước mắt là bản thứ mấy.
+   */
+  readonly supersededCount: number
   readonly source: TraceSourceLane | null
   readonly structural: readonly TraceStructuralLane[]
-  /** Bất kỳ làn nào kiểm-lại-hôm-nay khác bản đóng băng → cần duyệt lại. */
   readonly drift: boolean
 }
 
-// I5 SỐNG: mục tiêu (theo slug) hiện có MAPS_TO ≥1 KC không.
-async function objectiveCoveredNow(slug: string): Promise<boolean> {
-  const obj = await db.competency.findUnique({ where: { slug }, select: { id: true } })
-  if (!obj) return false
-  const n = await db.capabilityRelation.count({ where: { fromId: obj.id, relType: 'MAPS_TO' } })
-  return n >= 1
+/** Giữ tên cũ cho chỗ đang dùng — cùng một hình dạng, chỉ hẹp hơn. */
+export type ObjectiveTraceView = DecisionTraceView
+
+/**
+ * Ảnh chụp đồ thị ĐANG CÓ, đủ để kiểm lại mọi mã kiểm trong bộ nhớ.
+ *
+ * Bản cũ hỏi cơ sở dữ liệu một lần cho MỖI thẻ. Với 30 thẻ phủ của một mục tiêu là hơn 60 lượt đi
+ * về cho một lần mở panel. Nạp một lần rồi tính trong bộ nhớ.
+ */
+interface LiveGraph {
+  readonly idBySlug: ReadonlyMap<string, string>
+  readonly facetsBySlug: ReadonlyMap<string, Record<string, unknown>>
+  readonly mapsToCount: ReadonlyMap<string, number>
+  readonly edgeKeys: ReadonlySet<string>
 }
 
-export async function getObjectiveTrace(slug: string): Promise<ObjectiveTraceView | null> {
-  const rec = await db.decisionRecord.findFirst({
-    where: { artifact: 'OBJECTIVE_EXISTS', subjectSlug: slug },
+async function loadLiveGraph(slugs: readonly string[]): Promise<LiveGraph> {
+  const comps = slugs.length
+    ? await db.competency.findMany({
+        where: { slug: { in: [...new Set(slugs)] } },
+        select: { id: true, slug: true, facets: true },
+      })
+    : []
+  const idBySlug = new Map(comps.map((c) => [c.slug, c.id]))
+  const facetsBySlug = new Map(comps.map((c) => [c.slug, (c.facets ?? {}) as Record<string, unknown>]))
+  const ids = comps.map((c) => c.id)
+  const rels = ids.length
+    ? await db.capabilityRelation.findMany({
+        where: { fromId: { in: ids } },
+        select: { fromId: true, toId: true, relType: true },
+      })
+    : []
+  const slugById = new Map(comps.map((c) => [c.id, c.slug]))
+  const mapsToCount = new Map<string, number>()
+  const edgeKeys = new Set<string>()
+  for (const r of rels) {
+    const from = slugById.get(r.fromId)
+    const to = slugById.get(r.toId)
+    if (from === undefined) continue
+    if (r.relType === 'MAPS_TO') mapsToCount.set(from, (mapsToCount.get(from) ?? 0) + 1)
+    if (to !== undefined) edgeKeys.add(`${from}|${to}|${r.relType}`)
+  }
+  return { idBySlug, facetsBySlug, mapsToCount, edgeKeys }
+}
+
+/**
+ * Kiểm lại MỘT mã kiểm trên đồ thị đang có. `undefined` = không kiểm lại được.
+ *
+ * Trả `undefined` chứ không trả `false`: "không kiểm được" và "kiểm rồi, trượt" là hai chuyện khác
+ * hẳn, và gộp chúng làm một là dựng ra một lời cảnh báo không có thật.
+ */
+export function recheck(
+  code: string,
+  rec: { readonly subjectSlug: string; readonly objectSlug: string | null; readonly relType: string | null },
+  live: LiveGraph,
+): boolean | undefined {
+  switch (code) {
+    // I5: mục tiêu phải đo bằng ít nhất một kiến thức.
+    case CHECK_COVERAGE:
+      return live.idBySlug.has(rec.subjectSlug) ? (live.mapsToCount.get(rec.subjectSlug) ?? 0) >= 1 : false
+    // I1: kiến thức phải nói rõ nó nói VỀ CÁI GÌ, không thì không tách khỏi cái bên cạnh được.
+    case CHECK_DISCRIMINATING: {
+      const f = live.facetsBySlug.get(rec.subjectSlug)
+      if (f === undefined) return false
+      return typeof f.object === 'string' && f.object.length > 0
+    }
+    // I4: cạnh đo phải còn đó và còn đúng kiểu.
+    case CHECK_REQUIRED_ALL:
+      return rec.objectSlug === null
+        ? undefined
+        : live.edgeKeys.has(`${rec.subjectSlug}|${rec.objectSlug}|MAPS_TO`)
+    /**
+     * Thứ tự: chạy lại engine giải thích trên dấu hiệu ĐANG CÓ, không phát lại kết luận cũ.
+     *
+     * Cả ba mã cùng một câu hỏi — "máy CHỨNG được thứ tự này chưa" — vì chỗ ghi lưu `passed: proven`
+     * cho cả ba. Đọc mã `order:judgment` thành "có đúng là phán đoán không" là đảo nghĩa, và hậu quả
+     * không nhẹ: mọi cạnh phán đoán lập tức báo lệch, tức là màn hình giục người duyệt xem lại
+     * đúng những cạnh không hề đổi gì.
+     */
+    case CHECK_ORDER_PROVEN:
+    case CHECK_ORDER_REVERSED:
+    case CHECK_ORDER_JUDGMENT: {
+      if (rec.objectSlug === null) return undefined
+      const from = live.facetsBySlug.get(rec.subjectSlug)
+      const to = live.facetsBySlug.get(rec.objectSlug)
+      if (from === undefined || to === undefined) return false
+      const ex = explainClaim({
+        claimKind: 'ORDERING_EDGE',
+        relType: rec.relType ?? 'PREREQUISITE',
+        fromFacets: from,
+        toFacets: to,
+      })
+      return ex.relation?.basis === 'ordering-proven'
+    }
+    default:
+      return undefined
+  }
+}
+
+/**
+ * Gom thẻ theo CHỖ nó nói về, bản mới nhất thắng, đếm số bản cũ.
+ *
+ * Thuần, tách ra để kiểm được mà không cần cơ sở dữ liệu.
+ */
+export function newestPerSubject<
+  T extends { subjectSlug: string; objectSlug: string | null; relType: string | null; createdAt: Date },
+>(rows: readonly T[]): { readonly row: T; readonly supersededCount: number }[] {
+  const groups = new Map<string, T[]>()
+  for (const r of rows) {
+    const k = `${r.subjectSlug}|${r.objectSlug ?? ''}|${r.relType ?? ''}`
+    groups.set(k, [...(groups.get(k) ?? []), r])
+  }
+  return [...groups.values()].map((g) => {
+    const sorted = [...g].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    return { row: sorted[0] as T, supersededCount: sorted.length - 1 }
+  })
+}
+
+/**
+ * ĐỌC thẻ căn cứ cho MỘT chỗ bất kỳ — bốn loại đi chung một đường.
+ *
+ * Trước file này chỉ có `getObjectiveTrace`, viết cứng `artifact: 'OBJECTIVE_EXISTS'`. Ba loại còn
+ * lại vẫn được ghi đầy đủ mỗi lần duyệt và không đường nào đọc ra: vì sao kiến thức này có mặt, vì
+ * sao học cái này trước cái kia, vì sao mục tiêu cần đúng những mảnh đó. Đúng ba câu hỏi mà cả hệ
+ * được dựng lên để trả lời.
+ *
+ * Trả về DANH SÁCH chứ không một thẻ: một quan hệ có thể có nhiều thẻ (mỗi cặp mục-tiêu↔kiến-thức
+ * một thẻ), và "chưa có thẻ nào" là trạng thái bình thường của người duyệt, không phải lỗi.
+ */
+export async function getDecisionTraces(q: {
+  readonly artifact: TraceArtifact
+  readonly subjectSlug: string
+  readonly objectSlug?: string
+}): Promise<DecisionTraceView[]> {
+  const rows = await db.decisionRecord.findMany({
+    where: {
+      artifact: q.artifact,
+      subjectSlug: q.subjectSlug,
+      ...(q.objectSlug !== undefined ? { objectSlug: q.objectSlug } : {}),
+    },
     orderBy: { createdAt: 'desc' },
     include: { evidence: true },
   })
-  if (!rec) return null
+  if (rows.length === 0) return []
 
-  const doc = rec.sourceDocumentId
-    ? await db.sourceDocument.findUnique({ where: { id: rec.sourceDocumentId } })
-    : null
+  const picked = newestPerSubject(rows)
 
-  // Làn NGUỒN — kiểm lại byte-for-byte vào chính đoạn đã lưu.
-  const span = rec.evidence.find((e) => e.kind === 'SOURCE_SPAN')
-  let source: TraceSourceLane | null = null
-  if (span?.quote !== undefined && span.quote !== null && doc) {
-    const m = verifyQuote(span.quote, doc.excerptText)
-    source = {
-      quote: span.quote,
-      ...(span.chunkId ? { chunkId: span.chunkId } : {}),
-      excerpt: doc.excerptText,
-      ...(span.charStart != null ? { charStart: span.charStart } : {}),
-      ...(span.charEnd != null ? { charEnd: span.charEnd } : {}),
-      verifiedAtWrite: span.quoteVerified ?? false,
-      verifiedNow: m.status === 'verified',
-      documentId: doc.id,
-      ...(doc.pageCount != null ? { pageCount: doc.pageCount } : {}),
-      // Neo chỉ dùng nếu tài liệu KHÔNG đổi kể từ lúc tính (contentHash khớp) — không thì rects cũ có thể lệch.
-      ...(span.anchorLocator && span.anchorContentHash === doc.contentHash
-        ? { locator: span.anchorLocator as unknown as SourceLocator }
-        : {}),
+  // Nạp MỘT lần cho cả lô: tài liệu nguồn và ảnh chụp đồ thị.
+  const docIds = [...new Set(picked.map((p) => p.row.sourceDocumentId).filter((x): x is string => !!x))]
+  const docs = docIds.length ? await db.sourceDocument.findMany({ where: { id: { in: docIds } } }) : []
+  const docById = new Map(docs.map((d) => [d.id, d]))
+  const live = await loadLiveGraph(
+    picked.flatMap((p) => [p.row.subjectSlug, p.row.objectSlug].filter((x): x is string => !!x)),
+  )
+
+  return picked.map(({ row: rec, supersededCount }) => {
+    const doc = rec.sourceDocumentId ? docById.get(rec.sourceDocumentId) : undefined
+
+    // Làn NGUỒN — kiểm lại byte-for-byte vào chính đoạn đã lưu, không tin cờ đã lưu.
+    const span = rec.evidence.find((e) => e.kind === 'SOURCE_SPAN')
+    let source: TraceSourceLane | null = null
+    if (span?.quote !== undefined && span.quote !== null && doc) {
+      const m = verifyQuote(span.quote, doc.excerptText)
+      source = {
+        quote: span.quote,
+        ...(span.chunkId ? { chunkId: span.chunkId } : {}),
+        excerpt: doc.excerptText,
+        ...(span.charStart != null ? { charStart: span.charStart } : {}),
+        ...(span.charEnd != null ? { charEnd: span.charEnd } : {}),
+        verifiedAtWrite: span.quoteVerified ?? false,
+        verifiedNow: m.status === 'verified',
+        documentId: doc.id,
+        ...(doc.pageCount != null ? { pageCount: doc.pageCount } : {}),
+        // Neo chỉ dùng khi tài liệu KHÔNG đổi kể từ lúc tính — không thì vệt tô cũ có thể lệch dòng.
+        ...(span.anchorLocator && span.anchorContentHash === doc.contentHash
+          ? { locator: span.anchorLocator as unknown as SourceLocator }
+          : {}),
+      }
     }
-  }
 
-  // Làn CẤU TRÚC — tính lại I5 sống, đối chiếu bản đóng băng.
-  const liveCovered = await objectiveCoveredNow(slug)
-  const structural: TraceStructuralLane[] = rec.evidence
-    .filter((e) => e.kind === 'STRUCTURAL_CHECK')
-    .map((e) => ({
-      checkCode: e.checkCode ?? '',
-      passedAtWrite: e.passed ?? false,
-      passedNow: e.checkCode === 'coverage:nonempty' ? liveCovered : (e.passed ?? false),
-      ...(e.detail != null ? { detail: e.detail } : {}),
-    }))
+    const structural: TraceStructuralLane[] = rec.evidence
+      .filter((e) => e.kind === 'STRUCTURAL_CHECK')
+      .map((e) => {
+        const code = e.checkCode ?? ''
+        const now = recheck(code, rec, live)
+        return {
+          checkCode: code,
+          passedAtWrite: e.passed ?? false,
+          passedNow: now ?? e.passed ?? false,
+          liveChecked: now !== undefined,
+          ...(e.detail != null ? { detail: e.detail } : {}),
+        }
+      })
 
-  const drift =
-    (source !== null && source.verifiedNow !== source.verifiedAtWrite) ||
-    structural.some((s) => s.passedNow !== s.passedAtWrite)
+    // Lệch chỉ tính trên thứ HÔM NAY kiểm lại được. Làn không kiểm được thì không có gì để so.
+    const drift =
+      (source !== null && source.verifiedNow !== source.verifiedAtWrite) ||
+      structural.some((s) => s.liveChecked && s.passedNow !== s.passedAtWrite)
 
-  return {
-    slug,
-    claim: rec.claim,
-    basis: rec.basis as EvidenceBasis,
-    verdict: rec.verdict,
-    overridden: rec.overridden,
-    decidedAt: rec.decidedAt ? rec.decidedAt.toISOString() : null,
-    source,
-    structural,
-    drift,
-  }
+    return {
+      id: rec.id,
+      artifact: rec.artifact as TraceArtifact,
+      subjectSlug: rec.subjectSlug,
+      objectSlug: rec.objectSlug,
+      relType: rec.relType,
+      claim: rec.claim,
+      reason: rec.reason ?? null,
+      method: rec.method,
+      basis: rec.basis as EvidenceBasis,
+      verdict: rec.verdict,
+      overridden: rec.overridden,
+      decidedAt: rec.decidedAt ? rec.decidedAt.toISOString() : null,
+      createdAt: rec.createdAt.toISOString(),
+      supersededCount,
+      source,
+      structural,
+      drift,
+    }
+  })
+}
+
+/** Đường cũ, giữ nguyên chữ ký cho chỗ đang gọi. */
+export async function getObjectiveTrace(slug: string): Promise<ObjectiveTraceView | null> {
+  const [first] = await getDecisionTraces({ artifact: 'OBJECTIVE_EXISTS', subjectSlug: slug })
+  return first ?? null
 }
