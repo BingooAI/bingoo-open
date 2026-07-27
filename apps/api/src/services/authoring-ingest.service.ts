@@ -20,6 +20,7 @@ import { buildAuthoringPorts } from './authoring-adapters'
 import {
   describeCollisions,
   describeCycles,
+  verifiedSlugs,
   type CollisionView,
   type CycleView,
 } from './authoring-framework.service'
@@ -87,7 +88,7 @@ export async function ingestSource(
       slugs: [...v.slugs],
     })),
     collisions: describeCollisions(compiled.graph, violations),
-    cycles: describeCycles(compiled.graph, violations),
+    cycles: describeCycles(compiled.graph, violations, verifiedSlugs(compiled.concepts)),
     blocking: hasBlockingIssue(issues) || hasBlockingViolation(violations),
   }
 }

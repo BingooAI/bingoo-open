@@ -84,6 +84,10 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
             issues: r.issues,
             violations: r.violations,
             collisions: r.collisions,
+            // Cả VÒNG cũng phải thay. Bỏ sót thì người duyệt gỡ xong một mắt mà danh sách vòng vẫn
+            // đứng nguyên như cũ — họ không có cách nào biết mình vừa gỡ đúng hay chưa, và cái nút
+            // "Gỡ mắt này" bên dưới trỏ vào những cạnh không còn tồn tại.
+            cycles: r.cycles,
             blocking: r.blocking,
           }
         : prev,

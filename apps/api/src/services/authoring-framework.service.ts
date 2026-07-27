@@ -20,6 +20,7 @@ import {
   verifyEvidence,
   type ClaimExplanation,
   type CollisionDecision,
+  type CompiledConcept,
   type CompiledObjective,
   type ConceptDraft,
   type EdgeDraft,
@@ -168,7 +169,7 @@ export async function frameworkFromPrompt(
       slugs: [...v.slugs],
     })),
     collisions: describeCollisions(compiled.graph, violations),
-    cycles: describeCycles(compiled.graph, violations),
+    cycles: describeCycles(compiled.graph, violations, verifiedSlugs(compiled.concepts)),
     blocking: hasBlockingIssue(issues) || hasBlockingViolation(violations),
   }
 }
@@ -312,7 +313,7 @@ async function frameworkFromSource(
       slugs: [...v.slugs],
     })),
     collisions: describeCollisions(compiled.graph, violations),
-    cycles: describeCycles(compiled.graph, violations),
+    cycles: describeCycles(compiled.graph, violations, verifiedSlugs(compiled.concepts)),
     blocking: hasBlockingIssue(issues) || hasBlockingViolation(violations),
   }
 }
@@ -414,6 +415,16 @@ const facetsOf = (n: SkillNode | undefined): Record<string, unknown> =>
   (n?.facets ?? {}) as Record<string, unknown>
 
 /**
+ * Kiến thức nào có câu trích ĐÃ ĐỐI CHIẾU được vào tài liệu.
+ *
+ * Đây là thứ tách "máy tự chứng được" khỏi "máy suy ra từ dữ liệu AI đoán". Một suy luận đúng trên
+ * facet bịa vẫn là một kết luận bịa, nên bậc `proven` chỉ được gọi là chắc khi hai đầu của nó neo
+ * vào chữ có thật trong tài liệu người dùng đưa lên.
+ */
+export const verifiedSlugs = (concepts: readonly CompiledConcept[]): Set<string> =>
+  new Set(concepts.filter((c) => c.evidence.some((e) => e.verified)).map((c) => c.slug as string))
+
+/**
  * Dịch vi phạm I1 thành thứ hiện được cho người duyệt.
  *
  * Vi phạm chỉ mang hai slug; câu chữ của nó dành cho log. Chỗ này tra lại node để lấy nhan đề và
@@ -474,6 +485,7 @@ export interface CycleView {
 export function describeCycles(
   graph: GraphData,
   violations: readonly { code: string; slugs: readonly string[] }[],
+  verified: ReadonlySet<string> = new Set(),
 ): CycleView[] {
   const bySlug = new Map(graph.nodes.map((n) => [n.slug as string, n]))
   const out: CycleView[] = []
@@ -498,6 +510,10 @@ export function describeCycles(
           relType: edge?.relType ?? 'PREREQUISITE',
           fromFacets: facetsOf(nf),
           toFacets: facetsOf(nt),
+          // Cấu trúc tự chứng được thứ tự thì mới là "chắc" — NHƯNG chỉ khi hai đầu của nó có câu
+          // trích đã đối chiếu vào tài liệu. Bước suy luận đúng không cứu nổi đầu vào do AI đoán,
+          // nên thiếu chỗ này là mọi mắt đều bị tô như phán đoán, kể cả mắt chứng minh được.
+          inputsVerified: verified.has(from) && verified.has(to),
         }),
       })
     }
