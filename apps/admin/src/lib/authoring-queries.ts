@@ -59,6 +59,15 @@ export interface IngestResultDto {
     graph: { nodes: GraphNodeDto[]; edges: GraphEdgeDto[] }
     objectives: ObjectiveDto[]
     framework?: FrameworkMetaDto
+    /** Bằng chứng nguồn của từng KIẾN THỨC — hợp đồng đồ thị không chở được nên nó đi danh sách riêng. */
+    concepts?: {
+      slug: string
+      title: Record<string, string>
+      kind: string
+      facets?: Record<string, unknown>
+      evidence: { chunkId: string; quote: string; verified?: boolean; charStart?: number; charEnd?: number }[]
+      confidence?: number
+    }[]
   }
   issues: DraftIssueDto[]
   /** Cảnh báo pipeline (vd cạnh bị bỏ) — nuốt cảnh báo = mù. */
@@ -183,7 +192,7 @@ export interface ApplyResultDto {
 }
 
 // ── Upload: PDF → media (presigned 3 bước) → URL đã ký để đưa cho AI ─────────
-export async function uploadPdfAndGetUrl(file: File): Promise<string> {
+export async function uploadPdfAndGetUrl(file: File): Promise<{ url: string; storageKey: string }> {
   const mimeType = file.type || 'application/pdf'
   const { asset, upload } = await api.post<CreateAssetResult>('/media/assets', {
     kind: 'DOCUMENT',
@@ -196,7 +205,9 @@ export async function uploadPdfAndGetUrl(file: File): Promise<string> {
   })
   const url = done.renditions?.find((r) => r.kind === 'ORIGINAL')?.url ?? done.renditions?.[0]?.url ?? null
   if (!url) throw new Error('Không lấy được URL của file đã tải lên.')
-  return url
+  // KHOÁ KHO đi kèm: chỉ có nó thì lúc duyệt máy chủ mới lấy lại được bytes để định vị từng câu
+  // trong PDF. Thiếu, thì thẻ căn cứ vẫn có câu trích nhưng không bao giờ mở được đúng trang.
+  return { url, storageKey: upload.key }
 }
 
 // ── Framework ────────────────────────────────────────────────────────────────
@@ -210,9 +221,9 @@ export function useFrameworkFromPrompt() {
 export function useFrameworkFromPdf() {
   return useMutation({
     mutationFn: async (input: { file: File; locale?: string }) => {
-      const pdf = await uploadPdfAndGetUrl(input.file)
+      const { url } = await uploadPdfAndGetUrl(input.file)
       return api.post<IngestResultDto>('/authoring/framework/from-pdf', {
-        pdf,
+        pdf: url,
         locale: input.locale ?? 'vi',
       })
     },
@@ -220,14 +231,28 @@ export function useFrameworkFromPdf() {
 }
 
 /** Duyệt: ghi đồ thị + framework + objectives + MAPS_TO. */
+/**
+ * Duyệt: ghi đồ thị + khung + mục tiêu + ánh xạ, VÀ tài liệu nguồn.
+ *
+ * `source` từng bị bỏ ra khỏi thân yêu cầu, nên máy chủ không có gì để đối chiếu và không ghi một
+ * thẻ căn cứ nào. Hậu quả đọc lên rất khó lần: mọi khung nhập qua trình duyệt ra một đồ thị đầy đủ
+ * mà nút "xem căn cứ" mở ra trống, trong khi đúng đường đó chạy từ dòng lệnh thì có đủ.
+ *
+ * `concepts` cũng vậy — bằng chứng của từng kiến thức đi đường riêng chứ đồ thị không chở được.
+ */
 export function useApplyFramework() {
   return useMutation({
-    mutationFn: (compiled: IngestResultDto['compiled']) =>
+    mutationFn: (input: {
+      compiled: IngestResultDto['compiled']
+      source?: { text: string; storageKey?: string }
+    }) =>
       api.post<ApplyResultDto>('/authoring/apply', {
-        nodes: compiled.graph.nodes,
-        edges: compiled.graph.edges,
-        ...(compiled.framework ? { framework: compiled.framework } : {}),
-        ...(compiled.objectives.length ? { objectives: compiled.objectives } : {}),
+        nodes: input.compiled.graph.nodes,
+        edges: input.compiled.graph.edges,
+        ...(input.compiled.framework ? { framework: input.compiled.framework } : {}),
+        ...(input.compiled.objectives.length ? { objectives: input.compiled.objectives } : {}),
+        ...(input.compiled.concepts?.length ? { concepts: input.compiled.concepts } : {}),
+        ...(input.source?.text ? { source: input.source } : {}),
       }),
   })
 }
@@ -282,8 +307,8 @@ export function useCourseFromPrompt() {
 export function useCourseFromBook() {
   return useMutation({
     mutationFn: async (input: CourseScopeInput & { file: File }) => {
-      const pdf = await uploadPdfAndGetUrl(input.file)
-      return api.post<SavedCourseDto>('/authoring/course/from-book', { pdf, ...scopeBody(input) })
+      const { url } = await uploadPdfAndGetUrl(input.file)
+      return api.post<SavedCourseDto>('/authoring/course/from-book', { pdf: url, ...scopeBody(input) })
     },
   })
 }
@@ -658,8 +683,11 @@ export function useMediaSearch(text: string, kind: 'image' | 'audio', enabled: b
 export function useExtractText() {
   return useMutation({
     mutationFn: async (file: File) => {
-      const pdf = await uploadPdfAndGetUrl(file)
-      return api.post<{ text: string; chars: number }>('/authoring/source/extract-text', { pdf })
+      const { url, storageKey } = await uploadPdfAndGetUrl(file)
+      const r = await api.post<{ text: string; chars: number }>('/authoring/source/extract-text', {
+        pdf: url,
+      })
+      return { ...r, storageKey }
     },
   })
 }

@@ -32,6 +32,8 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
   const [file, setFile] = useState<File | null>(null)
   const [topic, setTopic] = useState('')
   const [text, setText] = useState('')
+  // Khoá kho của PDF vừa tải lên — máy chủ cần nó để định vị từng câu và mở đúng trang.
+  const [storageKey, setStorageKey] = useState<string | null>(null)
   const [draft, setDraft] = useState<IngestResultDto | null>(null)
   const [appliedMsg, setAppliedMsg] = useState<string | null>(null)
 
@@ -51,6 +53,7 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
     setFile(null)
     setTopic('')
     setText('')
+    setStorageKey(null)
     setDraft(null)
     setAppliedMsg(null)
   }
@@ -58,7 +61,10 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
   const runExtract = () => {
     if (!file) return
     extract.mutate(file, {
-      onSuccess: (r) => setText(r.text),
+      onSuccess: (r) => {
+        setText(r.text)
+        setStorageKey(r.storageKey)
+      },
       onError: onErr,
     })
   }
@@ -96,14 +102,22 @@ export function FrameworkWizard({ onApplied }: { onApplied?: () => void }) {
 
   const runApply = () => {
     if (!draft) return
-    apply.mutate(draft.compiled, {
-      onSuccess: (r) => {
-        setAppliedMsg(`${r.nodes} ${t('concepts')} · ${r.edges} ${t('edges')}`)
-        toast({ variant: 'success', title: t('fwApplied') })
-        onApplied?.()
+    apply.mutate(
+      {
+        compiled: draft.compiled,
+        // Gửi kèm tài liệu nguồn: thiếu nó thì máy chủ không có gì để đối chiếu và khung được ghi
+        // ra mà không một mục nào trả lời được "vì sao có nó".
+        ...(text ? { source: { text, ...(storageKey ? { storageKey } : {}) } } : {}),
       },
-      onError: onErr,
-    })
+      {
+        onSuccess: (r) => {
+          setAppliedMsg(`${r.nodes} ${t('concepts')} · ${r.edges} ${t('edges')}`)
+          toast({ variant: 'success', title: t('fwApplied') })
+          onApplied?.()
+        },
+        onError: onErr,
+      },
+    )
   }
 
   // ── trạng thái từng bước ───────────────────────────────────────────────────

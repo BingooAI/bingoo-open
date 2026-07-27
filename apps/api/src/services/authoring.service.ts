@@ -24,7 +24,27 @@ import {
 import { indexKcEmbeddings } from '../repos/competency-embedding.repo'
 import { invalidateGraphCache } from './knowledge.service'
 import { AppError } from '../lib/errors'
-import { writeClaimTraces, type WriteTraceResult } from './decision-trace.service'
+import {
+  fetchStoredBytes,
+  writeClaimTraces,
+  type AnchorContext,
+  type WriteTraceResult,
+} from './decision-trace.service'
+import { contentHashOf, pdfPositionedUnits } from './pdf-anchor.service'
+
+/** Định vị từng câu trong PDF để thẻ mở được đúng trang. `undefined` khi không làm được — và đó là
+ *  câu trả lời thật, không phải một lỗi cần che. */
+async function buildAnchorContext(storageKey: string | undefined): Promise<AnchorContext | undefined> {
+  if (storageKey === undefined) return undefined
+  try {
+    const bytes = await fetchStoredBytes(storageKey)
+    if (bytes === null) return undefined
+    const { units, pageCount } = await pdfPositionedUnits(bytes)
+    return { units, contentHash: contentHashOf(bytes), pageCount, storageKey }
+  } catch {
+    return undefined
+  }
+}
 
 /**
  * CỔNG BẤT BIẾN — chạy TOÀN BỘ bất biến (I1–I8) trước khi ghi, không chỉ kiểm chu trình.
@@ -116,8 +136,17 @@ export async function applyAuthoredFramework(input: {
           })),
       },
       input.source.text,
-      // Neo toạ độ cần file gốc; đường /apply chưa có bytes nên chỉ đối chiếu văn bản. Câu trích vẫn
-      // được kiểm và vẫn tô "từ tài liệu" — chỉ chưa mở được đúng trang.
+      /**
+       * NEO TOẠ ĐỘ nếu tài liệu còn trong kho.
+       *
+       * Không có nhánh này thì mọi thẻ sinh qua giao diện đều `anchored=0`: câu trích vẫn được kiểm
+       * và vẫn tô "lấy từ tài liệu", nhưng nút mở đúng trang không bao giờ hiện — với đúng những
+       * tài liệu người dùng tự tải lên, tức là gần như tất cả.
+       *
+       * Neo hỏng KHÔNG chặn ghi: nó là tiện ích soi lại, không phải bất biến. Tài liệu không phải
+       * PDF, hoặc kho không với tới được, thì thẻ vẫn còn nguyên giá trị.
+       */
+      await buildAnchorContext(input.source.storageKey),
     )
   }
 

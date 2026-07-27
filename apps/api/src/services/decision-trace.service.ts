@@ -31,6 +31,7 @@ import type { Facets } from '@bingoo.ai/facets'
 import { readFile } from 'node:fs/promises'
 import { resolve, sep } from 'node:path'
 import { db, type Prisma } from '@bingoo.ai/db'
+import { getStorage } from '../providers'
 
 export type EvidenceBasis = 'FROM_SOURCE' | 'STRUCTURAL' | 'AI_INFERRED'
 
@@ -348,17 +349,44 @@ export function resolveSourcePath(storageKey: string): string {
   return resolve(sourceDocRoot(), storageKey)
 }
 
+/**
+ * Lấy bytes của một tài liệu trong KHO.
+ *
+ * Cổng lưu trữ không có hàm đọc thẳng — nó ký URL rồi ai cần thì tự tải. Đúng cho luồng bình
+ * thường (hàng trăm MB không nên chạy vòng qua máy chủ), nên chỗ này đi đúng đường đó: ký một URL
+ * sống rất ngắn rồi tự tải về.
+ */
+export async function fetchStoredBytes(storageKey: string): Promise<Uint8Array | null> {
+  try {
+    const { url } = await getStorage().createSignedDownloadUrl({ key: storageKey, expiresInSeconds: 120 })
+    const res = await fetch(url)
+    if (!res.ok) return null
+    return new Uint8Array(await res.arrayBuffer())
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Bytes tài liệu nguồn: thử THƯ MỤC TRÊN MÁY trước, rồi tới KHO.
+ *
+ * Chỉ có nhánh đầu thì trình xem PDF chỉ mở được tài liệu nằm sẵn trên đĩa máy phát triển. Mọi tài
+ * liệu người dùng tải lên đều nằm trong kho, nên nút "mở đúng trang" tắt ngóm với đúng những tài
+ * liệu mà tính năng này được dựng ra để phục vụ.
+ */
 export async function getSourceDocumentBytes(id: string): Promise<Uint8Array | null> {
   const doc = await db.sourceDocument.findUnique({ where: { id }, select: { storageKey: true } })
   if (!doc?.storageKey) return null
   const root = sourceDocRoot()
   const abs = resolve(root, doc.storageKey)
-  if (abs !== root && !abs.startsWith(root + sep)) return null // chặn ../../ ra ngoài gốc
-  try {
-    return new Uint8Array(await readFile(abs))
-  } catch {
-    return null
+  if (abs === root || abs.startsWith(root + sep)) {
+    try {
+      return new Uint8Array(await readFile(abs))
+    } catch {
+      // Không có trên đĩa — bình thường với tài liệu tải lên. Rơi xuống kho.
+    }
   }
+  return fetchStoredBytes(doc.storageKey)
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
