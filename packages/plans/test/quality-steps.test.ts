@@ -174,3 +174,63 @@ describe('GATE — plan kcArcs đầy đủ phải DUYỆT được (không lỗ
     expect(q.approvable).toBe(true)
   })
 })
+
+/**
+ * MỨC NGHIÊM TRỌNG phải khớp với điều prompt tự khai.
+ *
+ * Prompt sinh kế hoạch nói thẳng "BA YÊU CẦU CỨNG (không được vi phạm)" và gọi một kiến thức chỉ
+ * luyện mà không dạy hoặc không đo là "một thất bại". Chỗ chấm từng hạ cả ba xuống cảnh báo, nên một
+ * kế hoạch vi phạm cả ba ra KHÔNG LỖI NÀO và đọc lên như chỉ hơi sơ sài.
+ *
+ * Chấm KHÔNG chặn duyệt — người mới là cổng. Chính vì con người quyết nên nhãn phải nói thật.
+ */
+describe('dạy và đo là điều kiện cứng, và nhãn phải nói đúng như vậy', () => {
+  const sev = (l: LessonInstructionPlan, code: string): string | undefined =>
+    planQuality(courseOf(l), mkGraph()).issues.find((i) => i.code === code)?.severity
+
+  /** Một arc chỉ có bước LUYỆN: không dạy, không đo — đúng ca prompt gọi là thất bại. */
+  const practiceOnly: LessonInstructionPlan = {
+    ...base,
+    kcArcs: [
+      {
+        kc: 'count-to-10',
+        steps: [
+          {
+            slug: 's1',
+            role: 'luyện tập',
+            title: { vi: 'Luyện' },
+            durationMin: 10,
+            deliveryKind: 'practice',
+            brief: { vi: 'x' },
+          } as LessonStep,
+        ],
+      } as KcArc,
+      {
+        kc: 'add-within-20',
+        steps: [
+          {
+            slug: 's2',
+            role: 'luyện tập',
+            title: { vi: 'Luyện' },
+            durationMin: 10,
+            deliveryKind: 'practice',
+            brief: { vi: 'x' },
+          } as LessonStep,
+        ],
+      } as KcArc,
+    ],
+  }
+
+  it('kiến thức không được DẠY → lỗi, không phải cảnh báo', () => {
+    expect(sev(practiceOnly, 'KC_NOT_TAUGHT')).toBe('error')
+  })
+
+  it('kiến thức không được ĐO → lỗi, không phải cảnh báo', () => {
+    expect(sev(practiceOnly, 'KC_NOT_ASSESSED')).toBe('error')
+  })
+
+  it('vi phạm cả hai thì kế hoạch KHÔNG được ra "không lỗi nào"', () => {
+    const q = planQuality(courseOf(practiceOnly), mkGraph())
+    expect(q.issues.some((i) => i.severity === 'error')).toBe(true)
+  })
+})

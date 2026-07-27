@@ -187,13 +187,23 @@ export function planQuality(course: CoursePlan, graph: SkillGraph): PlanQuality 
         continue
       }
       const kinds = new Set(arc.steps.map((s) => s.deliveryKind))
+      /**
+       * DẠY và ĐO là hai điều kiện CỨNG, và chỗ này phải nói đúng như vậy.
+       *
+       * Prompt sinh kế hoạch khai thẳng "BA YÊU CẦU CỨNG (không được vi phạm)" và gọi một kiến thức
+       * chỉ luyện mà không dạy hoặc không đo là "một thất bại". Chỗ chấm lại hạ cả ba xuống mức cảnh
+       * báo, nên một kế hoạch vi phạm cả ba vẫn ra KHÔNG LỖI NÀO và đọc lên như chỉ hơi sơ sài.
+       *
+       * Chấm KHÔNG chặn duyệt — người mới là cổng, và đó là đúng (R5). Nhưng chính vì con người
+       * quyết, nhãn phải nói thật: đây là hỏng, không phải chưa trau chuốt.
+       */
       if (!kinds.has('explainer') && !kinds.has('content'))
-        warn('KC_NOT_TAUGHT', `KC "${kc}" (bài "${l.slug}") không có bước DẠY (explainer/content).`, [
+        err('KC_NOT_TAUGHT', `KC "${kc}" (bài "${l.slug}") không có bước DẠY (explainer/content).`, [
           l.slug,
           kc,
         ])
       if (!kinds.has('assessment'))
-        warn('KC_NOT_ASSESSED', `KC "${kc}" (bài "${l.slug}") không có bước ĐÁNH GIÁ.`, [l.slug, kc])
+        err('KC_NOT_ASSESSED', `KC "${kc}" (bài "${l.slug}") không có bước ĐÁNH GIÁ.`, [l.slug, kc])
       // Nội dung mỗi bước phải có brief CỤ THỂ — bước không brief thì generator sinh chung chung.
       for (const s of arc.steps)
         if (!s.brief || !Object.values(s.brief).some((v) => v.trim()))

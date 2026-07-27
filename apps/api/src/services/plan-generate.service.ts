@@ -79,11 +79,30 @@ export async function generateLessonPlanInCourse(input: {
     getPlan(input.courseSlug, 'unit', unit.slug),
   ])
 
+  /**
+   * Thiếu ngữ cảnh cha thì DỪNG, không thay bằng một vật rỗng.
+   *
+   * Trước đây thiếu kế hoạch khoá là `?? {}` — model nhận một đối tượng rỗng làm ngữ cảnh và vẫn
+   * soạn ra một kế hoạch trông y hệt kế hoạch có ngữ cảnh đầy đủ. Không gì trong bản lưu phân biệt
+   * được hai thứ đó, nên "bám vào khung và khoá học" thành một lời khai không kiểm được.
+   *
+   * Cổng cho UNIT đã có sẵn ngay phía trên; khoá thì không, dù chính chú thích đầu file nói kế hoạch
+   * bài được neo bằng "context KHOÁ+UNIT đã duyệt".
+   */
+  if (!coursePlan)
+    throw AppError.validation([
+      {
+        path: 'course',
+        message: `Chưa có kế hoạch KHOÁ cho "${input.courseSlug}" — sinh và duyệt nó trước, vì kế hoạch bài neo vào nó.`,
+        code: 'parent_missing',
+      },
+    ])
+
   const plan = await generateLessonPlan({
     kcs: lesson.teaches,
     language: input.language,
     ...(input.level ? { level: input.level } : {}),
-    courseContext: JSON.stringify(coursePlan?.doc ?? {}),
+    courseContext: JSON.stringify(coursePlan.doc),
     unitContext: JSON.stringify(unitPlan?.doc ?? {}),
     ...(input.aiKey ? { aiKey: input.aiKey } : {}),
     ...(input.signal ? { signal: input.signal } : {}),
