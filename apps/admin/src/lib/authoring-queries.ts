@@ -113,7 +113,12 @@ export interface CycleLinkDto {
   to: string
   relType: string
   titles: [Record<string, string>, Record<string, string>]
-  explanation: { tier: string; basis: string; machineProven?: boolean }
+  /**
+   * `provenanceCaveat` = cấu trúc CHỨNG ĐƯỢC thứ tự, nhưng dấu hiệu nuôi nó chưa ai đối chiếu vào
+   * tài liệu. Gộp nó vào "phán đoán" là mất một mức: một bước suy luận đúng trên dữ liệu chưa kiểm
+   * khác hẳn một phán đoán sư phạm thuần tuý, và người duyệt xử hai thứ đó theo hai cách khác nhau.
+   */
+  explanation: { tier: string; basis: string; machineProven?: boolean; provenanceCaveat?: boolean }
 }
 
 export interface CycleDto {

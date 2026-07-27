@@ -1133,6 +1133,7 @@
       "cycPath": "The loop",
       "cycProven": "the machine can prove this order",
       "cycJudged": "a judgement, with nothing backing it yet",
+      "cycCaveat": "the reasoning holds, but nothing behind it was checked against the document",
       "cycDrop": "Break this link",
       "cycBefore": "comes before",
       "xwWhyTitle": "Why they differ — {n} pieces of knowledge on one side only",

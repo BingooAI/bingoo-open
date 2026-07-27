@@ -310,6 +310,8 @@ export function CollisionGate({
           <ul className="space-y-1.5">
             {cy.links.map((l) => {
               const proven = l.explanation.machineProven === true
+              // Ba mức, không phải hai: chứng được · chứng được nhưng dấu hiệu chưa kiểm · phán đoán.
+              const caveat = !proven && l.explanation.provenanceCaveat === true
               const picked = decisions.some(
                 (d) => d.kind === 'drop-edge' && d.from === l.from && d.to === l.to,
               )
@@ -331,10 +333,12 @@ export function CollisionGate({
                       'rounded border px-1.5 py-0.5 text-[11px]',
                       proven
                         ? 'border-success/50 bg-success-soft text-success'
-                        : 'border-warning/50 bg-warning-soft text-warning',
+                        : caveat
+                          ? 'border-info/50 bg-info-soft text-info'
+                          : 'border-warning/50 bg-warning-soft text-warning',
                     )}
                   >
-                    {proven ? t('cycProven') : t('cycJudged')}
+                    {proven ? t('cycProven') : caveat ? t('cycCaveat') : t('cycJudged')}
                   </span>
                   <Button
                     size="sm"

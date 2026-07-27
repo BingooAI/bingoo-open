@@ -1133,6 +1133,7 @@
       "cycPath": "Đường vòng",
       "cycProven": "máy tự chứng được thứ tự này",
       "cycJudged": "chỉ là phán đoán, chưa có căn cứ",
+      "cycCaveat": "bước suy ra đúng, nhưng dấu hiệu chưa ai đối chiếu vào tài liệu",
       "cycDrop": "Gỡ mắt này",
       "cycBefore": "học trước",
       "xwWhyTitle": "Vì sao khác — {n} kiến thức chỉ có ở một bên",
