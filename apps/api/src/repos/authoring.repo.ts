@@ -35,6 +35,17 @@ export interface FrameworkPersistResult {
   readonly frameworkVersionId: string
   readonly objectives: number
   readonly mapsTo: number
+  /**
+   * Mục tiêu của bản TRƯỚC mà lô này không còn khai.
+   *
+   * Chỗ ghi chỉ upsert theo slug và KHÔNG dọn cái bị bỏ ra khỏi lô — ngữ nghĩa phiên bản của đường
+   * duyệt là một quyết định còn treo (xem chú thích bên dưới), nên chỗ này KHÔNG tự xoá.
+   *
+   * Nhưng nó phải NÓI RA. Im lặng thì một lần đổi slug để lại những mục tiêu vẫn gắn vào khung, vẫn
+   * đếm vào tổng số, mà bản phát hành mới nhất không hề nhắc tới — và không nhìn từ mã nguồn mà thấy
+   * được, vì mã nguồn đọc lên hoàn toàn bình thường. Đúng chuyện vừa xảy ra khi đổi tên khung mẫu.
+   */
+  readonly orphanedFromPrevious: readonly string[]
 }
 
 /**
@@ -114,7 +125,25 @@ export async function persistFramework(
     }
   }
 
-  return { frameworkVersionId: version.id, objectives: objectives.length, mapsTo }
+  // Mục tiêu còn gắn vào khung nhưng KHÔNG thuộc bản vừa ghi — báo ra, không xoá.
+  const orphans = await db.competency.findMany({
+    where: { frameworkId: framework.id, kind: 'OBJECTIVE', NOT: { frameworkVersionId: version.id } },
+    select: { slug: true },
+  })
+  if (orphans.length > 0) {
+    console.warn(
+      `[framework:${fw.slug}] ${orphans.length} mục tiêu của bản trước không còn trong lô này và VẪN nằm trong kho: ${orphans
+        .map((o) => o.slug)
+        .join(', ')}`,
+    )
+  }
+
+  return {
+    frameworkVersionId: version.id,
+    objectives: objectives.length,
+    mapsTo,
+    orphanedFromPrevious: orphans.map((o) => o.slug),
+  }
 }
 
 // ── Quản lý Framework (list / detail / graph / version) ──────────────────────
