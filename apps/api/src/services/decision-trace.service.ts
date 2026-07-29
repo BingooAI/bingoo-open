@@ -855,6 +855,43 @@ export async function writeConceptIdentityTraces(
   return merges.length
 }
 
+/**
+ * NGƯỜI DUYỆT CHỐT một tấm thẻ — và đây là lần đầu tiên trong hệ có ai ghi được phán quyết.
+ *
+ * Cột `verdict` có từ đầu, mặc định PENDING, và không một đường nào từng ghi vào nó. Nghĩa là mọi
+ * tấm thẻ mãi mãi hiện "chờ duyệt", và lời hứa R5 — người duyệt mới là thứ thi hành — không thực
+ * hiện được ở chỗ nó quan trọng nhất: chính nơi máy nói ra kết luận của nó.
+ *
+ * `overridden` = người KHÔNG đồng ý với máy. Đó là con số đáng theo dõi nhất trong cả hệ: nó đo máy
+ * sai bao nhiêu, và nếu không tách khỏi "đã xem" thì không ai biết chất lượng đang lên hay xuống.
+ *
+ * TỪ CHỐI và SỬA bắt buộc kèm lý do (cưỡng chế ở tầng route). Từ chối không nêu lý do để lại một
+ * tấm thẻ trông y như chưa ai xem, và đó đúng là lỗi đã phải sửa ba lần ở những chỗ khác.
+ */
+export async function setTraceVerdict(input: {
+  readonly id: string
+  readonly verdict: 'CONFIRMED' | 'REJECTED' | 'EDITED'
+  readonly note?: string
+  readonly decidedById: string
+  readonly decidedAt: Date
+}): Promise<{ id: string; verdict: string; overridden: boolean } | null> {
+  const rec = await db.decisionRecord.findUnique({ where: { id: input.id }, select: { id: true } })
+  if (!rec) return null
+  const overridden = input.verdict !== 'CONFIRMED'
+  const updated = await db.decisionRecord.update({
+    where: { id: input.id },
+    data: {
+      verdict: input.verdict,
+      overridden,
+      decidedById: input.decidedById,
+      decidedAt: input.decidedAt,
+      ...(input.note !== undefined ? { decidedNote: input.note } : {}),
+    },
+    select: { id: true, verdict: true, overridden: true },
+  })
+  return updated
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ĐỌC — trả về cho panel truy ngược. KIỂM LẠI SỐNG rồi ĐỐI CHIẾU bản đóng băng:
 // nếu khác (đồ thị đã đổi sau lần duyệt) thì `drift=true` → UI hiện "cần duyệt lại"
@@ -921,6 +958,8 @@ export interface DecisionTraceView {
   readonly verdict: string
   readonly overridden: boolean
   readonly decidedAt: string | null
+  /** Lý do NGƯỜI nêu khi từ chối/sửa — khác hẳn `reason` (câu AI tự lý giải). */
+  readonly decidedNote: string | null
   readonly createdAt: string
   /**
    * Còn bao nhiêu bản CŨ cho cùng một chỗ.
@@ -1154,6 +1193,7 @@ export async function getDecisionTraces(q: {
       verdict: rec.verdict,
       overridden: rec.overridden,
       decidedAt: rec.decidedAt ? rec.decidedAt.toISOString() : null,
+      decidedNote: rec.decidedNote,
       createdAt: rec.createdAt.toISOString(),
       supersededCount,
       source,

@@ -58,6 +58,7 @@ import {
   getDecisionTraces,
   getObjectiveTrace,
   getSourceDocumentBytes,
+  setTraceVerdict,
 } from '../services/decision-trace.service'
 
 /**
@@ -760,6 +761,51 @@ export const authoring = new Hono<AppEnv>()
     if (!user) throw AppError.unauthorized()
     return ok(c, await getPlanGrounding(c.req.param('courseSlug'), c.req.param('lessonSlug')))
   })
+  /**
+   * NGƯỜI DUYỆT CHỐT một tấm thẻ. Lần đầu tiên trong hệ có đường ghi phán quyết.
+   *
+   * TỪ CHỐI và SỬA đòi lý do, và đòi ở đây chứ không nhắc nhở: một tấm thẻ bị từ chối mà không nêu
+   * lý do trông y hệt một tấm chưa ai xem, nên "vì sao điều này không được nhận" mất luôn câu trả
+   * lời — đúng cái lỗi đã phải sửa ba lần ở những chỗ khác trong hệ này.
+   */
+  .post(
+    '/trace/:id/verdict',
+    authorGuard,
+    validate(
+      'json',
+      z.object({
+        verdict: z.enum(['CONFIRMED', 'REJECTED', 'EDITED']),
+        note: z.string().trim().max(500).optional(),
+      }),
+    ),
+    async (c) => {
+      const user = c.get('user')
+      if (!user) throw AppError.unauthorized()
+      const b = c.req.valid('json')
+      if (b.verdict !== 'CONFIRMED' && (b.note === undefined || b.note.length === 0)) {
+        throw AppError.validation([
+          { path: 'note', message: 'Từ chối hoặc sửa thì phải nêu lý do.', code: 'note_required' },
+        ])
+      }
+      const r = await setTraceVerdict({
+        id: c.req.param('id'),
+        verdict: b.verdict,
+        ...(b.note !== undefined ? { note: b.note } : {}),
+        decidedById: user.id,
+        decidedAt: new Date(),
+      })
+      if (!r) throw AppError.notFound('Không có thẻ căn cứ này.')
+      // DẤU VẾT: ai chốt cái gì — phán quyết của người là thứ thi hành, nên phải ghi lại.
+      await writeAudit({
+        action: 'authoring.trace.verdict',
+        actorUserId: user.id,
+        targetType: 'decision_record',
+        targetId: r.id,
+        metadata: { verdict: r.verdict, overridden: r.overridden },
+      })
+      return ok(c, r)
+    },
+  )
   // BYTES tài liệu nguồn cho viewer (mở đúng trang, tô đúng dòng). Staff-gated.
   .get('/source/:id/file', authorGuard, async (c) => {
     const user = c.get('user')

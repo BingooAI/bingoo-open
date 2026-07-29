@@ -1438,6 +1438,12 @@ model DecisionRecord {
   /// Phán quyết của NGƯỜI (R5) — mới là thứ thi hành. `overridden` = người khác máy.
   verdict             DecisionVerdict    @default(PENDING)
   overridden          Boolean            @default(false)
+  /// LÝ DO người duyệt nêu khi TỪ CHỐI hoặc SỬA. Bắt buộc ở tầng route cho hai trường hợp đó.
+  ///
+  /// Không dùng chung cột `reason`: cột kia là câu AI TỰ lý giải, và trộn hai giọng vào một chỗ thì
+  /// về sau không ai tách được "máy nói" với "người nói". Từ chối mà không nêu lý do là đúng cái lỗi
+  /// đã phải sửa ba lần trong hệ này — một quyết định biến mất, để lại thứ trông y như chưa ai xem.
+  decidedNote         String?
   decidedById         String?
   decidedBy           User?              @relation(fields: [decidedById], references: [id], onDelete: SetNull)
   decidedAt           DateTime?

@@ -1171,7 +1171,11 @@
       "pgNoObjectives": "No objective in any framework asks for this knowledge. The lesson can still be taught, but it certifies nothing.",
       "pgFromBook": "Drawn from the book — {n} recorded",
       "pgContextOk": "The course and unit plans are approved, so this lesson was written from them.",
-      "pgContextMissing": "The course or unit plan is not approved — a lesson written now has nothing to anchor to."
+      "pgContextMissing": "The course or unit plan is not approved — a lesson written now has nothing to anchor to.",
+      "tbConfirm": "Yes, I confirm this",
+      "tbReject": "This is wrong",
+      "tbNotePh": "Say why (required if you disagree)",
+      "tbRejectNeedsNote": "To say it is wrong, give a reason."
     }
   },
   "learn": {

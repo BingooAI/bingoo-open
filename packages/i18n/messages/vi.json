@@ -1171,7 +1171,11 @@
       "pgNoObjectives": "Không mục tiêu nào của khung nào đòi những kiến thức này. Bài vẫn dạy được, nhưng nó không chứng nhận điều gì.",
       "pgFromBook": "Lấy từ sách — {n} chỗ có ghi căn cứ",
       "pgContextOk": "Kế hoạch khoá và chương đã duyệt, nên bài được soạn dựa trên chúng.",
-      "pgContextMissing": "Kế hoạch khoá hoặc chương chưa duyệt — bài soạn ra sẽ không có ngữ cảnh nào để bám."
+      "pgContextMissing": "Kế hoạch khoá hoặc chương chưa duyệt — bài soạn ra sẽ không có ngữ cảnh nào để bám.",
+      "tbConfirm": "Đúng, tôi xác nhận",
+      "tbReject": "Không đúng",
+      "tbNotePh": "Ghi lý do (bắt buộc khi không đồng ý)",
+      "tbRejectNeedsNote": "Muốn nói không đúng thì phải nêu lý do."
     }
   },
   "learn": {

@@ -839,6 +839,8 @@ export interface DecisionTraceDto {
   verdict: string
   overridden: boolean
   decidedAt: string | null
+  /** Lý do NGƯỜI nêu khi từ chối/sửa — khác `reason`, vốn là câu AI tự lý giải. */
+  decidedNote: string | null
   createdAt: string
   supersededCount: number
   source: TraceSourceLaneDto | null
@@ -1379,5 +1381,23 @@ export function usePlanGrounding(courseSlug: string, lessonSlug: string | null) 
         `/authoring/plan/${encodeURIComponent(courseSlug)}/${encodeURIComponent(lessonSlug ?? '')}/grounding`,
       ),
     enabled: lessonSlug !== null,
+  })
+}
+
+/**
+ * Người duyệt CHỐT một tấm thẻ.
+ *
+ * Từ chối/sửa phải kèm lý do — máy chủ cưỡng chế, và giao diện cũng không cho bấm khi trống, để
+ * người dùng biết trước chứ không bị chặn sau.
+ */
+export function useTraceVerdict() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (input: { id: string; verdict: 'CONFIRMED' | 'REJECTED' | 'EDITED'; note?: string }) =>
+      api.post<{ id: string; verdict: string; overridden: boolean }>(
+        `/authoring/trace/${encodeURIComponent(input.id)}/verdict`,
+        { verdict: input.verdict, ...(input.note ? { note: input.note } : {}) },
+      ),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['authoring', 'trace'] }),
   })
 }

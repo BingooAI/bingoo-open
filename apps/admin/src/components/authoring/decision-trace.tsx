@@ -21,6 +21,7 @@ import {
 import { Spinner } from '@bingoo.ai/ui-web'
 import {
   useDecisionTraces,
+  useTraceVerdict,
   type DecisionTraceDto,
   type RectDto,
   type TraceArtifactDto,
@@ -257,6 +258,8 @@ export function DecisionTraceCard({ trace, onClose }: { trace: DecisionTraceDto;
   const locale = useLocale()
   const format = useFormatter()
   const [viewer, setViewer] = useState<ViewerTarget | null>(null)
+  const [note, setNote] = useState('')
+  const verdict = useTraceVerdict()
 
   return (
     <div className="space-y-3 rounded-lg border border-border bg-surface p-4">
@@ -320,12 +323,53 @@ export function DecisionTraceCard({ trace, onClose }: { trace: DecisionTraceDto;
           </span>
         ) : null}
         {trace.overridden ? <span className="w-full text-foreground-subtle">{t('tbOverridden')}</span> : null}
+        {trace.decidedNote ? (
+          <span className="w-full text-foreground-muted">“{trace.decidedNote}”</span>
+        ) : null}
         {trace.supersededCount > 0 ? (
           <span className="w-full text-foreground-subtle">
             {t('tbNewerGeneration', { n: trace.supersededCount })}
           </span>
         ) : null}
       </div>
+
+      {/*
+        CHỖ NGƯỜI CHỐT — trước đây không tồn tại, nên mọi thẻ mãi mãi "chờ duyệt" và lời hứa
+        "người duyệt mới là thứ thi hành" không thực hiện được ở đúng chỗ máy nói ra kết luận.
+        Từ chối phải nêu lý do: một thẻ bị từ chối không kèm lý do trông y hệt thẻ chưa ai xem.
+      */}
+      {trace.verdict === 'PENDING' ? (
+        <div className="space-y-2 border-t border-border/60 pt-2">
+          <input
+            value={note}
+            placeholder={t('tbNotePh')}
+            aria-label={t('tbNotePh')}
+            onChange={(e) => setNote(e.target.value)}
+            className="focus-ring w-full rounded-md border border-border bg-surface px-2 py-1 text-[12px] text-foreground"
+          />
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              disabled={verdict.isPending}
+              onClick={() => verdict.mutate({ id: trace.id, verdict: 'CONFIRMED', note: note.trim() })}
+              className="focus-ring rounded-md bg-success-soft px-2.5 py-1 text-[12px] font-medium text-success hover:bg-success/20 disabled:opacity-50"
+            >
+              {t('tbConfirm')}
+            </button>
+            <button
+              type="button"
+              disabled={verdict.isPending || note.trim().length === 0}
+              onClick={() => verdict.mutate({ id: trace.id, verdict: 'REJECTED', note: note.trim() })}
+              className="focus-ring rounded-md bg-danger-soft px-2.5 py-1 text-[12px] font-medium text-danger hover:bg-danger/20 disabled:opacity-50"
+            >
+              {t('tbReject')}
+            </button>
+            {note.trim().length === 0 ? (
+              <span className="self-center text-[11px] text-foreground-subtle">{t('tbRejectNeedsNote')}</span>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
