@@ -396,15 +396,18 @@ export interface LessonContentDto {
   assessment: { items: ItemDto[]; issues: IssueDto[]; approvable: boolean }
 }
 
+/**
+ * Sinh nội dung cho một bài: nêu BÀI NÀO, máy chủ tự lấy giáo án ĐÃ DUYỆT.
+ *
+ * Trước đây giáo án được gửi lên từ trạng thái trình duyệt, nên máy chủ không biết đang sinh cho
+ * bài nào và không kiểm được nó đã duyệt chưa. Nút bấm có khoá, nhưng khoá ở nút bấm thì không phải khoá.
+ */
 export function useGenerateContent() {
   return useMutation({
-    mutationFn: (input: {
-      lesson: { teaches: string[]; knowledgePoints: { targets: string[] }[] }
-      level: string
-      language?: string
-    }) =>
+    mutationFn: (input: { courseSlug: string; lessonSlug: string; level: string; language?: string }) =>
       api.post<LessonContentDto>('/authoring/content/generate', {
-        lesson: input.lesson,
+        courseSlug: input.courseSlug,
+        lessonSlug: input.lessonSlug,
         learner: { level: input.level, language: input.language ?? 'vi' },
       }),
   })

@@ -160,13 +160,9 @@ export function CourseWorkbench({ slug }: { slug: string }) {
     )
 
   const doContent = (l: Lesson) => {
-    const plan = lessonPlans[l.slug]
-    if (!plan) return // nội dung phải bám giáo án (chặn ở nút)
+    // Chỉ nêu BÀI NÀO. Máy chủ tự lấy giáo án đã duyệt từ kho — nút bấm không còn là chỗ giữ cổng.
     genContent.mutate(
-      {
-        lesson: { teaches: plan.plan.teaches, knowledgePoints: plan.plan.knowledgePoints },
-        level: levels[l.slug] ?? 'L2',
-      },
+      { courseSlug: slug, lessonSlug: l.slug, level: levels[l.slug] ?? 'L2' },
       { onSuccess: (r) => setBundles((b) => ({ ...b, [l.slug]: r })), onError: onErr },
     )
   }

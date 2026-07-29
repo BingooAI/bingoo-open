@@ -157,13 +157,19 @@ const SnapshotBody = z
   })
   .optional()
 // Nhẹ: contentPlan chỉ đọc teaches + knowledgePoints[].targets để suy ra KC đích.
+/**
+ * Sinh nội dung: nêu BÀI NÀO, không gửi giáo án.
+ *
+ * Trước đây thân yêu cầu mang thẳng giáo án, nên route không biết nó đang sinh cho bài nào và
+ * KHÔNG THỂ kiểm giáo án ấy đã được duyệt hay chưa — kể cả nếu muốn. Cổng duyệt chỉ tồn tại ở nút
+ * bấm trong trình duyệt, mà một cổng chỉ có ở trình duyệt thì không phải cổng.
+ *
+ * Đường sinh GIÁO ÁN một bước trước đó đã theo đúng nguyên tắc này: nó lấy kiến thức TỪ VỎ KHOÁ và
+ * ghi rõ "không tin client". Bước sinh NỘI DUNG TỚI TRẺ thì lại tin — đúng chỗ không được tin nhất.
+ */
 const ContentBody = z.object({
-  lesson: z
-    .object({
-      teaches: z.array(z.string()).default([]),
-      knowledgePoints: z.array(z.object({ targets: z.array(z.string()).default([]) })).default([]),
-    })
-    .passthrough(),
+  courseSlug: z.string().min(1),
+  lessonSlug: z.string().min(1),
   learner: LearnerBody,
   teacher: TeacherBody,
   snapshot: SnapshotBody,
@@ -174,10 +180,25 @@ export const authoring = new Hono<AppEnv>()
     const user = c.get('user')
     if (!user) throw AppError.unauthorized()
     const b = c.req.valid('json')
+
+    // Giáo án lấy TỪ KHO, và phải ĐÃ DUYỆT. Đây là thứ trẻ sẽ học (R5) — không có bước nào sau đây
+    // để bắt lại, nên chặn ở đây chứ không ở nút bấm.
+    const stored = await getPlan(b.courseSlug, 'lesson', b.lessonSlug)
+    if (!stored) throw AppError.notFound('Chưa có giáo án cho bài này.')
+    if (stored.status !== 'APPROVED') {
+      throw AppError.validation([
+        {
+          path: 'lessonSlug',
+          message: 'Giáo án của bài này chưa được duyệt — duyệt trước, vì nội dung sinh ra là thứ trẻ học.',
+          code: 'plan_not_approved',
+        },
+      ])
+    }
+
     return ok(
       c,
       await generateLessonContent({
-        lesson: b.lesson as unknown as LessonInstructionPlan,
+        lesson: stored.doc as LessonInstructionPlan,
         learner: b.learner as LearnerPersona,
         userId: user.id, // không truyền snapshot → tự chụp ảnh engine của học viên
         ...(b.teacher ? { teacher: b.teacher as TeacherPersona } : {}),
