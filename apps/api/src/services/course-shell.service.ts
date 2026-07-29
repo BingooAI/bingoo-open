@@ -162,6 +162,21 @@ const LOCAL_TEXT_FLOOR = 2_000
 const OCR_CHUNK_BYTES = 3_500_000
 
 /**
+ * Trần khi ĐỌC CẢ CUỐN — khác hẳn cửa sổ của một lượt gọi model.
+ *
+ * Trước đây hai thứ này là một con số: đọc tới 40.000 ký tự rồi dừng, và cùng 40.000 ký tự ấy được
+ * đưa cho mọi lượt sinh. Hệ quả đo được trên một cuốn 266 trang: 26 chương nhưng chỉ 13 bài — các
+ * chương cuối không có chữ nào để tìm bài trong đó.
+ *
+ * Tách ra thì đọc sâu được mà mỗi lượt gọi vẫn nhỏ: cả cuốn đọc tới trần này, còn từng chương chỉ
+ * nhận đúng phần sách của nó.
+ */
+const FULL_READ_CAP = 400_000
+
+/** Cửa sổ chữ đưa cho MỘT lượt sinh bài — đủ để thấy trọn một chương, không hơn. */
+const UNIT_WINDOW = 30_000
+
+/**
  * Đọc lớp chữ có sẵn trong PDF, không gọi ra ngoài. `undefined` khi không đọc được.
  *
  * Hỏng ở đây KHÔNG được ném: nó chỉ có nghĩa là phải OCR, và OCR là đường vốn đã có.
@@ -227,15 +242,31 @@ async function ocrInChunks(pdfUrl: string, localChars: number): Promise<string> 
     const out = await getVision().extractText({ image: b64, mediaType: 'application/pdf' })
     parts.push(out.text)
     chars += out.text.length
-    if (chars >= BOOK_OCR_CAP) {
-      console.log(`[course:from-book] đọc ${i + 1}/${chunks.length} phần (${pageCount} trang) là đủ chữ`)
+    if (chars >= FULL_READ_CAP) {
+      console.log(`[course:from-book] dừng ở ${i + 1}/${chunks.length} phần (${pageCount} trang) — chạm trần`)
       break
     }
   }
   return parts.join('\n\n')
 }
 
-/** Đọc lần lượt từng ảnh, DỪNG khi đã đủ chữ để dựng cây chương. */
+/**
+ * Phần sách của MỘT chương: tìm nhan đề chương trong văn bản rồi cắt một cửa sổ từ đó.
+ *
+ * Không tìm thấy thì trả về phần ĐẦU sách chứ không trả cả cuốn — cả cuốn thì lượt sinh lại chạm
+ * trần token, đúng thứ vừa phải cắt việc để tránh. Trả phần đầu là thừa nhận không định vị được,
+ * và lượt đó sẽ ra ít bài; im lặng đưa cả cuốn thì hỏng theo kiểu khó lần hơn.
+ */
+export function unitWindow(bookText: string, title: string, ref: string): string {
+  const at = [ref, title]
+    .filter((k) => k.length >= 3)
+    .map((k) => bookText.indexOf(k))
+    .find((i) => i >= 0)
+  const from = at ?? 0
+  return bookText.slice(from, from + UNIT_WINDOW)
+}
+
+/** Đọc lần lượt từng ảnh, DỪNG khi chạm trần đọc cả cuốn. */
 async function ocrImages(images: readonly string[]): Promise<string> {
   const parts: string[] = []
   let chars = 0
@@ -243,8 +274,8 @@ async function ocrImages(images: readonly string[]): Promise<string> {
     const out = await getVision().extractText({ image: img })
     parts.push(out.text)
     chars += out.text.length
-    if (chars >= BOOK_OCR_CAP) {
-      console.log(`[course:from-book] đọc ${i + 1}/${images.length} ảnh là đủ chữ`)
+    if (chars >= FULL_READ_CAP) {
+      console.log(`[course:from-book] dừng ở ${i + 1}/${images.length} ảnh — chạm trần`)
       break
     }
   }
@@ -329,7 +360,11 @@ export async function courseShellFromBook(
    * chương cũng nhỏ, dù sách có bao nhiêu chương.
    */
   const unitsRes = await getAi(input.aiKey).generateText({
-    system: await renderPrompt('authoring.course.bookUnits', { bookText, locale: input.locale ?? 'vi' }),
+    // Mục lục nằm ở ĐẦU sách — đưa cả cuốn cho lượt này là trả tiền cho phần không dùng tới.
+    system: await renderPrompt('authoring.course.bookUnits', {
+      bookText: bookText.slice(0, BOOK_OCR_CAP),
+      locale: input.locale ?? 'vi',
+    }),
     messages: [{ role: 'user', content: 'Liệt kê các chương của sách, đúng thứ tự.' }],
     model: modelFor('content'),
     maxTokens: 4000,
@@ -357,7 +392,7 @@ export async function courseShellFromBook(
     const title = String((rec(u.title).vi ?? rec(u.title).en ?? u.slug) as string)
     const lessonsRes = await getAi(input.aiKey).generateText({
       system: await renderPrompt('authoring.course.bookLessons', {
-        bookText,
+        bookText: unitWindow(bookText, title, String(u.sourceRef ?? '')),
         unitTitle: title,
         unitRef: String(u.sourceRef ?? ''),
         locale: input.locale ?? 'vi',
