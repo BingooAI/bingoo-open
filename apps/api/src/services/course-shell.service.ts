@@ -13,11 +13,12 @@ import { renderPrompt } from '../prompts'
 import { loadConceptVocab, type ConceptVocabItem } from '../repos/authoring.repo'
 import { saveCourse, type SavedCourse } from '../repos/course.repo'
 import { AppError } from '../lib/errors'
-import { sanitizeCourse } from './course-shell.sanitize'
+import { rec, sanitizeCourse } from './course-shell.sanitize'
 import { parseModelJson } from '../lib/model-json'
 import { modelFor } from '../config/models'
 import { writeBookTraces, type WriteTraceResult } from './decision-trace.service'
 import { pdfPositionedUnits } from './pdf-anchor.service'
+import { splitPdfBySize } from './pdf-split.service'
 
 /**
  * CHI PHÍ: tách model cho khâu sinh nội dung. Mặc định Sonnet (nội dung học cần chất lượng hơn
@@ -152,6 +153,15 @@ const BOOK_OCR_CAP = 40_000
 const LOCAL_TEXT_FLOOR = 2_000
 
 /**
+ * Trần dung lượng mỗi phần gửi đi đọc ảnh.
+ *
+ * Đặt thấp hơn hẳn giới hạn của nhà cung cấp, vì giới hạn đó tính trên bản mã hoá base64 — phình
+ * thêm khoảng một phần ba — và mỗi nhà cung cấp một con số. Chọn ngưỡng an toàn cho mọi nhà thì
+ * không phải đi dò lại mỗi lần đổi.
+ */
+const OCR_CHUNK_BYTES = 3_500_000
+
+/**
  * Đọc lớp chữ có sẵn trong PDF, không gọi ra ngoài. `undefined` khi không đọc được.
  *
  * Hỏng ở đây KHÔNG được ném: nó chỉ có nghĩa là phải OCR, và OCR là đường vốn đã có.
@@ -173,18 +183,56 @@ async function ocrBook(pdfUrl: string, localChars: number): Promise<string> {
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e)
     if (!/exceeds the maximum allowed size|too large|payload/i.test(msg)) throw e
+    // Quá cỡ → cắt thành từng phần rồi đọc lần lượt. Không phải đường dự phòng cho có: đây là cách
+    // DUY NHẤT một cuốn sách quét thật đi qua được.
+    return ocrInChunks(pdfUrl, localChars)
+  }
+}
+
+/**
+ * Đọc ảnh THEO TỪNG PHẦN, và DỪNG khi đã đủ chữ.
+ *
+ * Dừng sớm không phải để tiết kiệm cho vui: việc ở đây là dựng cây chương/bài, mà cây đó nằm ở đầu
+ * sách. Đọc hết 266 trang một cuốn sách quét để rồi cắt bỏ tất cả trừ 40.000 ký tự đầu là trả tiền
+ * cho thứ bị vứt ngay sau đó.
+ *
+ * Dừng sớm thì `truncated` phải bật, và nó bật — người soạn cần biết những chương cuối có thể chưa
+ * được nhìn tới.
+ */
+async function ocrInChunks(pdfUrl: string, localChars: number): Promise<string> {
+  const res = await fetch(pdfUrl)
+  if (!res.ok) {
+    throw AppError.validation([
+      { path: 'pdf', message: 'Không tải được tệp sách để cắt.', code: 'book_fetch_failed' },
+    ])
+  }
+  const bytes = new Uint8Array(await res.arrayBuffer())
+  const { chunks, pageCount } = await splitPdfBySize(bytes, OCR_CHUNK_BYTES)
+  if (chunks.length === 0) {
     throw AppError.validation([
       {
         path: 'pdf',
         message:
-          'Cuốn sách này là bản QUÉT (không có lớp chữ nào để đọc thẳng, rút được ' +
-          `${localChars} ký tự), nên nó phải qua bước đọc ảnh — và tệp vượt quá dung lượng dịch vụ ` +
-          'đó nhận. Hiện chưa cắt sách thành từng phần để đọc, nên hãy tách sách theo chương rồi ' +
-          'bóc từng phần. Sách xuất ra PDF có sẵn chữ thì không vướng giới hạn này.',
-        code: 'scanned_book_too_large',
+          `Cuốn sách này là bản QUÉT (rút thẳng chỉ được ${localChars} ký tự) và không cắt nhỏ được ` +
+          'để đọc ảnh — tệp có thể hỏng hoặc bị khoá. Hãy thử tách sách theo chương rồi bóc từng phần.',
+        code: 'book_unsplittable',
       },
     ])
   }
+
+  const parts: string[] = []
+  let chars = 0
+  for (const [i, chunk] of chunks.entries()) {
+    const b64 = Buffer.from(chunk).toString('base64')
+    const out = await getVision().extractText({ image: b64, mediaType: 'application/pdf' })
+    parts.push(out.text)
+    chars += out.text.length
+    if (chars >= BOOK_OCR_CAP) {
+      console.log(`[course:from-book] đọc ${i + 1}/${chunks.length} phần (${pageCount} trang) là đủ chữ`)
+      break
+    }
+  }
+  return parts.join('\n\n')
 }
 
 async function extractBookTextLocally(pdfUrl: string): Promise<string | undefined> {
@@ -235,23 +283,62 @@ export async function courseShellFromBook(
   const truncated = raw.length > BOOK_OCR_CAP
   const bookText = raw.slice(0, BOOK_OCR_CAP)
 
-  const res = await getAi(input.aiKey).generateText({
-    system: await renderPrompt('authoring.course.fromBook', {
-      bookText,
-      locale: input.locale ?? 'vi',
-      stage: input.stage ?? '(any)',
-      vocab: JSON.stringify(
-        vocab.slice(0, VOCAB_CAP).map((v) => ({ slug: v.slug, title: v.title, strand: v.strand })),
-      ),
-    }),
-    messages: [{ role: 'user', content: 'Trích cấu trúc sách thành vỏ khoá, giữ nguyên thứ tự.' }],
+  /**
+   * HAI LƯỢT: danh sách chương trước, rồi bài của từng chương.
+   *
+   * Một lượt duy nhất phải nhả ra cây chương + bài + ánh xạ + câu trích của cả cuốn sách, và độ dài
+   * đó phụ thuộc vào việc sách dày bao nhiêu. Đo được trên một cuốn 266 trang: đầu ra chạm trần
+   * token, JSON đứt giữa chừng, vỏ khoá ra rỗng. Nới trần chỉ dời chỗ vỡ sang cuốn dày hơn.
+   *
+   * Cắt việc thì mỗi lượt có kích thước tự nó quyết định: danh sách chương luôn nhỏ; bài của MỘT
+   * chương cũng nhỏ, dù sách có bao nhiêu chương.
+   */
+  const unitsRes = await getAi(input.aiKey).generateText({
+    system: await renderPrompt('authoring.course.bookUnits', { bookText, locale: input.locale ?? 'vi' }),
+    messages: [{ role: 'user', content: 'Liệt kê các chương của sách, đúng thứ tự.' }],
     model: modelFor('content'),
-    maxTokens: 8000,
+    maxTokens: 4000,
   })
-  throwIfTruncated(res.finishReason, 'sách quá dài, tách theo phần/chương rồi sinh từng phần')
+  throwIfTruncated(unitsRes.finishReason, 'danh sách chương quá dài, tách sách theo phần rồi bóc từng phần')
+  const shell = rec(parseModelJson(unitsRes.text, 'Không đọc được danh sách chương'))
+  const rawUnits = Array.isArray(shell.units) ? (shell.units as Record<string, unknown>[]) : []
+  if (rawUnits.length === 0) {
+    throw AppError.validation([
+      {
+        path: 'units',
+        message: 'Không tìm thấy chương nào trong sách — kiểm lại tệp, hoặc sách không có mục lục rõ ràng.',
+        code: 'no_units',
+      },
+    ])
+  }
+
+  const vocabJson = JSON.stringify(
+    vocab.slice(0, VOCAB_CAP).map((v) => ({ slug: v.slug, title: v.title, strand: v.strand })),
+  )
+
+  // Bài của TỪNG chương — tuần tự, để một chương hỏng không kéo cả cuốn theo.
+  const units: Record<string, unknown>[] = []
+  for (const u of rawUnits) {
+    const title = String((rec(u.title).vi ?? rec(u.title).en ?? u.slug) as string)
+    const lessonsRes = await getAi(input.aiKey).generateText({
+      system: await renderPrompt('authoring.course.bookLessons', {
+        bookText,
+        unitTitle: title,
+        unitRef: String(u.sourceRef ?? ''),
+        locale: input.locale ?? 'vi',
+        vocab: vocabJson,
+      }),
+      messages: [{ role: 'user', content: `Trích các bài của chương "${title}".` }],
+      model: modelFor('content'),
+      maxTokens: 6000,
+    })
+    throwIfTruncated(lessonsRes.finishReason, `chương "${title}" quá dài, tách nhỏ rồi bóc lại`)
+    const got = rec(parseModelJson(lessonsRes.text, `Không đọc được bài của chương "${title}"`))
+    units.push({ ...u, lessons: Array.isArray(got.lessons) ? got.lessons : [] })
+  }
 
   const { plan, unmappedLessons, mappings, proposed, dropped } = sanitizeCourse(
-    parseModelJson(res.text, 'Không dựng được vỏ khoá học'),
+    { ...shell, units },
     allowed,
     {
       preserveStructure: true, // sách là sự thật về cấu trúc — giữ mọi bài, đúng thứ tự

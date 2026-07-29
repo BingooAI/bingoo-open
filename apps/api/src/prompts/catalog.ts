@@ -351,6 +351,77 @@ export const PROMPTS = {
     ].join(' '),
   },
 
+  /**
+   * LƯỢT MỘT của đường bóc sách: CHỈ lấy danh sách chương.
+   *
+   * Một cuốn sách thật không nhét vừa một lượt sinh: cây chương + bài + ánh xạ + câu trích của 266
+   * trang vượt trần token đầu ra, JSON bị cắt giữa chừng, và cả vỏ khoá ra rỗng. Nới trần chỉ đẩy
+   * lùi chỗ vỡ tới cuốn dày hơn — nên cắt việc, không nới trần.
+   *
+   * Danh sách chương thì nhỏ và ổn định, nên lượt này luôn lọt; bài của từng chương lấy ở lượt hai.
+   */
+  'authoring.course.bookUnits': {
+    id: 'authoring.course.bookUnits',
+    description: 'List only the CHAPTERS/UNITS of a textbook, in book order.',
+    variables: ['bookText', 'locale'],
+    template: [
+      'CANONICAL LANGUAGE = ENGLISH. Every localized field MUST include an "en" value. Other locales',
+      '(e.g. "vi") are TRANSLATIONS for display. Never omit "en".',
+      '',
+      'From the BOOK TEXT below, list ONLY the top-level units/chapters, IN THE EXACT ORDER they appear.',
+      '- Do NOT list lessons. Do NOT invent, merge, split or drop units.',
+      '- Use the book own titles. Put its own chapter label in "sourceRef" (e.g. "Chapter 2", "Unit 3").',
+      '- A revision or test chapter IS a unit; keep it in place.',
+      '',
+      'Language "{{locale}}".',
+      '',
+      'BOOK TEXT (may be truncated):',
+      '{{bookText}}',
+      '',
+      'Output ONLY minified JSON: {"slug":"","title":{"vi":"","en":""},',
+      '"units":[{"slug":"","title":{"vi":"","en":""},"sourceRef":""}]}. JSON only.',
+    ].join(' '),
+  },
+
+  /**
+   * LƯỢT HAI: bài của MỘT chương, kèm ánh xạ và câu trích.
+   *
+   * Bao nhiêu chương thì bấy nhiêu lượt, mỗi lượt nhỏ và có trần rõ ràng — thay cho một lượt duy
+   * nhất mà độ dài đầu ra phụ thuộc vào việc cuốn sách dày bao nhiêu.
+   */
+  'authoring.course.bookLessons': {
+    id: 'authoring.course.bookLessons',
+    description: 'Extract the lessons of ONE unit of a textbook and map them to framework knowledge.',
+    variables: ['bookText', 'unitTitle', 'unitRef', 'locale', 'vocab'],
+    template: [
+      'CANONICAL LANGUAGE = ENGLISH. Every localized field MUST include an "en" value.',
+      '',
+      'From the BOOK TEXT below, extract ONLY the lessons belonging to this one unit:',
+      'UNIT: "{{unitTitle}}" (book label: "{{unitRef}}").',
+      '- Reproduce its lessons IN BOOK ORDER. Do NOT invent, merge, split or drop them.',
+      '- Ignore every other unit. If you cannot find this unit, return an empty "lessons" array',
+      '  rather than guessing — an invented lesson is worse than a missing one.',
+      '',
+      '- "teaches" = the knowledge this lesson teaches, chosen from the allowed list BY MEANING.',
+      '  Each entry is {"slug":"<allowed-slug>","quote":"<exact span from the BOOK TEXT>"}. Copy the',
+      '  quote character-for-character; a reviewer will look for it verbatim. If you cannot find a',
+      '  supporting span, omit "quote" rather than inventing one.',
+      '- You MUST NOT put a slug in "teaches" that is not in the allowed list.',
+      '- "proposes" = knowledge this lesson teaches that is NOT in the allowed list and SHOULD BE:',
+      '  {"title":"<short noun phrase, English>","quote":"<exact span>"}. Leave it out when there is',
+      '  nothing to add. Not for revision, tests, instructions or page furniture.',
+      '- A lesson that teaches nothing in the list STILL appears, with "teaches":[] and "unmapped":true.',
+      '',
+      'Language "{{locale}}". Allowed knowledge: {{vocab}}.',
+      '',
+      'BOOK TEXT (may be truncated):',
+      '{{bookText}}',
+      '',
+      'Output ONLY minified JSON: {"lessons":[{"slug":"","title":{"vi":"","en":""},"sourceRef":"",',
+      '"teaches":[{"slug":"","quote":""}],"proposes":[{"title":"","quote":""}],"unmapped":false}]}. JSON only.',
+    ].join(' '),
+  },
+
   'authoring.course.fromBook': {
     id: 'authoring.course.fromBook',
     description:
