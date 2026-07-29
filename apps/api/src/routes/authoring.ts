@@ -937,15 +937,33 @@ export const authoring = new Hono<AppEnv>()
       if (!user) throw AppError.unauthorized()
       const okd = await setCourseStatus(c.req.param('slug'), c.req.valid('json').status)
       if (!okd) throw AppError.notFound('Không có vỏ khoá này.')
+      // DUYỆT một vỏ khoá là một quyết định của người — cùng hạng với duyệt đồ thị, nên cùng để lại vết.
+      await writeAudit({
+        action: 'authoring.course.status',
+        actorUserId: user.id,
+        targetType: 'course',
+        targetId: c.req.param('slug'),
+        metadata: { status: c.req.valid('json').status },
+      })
       return ok(c, { slug: c.req.param('slug'), status: c.req.valid('json').status })
     },
   )
   .delete('/course/:slug', authorGuard, async (c) => {
     const user = c.get('user')
     if (!user) throw AppError.unauthorized()
-    const okd = await deleteCourse(c.req.param('slug'))
-    if (!okd) throw AppError.notFound('Không có vỏ khoá này.')
-    return ok(c, { deleted: c.req.param('slug') })
+    const slug = c.req.param('slug')
+    const r = await deleteCourse(slug)
+    if (!r.deleted) throw AppError.notFound('Không có vỏ khoá này.')
+    // Xoá nội dung đã soạn mà không ghi ai xoá thì không truy được — và ở đây nó kéo theo cả kế
+    // hoạch lẫn thẻ căn cứ, nên số lượng cũng phải nằm trong vết.
+    await writeAudit({
+      action: 'authoring.course.delete',
+      actorUserId: user.id,
+      targetType: 'course',
+      targetId: slug,
+      metadata: { plans: r.plans, documents: r.documents, traces: r.traces },
+    })
+    return ok(c, { deleted: slug, plans: r.plans, documents: r.documents, traces: r.traces })
   })
   // Pipeline S1→S7: tạo, xem trạng thái, đẩy event (generate/complete/approve/regenerate/…).
   .post('/pipeline', authorGuard, validate('json', z.object({ title: z.string().min(1) })), async (c) => {

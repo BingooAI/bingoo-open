@@ -1175,7 +1175,9 @@
       "tbConfirm": "Đúng, tôi xác nhận",
       "tbReject": "Không đúng",
       "tbNotePh": "Ghi lý do (bắt buộc khi không đồng ý)",
-      "tbRejectNeedsNote": "Muốn nói không đúng thì phải nêu lý do."
+      "tbRejectNeedsNote": "Muốn nói không đúng thì phải nêu lý do.",
+      "cwResetApproval": "Đã gỡ dấu duyệt của vỏ khoá này",
+      "cwResetApprovalBody": "Trước đó có người đã duyệt vỏ khoá cùng tên này, và lần sinh vừa rồi thay hẳn nội dung. Bản duyệt cũ không còn, nên trạng thái quay về bản nháp — thứ chưa ai đọc thì không được mang con dấu của người đã đọc thứ khác."
     }
   },
   "learn": {

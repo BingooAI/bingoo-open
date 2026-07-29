@@ -188,6 +188,8 @@ export interface SavedCourseDto {
   slug: string
   frameworkVersionId: string | null
   status: string
+  /** Lần sinh này đè lên một vỏ khoá ĐÃ DUYỆT, nên con dấu duyệt đã bị gỡ. */
+  resetApproval?: boolean
   plan: CoursePlanDto
   /** Chỉ có khi sinh từ SÁCH: bài giữ đúng chỗ nhưng chưa map KC + cảnh báo OCR bị cắt. */
   bookReport?: {

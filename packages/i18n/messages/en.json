@@ -1175,7 +1175,9 @@
       "tbConfirm": "Yes, I confirm this",
       "tbReject": "This is wrong",
       "tbNotePh": "Say why (required if you disagree)",
-      "tbRejectNeedsNote": "To say it is wrong, give a reason."
+      "tbRejectNeedsNote": "To say it is wrong, give a reason.",
+      "cwResetApproval": "The approval on this course shell was removed",
+      "cwResetApprovalBody": "Someone had approved a course shell under this same name, and this run replaced its content outright. The earlier approval no longer describes anything, so the status is back to draft — work nobody has read must not carry the mark of someone who read something else."
     }
   },
   "learn": {

@@ -4,7 +4,7 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Badge, Button, Field, Input, Textarea, useToast } from '@bingoo.ai/ui-web'
+import { Badge, Button, Field, Input, Textarea, useToast, Callout } from '@bingoo.ai/ui-web'
 import { ArrowRight } from 'lucide-react'
 import { Dropzone } from './dropzone'
 import { Stepper, type StepDef, type StepState } from './stepper'
@@ -163,6 +163,11 @@ export function CourseWizard() {
                 </Badge>
               </div>
 
+              {course.resetApproval ? (
+                <Callout variant="warning" title={t('cwResetApproval')}>
+                  <p className="text-sm">{t('cwResetApprovalBody')}</p>
+                </Callout>
+              ) : null}
               {course.bookReport?.truncated ? (
                 <div className="rounded-lg border border-danger/50 bg-danger-soft/20 p-2.5 text-xs text-danger">
                   Sách dài hơn cửa sổ đọc — có thể THIẾU chương cuối. Tách sách theo phần rồi sinh từng phần
