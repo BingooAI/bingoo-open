@@ -312,11 +312,27 @@ export function useCourseFromPrompt() {
   })
 }
 
+/**
+ * Bóc sách từ MỘT tệp PDF, hoặc NHIỀU ẢNH (mỗi ảnh một trang).
+ *
+ * Ảnh rời là đường ngắn nhất cho sách quét: không tệp nào vượt trần dung lượng của bước đọc ảnh,
+ * và mỗi trang là một yêu cầu nhỏ. Thứ tự ảnh chính là thứ tự trang, nên tải lên tuần tự — chạy
+ * song song thì nhanh hơn nhưng thứ tự về không đảm bảo, mà thứ tự trang là sự thật về cuốn sách.
+ */
 export function useCourseFromBook() {
   return useMutation({
-    mutationFn: async (input: CourseScopeInput & { file: File }) => {
-      const { url } = await uploadPdfAndGetUrl(input.file)
-      return api.post<SavedCourseDto>('/authoring/course/from-book', { pdf: url, ...scopeBody(input) })
+    mutationFn: async (input: CourseScopeInput & { files: File[] }) => {
+      const pdf = input.files.find((f) => f.type === 'application/pdf')
+      if (pdf !== undefined) {
+        const { url } = await uploadPdfAndGetUrl(pdf)
+        return api.post<SavedCourseDto>('/authoring/course/from-book', { pdf: url, ...scopeBody(input) })
+      }
+      const images: string[] = []
+      for (const f of input.files) {
+        const { url } = await uploadPdfAndGetUrl(f)
+        images.push(url)
+      }
+      return api.post<SavedCourseDto>('/authoring/course/from-book', { images, ...scopeBody(input) })
     },
   })
 }

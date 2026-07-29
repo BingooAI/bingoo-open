@@ -235,6 +235,35 @@ async function ocrInChunks(pdfUrl: string, localChars: number): Promise<string> 
   return parts.join('\n\n')
 }
 
+/** Đọc lần lượt từng ảnh, DỪNG khi đã đủ chữ để dựng cây chương. */
+async function ocrImages(images: readonly string[]): Promise<string> {
+  const parts: string[] = []
+  let chars = 0
+  for (const [i, img] of images.entries()) {
+    const out = await getVision().extractText({ image: img })
+    parts.push(out.text)
+    chars += out.text.length
+    if (chars >= BOOK_OCR_CAP) {
+      console.log(`[course:from-book] đọc ${i + 1}/${images.length} ảnh là đủ chữ`)
+      break
+    }
+  }
+  return parts.join('\n\n')
+}
+
+/** Nguồn là PDF: đọc lớp chữ tại chỗ trước, chỉ OCR khi sách là bản quét. */
+async function pdfBookText(input: { pdf?: string }): Promise<string> {
+  if (input.pdf === undefined) {
+    throw AppError.validation([
+      { path: 'pdf', message: 'Cần một tệp PDF hoặc danh sách ảnh.', code: 'no_source' },
+    ])
+  }
+  const local = await extractBookTextLocally(input.pdf)
+  return local !== undefined && local.length >= LOCAL_TEXT_FLOOR
+    ? local
+    : ocrBook(input.pdf, local?.length ?? 0)
+}
+
 async function extractBookTextLocally(pdfUrl: string): Promise<string | undefined> {
   try {
     const res = await fetch(pdfUrl)
@@ -259,7 +288,7 @@ async function extractBookTextLocally(pdfUrl: string): Promise<string | undefine
  * cấu trúc sách). Bài nào không map được KC nào vẫn GIỮ đúng chỗ (unmapped) — bỏ đi là nói dối về sách.
  */
 export async function courseShellFromBook(
-  input: Omit<CourseShellInput, 'brief'> & { pdf: string },
+  input: Omit<CourseShellInput, 'brief'> & { pdf?: string; images?: readonly string[] },
 ): Promise<CourseShellResult> {
   const vocab = await stageVocab(input)
   const allowed = new Set<Slug>(vocab.map((v) => v.slug))
@@ -275,11 +304,17 @@ export async function courseShellFromBook(
    * một lượt gọi ra ngoài. OCR vẫn cần cho sách quét thành ảnh, và đó là lúc nó được gọi: khi rút
    * tại chỗ ra quá ít chữ để tin.
    */
-  const local = await extractBookTextLocally(input.pdf)
+  /**
+   * Nguồn là ẢNH RỜI thì đọc thẳng từng ảnh — không cắt, không dò dung lượng.
+   *
+   * Đây là đường ngắn nhất cho sách quét: người dùng đưa từng trang, mỗi trang là một yêu cầu nhỏ,
+   * và không có tệp nào để vượt trần dung lượng. Cơ chế đọc-từng-ảnh vốn đã có ở đường sinh khung;
+   * chỗ này chỉ dùng lại nó thay vì dựng thêm một cái thứ hai.
+   */
   const raw =
-    local !== undefined && local.length >= LOCAL_TEXT_FLOOR
-      ? local
-      : await ocrBook(input.pdf, local?.length ?? 0)
+    input.images !== undefined && input.images.length > 0
+      ? await ocrImages(input.images)
+      : await pdfBookText(input)
   const truncated = raw.length > BOOK_OCR_CAP
   const bookText = raw.slice(0, BOOK_OCR_CAP)
 

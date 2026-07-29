@@ -24,7 +24,15 @@ export interface SourceChunk {
 
 export interface RawSource {
   readonly id: string
-  readonly kind: 'pdf' | 'zip-images' | 'text'
+  /**
+   * Nguồn thuộc loại gì — NHÃN ĐỂ ĐỌC, pipeline không rẽ nhánh theo nó.
+   *
+   * Việc đọc ảnh hay không do TỪNG MẨU quyết định (`imageRef` có hay không), nên trường này chưa
+   * bao giờ được đọc tới. Trước đây một giá trị của nó là `zip-images`, và đó là một lời hứa không
+   * có mã đứng sau: schema nhận, trả 200, mà không gì giải nén — người gửi tưởng hệ thống hiểu tệp
+   * nén của họ. Nhãn phải nói đúng thứ hệ thống làm được: từng ảnh, không phải tệp nén.
+   */
+  readonly kind: 'pdf' | 'images' | 'text'
   readonly locale: string
   readonly chunks: readonly SourceChunk[]
 }

@@ -1182,7 +1182,8 @@
       "tbAcceptHint": "Cho biết nó dạy VỀ CÁI GÌ và học QUA KÊNH NÀO. Thiếu hai điều đó thì sau này máy không tách nổi nó khỏi mục bên cạnh, mà nhầm lẫn kiểu đó thì không sửa lại được.",
       "tbAcceptObject": "Dạy về cái gì (vd: ước lượng)",
       "tbAcceptChannel": "Học qua kênh nào (vd: tính)",
-      "tbAcceptRun": "Đưa vào khung"
+      "tbAcceptRun": "Đưa vào khung",
+      "courseBookMulti": "Một tệp PDF, hoặc cả thư mục ảnh đã quét — mỗi ảnh một trang, thứ tự theo tên tệp."
     }
   },
   "learn": {

@@ -26,7 +26,8 @@ export function CourseWizard() {
 
   const [mode, setMode] = useState<Mode>('prompt')
   const [brief, setBrief] = useState('')
-  const [file, setFile] = useState<File | null>(null)
+  // NHIỀU tệp: một PDF, hoặc cả thư mục ảnh đã quét (mỗi ảnh một trang, đúng thứ tự).
+  const [files, setFiles] = useState<File[]>([])
   const [fwVersionId, setFwVersionId] = useState('')
   const [fwSlug, setFwSlug] = useState('')
   const [stage, setStage] = useState('')
@@ -52,15 +53,15 @@ export function CourseWizard() {
       ...(stage.trim() ? { stage: stage.trim() } : {}),
     }
     if (mode === 'book') {
-      if (!file) return
-      fromBook.mutate({ file, ...scope }, { onSuccess, onError: onErr })
+      if (files.length === 0) return
+      fromBook.mutate({ files, ...scope }, { onSuccess, onError: onErr })
     } else {
       fromPrompt.mutate({ brief, ...scope }, { onSuccess, onError: onErr })
     }
   }
 
   const lessonCount = course?.plan.units.reduce((n, u) => n + u.lessons.length, 0) ?? 0
-  const hasSource = mode === 'book' ? !!file : brief.trim().length > 0
+  const hasSource = mode === 'book' ? files.length > 0 : brief.trim().length > 0
 
   const genState: StepState = pending
     ? 'running'
@@ -97,10 +98,12 @@ export function CourseWizard() {
 
           {mode === 'book' ? (
             <Dropzone
-              file={file}
-              onFile={setFile}
+              multiple
+              files={files}
+              onFiles={setFiles}
+              accept="application/pdf,image/*"
               label={t('dropLabel')}
-              hint={t('courseBook')}
+              hint={t('courseBookMulti')}
               disabled={pending}
             />
           ) : (

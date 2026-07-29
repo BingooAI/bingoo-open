@@ -100,7 +100,8 @@ const authorGuard = requireRole('CONTENT_EDITOR', 'ADMIN')
 
 const SourceBody = z.object({
   id: z.string().min(1),
-  kind: z.enum(['pdf', 'zip-images', 'text']),
+  // 'images' = danh sách ảnh rời. KHÔNG có 'zip-images': không gì giải nén, nhận nó là hứa suông.
+  kind: z.enum(['pdf', 'images', 'text']),
   locale: z.string().min(1),
   chunks: z
     .array(
@@ -133,7 +134,22 @@ const CourseScope = {
   strand: z.string().optional(),
 }
 const CourseBody = z.object({ brief: z.string().min(1), ...CourseScope })
-const BookBody = z.object({ pdf: z.string().min(1), ...CourseScope })
+/**
+ * Nguồn sách: MỘT tệp PDF, hoặc DANH SÁCH ẢNH (mỗi ảnh một trang).
+ *
+ * Ảnh rời là đường ngắn nhất cho sách quét — không tệp nào vượt trần dung lượng, và mỗi trang là
+ * một yêu cầu nhỏ. Phải có một trong hai; nhận cả hai cùng rỗng là để người dùng chờ rồi báo lỗi muộn.
+ */
+const BookBody = z
+  .object({
+    pdf: z.string().min(1).optional(),
+    images: z.array(z.string().min(1)).min(1).max(400).optional(),
+    ...CourseScope,
+  })
+  .refine((b) => b.pdf !== undefined || b.images !== undefined, {
+    message: 'Cần một tệp PDF hoặc danh sách ảnh.',
+    path: ['pdf'],
+  })
 
 const LearnerBody = z.object({
   level: z.enum(['L1', 'L2', 'L3']),
@@ -984,7 +1000,8 @@ export const authoring = new Hono<AppEnv>()
     return ok(
       c,
       await courseShellFromBook({
-        pdf: b.pdf,
+        ...(b.pdf !== undefined ? { pdf: b.pdf } : {}),
+        ...(b.images !== undefined ? { images: b.images } : {}),
         createdBy: user.id,
         locale: b.locale,
         ...(b.frameworkVersionId ? { frameworkVersionId: b.frameworkVersionId } : {}),

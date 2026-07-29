@@ -1182,7 +1182,8 @@
       "tbAcceptHint": "Say what it is ABOUT and how it is PERFORMED. Without those two, the machine cannot later tell it apart from the entry beside it, and that kind of mix-up cannot be undone.",
       "tbAcceptObject": "What it is about (e.g. estimation)",
       "tbAcceptChannel": "How it is performed (e.g. compute)",
-      "tbAcceptRun": "Add it"
+      "tbAcceptRun": "Add it",
+      "courseBookMulti": "One PDF, or a whole folder of scanned images — one image per page, ordered by file name."
     }
   },
   "learn": {
