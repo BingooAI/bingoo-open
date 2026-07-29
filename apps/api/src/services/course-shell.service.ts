@@ -16,6 +16,7 @@ import { AppError } from '../lib/errors'
 import { sanitizeCourse } from './course-shell.sanitize'
 import { parseModelJson } from '../lib/model-json'
 import { modelFor } from '../config/models'
+import { writeBookTraces, type WriteTraceResult } from './decision-trace.service'
 
 /**
  * CHI PHÍ: tách model cho khâu sinh nội dung. Mặc định Sonnet (nội dung học cần chất lượng hơn
@@ -76,6 +77,12 @@ export interface CourseShellResult extends SavedCourse {
     readonly unmappedLessons: readonly string[]
     /** OCR bị cắt (sách dài hơn cửa sổ) → có thể thiếu chương cuối. */
     readonly truncated: boolean
+    /** Kiến thức sách dạy mà khung chưa có — đề xuất làm dày, chờ người duyệt. */
+    readonly proposed: number
+    /** Ánh xạ model đề xuất nhưng bị loại vì không có trong vốn từ khung — có thẻ ghi lý do. */
+    readonly dropped: number
+    /** Thẻ căn cứ đã ghi. Vắng = ghi hỏng, và chỗ gọi phải thấy điều đó. */
+    readonly traces?: WriteTraceResult
   }
 }
 
@@ -167,7 +174,7 @@ export async function courseShellFromBook(
   })
   throwIfTruncated(res.finishReason, 'sách quá dài, tách theo phần/chương rồi sinh từng phần')
 
-  const { plan, unmappedLessons } = sanitizeCourse(
+  const { plan, unmappedLessons, mappings, proposed, dropped } = sanitizeCourse(
     parseModelJson(res.text, 'Không dựng được vỏ khoá học'),
     allowed,
     {
@@ -178,5 +185,34 @@ export async function courseShellFromBook(
   assertNonEmpty(plan)
 
   const saved = await saveCourse(plan, input.createdBy, input.frameworkVersionId)
-  return { ...saved, bookReport: { unmappedLessons, truncated } }
+
+  /**
+   * THẺ CĂN CỨ CHO SÁCH — vì sao bài này dạy kiến thức đó, và sách dạy thêm những gì.
+   *
+   * Không có phần này thì vỏ khoá sinh ra từ một cuốn sách thật vẫn là một cây chương/bài không ai
+   * hỏi được "dựa vào đâu": ánh xạ bài→kiến thức do model chọn, và không một dòng nào nói nó chọn
+   * dựa trên câu nào trong sách.
+   *
+   * Ghi hỏng KHÔNG chặn: vỏ khoá đã lưu xong và vẫn dùng được. Nhưng nói ra là ghi hỏng, chứ không
+   * âm thầm trả về như thể có đủ căn cứ.
+   */
+  let traces: WriteTraceResult | undefined
+  try {
+    // Vốn từ chỉ mang nhan đề TIẾNG ANH (một chuỗi) — dựng dạng đa ngữ tối thiểu, không bịa bản dịch.
+    const titles = new Map(vocab.map((v) => [v.slug as string, { en: v.title } as Record<string, string>]))
+    traces = await writeBookTraces(saved.plan.slug, { mappings, proposed }, bookText, titles)
+  } catch (e) {
+    console.error('[course:from-book] ghi thẻ căn cứ hỏng', e)
+  }
+
+  return {
+    ...saved,
+    bookReport: {
+      unmappedLessons,
+      truncated,
+      proposed: proposed.length,
+      dropped: dropped.length,
+      ...(traces ? { traces } : {}),
+    },
+  }
 }

@@ -31,10 +31,44 @@ function loc(v: unknown, fallback = ''): LocalizedText {
 
 /** Lấy khối JSON đầu tiên trong text LLM; hỏng → {} (lớp gọi phải tự bắt trường hợp rỗng, không nuốt). */
 
+/** Một bài trong sách dạy một kiến thức — kèm CÂU TRONG SÁCH làm căn cứ, nếu model có đưa. */
+export interface LessonMappingClaim {
+  readonly lessonSlug: string
+  readonly lessonTitle: LocalizedText
+  readonly conceptSlug: Slug
+  readonly quote?: string
+}
+
+/**
+ * Kiến thức sách DẠY mà khung KHÔNG có.
+ *
+ * Trước đây thứ này không tồn tại: model chỉ được phép chọn trong vốn từ của khung, nên mọi thứ sách
+ * dạy thêm đều bị vứt ngay tại chỗ lọc, không dấu vết. Đó vừa là chỗ "làm dày" chết, vừa là chỗ
+ * "lọc" chết — cùng một dòng mã.
+ */
+export interface ProposedKnowledge {
+  readonly title: string
+  readonly lessonSlug: string
+  readonly quote?: string
+}
+
+/** Một slug model đề xuất nhưng bị loại — kèm LÝ DO, để "vì sao khung không có cái này" còn trả lời được. */
+export interface DroppedMapping {
+  readonly lessonSlug: string
+  readonly proposed: string
+  readonly reason: 'not-in-vocabulary'
+}
+
 export interface SanitizedCourse {
   readonly plan: CoursePlan
   /** Bài GIỮ LẠI đúng vị trí nhưng chưa neo vào KC nào (ôn tập, kiểm tra, kiến thức ngoài stage…). */
   readonly unmappedLessons: readonly string[]
+  /** Bài ↔ kiến thức, kèm câu trong sách — nguyên liệu cho thẻ "vì sao bài này dạy kiến thức đó". */
+  readonly mappings: readonly LessonMappingClaim[]
+  /** Kiến thức sách dạy mà khung chưa có — đề xuất, chờ người duyệt. */
+  readonly proposed: readonly ProposedKnowledge[]
+  /** Những slug bị loại và VÌ SAO. Loại âm thầm thì không ai trả lời được "sao khung không có cái này". */
+  readonly dropped: readonly DroppedMapping[]
 }
 
 export interface SanitizeOpts {
@@ -58,17 +92,63 @@ export function sanitizeCourse(
 ): SanitizedCourse {
   const keep = (v: unknown): Slug[] => strArr(v).filter((s) => allowed.has(s))
   const unmapped: string[] = []
+  const mappings: LessonMappingClaim[] = []
+  const proposed: ProposedKnowledge[] = []
+  const dropped: DroppedMapping[] = []
+
+  /**
+   * `teaches` nhận HAI dạng: mảng chuỗi (dạng cũ) hoặc mảng {slug, quote} (dạng mới, có căn cứ).
+   *
+   * Nhận cả hai vì model không phải lúc nào cũng theo dạng mới, và một câu trả lời đúng nội dung mà
+   * sai vỏ thì không đáng vứt. Không có câu trích thì ánh xạ vẫn giữ — chỉ là nó sẽ được đánh dấu
+   * là chưa có căn cứ, chứ không biến mất.
+   */
+  const readTeaches = (v: unknown): { slug: string; quote?: string }[] =>
+    arr(v).map((x) => {
+      if (typeof x === 'string') return { slug: x.trim() }
+      const o = rec(x)
+      const slug = str(o.slug) ?? ''
+      const q = str(o.quote)
+      return { slug, ...(q !== undefined ? { quote: q } : {}) }
+    })
 
   const units: UnitPlan[] = arr(o.units).map((u, ui): UnitPlan => {
     const uo = rec(u)
     const rawLessons = arr(uo.lessons).map((l, li): LessonInstructionPlan => {
       const lo = rec(l)
-      const teaches = keep(lo.teaches)
       const title = loc(lo.title)
       const ref = str(lo.sourceRef)
+      const lessonSlug = str(lo.slug) ?? `u${ui}-l${li}`
+
+      // Tách LẤY và LOẠI, giữ lý do cho từng cái bị loại.
+      const claimed = readTeaches(lo.teaches).filter((x) => x.slug.length > 0)
+      const teaches: Slug[] = []
+      for (const c of claimed) {
+        if (allowed.has(c.slug as Slug)) {
+          teaches.push(c.slug as Slug)
+          mappings.push({
+            lessonSlug,
+            lessonTitle: title,
+            conceptSlug: c.slug as Slug,
+            ...(c.quote !== undefined ? { quote: c.quote } : {}),
+          })
+        } else {
+          dropped.push({ lessonSlug, proposed: c.slug, reason: 'not-in-vocabulary' })
+        }
+      }
+
+      // Kiến thức sách dạy mà khung chưa có — model khai riêng, không lẫn vào `teaches`.
+      for (const p of arr(lo.proposes)) {
+        const po = rec(p)
+        const t = str(po.title)
+        if (t === undefined) continue
+        const q = str(po.quote)
+        proposed.push({ title: t, lessonSlug, ...(q !== undefined ? { quote: q } : {}) })
+      }
+
       if (teaches.length === 0) unmapped.push(ref ?? title.en ?? `u${ui}-l${li}`)
       return {
-        slug: str(lo.slug) ?? `u${ui}-l${li}`,
+        slug: lessonSlug,
         version: 1,
         title,
         teaches,
@@ -95,5 +175,8 @@ export function sanitizeCourse(
       ...(opts.frameworkVersionId !== undefined ? { frameworkVersionId: opts.frameworkVersionId } : {}),
     },
     unmappedLessons: unmapped,
+    mappings,
+    proposed,
+    dropped,
   }
 }

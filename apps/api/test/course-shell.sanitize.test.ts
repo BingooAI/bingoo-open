@@ -121,3 +121,75 @@ describe('câu trả lời hỏng thì DỪNG, không đi tiếp với vật r�
     expect(parseModelJson('{"a":1}', 'x')).toEqual({ a: 1 })
   })
 })
+
+/**
+ * BA CÂU HỎI VỀ SÁCH mà chỗ lọc từng nuốt sạch.
+ *
+ * `keep()` cũ vứt mọi slug không có trong vốn từ khung, không để lại gì. Một dòng đó giết cả hai
+ * việc: sách dạy thêm cái gì (làm dày), và vì sao một đề xuất bị loại (lọc). Cả hai đọc lên giống
+ * hệt "sách không dạy gì cả", và không ai truy được ngược.
+ */
+describe('sách nói được nó dạy gì ngoài khung, và cái gì bị loại', () => {
+  const allowed = new Set(['count-100', 'add-100'] as Slug[])
+  const book = {
+    slug: 'book',
+    title: { en: 'Book', vi: 'Sách' },
+    units: [
+      {
+        slug: 'u1',
+        title: { en: 'Unit 1', vi: 'Chương 1' },
+        lessons: [
+          {
+            slug: 'l1',
+            title: { en: 'Counting', vi: 'Đếm' },
+            teaches: [
+              { slug: 'count-100', quote: 'Đếm các số trong phạm vi 100.' },
+              { slug: 'khong-co-trong-khung' },
+            ],
+            proposes: [{ title: 'Estimate quantities', quote: 'Ước lượng số lượng đồ vật.' }],
+          },
+          { slug: 'l2', title: { en: 'Revision', vi: 'Ôn tập' }, teaches: [] },
+        ],
+      },
+    ],
+  }
+
+  it('ánh xạ giữ được CÂU TRONG SÁCH — không có câu thì không kiểm được gì', () => {
+    const r = sanitizeCourse(book, allowed, { preserveStructure: true })
+    expect(r.mappings).toHaveLength(1)
+    expect(r.mappings[0]?.conceptSlug).toBe('count-100')
+    expect(r.mappings[0]?.quote).toBe('Đếm các số trong phạm vi 100.')
+  })
+
+  it('slug không có trong khung bị loại NHƯNG có lý do đi kèm', () => {
+    const r = sanitizeCourse(book, allowed, { preserveStructure: true })
+    expect(r.dropped).toEqual([
+      { lessonSlug: 'l1', proposed: 'khong-co-trong-khung', reason: 'not-in-vocabulary' },
+    ])
+    // và nó KHÔNG lọt vào vỏ khoá — vỏ khoá vẫn chỉ neo vào đồ thị thật.
+    expect(r.plan.units[0]?.lessons[0]?.teaches).toEqual(['count-100'])
+  })
+
+  it('sách dạy thứ khung chưa có → thành ĐỀ XUẤT, không bị vứt', () => {
+    const r = sanitizeCourse(book, allowed, { preserveStructure: true })
+    expect(r.proposed).toEqual([
+      { title: 'Estimate quantities', lessonSlug: 'l1', quote: 'Ước lượng số lượng đồ vật.' },
+    ])
+  })
+
+  it('dạng cũ (mảng chuỗi) vẫn nhận — không vứt một câu trả lời đúng vì sai vỏ', () => {
+    const old = {
+      ...book,
+      units: [{ ...book.units[0], lessons: [{ slug: 'l1', title: { en: 'C' }, teaches: ['add-100'] }] }],
+    }
+    const r = sanitizeCourse(old, allowed, { preserveStructure: true })
+    expect(r.plan.units[0]?.lessons[0]?.teaches).toEqual(['add-100'])
+    expect(r.mappings[0]?.quote).toBeUndefined() // và nói thật là không có câu trích
+  })
+
+  it('bài ôn tập vẫn giữ đúng chỗ, và vẫn được đếm là chưa neo', () => {
+    const r = sanitizeCourse(book, allowed, { preserveStructure: true })
+    expect(r.plan.units[0]?.lessons).toHaveLength(2)
+    expect(r.unmappedLessons).toContain('Revision')
+  })
+})

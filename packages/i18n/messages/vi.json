@@ -898,6 +898,8 @@
       "tbTitlePrereq": "Vì sao học cái này trước",
       "tbTitleCoverage": "Vì sao mục tiêu này cần kiến thức đó",
       "tbTitleIdentity": "Vì sao hai thứ này bị coi là một",
+      "tbTitleLesson": "Vì sao bài này dạy kiến thức đó",
+      "tbTitleProposed": "Sách dạy thứ khung chưa có",
       "tbReasonTitle": "Máy tự lý giải — cần người xác nhận",
       "tbEmptyAny": "Chưa lưu căn cứ cho mục này — nhập lại từ tài liệu, hoặc chạy dữ liệu mẫu.",
       "tbStructIdentityPass": "Mục này nói rõ nó dạy về CÁI GÌ, nên không lẫn với mục bên cạnh.",

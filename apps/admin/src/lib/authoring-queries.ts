@@ -821,6 +821,10 @@ export type TraceArtifactDto =
   | 'OBJECTIVE_COVERAGE'
   /** Máy tự gộp hai khái niệm — không có làn nguồn lẫn làn tự kiểm; lời giải thích ở cột lý do. */
   | 'CONCEPT_IDENTITY'
+  /** Bài trong sách dạy kiến thức nào. */
+  | 'LESSON_MAPPING'
+  /** Sách dạy thứ khung chưa có. */
+  | 'KC_PROPOSED'
 
 export interface DecisionTraceDto {
   id: string

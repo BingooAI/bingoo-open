@@ -79,6 +79,8 @@ const TITLE_KEY: Record<TraceArtifactDto, string> = {
   PREREQ_EDGE: 'tbTitlePrereq',
   OBJECTIVE_COVERAGE: 'tbTitleCoverage',
   CONCEPT_IDENTITY: 'tbTitleIdentity',
+  LESSON_MAPPING: 'tbTitleLesson',
+  KC_PROPOSED: 'tbTitleProposed',
 }
 
 /**

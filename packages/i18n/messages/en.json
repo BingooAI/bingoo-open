@@ -898,6 +898,8 @@
       "tbTitlePrereq": "Why this one comes first",
       "tbTitleCoverage": "Why this objective needs that knowledge",
       "tbTitleIdentity": "Why these two were treated as one",
+      "tbTitleLesson": "Why this lesson teaches that",
+      "tbTitleProposed": "The book teaches something the framework does not list",
       "tbReasonTitle": "The machine's own account — needs a person to confirm",
       "tbEmptyAny": "No evidence stored for this yet — import from a document, or run the sample data.",
       "tbStructIdentityPass": "This says plainly what it is about, so it cannot be confused with the one next to it.",

@@ -50,7 +50,15 @@ export interface TraceEvidenceInput {
 }
 
 export interface TraceRecordInput {
-  readonly artifact: 'OBJECTIVE_EXISTS' | 'CONCEPT_EXISTS' | 'PREREQ_EDGE' | 'OBJECTIVE_COVERAGE'
+  readonly artifact:
+    | 'OBJECTIVE_EXISTS'
+    | 'CONCEPT_EXISTS'
+    | 'PREREQ_EDGE'
+    | 'OBJECTIVE_COVERAGE'
+    /** Bài trong SÁCH người dùng tải lên dạy kiến thức nào. */
+    | 'LESSON_MAPPING'
+    /** Kiến thức sách dạy mà khung chưa có — đề xuất làm dày, chờ người duyệt. */
+    | 'KC_PROPOSED'
   readonly subjectSlug: string
   /** Đầu `to` của một quan hệ. Vắng với thẻ về một mục đơn lẻ. */
   readonly objectSlug?: string
@@ -534,20 +542,50 @@ export async function writeClaimTraces(
     ),
   ]
 
+  return persistTraceRecords(items, excerpt, { frameworkVersionId }, anchorCtx)
+}
+
+/**
+ * GHI một lô thẻ + tài liệu nguồn của nó. Dùng chung cho đường KHUNG và đường SÁCH.
+ *
+ * Tách ra vì hai đường khác nhau đúng một chuyện: thẻ neo vào bản phát hành khung hay vào khoá học.
+ * Mọi thứ còn lại — xoá-rồi-ghi cho chạy lại được, dựng tài liệu nguồn, định vị câu trích, ghi từng
+ * làn bằng chứng — giống hệt, và một bản sao thứ hai của đoạn đó là chỗ để hai đường lệch nhau về
+ * sau mà không ai thấy.
+ */
+async function persistTraceRecords(
+  items: readonly { record: TraceRecordInput; quote?: string }[],
+  excerpt: string,
+  scope: { readonly frameworkVersionId?: string; readonly courseSlug?: string },
+  anchorCtx?: AnchorContext,
+): Promise<WriteTraceResult> {
+  const { frameworkVersionId, courseSlug } = scope
+  const artifacts = [...new Set(items.map((i) => i.record.artifact))]
+
+  // Xoá-rồi-ghi trong ĐÚNG phạm vi của mình: khung không được đụng thẻ của sách và ngược lại.
+  const oldDocs =
+    courseSlug !== undefined
+      ? await db.sourceDocument.findMany({ where: { courseSlug }, select: { id: true } })
+      : []
   await db.decisionRecord.deleteMany({
     where: {
-      artifact: { in: ['OBJECTIVE_EXISTS', 'CONCEPT_EXISTS', 'PREREQ_EDGE', 'OBJECTIVE_COVERAGE'] },
-      frameworkVersionId,
+      artifact: { in: artifacts },
+      ...(frameworkVersionId !== undefined ? { frameworkVersionId } : {}),
+      ...(courseSlug !== undefined ? { sourceDocumentId: { in: oldDocs.map((d) => d.id) } } : {}),
       subjectSlug: { in: items.map((i) => i.record.subjectSlug) },
     },
   })
-  // CHỈ tài liệu của KHUNG này. Sách của một khoá học nằm ở `courseSlug`, và xoá theo
-  // frameworkVersionId sẽ không chạm tới nó — đó là lý do hai ref được tách cột.
-  await db.sourceDocument.deleteMany({ where: { frameworkVersionId } })
+  if (frameworkVersionId !== undefined) {
+    await db.sourceDocument.deleteMany({ where: { frameworkVersionId } })
+  }
+  if (courseSlug !== undefined) {
+    await db.sourceDocument.deleteMany({ where: { courseSlug } })
+  }
 
   const source = await db.sourceDocument.create({
     data: {
-      frameworkVersionId,
+      ...(frameworkVersionId !== undefined ? { frameworkVersionId } : {}),
+      ...(courseSlug !== undefined ? { courseSlug } : {}),
       excerptText: excerpt,
       ...(anchorCtx?.contentHash ? { contentHash: anchorCtx.contentHash } : {}),
       ...(anchorCtx?.pageCount !== undefined ? { pageCount: anchorCtx.pageCount } : {}),
@@ -572,7 +610,7 @@ export async function writeClaimTraces(
         basis: t.basis,
         checksPassed: [...t.checksPassed],
         checksFailed: [...t.checksFailed],
-        frameworkVersionId,
+        ...(frameworkVersionId !== undefined ? { frameworkVersionId } : {}),
         sourceDocumentId: source.id,
         evidence: {
           create: t.evidence.map((e) => ({
@@ -652,6 +690,145 @@ export function buildConceptIdentityTrace(m: Merge): ConceptIdentityTraceInput {
 }
 
 /**
+ * Dựng thẻ "BÀI NÀY DẠY KIẾN THỨC ĐÓ" — nguồn là SÁCH người dùng tải lên, không phải khung.
+ *
+ * Cùng làn nguồn với mọi thẻ khác: câu trích được đối chiếu byte-for-byte vào đoạn sách đã lưu. Có
+ * câu và khớp → "lấy từ sách", bạn tự soi được. Không có câu → nói thẳng là AI suy ra, chứ không tô
+ * như đã kiểm. Đây là chỗ phân biệt "sách dạy cái này" với "AI nghĩ sách dạy cái này".
+ */
+export function buildLessonMappingTrace(
+  m: {
+    readonly lessonSlug: string
+    readonly lessonTitle: LocalizedText
+    readonly conceptSlug: string
+    readonly quote?: string
+  },
+  conceptTitle: LocalizedText,
+  excerpt: string,
+): TraceRecordInput {
+  const lv = m.lessonTitle.vi ?? m.lessonTitle.en ?? m.lessonSlug
+  const le = m.lessonTitle.en ?? m.lessonTitle.vi ?? m.lessonSlug
+  const cv = conceptTitle.vi ?? conceptTitle.en ?? m.conceptSlug
+  const ce = conceptTitle.en ?? conceptTitle.vi ?? m.conceptSlug
+
+  const evidence: TraceEvidenceInput[] = []
+  let grounded = false
+  if (m.quote !== undefined) {
+    const ex = explainClaim({ claimKind: 'LESSON_MAPPING', quote: m.quote, sourceExcerpt: excerpt })
+    const q = ex.quote ?? { status: 'not_found' as const }
+    grounded = q.status === 'verified'
+    evidence.push({
+      kind: 'SOURCE_SPAN',
+      basis: grounded ? 'FROM_SOURCE' : 'AI_INFERRED',
+      method: 'quote',
+      quote: m.quote,
+      quoteVerified: grounded,
+      ...(q.status === 'verified' ? { charStart: q.charStart, charEnd: q.charEnd } : {}),
+    })
+  }
+
+  return {
+    artifact: 'LESSON_MAPPING',
+    subjectSlug: m.lessonSlug,
+    objectSlug: m.conceptSlug,
+    relType: 'TEACHES',
+    claim: {
+      vi: `Bài "${lv}" trong sách dạy kiến thức "${cv}".`,
+      en: `The lesson "${le}" in the book teaches "${ce}".`,
+    },
+    method: 'LLM',
+    basis: grounded ? 'FROM_SOURCE' : 'AI_INFERRED',
+    checksPassed: [],
+    checksFailed: [],
+    evidence,
+  }
+}
+
+/**
+ * Dựng thẻ "SÁCH DẠY THỨ KHUNG CHƯA CÓ" — đề xuất làm dày khung, chờ người duyệt.
+ *
+ * `verdict` để PENDING, và người duyệt từ chối thì chính thẻ này trở thành câu trả lời cho "vì sao
+ * khung không có cái đó": không phải nó bị bỏ sót, mà là ai đó đã xem và quyết định không đưa vào.
+ * Bỏ lặng lẽ thì hai chuyện đó đọc lên giống hệt nhau.
+ */
+export function buildProposedKcTrace(
+  p: { readonly title: string; readonly lessonSlug: string; readonly quote?: string },
+  excerpt: string,
+): TraceRecordInput {
+  const evidence: TraceEvidenceInput[] = []
+  let grounded = false
+  if (p.quote !== undefined) {
+    const ex = explainClaim({ claimKind: 'KC_PROPOSED', quote: p.quote, sourceExcerpt: excerpt })
+    const q = ex.quote ?? { status: 'not_found' as const }
+    grounded = q.status === 'verified'
+    evidence.push({
+      kind: 'SOURCE_SPAN',
+      basis: grounded ? 'FROM_SOURCE' : 'AI_INFERRED',
+      method: 'quote',
+      quote: p.quote,
+      quoteVerified: grounded,
+      ...(q.status === 'verified' ? { charStart: q.charStart, charEnd: q.charEnd } : {}),
+    })
+  }
+  return {
+    artifact: 'KC_PROPOSED',
+    // Gắn vào BÀI đã nêu nó: hỏi "bài này còn dạy gì ngoài khung?" thì tra theo đây.
+    subjectSlug: p.lessonSlug,
+    claim: {
+      vi: `Sách dạy "${p.title}" — khung hiện chưa có kiến thức này.`,
+      en: `The book teaches "${p.title}" — the framework does not list it.`,
+    },
+    method: 'LLM',
+    basis: grounded ? 'FROM_SOURCE' : 'AI_INFERRED',
+    checksPassed: [],
+    checksFailed: [],
+    evidence,
+  }
+}
+
+/**
+ * Ghi thẻ cho MỘT LƯỢT BÓC SÁCH.
+ *
+ * Cùng khuôn với đường khung: đối chiếu câu trích vào đoạn sách ĐÃ CHUẨN HOÁ sẽ được lưu, rồi neo
+ * toạ độ nếu có bytes. Idempotent theo khoá học — bóc lại cùng cuốn sách thì thay thẻ cũ, không chồng.
+ *
+ * `courseSlug` chứ không phải bản phát hành khung: sách thuộc về khoá học, và cùng một cuốn sách có
+ * thể được bóc cho hai khung khác nhau.
+ */
+export async function writeBookTraces(
+  courseSlug: string,
+  claims: {
+    readonly mappings?: readonly {
+      readonly lessonSlug: string
+      readonly lessonTitle: LocalizedText
+      readonly conceptSlug: string
+      readonly quote?: string
+    }[]
+    readonly proposed?: readonly {
+      readonly title: string
+      readonly lessonSlug: string
+      readonly quote?: string
+    }[]
+  },
+  bookText: string,
+  conceptTitles: ReadonlyMap<string, LocalizedText>,
+  anchorCtx?: AnchorContext,
+): Promise<WriteTraceResult> {
+  const excerpt = normalizeSource(bookText)
+  const records = [
+    ...(claims.mappings ?? []).map((m) => ({
+      record: buildLessonMappingTrace(m, conceptTitles.get(m.conceptSlug) ?? { en: m.conceptSlug }, excerpt),
+      ...(m.quote !== undefined ? { quote: m.quote } : {}),
+    })),
+    ...(claims.proposed ?? []).map((p) => ({
+      record: buildProposedKcTrace(p, excerpt),
+      ...(p.quote !== undefined ? { quote: p.quote } : {}),
+    })),
+  ]
+  return persistTraceRecords(records, excerpt, { courseSlug }, anchorCtx)
+}
+
+/**
  * Ghi thẻ CONCEPT_IDENTITY cho MỌI lần gộp trigram của một bản phát hành. Idempotent theo
  * frameworkVersionId. Không có evidence row (trigram không sinh SOURCE_SPAN/STRUCTURAL_CHECK) —
  * độ giống nằm trong `reason`; verdict để PENDING vì đây là thứ cần người duyệt nhất.
@@ -725,6 +902,10 @@ export type TraceArtifact =
    * ra thứ gì kiểm được — nên toàn bộ lời giải thích nằm ở cột `reason`, và tấm thẻ phải vẽ nó.
    */
   | 'CONCEPT_IDENTITY'
+  /** Bài trong sách dạy kiến thức nào — câu trích lấy từ chính cuốn sách. */
+  | 'LESSON_MAPPING'
+  /** Sách dạy thứ khung chưa có — đề xuất làm dày, chờ người duyệt. */
+  | 'KC_PROPOSED'
 
 export interface DecisionTraceView {
   readonly id: string
