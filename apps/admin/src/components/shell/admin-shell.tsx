@@ -13,6 +13,7 @@ import {
   LogOut,
   Menu,
   Network,
+  Users,
   X,
   type LucideIcon,
 } from 'lucide-react'
@@ -79,6 +80,8 @@ const NAV: NavItem[] = [
     show: (c) => c.canManageContent,
   },
   { key: 'explainer', Icon: Presentation, href: '/explainer', show: (c) => c.canManageContent },
+  // Hồ sơ học tập của trẻ — ADMIN, khớp requireRole('ADMIN') mà API đã dựng cho /admin/users.
+  { key: 'users', Icon: Users, href: '/users', show: (c) => c.isAdmin },
 ]
 
 export function AdminShell({

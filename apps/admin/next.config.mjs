@@ -60,6 +60,10 @@ const nextConfig = {
       // reported per-image, so it LOOKED like "the media library has nothing".
       // It had never reached the library at all.
       { source: '/api/explainer/:path*', destination: `${API_URL}/explainer/:path*` },
+      // Và đúng cái bẫy trên lại sập lần nữa với /api/admin/*: danh sách người dùng hiện ra
+      // TRỐNG chứ không báo lỗi, vì 404 của Next trông y hệt "không có bản ghi nào". Thêm một
+      // prefix ở API mà quên dòng ở đây thì triệu chứng luôn là "dữ liệu đâu mất rồi".
+      { source: '/api/admin/:path*', destination: `${API_URL}/admin/:path*` },
     ]
   },
 }

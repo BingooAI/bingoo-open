@@ -629,7 +629,8 @@
       "align": "Đối chiếu khung",
       "coverage": "Độ phủ 2 chiều",
       "crosswalk": "So sánh chương trình",
-      "explainer": "Bài giảng Explainer"
+      "explainer": "Bài giảng Explainer",
+      "users": "Người dùng"
     },
     "actions": {
       "logout": "Đăng xuất"
@@ -1184,6 +1185,126 @@
       "tbAcceptChannel": "Học qua kênh nào (vd: tính)",
       "tbAcceptRun": "Đưa vào khung",
       "courseBookMulti": "Một tệp PDF, hoặc cả thư mục ảnh đã quét — mỗi ảnh một trang, thứ tự theo tên tệp."
+    },
+    "users": {
+      "title": "Người dùng",
+      "description": "Tra cứu tài khoản và đọc hồ sơ học tập theo khung chương trình.",
+      "detailTitle": "Chi tiết người dùng",
+      "detailDescription": "Mọi lượt đọc hồ sơ học tập đều được ghi lại.",
+      "backToList": "← Về danh sách",
+      "searchPlaceholder": "Tên, email hoặc mã công khai",
+      "searchLabel": "Tìm người dùng",
+      "search": "Tìm",
+      "empty": "Không có người dùng nào khớp.",
+      "emptyHint": "Thử một từ khoá khác, hoặc bỏ trống để xem tất cả.",
+      "failed": "Không tải được dữ liệu.",
+      "notFound": "Không có người dùng này.",
+      "view": "Xem",
+      "banned": "Đã khoá",
+      "managedByGuardian": "Do người giám hộ quản lý",
+      "colName": "Người dùng",
+      "colType": "Loại tài khoản",
+      "colStatus": "Trạng thái",
+      "colJoined": "Tham gia",
+      "prev": "Trước",
+      "next": "Sau",
+      "pageOf": "Trang {page}/{total}",
+      "field": {
+        "publicId": "Mã công khai",
+        "accountType": "Loại tài khoản",
+        "status": "Trạng thái",
+        "role": "Vai trò",
+        "locale": "Ngôn ngữ",
+        "joined": "Tham gia"
+      },
+      "gap": {
+        "title": "Lỗ hổng theo khung chương trình",
+        "subtitle": "Đã ghi nhận dữ liệu trên {count} đơn vị kiến thức.",
+        "noData": "Chưa ghi nhận dữ liệu học tập nào.",
+        "frameworkLabel": "Khung chương trình",
+        "stageLabel": "Bậc",
+        "choose": "Chọn khung chương trình…",
+        "allStages": "Mọi bậc",
+        "pickFramework": "Chọn một khung chương trình để đọc.",
+        "noFrameworks": "Chưa có khung chương trình nào để đọc.",
+        "noFrameworksHint": "Cần ít nhất một khung đã khai yêu cầu cần đạt.",
+        "noObjectives": "Khung này chưa có yêu cầu cần đạt nào ở bậc đã chọn.",
+        "failed": "Không đọc được báo cáo.",
+        "scoreWithInterval": "Mức nắm {value} (khoảng tin cậy {lo}–{hi}).",
+        "observationsOnly": "Đã ghi nhận {count} lần quan sát. Mục tiêu này không quy thành điểm số.",
+        "needsTeaching": "Đã đo, chưa tới",
+        "needsObserving": "Chưa có quan sát",
+        "status": {
+          "achieved": "Đạt",
+          "partial": "Một phần",
+          "none": "Chưa có"
+        },
+        "reason": {
+          "notYet": "Đã có bằng chứng và bằng chứng cho thấy chưa tới. Bước tiếp theo là dạy.",
+          "noEvidence": "Chưa có quan sát nào cho mục tiêu này. Bước tiếp theo là thu bằng chứng, chưa phải dạy lại."
+        },
+        "summary": {
+          "achieved": "Đạt",
+          "partial": "Một phần",
+          "none": "Chưa có",
+          "awaitingEvidence": "Chờ được đo"
+        },
+        "progressLabel": "Tiến độ theo khung",
+        "progressCount": "{achieved}/{total} mục tiêu đã đạt",
+        "intervalShort": "{lo}–{hi}",
+        "notScoredShort": "Không quy thành điểm",
+        "noEvidenceShort": "Chưa có dữ liệu để chấm",
+        "collapse": "Thu gọn",
+        "expand": "Xem",
+        "group": {
+          "teach": "Cần dạy",
+          "teachHint": "Đã có bằng chứng, và bằng chứng cho thấy chưa tới. Xếp theo mức xa ngưỡng nhất.",
+          "measure": "Cần đo",
+          "measureHint": "Chưa có quan sát nào. Dạy lại ở đây là dạy mò — cần thu bằng chứng trước.",
+          "done": "Đã đạt",
+          "doneHint": "Không có việc phải làm ngay."
+        },
+        "why": {
+          "show": "Vì sao?",
+          "hide": "Ẩn giải thích",
+          "binding": "Mắt xích quyết định",
+          "required": "Bắt buộc",
+          "noObs": "chưa đo",
+          "observations": "{count} lần",
+          "footer": "Ngưỡng đạt {cut}. Tổng {observations} lần quan sát đứng sau con số này.",
+          "rule": {
+            "weakestRequired": "Mục tiêu này đòi {count} mắt xích bắt buộc. Điểm lấy theo mắt xích YẾU NHẤT — thiếu một mắt xích là chưa đạt, nên lấy trung bình sẽ nói dối.",
+            "weightedAverage": "Không mắt xích nào bắt buộc, nên điểm là trung bình có trọng số của các khái niệm bên dưới.",
+            "direct": "Mục tiêu này được chấm thẳng, không qua khái niệm trung gian nào.",
+            "noEvidence": "Chưa một quan sát nào, nên không có con số nào để tính. Đây không phải điểm 0 — là chưa ai chấm."
+          }
+        },
+        "charts": {
+          "radarTitle": "Hình dáng năng lực",
+          "radarBy": {
+            "strand": "Trung bình theo mạch nội dung.",
+            "kind": "Trung bình theo loại năng lực."
+          },
+          "radarUnavailable": "Không đủ nhóm để vẽ.",
+          "radarTooFewAxes": "Cần ít nhất 3 nhóm mới vẽ được hình này. Khung hiện tại chưa đủ — bảng bên cạnh vẫn đọc được đầy đủ.",
+          "radarGaps": "{count} trục vẽ đứt vì chưa có quan sát. Đứt là đúng — nối liền sẽ thành nói rằng chỗ đó bằng không.",
+          "unmeasured": "chưa đo",
+          "rangeTitle": "Mức nắm và độ chắc chắn",
+          "rangeHint": "Chấm là mức nắm, thanh mảnh là khoảng tin cậy, vạch đứt là ngưỡng đạt. Thanh càng dài, dữ liệu càng mỏng.",
+          "rangeEmpty": "Chưa mục tiêu nào có đủ bằng chứng để chấm.",
+          "passMark": "Ngưỡng đạt {cut}"
+        },
+        "kind": {
+          "KNOWLEDGE": "Kiến thức",
+          "PROCEDURE": "Quy trình",
+          "SKILL": "Kỹ năng",
+          "DISPOSITION": "Thái độ",
+          "BEHAVIOR": "Hành vi",
+          "ATTITUDE": "Thái độ sống",
+          "OBJECTIVE": "Mục tiêu",
+          "OUTCOME": "Chuẩn đầu ra"
+        }
+      }
     }
   },
   "learn": {

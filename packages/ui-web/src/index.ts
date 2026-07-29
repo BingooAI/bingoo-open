@@ -274,6 +274,13 @@ export {
   type DonutSegment,
   RadarChart,
   type RadarChartProps,
+  type RadarPoint,
+  StackedBar,
+  type StackedBarProps,
+  type StackedSegment,
+  RangeDots,
+  type RangeDotsProps,
+  type RangeRow,
   type XYPoint,
   type ChartColor,
 } from './charts'

@@ -629,7 +629,8 @@
       "align": "Align frameworks",
       "coverage": "Coverage",
       "crosswalk": "Compare programmes",
-      "explainer": "Explainer lessons"
+      "explainer": "Explainer lessons",
+      "users": "Users"
     },
     "actions": {
       "logout": "Sign out"
@@ -1184,6 +1185,126 @@
       "tbAcceptChannel": "How it is performed (e.g. compute)",
       "tbAcceptRun": "Add it",
       "courseBookMulti": "One PDF, or a whole folder of scanned images — one image per page, ordered by file name."
+    },
+    "users": {
+      "title": "Users",
+      "description": "Look up an account and read its standing against a framework.",
+      "detailTitle": "User detail",
+      "detailDescription": "Every read of a learning record is logged.",
+      "backToList": "← Back to list",
+      "searchPlaceholder": "Name, email or public ID",
+      "searchLabel": "Search users",
+      "search": "Search",
+      "empty": "No users match.",
+      "emptyHint": "Try another term, or leave it blank to see everyone.",
+      "failed": "Could not load the data.",
+      "notFound": "No such user.",
+      "view": "View",
+      "banned": "Banned",
+      "managedByGuardian": "Managed by a guardian",
+      "colName": "User",
+      "colType": "Account type",
+      "colStatus": "Status",
+      "colJoined": "Joined",
+      "prev": "Previous",
+      "next": "Next",
+      "pageOf": "Page {page} of {total}",
+      "field": {
+        "publicId": "Public ID",
+        "accountType": "Account type",
+        "status": "Status",
+        "role": "Role",
+        "locale": "Language",
+        "joined": "Joined"
+      },
+      "gap": {
+        "title": "Standing against a framework",
+        "subtitle": "Evidence recorded on {count} concepts.",
+        "noData": "No learning evidence recorded yet.",
+        "frameworkLabel": "Framework",
+        "stageLabel": "Stage",
+        "choose": "Choose a framework…",
+        "allStages": "All stages",
+        "pickFramework": "Choose a framework to read.",
+        "noFrameworks": "No framework is ready to read against.",
+        "noFrameworksHint": "At least one framework needs published objectives.",
+        "noObjectives": "This framework has no objectives at the chosen stage.",
+        "failed": "Could not load the report.",
+        "scoreWithInterval": "Mastery {value} (confidence interval {lo}–{hi}).",
+        "observationsOnly": "{count} observations recorded. This objective is not scored.",
+        "needsTeaching": "Assessed, not yet reached",
+        "needsObserving": "No observations yet",
+        "status": {
+          "achieved": "Achieved",
+          "partial": "Partial",
+          "none": "Not started"
+        },
+        "reason": {
+          "notYet": "Evidence exists and shows this is not reached yet. The next step is teaching.",
+          "noEvidence": "Nothing has been observed for this objective. The next step is gathering evidence, not reteaching."
+        },
+        "summary": {
+          "achieved": "Achieved",
+          "partial": "Partial",
+          "none": "Not started",
+          "awaitingEvidence": "Awaiting evidence"
+        },
+        "progressLabel": "Progress against the framework",
+        "progressCount": "{achieved} of {total} objectives achieved",
+        "intervalShort": "{lo}–{hi}",
+        "notScoredShort": "Not scored",
+        "noEvidenceShort": "Nothing measured yet",
+        "collapse": "Collapse",
+        "expand": "Show",
+        "group": {
+          "teach": "To teach",
+          "teachHint": "Evidence exists and shows these are not reached. Furthest from the bar first.",
+          "measure": "To measure",
+          "measureHint": "Nothing observed yet. Reteaching here is guesswork — gather evidence first.",
+          "done": "Achieved",
+          "doneHint": "Nothing to act on right now."
+        },
+        "why": {
+          "show": "Why?",
+          "hide": "Hide explanation",
+          "binding": "Deciding link",
+          "required": "Required",
+          "noObs": "not measured",
+          "observations": "{count} obs.",
+          "footer": "Pass mark {cut}. {observations} observations stand behind this number.",
+          "rule": {
+            "weakestRequired": "This objective requires {count} mandatory links. The score follows the WEAKEST one — missing a single link means not achieved, so an average would lie.",
+            "weightedAverage": "No link is mandatory, so the score is a weighted average of the concepts below.",
+            "direct": "This objective is assessed directly, with no intermediate concepts.",
+            "noEvidence": "Nothing has been observed, so there is no number to compute. This is not a zero — nobody has assessed it."
+          }
+        },
+        "charts": {
+          "radarTitle": "Competency shape",
+          "radarBy": {
+            "strand": "Averaged by content strand.",
+            "kind": "Averaged by competency kind."
+          },
+          "radarUnavailable": "Not enough groups to plot.",
+          "radarTooFewAxes": "This shape needs at least 3 groups. The current framework has fewer — the chart beside it still reads in full.",
+          "radarGaps": "{count} axes are drawn broken because nothing has been observed there. Broken is correct — closing the shape would claim those are zero.",
+          "unmeasured": "not measured",
+          "rangeTitle": "Mastery and how sure we are",
+          "rangeHint": "The dot is mastery, the thin bar is the confidence interval, the dashed line is the pass mark. A longer bar means thinner evidence.",
+          "rangeEmpty": "No objective has enough evidence to score yet.",
+          "passMark": "Pass mark {cut}"
+        },
+        "kind": {
+          "KNOWLEDGE": "Knowledge",
+          "PROCEDURE": "Procedure",
+          "SKILL": "Skill",
+          "DISPOSITION": "Disposition",
+          "BEHAVIOR": "Behaviour",
+          "ATTITUDE": "Attitude",
+          "OBJECTIVE": "Objective",
+          "OUTCOME": "Outcome"
+        }
+      }
     }
   },
   "learn": {
