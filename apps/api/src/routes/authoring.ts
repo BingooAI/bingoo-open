@@ -378,7 +378,7 @@ export const authoring = new Hono<AppEnv>()
       const user = c.get('user')
       if (!user) throw AppError.unauthorized()
       const itemKeys = c.req.valid('json').itemKeys
-      const approved = await approveItems(itemKeys)
+      const approved = await approveItems(itemKeys, user.id, new Date())
       // DẤU VẾT (R5): ai DUYỆT nội dung tới trẻ — item nào, bao nhiêu.
       await writeAudit({
         action: 'authoring.content.approve',

@@ -1184,6 +1184,16 @@ model ContentItem {
   lessonSlug    String?
   payload       Json // QuizQuestion @bingoo.ai/core (hộp đen)
   status        ContentItemStatus @default(NEEDS_REVIEW)
+  /// AI đã cho item này tới trẻ, và LÚC NÀO.
+  ///
+  /// Nhật ký hệ thống có ghi, nhưng ở đó khoá item nằm trong một mảng — hỏi "ai duyệt đúng item
+  /// này" thành ra phải quét nhật ký tìm mảng nào chứa nó, và không ai viết truy vấn đó. Kế hoạch
+  /// biên soạn và thẻ căn cứ đều ghi thẳng trên dòng; đây là chỗ duy nhất không, mà nó lại là thứ
+  /// trẻ trực tiếp nhìn thấy.
+  ///
+  /// Ref PHẲNG (không khoá ngoại) như mọi ref người dùng khác trong lược đồ này.
+  approvedById  String?
+  approvedAt    DateTime?
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
 

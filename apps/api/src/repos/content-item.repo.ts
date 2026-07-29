@@ -66,7 +66,12 @@ export async function saveItems(
     await db.contentItem.upsert({
       where: { itemKey: it.itemKey },
       create: { itemKey: it.itemKey, status, ...base },
-      update: { ...base, ...(demote ? { status: 'NEEDS_REVIEW' } : {}) },
+      // Hạ về chờ-duyệt thì PHẢI xoá cả dấu vết người duyệt cũ: giữ lại thì dòng đó nói "X đã
+      // duyệt" bên cạnh trạng thái "chờ duyệt", và người đọc không biết tin vế nào.
+      update: {
+        ...base,
+        ...(demote ? { status: 'NEEDS_REVIEW' as const, approvedById: null, approvedAt: null } : {}),
+      },
     })
   }
   return items.length
@@ -169,10 +174,21 @@ export async function loadItem(itemKey: string): Promise<AuthoredItem | null> {
 }
 
 /** Duyệt item (NEEDS_REVIEW → APPROVED) để lọt vào ngân hàng chọn. */
-export async function approveItems(itemKeys: readonly string[]): Promise<number> {
+/**
+ * DUYỆT item — và ghi AI duyệt, LÚC NÀO, ngay trên dòng đó.
+ *
+ * Nhật ký hệ thống vẫn ghi, nhưng ở đó khoá item nằm trong một mảng: hỏi "ai duyệt đúng item này"
+ * thành ra phải quét nhật ký tìm mảng nào chứa nó. Đây là thứ trẻ trực tiếp nhìn thấy, nên câu hỏi
+ * đó phải trả lời được bằng một truy vấn thẳng — như kế hoạch biên soạn và thẻ căn cứ vẫn làm.
+ */
+export async function approveItems(
+  itemKeys: readonly string[],
+  approvedById: string,
+  approvedAt: Date,
+): Promise<number> {
   const res = await db.contentItem.updateMany({
     where: { itemKey: { in: [...itemKeys] } },
-    data: { status: 'APPROVED' },
+    data: { status: 'APPROVED', approvedById, approvedAt },
   })
   return res.count
 }
