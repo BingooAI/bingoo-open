@@ -114,11 +114,23 @@ jobs:
   codeql:
     name: CodeQL
     runs-on: ubuntu-latest
+    # Code scanning is free on public repositories and licensed on private ones. This repository
+    # is private today, so the upload is refused no matter how the job is configured, and the
+    # check had been red on every run for weeks. A permanently red check is worse than an absent
+    # one: reviewers learn to wave it through, and the day it goes red for a real finding it
+    # looks exactly like every other day. The changeset job below declines to run for the same
+    # reason, in the same words.
+    #
+    # The condition reads the visibility rather than a flag someone has to remember to flip, so
+    # scanning resumes by itself the moment this repository is public again — which is what
+    # docs/adr and the licence both say it is meant to be. Nothing here disables scanning where
+    # scanning can actually run.
+    if: github.event.repository.visibility == 'public'
     # An explicit permissions block sets everything it does not name to `none`, including the
     # repository default. On a public repository that was survivable, because the analyser only
     # reads run metadata as a nicety. On a private one the same call is mandatory, so the job
     # started failing the moment this repository stopped being public — with an error naming an
-    # API endpoint rather than the permission behind it.
+    # API endpoint rather than the permission behind it. Kept because visibility can change back.
     permissions:
       contents: read
       security-events: write
