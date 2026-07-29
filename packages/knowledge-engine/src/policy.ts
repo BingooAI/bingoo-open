@@ -89,10 +89,34 @@ export interface SequencingParams {
   readonly matchFloor: number
 }
 
+/**
+ * Nửa đời của một loại năng lực: `base + mastery × slope`, tính bằng ngày.
+ *
+ * `base` là nửa đời khi vừa mới chạm tới; `slope` là phần được kéo dài ra khi đã nắm vững.
+ */
+export interface ReviewHalfLife {
+  readonly base: number
+  readonly slope: number
+}
+
 /** SPEC §8.1/§8.5 — đường cong quên & ưu tiên ôn. */
 export interface ReviewParams {
   readonly halfLifeBase: number
   readonly halfLifeSlope: number
+  /**
+   * Nửa đời riêng theo loại năng lực. Loại không khai thì rơi về `halfLifeBase`/`halfLifeSlope`.
+   *
+   * Một hằng số chung cho mọi loại là nói rằng phép chia có dư phai đi đúng bằng tốc độ của
+   * thói quen đọc sách. Bảng này chia theo `CompetencyKind` chứ KHÔNG theo môn — vì "môn" là
+   * khái niệm riêng của từng khung chương trình, còn kind thì khung nào cũng ánh xạ vào được.
+   * Đổi khung không được đổi lịch ôn.
+   *
+   * Các con số là PRIOR, không phải số đo. Thứ tự giữa chúng có cơ sở (kỹ năng thủ tục thiếu
+   * luyện thì rơi nhanh hơn hiểu biết khái niệm); còn độ lớn cụ thể thì chưa ai đo trên người
+   * học thật. Khi có đủ dữ liệu ôn tập, ước lượng lại từ dữ liệu và thay bảng này — đó là việc
+   * bảng tồn tại để dọn đường, không phải kết luận nó đưa ra.
+   */
+  readonly halfLifeByKind?: Partial<Record<CompetencyKind, ReviewHalfLife>>
   readonly dueThreshold: number
   readonly weakPriorityBase: number
   readonly masteredPriorityBase: number
@@ -141,6 +165,33 @@ export interface EnginePolicy {
 }
 
 // ── DEFAULT_POLICY — đúng từng giá trị SPEC §13 ───────────────────────────────
+
+/**
+ * Nửa đời mặc định theo loại năng lực.
+ *
+ * `KNOWLEDGE` giữ đúng `halfLifeBase`/`halfLifeSlope` cũ, nên trường hợp phổ biến nhất không
+ * xê dịch. Ba nhóm còn lại lệch đi, mỗi nhóm vì một lý do khác nhau:
+ *
+ * - `PROCEDURE` phai nhanh hơn. Một quy trình nhiều bước thiếu luyện thì rơi rụng ở từng
+ *   bước, chứ không mờ dần đều như một khái niệm đã hiểu.
+ * - `SKILL` phai chậm hơn: nó chuyển di được, và mỗi lần dùng ở ngữ cảnh khác lại tự ôn.
+ * - `DISPOSITION` / `BEHAVIOR` / `ATTITUDE` gần như không phai — và đây KHÔNG phải chuyện
+ *   hiệu chỉnh tham số, mà là sửa một chỗ sai loại. Ba kind này đo bằng Beta-Binomial, tức là
+ *   đo TẦN SUẤT quan sát được, không phải đo lượng còn nhớ (xem `methodFor`). "Ba tuần rồi
+ *   chưa ôn, chắc em quên mất cách thích đọc sách" là một câu vô nghĩa; để nguyên hằng số
+ *   chung thì hệ vẫn đều đặn đẩy chúng vào hàng chờ ôn chỉ vì thời gian trôi.
+ *
+ * `OBJECTIVE` và `OUTCOME` cố ý không có mặt: chúng là lớp phủ báo cáo, không phải thứ để
+ * luyện, nên lẽ ra không bao giờ lọt vào hàng ôn.
+ */
+const DEFAULT_HALF_LIFE_BY_KIND: Partial<Record<CompetencyKind, ReviewHalfLife>> = {
+  KNOWLEDGE: { base: 1, slope: 30 },
+  PROCEDURE: { base: 1, slope: 14 },
+  SKILL: { base: 2, slope: 60 },
+  DISPOSITION: { base: 30, slope: 300 },
+  BEHAVIOR: { base: 30, slope: 300 },
+  ATTITUDE: { base: 30, slope: 300 },
+}
 
 const DEFAULT_WRITE_MATRIX: EvidenceWriteMatrix = {
   LEARNER_SELF: {
@@ -231,6 +282,7 @@ export const DEFAULT_POLICY: EnginePolicy = {
   review: {
     halfLifeBase: 1,
     halfLifeSlope: 30,
+    halfLifeByKind: DEFAULT_HALF_LIFE_BY_KIND,
     dueThreshold: 0.4,
     weakPriorityBase: 1,
     masteredPriorityBase: 0.3,
@@ -339,6 +391,10 @@ export function validatePolicy(p: EnginePolicy): void {
 
   assertProb('review.dueThreshold', p.review.dueThreshold)
   assertPositive('review.halfLifeBase', p.review.halfLifeBase)
+  for (const [kind, hl] of Object.entries(p.review.halfLifeByKind ?? {})) {
+    // Nửa đời 0 làm urgency thành NaN — sai lặng lẽ, và chỉ lộ ra ở hàng chờ ôn của một đứa trẻ.
+    assertPositive(`review.halfLifeByKind.${kind}.base`, hl.base)
+  }
 
   assertNonNegInt('evidence.snapshotSampleEvery', p.evidence.snapshotSampleEvery)
   for (const actor of EVIDENCE_ACTORS) {

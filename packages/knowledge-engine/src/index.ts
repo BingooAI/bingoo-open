@@ -71,6 +71,7 @@ export type {
   BetaParams,
   SequencingParams,
   ReviewParams,
+  ReviewHalfLife,
   EvidenceWriteRule,
   EvidenceWriteMatrix,
   EvidenceParams,
@@ -107,6 +108,7 @@ export {
   dreyfusSignals,
   deriveLevel,
   reviewUrgency,
+  halfLifeDays,
 } from './mastery/index'
 export type {
   BktUpdateOpts,
@@ -188,8 +190,10 @@ export {
   buildPriority,
   dueForReview,
   selectAdaptiveSession,
+  selectAdaptiveSessionTraced,
   declumpByKind,
   selectNextItem,
+  policyFingerprint,
 } from './sequencer/index'
 export type {
   AbilityOf,
@@ -198,6 +202,9 @@ export type {
   SessionOpts,
   NextItemContext,
   NextItemOpts,
+  TracedSession,
+  SelectionTrace,
+  ConsideredCandidate,
 } from './sequencer/index'
 
 // Framework & migration (SPEC §9–§10) — change-set thuần
@@ -257,6 +264,7 @@ export {
   distribution,
   classRollup,
   coverageReport,
+  gapReport,
   learnerView,
   teacherView,
   supporterView,
@@ -266,6 +274,18 @@ export type {
   CurvePoint,
   Distribution,
   CoverageReport,
+  GapReport,
+  GapReportInput,
+  GapObjective,
+  GapSummary,
+  GapStatus,
+  GapReason,
+  ObjectiveGap,
+  ConceptGap,
+  ReportMode,
+  GapExplanation,
+  GapRule,
+  Interval,
   LearnerViewInput,
   LearnerView,
   TeacherViewInput,

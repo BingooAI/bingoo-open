@@ -32,7 +32,11 @@ export function buildPriority(
       out.set(slug, policy.review.weakPriorityBase + (1 - m))
     } else {
       const lastSeen = states.get(slug)?.lastSeenMs ?? null
-      out.set(slug, policy.review.masteredPriorityBase + reviewUrgency(m, lastSeen, nowMs, policy.review))
+      const kind = graph.node(slug)?.kind
+      out.set(
+        slug,
+        policy.review.masteredPriorityBase + reviewUrgency(m, lastSeen, nowMs, policy.review, kind),
+      )
     }
   }
   return out

@@ -7,6 +7,7 @@ import type { EnginePolicy } from '../policy'
 import type { SkillMastery } from '../mastery/observe'
 import { abilityFromStates, isEligible, scoreItem } from './score'
 import { dayRank } from './hash'
+import { policyFingerprint, type SelectionTrace } from './trace'
 
 export interface SessionContext {
   readonly states: ReadonlyMap<Slug, SkillMastery>
@@ -51,16 +52,25 @@ export function declumpByKind(items: Candidate[]): Candidate[] {
   return out
 }
 
+/** Phiên đã chọn, kèm nhật ký vì sao chọn thế. */
+export interface TracedSession {
+  readonly session: Candidate[]
+  readonly trace: SelectionTrace
+}
+
 /**
  * SPEC §8.3 — lọc → chấm → sort (bucket DESC, dayRank ASC) → caps + ε-explore 3 pha →
  * sort difficulty ASC + declump. Tất định theo (input, daySeed).
+ *
+ * Bản có nhật ký. `selectAdaptiveSession` chính là hàm này, bỏ phần nhật ký đi — cùng một
+ * đường mã, nên việc ghi nhật ký không thể lặng lẽ đổi thứ người học nhìn thấy.
  */
-export function selectAdaptiveSession(
+export function selectAdaptiveSessionTraced(
   ctx: SessionContext,
   candidates: readonly Candidate[],
   opts: SessionOpts,
   policy: EnginePolicy,
-): Candidate[] {
+): TracedSession {
   const seq = policy.sequencing
   const size = opts.size ?? seq.sessionSize
   const abilityOf = abilityFromStates(ctx.states, policy.elo.base)
@@ -75,11 +85,10 @@ export function selectAdaptiveSession(
   })
 
   // Chấm + sort: round(score·bucket) DESC, rồi dayRank ASC.
-  const scored = eligible.map((cand) => ({
-    cand,
-    bucket: Math.round(scoreItem(cand, ctx.priority, abilityOf, ctx.started, seq) * seq.scoreBucket),
-    rank: dayRank(cand.key, opts.daySeed),
-  }))
+  const scored = eligible.map((cand) => {
+    const score = scoreItem(cand, ctx.priority, abilityOf, ctx.started, seq)
+    return { cand, score, bucket: Math.round(score * seq.scoreBucket), rank: dayRank(cand.key, opts.daySeed) }
+  })
   scored.sort((a, b) => b.bucket - a.bucket || a.rank - b.rank)
   const sorted = scored.map((s) => s.cand)
 
@@ -131,5 +140,33 @@ export function selectAdaptiveSession(
 
   // Sắp cuối: dễ → khó rồi declump.
   picked.sort((a, b) => a.difficulty - b.difficulty)
-  return declumpByKind(picked)
+  const session = declumpByKind(picked)
+
+  const trace: SelectionTrace = {
+    policy: policyFingerprint(policy),
+    size,
+    exploreN,
+    daySeed: opts.daySeed ?? null,
+    offered: candidates.length,
+    eligible: eligible.length,
+    considered: scored.map((s) => ({
+      key: s.cand.key,
+      score: s.score,
+      bucket: s.bucket,
+      rank: s.rank,
+      picked: pickedKeys.has(s.cand.key),
+    })),
+    picked: session.map((c) => c.key),
+  }
+  return { session, trace }
+}
+
+/** SPEC §8.3 — như `selectAdaptiveSessionTraced` nhưng chỉ lấy phiên, bỏ nhật ký. */
+export function selectAdaptiveSession(
+  ctx: SessionContext,
+  candidates: readonly Candidate[],
+  opts: SessionOpts,
+  policy: EnginePolicy,
+): Candidate[] {
+  return selectAdaptiveSessionTraced(ctx, candidates, opts, policy).session
 }

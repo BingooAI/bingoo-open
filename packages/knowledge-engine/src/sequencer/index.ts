@@ -6,5 +6,13 @@ export { fnv1a32, dayRank } from './hash'
 export { abilityFromStates, isEligible, scoreItem, type AbilityOf } from './score'
 export { buildPriority } from './priority'
 export { dueForReview, type DueItem } from './review'
-export { selectAdaptiveSession, declumpByKind, type SessionContext, type SessionOpts } from './session'
+export {
+  selectAdaptiveSession,
+  selectAdaptiveSessionTraced,
+  declumpByKind,
+  type SessionContext,
+  type SessionOpts,
+  type TracedSession,
+} from './session'
+export { policyFingerprint, type ConsideredCandidate, type SelectionTrace } from './trace'
 export { selectNextItem, type NextItemContext, type NextItemOpts } from './next-item'

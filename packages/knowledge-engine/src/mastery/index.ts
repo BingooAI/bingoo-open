@@ -23,4 +23,4 @@ export {
   type DreyfusSignals,
   type LevelInput,
 } from './dreyfus'
-export { reviewUrgency } from './review-urgency'
+export { reviewUrgency, halfLifeDays } from './review-urgency'

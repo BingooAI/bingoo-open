@@ -51,3 +51,20 @@ export function isOrdering(rel: RelType | undefined): boolean {
 }
 
 export const EVIDENCE_ACTORS = ['LEARNER_SELF', 'TEACHER', 'SUPPORTER', 'PEER', 'ASSESSOR', 'SYSTEM'] as const
+
+/**
+ * Kind đo bằng TẦN SUẤT tích luỹ (Beta-Binomial), không đo lượng còn nhớ.
+ *
+ * Bản sao rút gọn của `methodFor` bên `@bingoo.ai/contracts` — chỉ giữ đúng câu hỏi engine cần
+ * hỏi, và giữ ở dạng hằng số vì gọi `methodFor` sẽ kéo contracts (và zod) thành phụ thuộc
+ * runtime. Test contracts-alignment canh cho hai bên không trôi khỏi nhau.
+ *
+ * Hai chỗ dùng, cả hai đều là chuyện đúng/sai chứ không phải chỉnh tham số:
+ * — lịch ôn: "quên" không áp cho tần suất (xem `halfLifeByKind`);
+ * — báo cáo: một tần suất mỏng không được in ra thành điểm số (xem `views/gap`).
+ */
+export const FREQUENCY_KINDS = ['DISPOSITION', 'BEHAVIOR', 'ATTITUDE'] as const
+
+export function isFrequencyMeasured(kind: CompetencyKind): boolean {
+  return (FREQUENCY_KINDS as readonly string[]).includes(kind)
+}

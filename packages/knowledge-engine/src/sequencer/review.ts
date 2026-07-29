@@ -33,7 +33,7 @@ export function dueForReview(
     const m = compositeMastery(graph, states, slug, { memo })
     if (m < policy.mastery.threshold) continue // chỉ ôn cái đã nắm
     const lastSeen = states.get(slug)?.lastSeenMs ?? null
-    const urgency = reviewUrgency(m, lastSeen, nowMs, policy.review)
+    const urgency = reviewUrgency(m, lastSeen, nowMs, policy.review, graph.node(slug)?.kind)
     if (urgency >= policy.review.dueThreshold) out.push({ slug, urgency })
   }
   return out.sort((a, b) => b.urgency - a.urgency)
