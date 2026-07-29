@@ -42,7 +42,7 @@ export async function apiPost<T>(url: string, body: unknown, opts?: { timeoutMs?
     })
   } catch (e) {
     if ((e as Error).name === 'AbortError')
-      throw new Error(`Hết thời gian chờ (${Math.round((opts!.timeoutMs ?? 0) / 1000)}s)`)
+      throw new Error(`Hết thời gian chờ (${Math.round((opts!.timeoutMs ?? 0) / 1000)}s)`, { cause: e })
     throw e
   } finally {
     if (timer) clearTimeout(timer)

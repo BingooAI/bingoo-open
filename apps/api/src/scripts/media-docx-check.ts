@@ -80,14 +80,13 @@ async function main() {
   check('DOCX mime recorded', rendition.mimeType === DOCX_MIME)
 
   // Download + verify it's a real .docx (ZIP magic "PK\x03\x04").
-  let ok = false
   if (rendition.storageKey) {
     const { url } = await getStorage(rendition.provider ?? undefined).createSignedDownloadUrl({
       key: rendition.storageKey,
     })
     const res = await fetch(url)
     const buf = Buffer.from(await res.arrayBuffer())
-    ok = buf.length > 0 && buf[0] === 0x50 && buf[1] === 0x4b // "PK"
+    const ok = buf.length > 0 && buf[0] === 0x50 && buf[1] === 0x4b // "PK"
     check('DOCX bytes downloadable + valid zip signature', ok, `${buf.length} bytes`)
   }
 

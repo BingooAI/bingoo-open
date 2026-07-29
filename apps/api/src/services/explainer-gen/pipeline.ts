@@ -85,7 +85,7 @@ async function bankBlock(brief: LessonBrief, deps: GenDeps): Promise<string> {
   const parts: string[] = []
   for (const o of brief.objectives) {
     if (!o.skills.length) continue
-    let items: BankItem[] = []
+    let items: BankItem[]
     try {
       items = await deps.bank(o.skills)
     } catch {

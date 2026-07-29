@@ -521,7 +521,7 @@ const REG: Record<string, Interactions<KitAny>> = {
     onTap(p, pt, ctx) {
       // keep in sync with sizeorder.ts render layout (slot geometry per mode)
       const len = p.values.length
-      let slot = -1
+      let slot: number
       if (p.mode === 'length') {
         const top = ctx.box.h * 0.2
         const rowH = Math.min((ctx.box.h * 0.68) / len, ctx.box.h * 0.2)
@@ -1116,8 +1116,8 @@ const REG: Record<string, Interactions<KitAny>> = {
       const gaps = p.filled.length
       const maxBank = p.bank.reduce((m2: number, w: string) => Math.max(m2, w.length), 3)
       let fs = Math.min(box.h * 0.08, box.w * 0.062)
-      let slots: (HitBox | null)[] = [],
-        chips: HitBox[] = []
+      let slots: (HitBox | null)[]
+      let chips: HitBox[]
       for (let it = 0; ; it++) {
         const ch = fs * 0.55,
           lineH = fs * 1.9,
@@ -1326,8 +1326,8 @@ const REG: Record<string, Interactions<KitAny>> = {
         return { chips, bottom: y + chipH / 2 }
       }
       let fs = Math.min(box.h * 0.055, box.w * 0.05)
-      let A = null,
-        B = null
+      let A: ReturnType<typeof wrap>
+      let B: ReturnType<typeof wrap>
       for (let it = 0; ; it++) {
         A = wrap(ta, fs, box.h * 0.1)
         B = wrap(tb, fs, box.h * 0.56)

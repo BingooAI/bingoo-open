@@ -58,7 +58,9 @@ describe('năng lượng + đòn đặc biệt', () => {
     let m = initMatch({ mode: 'vsAI', totalRounds: 20 })
     m = play(m, [true, true], rng) // foe: 100 - 68 = 32, energy 2
     expect(specialReady(m)).toBe(false)
-    m = play(m, [true, true], rng) // foe hp đã 0 ở đòn thứ 3 → won trước khi đủ energy
+    // Đòn thứ ba hạ foe trước khi đủ năng lượng — chú thích cũ nói vậy nhưng không ai kiểm, và
+    // giá trị trả về bị vứt. Kiểm hẳn: đó mới là điều dòng này định chứng minh.
+    expect(play(m, [true, true], rng).status).toBe('won')
     // Dùng match mới để test special sạch (foe máu cao)
     let c = initMatch({ mode: 'coop', totalRounds: 20 })
     c = play(c, [true, true, true, true], rng) // energy 4, foe 150-120=30
