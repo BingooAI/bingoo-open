@@ -1408,3 +1408,27 @@ export function useTraceVerdict() {
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['authoring', 'trace'] }),
   })
 }
+
+/**
+ * Nhận một đề xuất làm dày: kiến thức mới thật sự vào khung.
+ *
+ * Đòi khai NÓ NÓI VỀ CÁI GÌ và học QUA KÊNH NÀO — không phải thủ tục. Một kiến thức không có dấu
+ * hiệu phân biệt thì ngày mai không ai tách nổi nó khỏi cái bên cạnh, và gộp sai là hỏng vĩnh viễn
+ * mà không có tín hiệu nào báo.
+ */
+export function useAcceptProposal() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (input: { id: string; object: string; channel: string; bloom?: string; subject?: string }) =>
+      api.post<{ slug: string; title: string; traceId: string }>(
+        `/authoring/trace/${encodeURIComponent(input.id)}/accept-proposal`,
+        {
+          object: input.object,
+          channel: input.channel,
+          ...(input.bloom ? { bloom: input.bloom } : {}),
+          ...(input.subject ? { subject: input.subject } : {}),
+        },
+      ),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['authoring', 'trace'] }),
+  })
+}

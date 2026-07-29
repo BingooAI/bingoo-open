@@ -31,6 +31,7 @@ import {
 } from '../repos/content-item.repo'
 import { generateLessonPlanFor, generateLessonPlanInCourse } from '../services/plan-generate.service'
 import { getPlanGrounding } from '../services/plan-grounding.service'
+import { acceptProposal } from '../services/proposal-accept.service'
 import { generateCoursePlan, generateUnitPlan } from '../services/plan-hierarchy.service'
 import { cancelPlanJob, getPlanJob, startPlanJob } from '../services/plan-jobs'
 import { deriveLevelInsights } from '../services/plan-insights.service'
@@ -836,6 +837,49 @@ export const authoring = new Hono<AppEnv>()
         targetType: 'decision_record',
         targetId: r.id,
         metadata: { verdict: r.verdict, overridden: r.overridden },
+      })
+      return ok(c, r)
+    },
+  )
+  /**
+   * NHẬN một đề xuất làm dày — sách dạy thứ khung chưa có, người duyệt đồng ý đưa vào.
+   *
+   * Đòi người duyệt khai NÓ NÓI VỀ CÁI GÌ và học QUA KÊNH NÀO. Không phải thủ tục: một kiến thức
+   * không có dấu hiệu phân biệt thì ngày mai không ai tách nổi nó khỏi cái bên cạnh, và gộp sai là
+   * hỏng vĩnh viễn mà không có tín hiệu nào báo. Máy đúc từ nhan đề là tự tạo ra đúng thứ đó.
+   */
+  .post(
+    '/trace/:id/accept-proposal',
+    authorGuard,
+    validate(
+      'json',
+      z.object({
+        object: z.string().trim().min(1).max(64),
+        channel: z.string().trim().min(1).max(64),
+        bloom: z.string().trim().max(32).optional(),
+        subject: z.string().trim().max(64).optional(),
+      }),
+    ),
+    async (c) => {
+      const user = c.get('user')
+      if (!user) throw AppError.unauthorized()
+      const b = c.req.valid('json')
+      const r = await acceptProposal({
+        traceId: c.req.param('id'),
+        object: b.object,
+        channel: b.channel,
+        ...(b.bloom !== undefined ? { bloom: b.bloom } : {}),
+        ...(b.subject !== undefined ? { subject: b.subject } : {}),
+        decidedById: user.id,
+        decidedAt: new Date(),
+      })
+      // Thêm một kiến thức vào khung là sửa xương sống bằng chứng — phải biết ai đã thêm.
+      await writeAudit({
+        action: 'authoring.proposal.accept',
+        actorUserId: user.id,
+        targetType: 'competency',
+        targetId: r.slug,
+        metadata: { fromTrace: r.traceId, title: r.title },
       })
       return ok(c, r)
     },

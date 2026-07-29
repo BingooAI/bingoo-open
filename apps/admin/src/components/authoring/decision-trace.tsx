@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { Spinner } from '@bingoo.ai/ui-web'
 import {
+  useAcceptProposal,
   useDecisionTraces,
   useTraceVerdict,
   type DecisionTraceDto,
@@ -259,7 +260,9 @@ export function DecisionTraceCard({ trace, onClose }: { trace: DecisionTraceDto;
   const format = useFormatter()
   const [viewer, setViewer] = useState<ViewerTarget | null>(null)
   const [note, setNote] = useState('')
+  const [marks, setMarks] = useState({ object: '', channel: '' })
   const verdict = useTraceVerdict()
+  const accept = useAcceptProposal()
 
   return (
     <div className="space-y-3 rounded-lg border border-border bg-surface p-4">
@@ -338,6 +341,50 @@ export function DecisionTraceCard({ trace, onClose }: { trace: DecisionTraceDto;
         "người duyệt mới là thứ thi hành" không thực hiện được ở đúng chỗ máy nói ra kết luận.
         Từ chối phải nêu lý do: một thẻ bị từ chối không kèm lý do trông y hệt thẻ chưa ai xem.
       */}
+      {/*
+        NHẬN MỘT ĐỀ XUẤT LÀM DÀY — khác hẳn "xác nhận đúng": nó đưa kiến thức mới vào khung thật.
+        Nên nó đòi hai dấu hiệu, và nút tắt cho tới khi có đủ. Máy tự đúc từ nhan đề là tạo ra đúng
+        loại kiến thức không phân biệt được mà quy tắc định danh tồn tại để chặn.
+      */}
+      {trace.artifact === 'KC_PROPOSED' && trace.verdict === 'PENDING' ? (
+        <div className="space-y-2 rounded-md border border-info/40 bg-info-soft p-2.5">
+          <div className="text-[12px] font-semibold text-foreground">{t('tbAcceptTitle')}</div>
+          <p className="text-[11px] text-foreground-muted">{t('tbAcceptHint')}</p>
+          <div className="flex flex-wrap gap-2">
+            <input
+              value={marks.object}
+              placeholder={t('tbAcceptObject')}
+              aria-label={t('tbAcceptObject')}
+              onChange={(e) => setMarks((m) => ({ ...m, object: e.target.value }))}
+              className="focus-ring min-w-[9rem] flex-1 rounded-md border border-border bg-surface px-2 py-1 text-[12px] text-foreground"
+            />
+            <input
+              value={marks.channel}
+              placeholder={t('tbAcceptChannel')}
+              aria-label={t('tbAcceptChannel')}
+              onChange={(e) => setMarks((m) => ({ ...m, channel: e.target.value }))}
+              className="focus-ring min-w-[9rem] flex-1 rounded-md border border-border bg-surface px-2 py-1 text-[12px] text-foreground"
+            />
+            <button
+              type="button"
+              disabled={
+                accept.isPending || marks.object.trim().length === 0 || marks.channel.trim().length === 0
+              }
+              onClick={() =>
+                accept.mutate({
+                  id: trace.id,
+                  object: marks.object.trim(),
+                  channel: marks.channel.trim(),
+                })
+              }
+              className="focus-ring rounded-md bg-info-soft px-2.5 py-1 text-[12px] font-medium text-info hover:bg-info/20 disabled:opacity-50"
+            >
+              {t('tbAcceptRun')}
+            </button>
+          </div>
+        </div>
+      ) : null}
+
       {trace.verdict === 'PENDING' ? (
         <div className="space-y-2 border-t border-border/60 pt-2">
           <input

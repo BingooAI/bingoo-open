@@ -1177,7 +1177,12 @@
       "tbNotePh": "Ghi lý do (bắt buộc khi không đồng ý)",
       "tbRejectNeedsNote": "Muốn nói không đúng thì phải nêu lý do.",
       "cwResetApproval": "Đã gỡ dấu duyệt của vỏ khoá này",
-      "cwResetApprovalBody": "Trước đó có người đã duyệt vỏ khoá cùng tên này, và lần sinh vừa rồi thay hẳn nội dung. Bản duyệt cũ không còn, nên trạng thái quay về bản nháp — thứ chưa ai đọc thì không được mang con dấu của người đã đọc thứ khác."
+      "cwResetApprovalBody": "Trước đó có người đã duyệt vỏ khoá cùng tên này, và lần sinh vừa rồi thay hẳn nội dung. Bản duyệt cũ không còn, nên trạng thái quay về bản nháp — thứ chưa ai đọc thì không được mang con dấu của người đã đọc thứ khác.",
+      "tbAcceptTitle": "Nhận vào khung",
+      "tbAcceptHint": "Cho biết nó dạy VỀ CÁI GÌ và học QUA KÊNH NÀO. Thiếu hai điều đó thì sau này máy không tách nổi nó khỏi mục bên cạnh, mà nhầm lẫn kiểu đó thì không sửa lại được.",
+      "tbAcceptObject": "Dạy về cái gì (vd: ước lượng)",
+      "tbAcceptChannel": "Học qua kênh nào (vd: tính)",
+      "tbAcceptRun": "Đưa vào khung"
     }
   },
   "learn": {
