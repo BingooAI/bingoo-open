@@ -114,9 +114,15 @@ jobs:
   codeql:
     name: CodeQL
     runs-on: ubuntu-latest
+    # An explicit permissions block sets everything it does not name to `none`, including the
+    # repository default. On a public repository that was survivable, because the analyser only
+    # reads run metadata as a nicety. On a private one the same call is mandatory, so the job
+    # started failing the moment this repository stopped being public — with an error naming an
+    # API endpoint rather than the permission behind it.
     permissions:
       contents: read
       security-events: write
+      actions: read
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: github/codeql-action/init@7188fc363630916deb702c7fdcf4e481b751f97a # v4.37.1
