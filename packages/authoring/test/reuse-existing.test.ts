@@ -13,7 +13,8 @@
 
 import { describe, expect, it } from 'vitest'
 import { compileDraft, validateDraft, hasBlockingIssue } from '../src/index'
-import type { IngestDraft, Slug } from '../src/index'
+import type { IngestDraft } from '../src/index'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
 
 /** Kiến thức đã có trong kho, đến từ một khung khác. */
 const EXISTING = [
