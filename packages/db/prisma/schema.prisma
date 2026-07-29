@@ -1007,7 +1007,22 @@ model Competency {
   altitude           String? // concept|skill|competency|outcome|role
   targetLevel        String? // novice|competent|proficient|expert
   source             String? // mã chuẩn ngoài / đơn vị sách (DATA)
-  code               String? // mã hiển thị tuỳ chọn (VD KC001)
+  code               String? // mã ĐƯỢC TÀI LIỆU IN, nguyên văn (vd "1Nc.01"). Không có thì để trống.
+  /// CHỖ ĐỂ TRỐNG cho một mã người-đọc, khi nào chốt được cách đặt. HIỆN KHÔNG CÓ GÌ GHI VÀO ĐÂY.
+  ///
+  /// Nhiều chương trình không in mã (bản tiếng Việt của chương trình Toán lớp 1: mười mục tiêu,
+  /// không mã nào), nên danh sách hiện ra một cột trống và không ai gọi tên được một mục tiêu khi
+  /// trao đổi. Một lược đồ tự đặt đã thử rồi và bỏ: nén tên mạch thành chữ đầu ("Số và Phép tính" →
+  /// SPT) khiến mã phụ thuộc NGÔN NGỮ của tài liệu — cùng một năng lực mà nguồn tiếng Việt ra "SPT",
+  /// nguồn tiếng Anh ra "N" — trái đúng cái nguyên tắc rằng một năng lực dùng chung giữa các khung.
+  ///
+  /// Định danh thì KHÔNG chờ quyết định này: `id` (cuid) là khoá duy nhất, và `slug` (mint từ tiêu đề
+  /// tiếng Anh) là khoá tham chiếu dùng chung mọi khung. Còn thiếu là một NHÃN cho người đọc.
+  ///
+  /// Vì sao là cột RIÊNG chứ không dùng chung `code`: `code` chảy ra `humanCodingScheme` của CASE,
+  /// tức nói với LMS/bảng tính rằng chương trình CÓ mã đó. Một mã do mình đặt đi ra chỗ ấy là nói
+  /// quá. Tách hai cột thì exporter không thể lẫn — đúng về cấu trúc, không nhờ ai nhớ kiểm.
+  codeMinted         String?
   version            Int                   @default(1)
   supersedesId       String?
   supersedes         Competency?           @relation("competencySupersede", fields: [supersedesId], references: [id], onDelete: SetNull)
@@ -1162,6 +1177,42 @@ model SkillSnapshot {
 
   @@index([userId, skillSlug, at])
   @@map("skill_snapshot")
+}
+
+// Ai sinh ra lượt chọn này. Học viên thật và học viên mô phỏng KHÔNG BAO GIỜ được lẫn: một
+// phân tích lỡ trộn hai nguồn sẽ rút ra kết luận về trẻ thật từ hành vi chưa từng xảy ra.
+// Cột này là chỗ phân tách rẻ nhất — đặt sẵn từ bây giờ, trước khi có dòng dữ liệu ảo nào.
+enum TraceOrigin {
+  LEARNER
+  SIMULATION
+}
+
+// Nhật ký một lượt chọn phiên học — vì sao lượt này ra đúng những bài này.
+//
+// Observation ghi CHUYỆN ĐÃ XẢY RA. Bảng này ghi NHỮNG GÌ ĐÃ KHÔNG XẢY RA: ứng viên nào vào
+// vòng cân nhắc, chấm bao nhiêu, thua ai. Thiếu vế thứ hai thì câu "nếu hồi ấy chấm khác đi,
+// phiên này có còn giống không" vĩnh viễn không có đáp án — bộ chọn tất định nên phiên đã trả
+// về không hề hé lộ nó đã suýt trả về gì.
+//
+// userId là ref phẳng, KHÔNG FK — như Observation.
+model SelectionTrace {
+  id         String      @id @default(cuid())
+  userId     String
+  origin     TraceOrigin @default(LEARNER)
+  policy     String // dấu vân tay policy — đổi một tham số là đổi dấu
+  size       Int
+  exploreN   Int
+  daySeed    String?
+  offered    Int // ứng viên host đưa vào
+  eligible   Int // còn lại sau khi lọc
+  considered Json // [{key,score,bucket,rank,picked}] theo thứ tự đã sắp hạng
+  picked     String[] // khoá bài, theo đúng thứ tự trình cho người học
+  at         DateTime    @default(now())
+
+  @@index([userId, at])
+  @@index([origin, at])
+  @@index([policy])
+  @@map("selection_trace")
 }
 
 // Ngân hàng item nội dung — AuthoredItem đã sinh/duyệt. Đo được → CandidatePort kéo làm Candidate;
