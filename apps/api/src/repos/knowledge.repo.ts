@@ -9,6 +9,7 @@ import { db } from '@bingoo.ai/db'
 import type {
   EvidenceInput,
   GraphData,
+  SelectionTrace,
   SkillEdge,
   SkillMastery,
   SkillNode,
@@ -24,6 +25,11 @@ export async function loadGraphData(): Promise<GraphData> {
         title: true,
         kind: true,
         level: true,
+        // Nhãn báo cáo. Engine KHÔNG quyết định gì theo hai trường này — nhưng các mặt đọc
+        // (gapReport) mang chúng ra cho người dùng, và bỏ khỏi select thì chúng lặng lẽ thành
+        // null suốt: kiểu vẫn hợp lệ, test engine vẫn xanh, chỉ màn hình là trống.
+        stage: true,
+        strand: true,
         parent: { select: { slug: true } },
       },
     }),
@@ -44,6 +50,8 @@ export async function loadGraphData(): Promise<GraphData> {
     kind: n.kind,
     ...(n.parent ? { parent: n.parent.slug } : {}),
     ...(n.level != null ? { level: n.level } : {}),
+    ...(n.stage != null ? { stage: n.stage } : {}),
+    ...(n.strand != null ? { strand: n.strand } : {}),
   }))
 
   const skillEdges: SkillEdge[] = edges.map((e) => ({
@@ -99,6 +107,44 @@ export async function loadLearnerMastery(userId: string): Promise<Map<Slug, Skil
     })
   }
   return out
+}
+
+/**
+ * Slug các objective của một khung, tuỳ chọn lọc theo bậc.
+ *
+ * Lọc theo bậc là một TRUY VẤN, không phải một nhánh trong engine. `stage` là nhãn riêng của
+ * từng khung ("Lớp 3", "A2", "buổi-7"), so bằng chuỗi và không được diễn giải ở đâu cả — đó
+ * là điều giữ cho cùng một đường mã chạy được với khung chia theo lớp lẫn khung chia theo bậc.
+ */
+export async function loadFrameworkObjectiveSlugs(
+  frameworkSlug: string,
+  stage?: string,
+): Promise<Slug[] | null> {
+  const fw = await db.framework.findUnique({ where: { slug: frameworkSlug }, select: { id: true } })
+  if (!fw) return null
+  const rows = await db.competency.findMany({
+    where: {
+      frameworkId: fw.id,
+      kind: 'OBJECTIVE',
+      ...(stage === undefined ? {} : { stage }),
+    },
+    select: { slug: true },
+    orderBy: { slug: 'asc' },
+  })
+  return rows.map((r) => r.slug)
+}
+
+/** Các nhãn bậc một khung thực sự dùng — để giao diện dựng bộ lọc mà không đoán. */
+export async function loadFrameworkStages(frameworkSlug: string): Promise<string[]> {
+  const fw = await db.framework.findUnique({ where: { slug: frameworkSlug }, select: { id: true } })
+  if (!fw) return []
+  const rows = await db.competency.findMany({
+    where: { frameworkId: fw.id, kind: 'OBJECTIVE', stage: { not: null } },
+    select: { stage: true },
+    distinct: ['stage'],
+    orderBy: { stage: 'asc' },
+  })
+  return rows.flatMap((r) => (r.stage == null ? [] : [r.stage]))
 }
 
 /** Đã có Observation với attemptId này chưa (idempotency §9.1). */
@@ -165,4 +211,38 @@ export async function saveFold(
       data: { userId, skillSlug: state.skill, pKnown: state.pKnown, ability: state.ability },
     })
   }
+}
+
+/**
+ * Ghi nhật ký một lượt chọn phiên.
+ *
+ * `origin` mặc định LEARNER và người gọi phải nói khác đi nếu muốn khác — dữ liệu mô phỏng
+ * lẫn vào lane người thật là hỏng cả về sau, nên mặc định phải là cái an toàn khi ai đó quên.
+ */
+export async function saveSelectionTrace(
+  userId: string,
+  trace: SelectionTrace,
+  origin: 'LEARNER' | 'SIMULATION' = 'LEARNER',
+): Promise<void> {
+  await db.selectionTrace.create({
+    data: {
+      userId,
+      origin,
+      policy: trace.policy,
+      size: trace.size,
+      exploreN: trace.exploreN,
+      daySeed: trace.daySeed,
+      offered: trace.offered,
+      eligible: trace.eligible,
+      // Trải thành object thuần: kiểu Json của Prisma không nhận thuộc tính readonly.
+      considered: trace.considered.map((c) => ({
+        key: c.key,
+        score: c.score,
+        bucket: c.bucket,
+        rank: c.rank,
+        picked: c.picked,
+      })),
+      picked: [...trace.picked],
+    },
+  })
 }

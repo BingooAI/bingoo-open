@@ -12,6 +12,20 @@ import { requireRole } from '../auth'
 import { queryAudit, writeAudit } from '../repos/audit.repo'
 import { getRemoteConfig, setRemoteConfig } from '../repos/config.repo'
 import { createSegment, listSegments, recomputeSegment, segmentMembers } from '../repos/segment.repo'
+import { getUserDetail, listReportableFrameworks, listUsers } from '../repos/user-admin.repo'
+import { getLearnerGapReport, listFrameworkStages } from '../services/knowledge.service'
+
+const UserQuerySchema = paginationQuerySchema.extend({
+  q: z.string().trim().min(1).max(120).optional(),
+  role: z.string().trim().min(1).max(40).optional(),
+  accountType: z.string().trim().min(1).max(40).optional(),
+})
+
+const GapQuerySchema = z.object({
+  framework: z.string().trim().min(1).max(200),
+  /** Nhãn bậc riêng của từng khung — so bằng chuỗi, không diễn giải. */
+  stage: z.string().trim().min(1).max(120).optional(),
+})
 
 const ConfigSchema = z.object({
   value: z.unknown().refine((v) => v !== undefined, 'value is required'),
@@ -104,4 +118,51 @@ export const admin = new Hono<AppEnv>()
   })
   .get('/segments/:key/members', requireRole('ADMIN'), async (c) =>
     ok(c, await segmentMembers(c.req.param('key'))),
+  )
+  // ── Người dùng ────────────────────────────────────────────────────────────
+  .get('/users', requireRole('ADMIN'), validate('query', UserQuerySchema), async (c) => {
+    const q = c.req.valid('query')
+    const { skip, take } = toSkipTake(q)
+    const { items, total } = await listUsers({
+      skip,
+      take,
+      ...(q.q === undefined ? {} : { q: q.q }),
+      ...(q.role === undefined ? {} : { role: q.role }),
+      ...(q.accountType === undefined ? {} : { accountType: q.accountType }),
+    })
+    return paginated(c, items, paginationMeta(q, total))
+  })
+  .get('/users/:id', requireRole('ADMIN'), async (c) => {
+    const user = await getUserDetail(c.req.param('id'))
+    if (!user) throw AppError.notFound('Không có người dùng này.')
+    return ok(c, user)
+  })
+  /**
+   * Lỗ hổng của MỘT người học so với một khung.
+   *
+   * Ghi audit, và ghi trước khi trả về. Đây là hồ sơ học tập của một đứa trẻ; ai mở nó ra và
+   * lúc nào là chuyện phải trả lời được sau này. Ghi sau khi trả về thì mọi lần đọc bị lỗi
+   * giữa chừng đều biến mất khỏi sổ.
+   */
+  .get('/users/:id/gap', requireRole('ADMIN'), validate('query', GapQuerySchema), async (c) => {
+    const actor = c.get('user')
+    const id = c.req.param('id')
+    const { framework, stage } = c.req.valid('query')
+
+    await writeAudit({
+      action: 'learner.gap.viewed',
+      actorUserId: actor?.id ?? null,
+      targetType: 'user',
+      targetId: id,
+    })
+
+    const report = await getLearnerGapReport(id, framework, stage)
+    if (!report) throw AppError.notFound('Không có chương trình này.')
+    return ok(c, report)
+  })
+  .get('/users/:id/gap/frameworks', requireRole('ADMIN'), async (c) =>
+    ok(c, await listReportableFrameworks()),
+  )
+  .get('/frameworks/:slug/stages', requireRole('ADMIN'), async (c) =>
+    ok(c, await listFrameworkStages(c.req.param('slug'))),
   )

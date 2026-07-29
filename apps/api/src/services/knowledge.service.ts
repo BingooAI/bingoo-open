@@ -14,13 +14,15 @@ import {
   dueForReview,
   frontierComposite,
   freshMastery,
+  gapReport,
   recordEvidence,
-  selectAdaptiveSession,
+  selectAdaptiveSessionTraced,
   type Candidate,
   type CertifyObjective,
   type CertifyReport,
   type EvidenceInput,
   type FrontierNode,
+  type GapReport,
   type RecordResult,
   type SessionContext,
   type SessionOpts,
@@ -30,10 +32,13 @@ import {
 import {
   attemptExists,
   getSkillState,
+  loadFrameworkObjectiveSlugs,
+  loadFrameworkStages,
   loadGraphData,
   loadLearnerMastery,
   loadLearnerStates,
   saveFold,
+  saveSelectionTrace,
 } from '../repos/knowledge.repo'
 import { loadCandidates } from '../repos/content-item.repo'
 
@@ -112,7 +117,44 @@ export async function getNextSession(
     ...(opts.size !== undefined ? { size: opts.size } : {}),
     ...(opts.focus && opts.focus.length ? { focus: new Set(opts.focus) } : {}),
   }
-  return selectAdaptiveSession(ctx, candidates, sopts, DEFAULT_POLICY)
+  const { session, trace } = selectAdaptiveSessionTraced(ctx, candidates, sopts, DEFAULT_POLICY)
+
+  // Nhật ký ghi hụt thì mất dữ liệu; nhật ký làm hỏng request thì mất buổi học của một đứa
+  // trẻ. Nên lỗi ghi được nuốt — nhưng nuốt KÈM log, vì một đường ghi hỏng im lặng đúng bằng
+  // không có đường ghi nào, và ta chỉ phát hiện ra sau một năm không có gì để phân tích.
+  try {
+    await saveSelectionTrace(userId, trace)
+  } catch (err) {
+    console.error('[knowledge] không ghi được nhật ký chọn bài', { userId, err })
+  }
+
+  return session
+}
+
+/**
+ * Lỗ hổng của một học viên so với một khung chương trình.
+ *
+ * Ba việc engine làm mà bản đọc cũ (`getLearnerFrameworkReport`) không làm: tách "đã đo mà
+ * chưa tới" khỏi "chưa ai đo", chặn không cho mục tiêu kiểu thái độ mang điểm số, và trả kèm
+ * khoảng tin cậy cho phần được phép mang điểm.
+ *
+ * `stage` là tuỳ chọn và không được diễn giải — bỏ trống thì đọc cả khung.
+ */
+export async function getLearnerGapReport(
+  userId: string,
+  frameworkSlug: string,
+  stage?: string,
+): Promise<GapReport | null> {
+  const objectiveSlugs = await loadFrameworkObjectiveSlugs(frameworkSlug, stage)
+  if (objectiveSlugs === null) return null
+
+  const [graph, states] = await Promise.all([getGraph(), loadLearnerMastery(userId)])
+  return gapReport({ graph, states, objectives: objectiveSlugs.map((slug) => ({ slug })) }, DEFAULT_POLICY)
+}
+
+/** Các nhãn bậc một khung thực sự dùng — giao diện dựng bộ lọc từ dữ liệu, không đoán. */
+export function listFrameworkStages(frameworkSlug: string): Promise<string[]> {
+  return loadFrameworkStages(frameworkSlug)
 }
 
 /** Chứng nhận: đo mức nắm học viên với tập objective (slug) → CertifyReport (đạt/không, %). */
