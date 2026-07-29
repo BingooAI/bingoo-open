@@ -17,6 +17,7 @@ import { sanitizeCourse } from './course-shell.sanitize'
 import { parseModelJson } from '../lib/model-json'
 import { modelFor } from '../config/models'
 import { writeBookTraces, type WriteTraceResult } from './decision-trace.service'
+import { pdfPositionedUnits } from './pdf-anchor.service'
 
 /**
  * CHI PHÍ: tách model cho khâu sinh nội dung. Mặc định Sonnet (nội dung học cần chất lượng hơn
@@ -142,6 +143,66 @@ export async function courseShellFromPrompt(input: CourseShellInput): Promise<Co
 const BOOK_OCR_CAP = 40_000
 
 /**
+ * Dưới ngưỡng này thì coi như PDF không có lớp chữ (sách quét thành ảnh) và phải OCR.
+ *
+ * Không đặt bằng 0: một cuốn sách quét vẫn thường rút ra được dăm chục ký tự rác từ chữ ký số hoặc
+ * số trang, và nhận nhầm đám đó làm nội dung sách thì kết quả là một vỏ khoá rỗng mà không ai hiểu
+ * vì sao.
+ */
+const LOCAL_TEXT_FLOOR = 2_000
+
+/**
+ * Đọc lớp chữ có sẵn trong PDF, không gọi ra ngoài. `undefined` khi không đọc được.
+ *
+ * Hỏng ở đây KHÔNG được ném: nó chỉ có nghĩa là phải OCR, và OCR là đường vốn đã có.
+ */
+/**
+ * OCR cả cuốn — và khi nó không nhận nổi thì nói ra CHUYỆN GÌ ĐANG XẢY RA.
+ *
+ * Một cuốn sách giáo khoa quét thành ảnh không có lớp chữ nào để đọc tại chỗ, nên nó buộc phải đi
+ * qua dịch vụ đọc ảnh; và dịch vụ đó có trần dung lượng mà một cuốn sách thật vượt qua dễ dàng.
+ * Ném nguyên câu trả lời của nhà cung cấp ra ngoài thì người dùng nhận được "tệp vượt quá dung
+ * lượng cho phép" — đúng về mặt kỹ thuật và vô dụng: nó không nói tệp nào, không nói vì sao một
+ * cuốn PDF khác cùng cỡ lại chạy được, và không nói phải làm gì.
+ *
+ * Đây là một GIỚI HẠN CHƯA GỠ, không phải một lỗi thoáng qua. Câu báo nói đúng như vậy.
+ */
+async function ocrBook(pdfUrl: string, localChars: number): Promise<string> {
+  try {
+    return (await getVision().extractText({ image: pdfUrl })).text
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e)
+    if (!/exceeds the maximum allowed size|too large|payload/i.test(msg)) throw e
+    throw AppError.validation([
+      {
+        path: 'pdf',
+        message:
+          'Cuốn sách này là bản QUÉT (không có lớp chữ nào để đọc thẳng, rút được ' +
+          `${localChars} ký tự), nên nó phải qua bước đọc ảnh — và tệp vượt quá dung lượng dịch vụ ` +
+          'đó nhận. Hiện chưa cắt sách thành từng phần để đọc, nên hãy tách sách theo chương rồi ' +
+          'bóc từng phần. Sách xuất ra PDF có sẵn chữ thì không vướng giới hạn này.',
+        code: 'scanned_book_too_large',
+      },
+    ])
+  }
+}
+
+async function extractBookTextLocally(pdfUrl: string): Promise<string | undefined> {
+  try {
+    const res = await fetch(pdfUrl)
+    if (!res.ok) return undefined
+    const { units } = await pdfPositionedUnits(new Uint8Array(await res.arrayBuffer()))
+    const text = units
+      .map((u) => u.text)
+      .join(' ')
+      .trim()
+    return text.length > 0 ? text : undefined
+  } catch {
+    return undefined
+  }
+}
+
+/**
  * Vỏ khoá từ SÁCH (PDF).
  *
  * KHÁC HẲN đường prompt: sách ĐÃ CÓ cấu trúc và thứ tự của nó, nên việc ở đây là TRÍCH TRUNG THÀNH cây
@@ -155,9 +216,24 @@ export async function courseShellFromBook(
   const vocab = await stageVocab(input)
   const allowed = new Set<Slug>(vocab.map((v) => v.slug))
 
-  const ocr = await getVision().extractText({ image: input.pdf })
-  const truncated = ocr.text.length > BOOK_OCR_CAP
-  const bookText = ocr.text.slice(0, BOOK_OCR_CAP)
+  /**
+   * RÚT CHỮ TẠI CHỖ TRƯỚC, OCR chỉ khi cần.
+   *
+   * Trước đây cả cuốn sách được đẩy lên dịch vụ đọc ảnh, kể cả khi nó vốn đã có sẵn chữ. Một cuốn
+   * sách giáo khoa thật nặng gần trăm megabyte, và dịch vụ trả về đúng một câu: tệp vượt quá dung
+   * lượng cho phép. Nghĩa là đường bóc sách hỏng với chính loại tệp mà nó tồn tại để xử lý.
+   *
+   * Sách in ra PDF thì có sẵn lớp chữ — đọc tại chỗ vừa không giới hạn dung lượng, vừa không tốn
+   * một lượt gọi ra ngoài. OCR vẫn cần cho sách quét thành ảnh, và đó là lúc nó được gọi: khi rút
+   * tại chỗ ra quá ít chữ để tin.
+   */
+  const local = await extractBookTextLocally(input.pdf)
+  const raw =
+    local !== undefined && local.length >= LOCAL_TEXT_FLOOR
+      ? local
+      : await ocrBook(input.pdf, local?.length ?? 0)
+  const truncated = raw.length > BOOK_OCR_CAP
+  const bookText = raw.slice(0, BOOK_OCR_CAP)
 
   const res = await getAi(input.aiKey).generateText({
     system: await renderPrompt('authoring.course.fromBook', {

@@ -7,6 +7,7 @@
  */
 
 import { describe, expect, it } from 'vitest'
+import type { Slug } from '@bingoo.ai/knowledge-engine'
 import { sanitizeCourse } from '../src/services/course-shell.sanitize'
 import { ModelReplyError, parseModelJson } from '../src/lib/model-json'
 
