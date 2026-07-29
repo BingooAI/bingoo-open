@@ -11,9 +11,7 @@ import { requireAuth } from '../auth'
 import {
   certifyLearner,
   getLearnerFrontier,
-  getLearnerGapReport,
   getNextSession,
-  listFrameworkStages,
   recordLearnerEvidence,
 } from '../services/knowledge.service'
 import { gradeAndFold } from '../services/content-grade.service'
@@ -93,20 +91,6 @@ export const knowledge = new Hono<AppEnv>()
     const r = await getLearnerFrameworkReport(user.id, c.req.param('slug'))
     if (!r) throw AppError.notFound('Không có chương trình này.')
     return ok(c, r)
-  })
-  // LỖ HỔNG theo khung: như /report nhưng tách "đã đo mà chưa tới" khỏi "chưa ai đo", và
-  // không cho mục tiêu kiểu thái độ mang điểm số. `stage` là nhãn riêng của từng khung, so
-  // bằng chuỗi — bỏ trống thì đọc cả khung.
-  .get('/framework/:slug/gap', requireAuth, async (c) => {
-    const user = c.get('user')
-    if (!user) throw AppError.unauthorized()
-    const stage = c.req.query('stage')
-    const r = await getLearnerGapReport(user.id, c.req.param('slug'), stage)
-    if (!r) throw AppError.notFound('Không có chương trình này.')
-    return ok(c, r)
-  })
-  .get('/framework/:slug/stages', requireAuth, async (c) => {
-    return ok(c, await listFrameworkStages(c.req.param('slug')))
   })
   .post('/evidence', requireAuth, validate('json', EvidenceBody), async (c) => {
     const user = c.get('user')
