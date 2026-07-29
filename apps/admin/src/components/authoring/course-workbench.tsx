@@ -31,6 +31,7 @@ import {
   type LessonPlanResultDto,
 } from '@/lib/authoring-queries'
 import { PlanHierarchyPanel } from './plan-hierarchy-panel'
+import { PlanGrounding } from './plan-grounding'
 import { PlanJobProgress } from './plan-job-progress'
 import { CompetencyBreakdown } from './competency-breakdown'
 import { ContentStepsPanel } from './content-steps-panel'
@@ -315,6 +316,12 @@ export function CourseWorkbench({ slug }: { slug: string }) {
                 onContent={() => doContent(activeLesson)}
                 onApprove={() => doApprove(activeLesson)}
               />
+            ) : null}
+            {/* Vì sao bài này ở đây — nối ngược về mục tiêu và về sách, từ vết đã có. */}
+            {activeLesson ? (
+              <div className="mt-3">
+                <PlanGrounding courseSlug={slug} lessonSlug={activeLesson.slug} />
+              </div>
             ) : (
               <EmptyState title="Chọn một bài để bắt đầu" />
             )}

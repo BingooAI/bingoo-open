@@ -1349,3 +1349,35 @@ export function useGenLessonPlanInCourse(courseSlug: string) {
       void qc.invalidateQueries({ queryKey: planJobQK(courseSlug, 'lesson', input.lessonSlug) }),
   })
 }
+
+/** Vì sao bài này ở đây — nối ngược từ bài về mục tiêu và về sách. Không đúc thẻ mới, chỉ soạn lại. */
+export interface PlanGroundingDto {
+  courseSlug: string
+  lessonSlug: string
+  lessonTitle: Record<string, string>
+  unitSlug: string
+  planStatus: string | null
+  courseePlanApproved: boolean
+  unitPlanApproved: boolean
+  concepts: { slug: string; title: Record<string, string> | null; hasTrace: boolean }[]
+  objectives: {
+    slug: string
+    code: string | null
+    title: Record<string, string> | null
+    frameworkSlug: string | null
+    viaConcepts: string[]
+    hasTrace: boolean
+  }[]
+  fromBook: { conceptSlug: string | null; hasQuote: boolean }[]
+}
+
+export function usePlanGrounding(courseSlug: string, lessonSlug: string | null) {
+  return useQuery({
+    queryKey: ['authoring', 'plan-grounding', courseSlug, lessonSlug] as const,
+    queryFn: () =>
+      api.get<PlanGroundingDto>(
+        `/authoring/plan/${encodeURIComponent(courseSlug)}/${encodeURIComponent(lessonSlug ?? '')}/grounding`,
+      ),
+    enabled: lessonSlug !== null,
+  })
+}

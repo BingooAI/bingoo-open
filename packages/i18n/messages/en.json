@@ -1162,7 +1162,16 @@
       "axScope": "Range",
       "axRepresentation": "Form",
       "axTransfer": "Applying it",
-      "axFluency": "Fluency"
+      "axFluency": "Fluency",
+      "pgTitle": "Why this lesson is here",
+      "pgTeaches": "This lesson teaches",
+      "pgServes": "Serves",
+      "pgNoTrace": "no evidence yet",
+      "pgNoConcepts": "This lesson is not linked to any knowledge — nothing to trace back to.",
+      "pgNoObjectives": "No objective in any framework asks for this knowledge. The lesson can still be taught, but it certifies nothing.",
+      "pgFromBook": "Drawn from the book — {n} recorded",
+      "pgContextOk": "The course and unit plans are approved, so this lesson was written from them.",
+      "pgContextMissing": "The course or unit plan is not approved — a lesson written now has nothing to anchor to."
     }
   },
   "learn": {

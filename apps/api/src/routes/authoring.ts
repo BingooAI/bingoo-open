@@ -30,6 +30,7 @@ import {
   saveItems,
 } from '../repos/content-item.repo'
 import { generateLessonPlanFor, generateLessonPlanInCourse } from '../services/plan-generate.service'
+import { getPlanGrounding } from '../services/plan-grounding.service'
 import { generateCoursePlan, generateUnitPlan } from '../services/plan-hierarchy.service'
 import { cancelPlanJob, getPlanJob, startPlanJob } from '../services/plan-jobs'
 import { deriveLevelInsights } from '../services/plan-insights.service'
@@ -747,6 +748,17 @@ export const authoring = new Hono<AppEnv>()
         ...(object ? { objectSlug: object } : {}),
       }),
     )
+  })
+  /**
+   * VÌ SAO GIÁO ÁN NÀY Ở ĐÂY — nối lại từ vết đã có, không đúc thẻ mới.
+   *
+   * Kế hoạch bài neo vào ba thứ và cả ba đều đã có vết riêng. Chỗ này chỉ đi lại con đường đó:
+   * bài dạy kiến thức nào → kiến thức ấy chứng nhận mục tiêu nào → bài đến từ đâu trong sách.
+   */
+  .get('/plan/:courseSlug/:lessonSlug/grounding', authorGuard, async (c) => {
+    const user = c.get('user')
+    if (!user) throw AppError.unauthorized()
+    return ok(c, await getPlanGrounding(c.req.param('courseSlug'), c.req.param('lessonSlug')))
   })
   // BYTES tài liệu nguồn cho viewer (mở đúng trang, tô đúng dòng). Staff-gated.
   .get('/source/:id/file', authorGuard, async (c) => {
