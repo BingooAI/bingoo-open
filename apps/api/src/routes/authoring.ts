@@ -289,7 +289,20 @@ export const authoring = new Hono<AppEnv>()
       const { level, refSlug } = c.req.valid('json')
       const course = c.req.param('course')
       const r = await approvePlan(course, level, refSlug, user.id)
-      if (!r) throw AppError.notFound('Chưa có bản nháp kế hoạch để duyệt.')
+      if (r === 'not-found') throw AppError.notFound('Chưa có bản nháp kế hoạch để duyệt.')
+      if (r === 'parent-not-approved') {
+        // Nói rõ THỨ TỰ, không chỉ nói "không được": người soạn cần biết phải làm gì trước.
+        throw AppError.validation([
+          {
+            path: 'level',
+            message:
+              level === 'unit'
+                ? 'Kế hoạch KHOÁ chưa duyệt — duyệt nó trước, vì kế hoạch chương đứng trên nó.'
+                : 'Kế hoạch CHƯƠNG chưa duyệt — duyệt nó trước, vì kế hoạch bài đứng trên nó.',
+            code: 'parent_not_approved',
+          },
+        ])
+      }
       // DẤU VẾT (R5): ai DUYỆT giáo án nào, lúc nào, bản mấy — thứ trẻ sẽ học đi qua đây.
       await writeAudit({
         action: 'authoring.plan.approve',

@@ -1186,6 +1186,8 @@ export interface HierQualityDto {
   approvable: boolean
 }
 export interface StoredPlanDto {
+  /** Cấp DƯỚI vừa bị gỡ dấu duyệt vì bản này được sinh lại — người soạn phải thấy. */
+  invalidated?: string[]
   level: PlanLevel
   refSlug: string
   doc: Record<string, unknown>

@@ -96,7 +96,13 @@ function sanitizeCoursePlan(
 }
 
 export interface PlanResult {
-  readonly plan: StoredPlan
+  /**
+   * Kèm `invalidated`: những cấp DƯỚI vừa bị gỡ dấu duyệt vì bản này được sinh lại.
+   *
+   * Phải đi ra tới người soạn. Họ sinh lại kế hoạch khoá và không nhìn thấy rằng ba chương cùng
+   * năm bài vừa mất con dấu duyệt thì họ tưởng mọi thứ còn nguyên — rồi phát hiện ở chỗ khác, muộn hơn.
+   */
+  readonly plan: StoredPlan & { readonly invalidated?: readonly string[] }
   readonly quality: ReturnType<typeof coursePlanQuality>
 }
 
@@ -211,7 +217,10 @@ export async function generateUnitPlan(input: {
   aiKey?: string
   /** Cho phép HỦY job nền — luồn xuống LLM call. */
   signal?: AbortSignal
-}): Promise<{ plan: StoredPlan; quality: ReturnType<typeof unitPlanQuality> }> {
+}): Promise<{
+  plan: StoredPlan & { readonly invalidated?: readonly string[] }
+  quality: ReturnType<typeof unitPlanQuality>
+}> {
   // CỔNG: kế hoạch KHOÁ phải DUYỆT trước.
   if (!(await isApproved(input.courseSlug, 'course', input.courseSlug)))
     throw AppError.validation([
